@@ -15,8 +15,12 @@ export function useAudioPlayer() {
     setCurrentUrl(null)
   }, [])
 
-  const play = useCallback((url: string) => {
+  const play = useCallback((url?: string | null) => {
     setError(null)
+
+    if (!url || typeof url !== "string" || !url.trim()) {
+      return
+    }
 
     if (currentUrl === url && isPlaying) {
       stop()

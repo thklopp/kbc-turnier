@@ -1,6 +1,6 @@
 import { initializeApp, getApps, type FirebaseApp } from "firebase/app"
 import { getAuth, type Auth } from "firebase/auth"
-import { getFirestore, type Firestore } from "firebase/firestore"
+import { initializeFirestore, type Firestore } from "firebase/firestore"
 import { getStorage, type FirebaseStorage } from "firebase/storage"
 
 const env = (typeof import.meta !== "undefined" && import.meta.env) ? import.meta.env : ({} as Record<string, string | undefined>)
@@ -41,6 +41,8 @@ const app: FirebaseApp = getApps().length > 0
   : initializeApp(isFirebaseConfigured ? firebaseConfig : mockConfig)
 
 export const auth: Auth = getAuth(app)
-export const db: Firestore = getFirestore(app)
+export const db: Firestore = initializeFirestore(app, {
+  ignoreUndefinedProperties: true,
+})
 export const storage: FirebaseStorage = getStorage(app)
 export default app
