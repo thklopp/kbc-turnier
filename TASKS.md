@@ -11,7 +11,7 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 - [x] **Meilenstein 2: Admin-Bereich – Teamverwaltung & Medien-Upload (Logo + MP3)**
 - [x] **Meilenstein 3: Admin-Bereich – Zeitkonfiguration & Spielplan-Generierung**
 - [x] **Meilenstein 4: Admin-Bereich – Kampfgericht Live-Desk & Torjingle-Playback**
-- [ ] **Meilenstein 5: Öffentliche Gast-Ansicht – Spielplan, Live-Ticker & Tabellen**
+- [x] **Meilenstein 5: Öffentliche Gast-Ansicht – Spielplan, Live-Ticker & Tabellen**
 - [ ] **Meilenstein 6: Hallen-Kiosk – TV-Display & automatisierte Rotation**
 - [ ] **Meilenstein 7: End-to-End Tests, Optimierung & Railway Deployment**
 
@@ -80,10 +80,10 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 ---
 
 ### Meilenstein 5: Öffentliche Gast-Ansicht – Spielplan, Live-Ticker & Tabellen
-- [ ] Mobil-optimierter Live-Hero für die aktuell laufende Partie (Echtzeit-Score & Spielminute via `onSnapshot`).
-- [ ] Filterbarer Spielplan (nach Tag, Geschlecht `mU14`/`wU14`, Gruppe A/B).
-- [ ] Live-Tabellen: Automatische Berechnung von Punkten, Toren, Gegentoren und Tordifferenz.
-- [ ] Team-Detailansichten mit Logo, Kader und bisherigen Spielergebnissen.
+- [x] Mobil-optimierter Live-Hero für die aktuell laufende Partie (Echtzeit-Score & Spielminute via `onSnapshot`).
+- [x] Filterbarer Spielplan (nach Tag, Geschlecht `mU14`/`wU14`, Gruppe A/B).
+- [x] Live-Tabellen: Automatische Berechnung von Punkten, Toren, Gegentoren und Tordifferenz.
+- [x] Team-Detailansichten mit Logo, Kader und bisherigen Spielergebnissen.
 
 ---
 

@@ -1,92 +1,128 @@
-import { Link } from "react-router-dom"
-import { Calendar, Users, Trophy, Tv, ShieldCheck } from "lucide-react"
+import { useState, useEffect } from "react"
+import type { Match, Team, TournamentConfig } from "@/types/database"
+import { subscribeMatches } from "@/services/matchService"
+import { subscribeTeams } from "@/services/teamService"
+import { subscribeTournamentConfig, getDefaultConfig } from "@/services/configService"
+import { LiveHeroCard } from "@/components/guest/LiveHeroCard"
+import { GuestScheduleView } from "@/components/guest/GuestScheduleView"
+import { StandingsView } from "@/components/guest/StandingsView"
+import { FinalsBracketView } from "@/components/guest/FinalsBracketView"
+import { Calendar, Trophy, Medal } from "lucide-react"
 
 export function HomePage() {
+  const [matches, setMatches] = useState<Match[]>([])
+  const [teams, setTeams] = useState<Team[]>([])
+  const [config, setConfig] = useState<TournamentConfig>(getDefaultConfig())
+  const [loading, setLoading] = useState(true)
+  const [activeTab, setActiveTab] = useState<"schedule" | "standings" | "finals">("schedule")
+
+  useEffect(() => {
+    const unsubMatches = subscribeMatches(
+      (m) => {
+        setMatches(m)
+        setLoading(false)
+      },
+      (err) => console.error("Guest matches error:", err)
+    )
+
+    const unsubTeams = subscribeTeams(
+      (t) => setTeams(t),
+      (err) => console.error("Guest teams error:", err)
+    )
+
+    const unsubConfig = subscribeTournamentConfig(
+      (c) => setConfig(c),
+      (err) => console.error("Guest config error:", err)
+    )
+
+    return () => {
+      unsubMatches()
+      unsubTeams()
+      unsubConfig()
+    }
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <div className="flex flex-col items-center gap-2 text-slate-400">
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+          <span className="text-xs font-medium">Lade Turnierdaten...</span>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="space-y-6">
-      {/* Welcome Banner */}
-      <div className="rounded-2xl bg-gradient-to-br from-blue-700 via-blue-800 to-indigo-900 p-6 sm:p-8 text-white shadow-lg">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold backdrop-blur">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              Turnierverwaltung online
-            </div>
-            <h1 className="mt-3 text-2xl sm:text-3xl font-black tracking-tight">
-              KBC Hallenhockey Cup 2026
-            </h1>
-            <p className="mt-1 text-sm text-blue-100 max-w-xl">
-              16 Mannschaften &bull; 8x mU14 &bull; 8x wU14 &bull; 40 Spiele &bull; 1 Spielfeld
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2.5">
-            <Link
-              to="/kiosk"
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-xs font-bold text-slate-900 shadow-sm hover:bg-blue-50 transition-colors"
-            >
-              <Tv className="h-4 w-4 text-blue-600" />
-              Hallen-Monitor
-            </Link>
-            <Link
-              to="/admin"
-              className="inline-flex items-center gap-2 rounded-xl bg-blue-950/70 border border-blue-400/30 px-4 py-2.5 text-xs font-bold text-white hover:bg-blue-950 transition-colors"
-            >
-              <ShieldCheck className="h-4 w-4 text-blue-300" />
-              Kampfgericht
-            </Link>
-          </div>
-        </div>
+    <div className="space-y-6 pb-8">
+      {/* 1. Live Hero Card (laufendes Spiel oder nächste Partie) */}
+      <LiveHeroCard matches={matches} teams={teams} />
+
+      {/* 2. Public Guest Tabs */}
+      <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
+        <button
+          onClick={() => setActiveTab("schedule")}
+          className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
+            activeTab === "schedule"
+              ? "bg-blue-600 text-white shadow-sm"
+              : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+          }`}
+        >
+          <Calendar className="h-4 w-4" />
+          <span>Spielplan ({matches.length})</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("standings")}
+          className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
+            activeTab === "standings"
+              ? "bg-blue-600 text-white shadow-sm"
+              : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+          }`}
+        >
+          <Trophy className="h-4 w-4" />
+          <span>Live-Tabellen</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("finals")}
+          className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
+            activeTab === "finals"
+              ? "bg-blue-600 text-white shadow-sm"
+              : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+          }`}
+        >
+          <Medal className="h-4 w-4" />
+          <span>Finalphase</span>
+        </button>
       </div>
 
-      {/* Feature Cards Grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 text-blue-700 mb-3">
-            <Calendar className="h-5 w-5" />
-          </div>
-          <h2 className="text-base font-bold text-slate-900">Spielplan & Anstoßzeiten</h2>
-          <p className="mt-1 text-xs text-slate-500">
-            Samstag ab 10:00 Uhr (24 Gruppenspiele) &bull; Sonntag ab 09:00 Uhr (16 Finalspiele).
-          </p>
-          <div className="mt-4 text-xs font-semibold text-blue-600">
-            Vorbereitet für Meilenstein 3 &rarr;
-          </div>
-        </div>
+      {/* 3. Tab Contents */}
+      {activeTab === "schedule" && (
+        <section>
+          <GuestScheduleView matches={matches} teams={teams} />
+        </section>
+      )}
 
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700 mb-3">
-            <Trophy className="h-5 w-5" />
-          </div>
-          <h2 className="text-base font-bold text-slate-900">Live-Tabellen & Ticker</h2>
-          <p className="mt-1 text-xs text-slate-500">
-            Echtzeit-Berechnung der Gruppenstände für mU14 & wU14 mit Firestore Sync.
-          </p>
-          <div className="mt-4 text-xs font-semibold text-emerald-600">
-            Vorbereitet für Meilenstein 5 &rarr;
-          </div>
-        </div>
+      {activeTab === "standings" && (
+        <section>
+          <StandingsView teams={teams} matches={matches} />
+        </section>
+      )}
 
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100 text-purple-700 mb-3">
-            <Users className="h-5 w-5" />
-          </div>
-          <h2 className="text-base font-bold text-slate-900">Teams & Torjingles</h2>
-          <p className="mt-1 text-xs text-slate-500">
-            16 Mannschaften mit individuellem Wappen und MP3-Torjingle für das Kampfgericht.
-          </p>
-          <div className="mt-4 text-xs font-semibold text-purple-600">
-            Vorbereitet für Meilenstein 2 &rarr;
-          </div>
-        </div>
-      </div>
+      {activeTab === "finals" && (
+        <section>
+          <FinalsBracketView matches={matches} teams={teams} />
+        </section>
+      )}
 
-      {/* SDD Architectural Badge */}
-      <div className="rounded-xl border border-slate-200 bg-white p-4 text-xs text-slate-600 flex items-center justify-between">
-        <span className="font-medium">
-          Infrastruktur-Status: <strong>Meilenstein 1 aktiv</strong> (Routing, Auth Context & Firebase Client bereit)
+      {/* Footer Info Box */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2 shadow-xs">
+        <span>
+          Aktiver Turniertag: <strong>{config.activeDay === "saturday" ? "Samstag" : "Sonntag"}</strong> &bull; {teams.length} Teams
         </span>
-        <span className="font-mono text-[11px] bg-slate-100 px-2 py-1 rounded text-slate-700">
-          v0.1.0
+        <span className="font-mono text-[11px] text-slate-400">
+          Live Sync via Firestore onSnapshot
         </span>
       </div>
     </div>
