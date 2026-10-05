@@ -1,6 +1,6 @@
 # SPEC-003: Robuste Torerfassung im Live-Desk & Jingle-Fallback
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Bugfix & Optimierung  
 > **Branch**: fix/SPEC-003-torerfassung-und-jingle-fallback  
 > **Autor**: Thorsten / Antigravity  
