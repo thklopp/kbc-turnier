@@ -1,6 +1,6 @@
 # SPEC-004: Vollständige Entfernung des Darkmodes und dunkler Hintergründe
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Refactoring / UI-Optimierung  
 > **Branch**: `refactor/SPEC-004-entfernung-darkmode-und-dunkle-hintergruende`  
 > **Autor**: Antigravity Agent  
