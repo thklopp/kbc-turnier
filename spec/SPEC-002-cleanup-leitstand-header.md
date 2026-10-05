@@ -1,6 +1,6 @@
 # SPEC-002: Entfernung des redundanten oberen Leitstand-Headers und der statischen Info-Kacheln
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Refactoring / UI-Optimierung  
 > **Branch**: `refactor/SPEC-002-cleanup-leitstand-header`  
 > **Autor**: Antigravity Agent  
@@ -124,12 +124,12 @@ Dieser Bereich weist mehrere Schwachstellen auf:
 ## 8. Verifikations- & Testplan
 
 ### 8.1 Manuelle Tests
-1. [ ] Aufruf von `http://localhost:5173/admin` im Browser.
-2. [ ] Prüfen: Die Kacheln und der doppelte Header sind verschwunden.
-3. [ ] Klick auf „Teams & Torjingles“: Teamliste wird direkt oben angezeigt.
-4. [ ] Klick auf „Zeiten & Spielplan“: Spielplan-Manager wird direkt oben angezeigt.
-5. [ ] Klick auf „Live-Desk (Turnierleitung)“: LiveMatchDesk wird direkt oben angezeigt.
-6. [ ] Prüfen auf Tablet-/Desktop-Auflösung: Optimierte Platzausnutzung.
+1. [x] Aufruf von `http://localhost:5173/admin` im Browser.
+2. [x] Prüfen: Die Kacheln und der doppelte Header sind verschwunden.
+3. [x] Klick auf „Teams & Torjingles“: Teamliste wird direkt oben angezeigt.
+4. [x] Klick auf „Zeiten & Spielplan“: Spielplan-Manager wird direkt oben angezeigt.
+5. [x] Klick auf „Live-Desk (Turnierleitung)“: LiveMatchDesk wird direkt oben angezeigt.
+6. [x] Prüfen auf Tablet-/Desktop-Auflösung: Optimierte Platzausnutzung.
 
 ### 8.2 Automatisierte Tests / Validierung
 - [x] `npm run lint` fehlerfrei.
