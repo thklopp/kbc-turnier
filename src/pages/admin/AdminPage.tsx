@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useAuth } from "@/hooks/useAuth"
 import { TeamList } from "@/components/admin/TeamList"
 import { ScheduleManager } from "@/components/admin/ScheduleManager"
+import { LiveMatchDesk } from "@/components/admin/live/LiveMatchDesk"
 import { Users, Calendar, PlayCircle, Clock, Volume2, ShieldCheck } from "lucide-react"
 
 export function AdminPage() {
@@ -110,13 +111,9 @@ export function AdminPage() {
       )}
 
       {activeTab === "desk" && (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
-          <PlayCircle className="h-10 w-10 text-emerald-500 mx-auto mb-3" />
-          <h3 className="text-base font-bold text-slate-900">Meilenstein 4: Kampfgericht Live-Desk</h3>
-          <p className="mt-1 text-xs text-slate-500 max-w-md mx-auto">
-            Hier steuerst du während der laufenden Spiele die Spieluhr, die Tore mit direktem Jingle-Auslöser sowie die Strafzeiten.
-          </p>
-        </div>
+        <section>
+          <LiveMatchDesk />
+        </section>
       )}
     </div>
   )

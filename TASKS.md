@@ -10,7 +10,7 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 - [x] **Meilenstein 1: Basis-Infrastruktur, Routing & Firebase-Anbindung**
 - [x] **Meilenstein 2: Admin-Bereich – Teamverwaltung & Medien-Upload (Logo + MP3)**
 - [x] **Meilenstein 3: Admin-Bereich – Zeitkonfiguration & Spielplan-Generierung**
-- [ ] **Meilenstein 4: Admin-Bereich – Kampfgericht Live-Desk & Torjingle-Playback**
+- [x] **Meilenstein 4: Admin-Bereich – Kampfgericht Live-Desk & Torjingle-Playback**
 - [ ] **Meilenstein 5: Öffentliche Gast-Ansicht – Spielplan, Live-Ticker & Tabellen**
 - [ ] **Meilenstein 6: Hallen-Kiosk – TV-Display & automatisierte Rotation**
 - [ ] **Meilenstein 7: End-to-End Tests, Optimierung & Railway Deployment**
@@ -69,13 +69,13 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 ---
 
 ### Meilenstein 4: Admin-Bereich – Kampfgericht Live-Desk & Torjingle-Playback
-- [ ] Kampfgericht-Steuerkonsole für das aktuell laufende Spiel:
+- [x] Kampfgericht-Steuerkonsole für das aktuell laufende Spiel:
   - Spieluhr (Start, Stopp, Reset, Restzeit-Anzeige)
   - Tor-Eingabe (Heim / Gast) mit Erfassung der Spielminute
   - Schneller Torjingle-Auslöser: Beim Torerfolg spielt der Jingle des Teams unmittelbar ab
   - Manueller Soundboard-Button für Schlusshorn & Hallenjingles
   - Verwarnungen & Zeitstrafen (Grüne Karte, Gelbe Karte) mit automatischem Strafzeit-Countdown
-- [ ] Spiel beenden und automatischer Übergang zum nächsten Spiel.
+- [x] Spiel beenden und automatischer Übergang zum nächsten Spiel.
 
 ---
 
