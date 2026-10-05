@@ -155,31 +155,43 @@ export function useLiveMatchDesk(
       const teamId = isHome ? match.teamHomeId : match.teamAwayId
       const scoringTeam = teams.find((t) => t.id === teamId)
 
+      const validPlayerNumber =
+        typeof playerNumber === "number" && !isNaN(playerNumber) ? playerNumber : undefined
+
       const newEvent: MatchEvent = {
         id: `goal-${Date.now().toString(36)}`,
         type: "goal",
         teamId: teamId || (isHome ? "home" : "away"),
-        playerNumber: playerNumber || undefined,
         matchMinute: minute,
         timestamp: { seconds: Math.floor(Date.now() / 1000), nanoseconds: 0 } as MatchEvent["timestamp"],
+        ...(validPlayerNumber !== undefined ? { playerNumber: validPlayerNumber } : {}),
       }
 
       const updatedEvents = [...(match.events || []), newEvent]
       const newScoreHome = isHome ? (match.scoreHome || 0) + 1 : match.scoreHome || 0
       const newScoreAway = !isHome ? (match.scoreAway || 0) + 1 : match.scoreAway || 0
 
-      // 1. Sofort Torjingle abspielen
-      if (scoringTeam?.jingleUrl) {
-        play(scoringTeam.jingleUrl)
+      // 1. Torjingle abspielen falls vorhanden (strikt fehlertolerant & entkoppelt)
+      if (scoringTeam?.jingleUrl && scoringTeam.jingleUrl.trim() !== "") {
+        try {
+          play(scoringTeam.jingleUrl)
+        } catch (audioErr) {
+          console.warn("Torjingle konnte nicht abgespielt werden:", audioErr)
+        }
       }
 
       // 2. In Firestore persistieren
-      await updateMatch(match.id, {
-        scoreHome: newScoreHome,
-        scoreAway: newScoreAway,
-        events: updatedEvents,
-        status: match.status === "scheduled" ? "live" : match.status,
-      })
+      try {
+        await updateMatch(match.id, {
+          scoreHome: newScoreHome,
+          scoreAway: newScoreAway,
+          events: updatedEvents,
+          status: match.status === "scheduled" ? "live" : match.status,
+        })
+      } catch (err) {
+        console.error("Fehler beim Speichern des Tors in Firestore:", err)
+        throw err
+      }
     },
     [match, teams, getCurrentMinute, play]
   )
@@ -193,10 +205,35 @@ export function useLiveMatchDesk(
       const newScoreHome = isHome ? currentScore - 1 : match.scoreHome || 0
       const newScoreAway = !isHome ? currentScore - 1 : match.scoreAway || 0
 
-      await updateMatch(match.id, {
-        scoreHome: newScoreHome,
-        scoreAway: newScoreAway,
-      })
+      // Letztes Goal-Event des jeweiligen Teams entfernen, falls vorhanden
+      const events = match.events || []
+      const targetTeamId = isHome ? match.teamHomeId : match.teamAwayId
+      const fallbackId = isHome ? "home" : "away"
+
+      let lastGoalIdx = -1
+      for (let i = events.length - 1; i >= 0; i--) {
+        if (
+          events[i].type === "goal" &&
+          (events[i].teamId === targetTeamId || events[i].teamId === fallbackId)
+        ) {
+          lastGoalIdx = i
+          break
+        }
+      }
+
+      const updatedEvents =
+        lastGoalIdx >= 0 ? events.filter((_, idx) => idx !== lastGoalIdx) : events
+
+      try {
+        await updateMatch(match.id, {
+          scoreHome: newScoreHome,
+          scoreAway: newScoreAway,
+          events: updatedEvents,
+        })
+      } catch (err) {
+        console.error("Fehler beim Verringern des Spielstands in Firestore:", err)
+        throw err
+      }
     },
     [match]
   )
@@ -221,13 +258,16 @@ export function useLiveMatchDesk(
           ? "card_yellow"
           : "card_red"
 
+      const validPlayerNumber =
+        typeof playerNumber === "number" && !isNaN(playerNumber) ? playerNumber : undefined
+
       const newEvent: MatchEvent = {
         id: `card-${Date.now().toString(36)}`,
         type: eventType,
         teamId,
-        playerNumber,
         matchMinute: minute,
         timestamp: { seconds: Math.floor(Date.now() / 1000), nanoseconds: 0 } as MatchEvent["timestamp"],
+        ...(validPlayerNumber !== undefined ? { playerNumber: validPlayerNumber } : {}),
       }
 
       const updatedEvents = [...(match.events || []), newEvent]
@@ -239,7 +279,7 @@ export function useLiveMatchDesk(
             id: newEvent.id,
             teamId,
             teamName: team?.name || "Team",
-            playerNumber,
+            ...(validPlayerNumber !== undefined ? { playerNumber: validPlayerNumber } : {}),
             cardType,
             totalSeconds: durationPenaltySeconds,
             secondsRemaining: durationPenaltySeconds,
@@ -247,9 +287,14 @@ export function useLiveMatchDesk(
         ])
       }
 
-      await updateMatch(match.id, {
-        events: updatedEvents,
-      })
+      try {
+        await updateMatch(match.id, {
+          events: updatedEvents,
+        })
+      } catch (err) {
+        console.error("Fehler beim Speichern der Karte in Firestore:", err)
+        throw err
+      }
     },
     [match, teams, getCurrentMinute]
   )

@@ -1,6 +1,6 @@
 # SPEC-003: Robuste Torerfassung im Live-Desk & Jingle-Fallback
 
-> **Status**: In Review  
+> **Status**: In Abnahme  
 > **Typ**: Bugfix & Optimierung  
 > **Branch**: fix/SPEC-003-torerfassung-und-jingle-fallback  
 > **Autor**: Thorsten / Antigravity  
@@ -36,11 +36,11 @@ Im Live-Desk der Turnierleitung (`/admin`) schlägt die Erfassung von Toren übe
 ## 3. Fachliche Anforderungen & Scope
 
 ### 3.1 Im Scope (Must-Have / Should-Have)
-- [ ] **Must-Have: Bereinigung der Event-Payloads**: Bei der Erstellung von `MatchEvent` für Tore (`recordGoal`) und Karten (`addPenalty`) dürfen keine Felder mit dem Wert `undefined` an Firestore übergeben werden (z. B. durch bedingtes Setzen von `playerNumber` oder Vorab-Sanitizing).
-- [ ] **Must-Have: Firestore SDK Absicherung**: Aktivierung von `ignoreUndefinedProperties: true` bei der Initialisierung von Firestore in `src/lib/firebase.ts` als systemweite Sicherheitsbarriere.
-- [ ] **Must-Have: Entkopplung der Audio-Wiedergabe**: Die Jingle-Wiedergabe in `recordGoal` erfolgt strikt asynchron und fehlerisoliert (`try-catch` um `play`), sodass weder das Fehlen eines Jingles noch ein Playback-Fehler das `updateMatch` verhindert.
-- [ ] **Must-Have: Graceful Handling bei fehlendem Jingle**: Wenn `team.jingleUrl` `null`, `undefined` oder ein leerer String ist, wird kein Wiedergabeversuch unternommen und das Tor lautlos verbucht.
-- [ ] **Should-Have: Fehlerbehandlung & Logging**: Robuste Fehlerbehandlung in `recordGoal` mit aussagekräftigem Logging (`console.error`), falls das Firestore-Update fehlschlagen sollte.
+- [x] **Must-Have: Bereinigung der Event-Payloads**: Bei der Erstellung von `MatchEvent` für Tore (`recordGoal`) und Karten (`addPenalty`) dürfen keine Felder mit dem Wert `undefined` an Firestore übergeben werden (z. B. durch bedingtes Setzen von `playerNumber` oder Vorab-Sanitizing).
+- [x] **Must-Have: Firestore SDK Absicherung**: Aktivierung von `ignoreUndefinedProperties: true` bei der Initialisierung von Firestore in `src/lib/firebase.ts` als systemweite Sicherheitsbarriere.
+- [x] **Must-Have: Entkopplung der Audio-Wiedergabe**: Die Jingle-Wiedergabe in `recordGoal` erfolgt strikt asynchron und fehlerisoliert (`try-catch` um `play`), sodass weder das Fehlen eines Jingles noch ein Playback-Fehler das `updateMatch` verhindert.
+- [x] **Must-Have: Graceful Handling bei fehlendem Jingle**: Wenn `team.jingleUrl` `null`, `undefined` oder ein leerer String ist, wird kein Wiedergabeversuch unternommen und das Tor lautlos verbucht.
+- [x] **Should-Have: Fehlerbehandlung & Logging**: Robuste Fehlerbehandlung in `recordGoal` mit aussagekräftigem Logging (`console.error`), falls das Firestore-Update fehlschlagen sollte.
 
 ### 3.2 Explizit Out-of-Scope (Nicht Teil dieser Spec)
 - Überarbeitung der Benutzeroberfläche zur Erfassung von Torschützennummern (dies bleibt optional bzw. für spätere Features vorbehalten).
@@ -51,7 +51,7 @@ Im Live-Desk der Turnierleitung (`/admin`) schlägt die Erfassung von Toren übe
 ## 4. Akzeptanzkriterien
 
 ### 4.1 Szenarien / Kriterien
-- [ ] **AC-1: Torerfassung bei Team OHNE Torjingle**
+- [x] **AC-1: Torerfassung bei Team OHNE Torjingle**
   - **Gegeben sei**: Ein laufendes oder geplantes Spiel, bei dem das erzielende Team keinen Torjingle besitzt (`jingleUrl` ist `null` oder nicht gesetzt).
   - **Wenn**: Der Benutzer auf "Tor Heim (+1)" bzw. "Tor Gast (+1)" klickt.
   - **Dann**:
@@ -61,21 +61,21 @@ Im Live-Desk der Turnierleitung (`/admin`) schlägt die Erfassung von Toren übe
     - Die Änderung wird erfolgreich in Firestore gespeichert.
     - Es wird keine Exception geworfen.
 
-- [ ] **AC-2: Torerfassung bei Team MIT Torjingle**
+- [x] **AC-2: Torerfassung bei Team MIT Torjingle**
   - **Gegeben sei**: Ein laufendes Spiel, bei dem das Team einen gültigen Torjingle hinterlegt hat.
   - **Wenn**: Der Benutzer auf "+1 Tor" klickt.
   - **Dann**:
     - Der Spielstand erhöht sich um 1 und wird in Firestore gespeichert.
     - Der Torjingle wird abgespielt.
 
-- [ ] **AC-3: Torerfassung bei fehlerhaftem Audio / Autoplay-Blockade**
+- [x] **AC-3: Torerfassung bei fehlerhaftem Audio / Autoplay-Blockade**
   - **Gegeben sei**: Ein Team mit ungültiger oder unerreichbarer `jingleUrl`.
   - **Wenn**: Der Benutzer auf "+1 Tor" klickt.
   - **Dann**:
     - Der Audio-Fehler wird lautlos abgefangen bzw. geloggt.
     - Der Spielstand wird dennoch ohne Unterbrechung gespeichert und die UI aktualisiert.
 
-- [ ] **AC-4: Strafkartenvergabe ohne Spielernummer**
+- [x] **AC-4: Strafkartenvergabe ohne Spielernummer**
   - **Gegeben sei**: Im Live-Desk wird eine grüne oder gelbe Karte ohne Angabe einer Spielernummer vergeben.
   - **Wenn**: Die Karte bestätigt wird.
   - **Dann**:
@@ -83,9 +83,9 @@ Im Live-Desk der Turnierleitung (`/admin`) schlägt die Erfassung von Toren übe
     - Die Zeitstrafe wird im Strafzeiten-Manager korrekt angezeigt.
 
 ### 4.2 Allgemeine Qualitätskriterien
-- [ ] Keine fest kodierten Parameter (Einhaltung von `AGENTS.md`).
-- [ ] Vollständige TypeScript-Typisierung ohne `any`.
-- [ ] Baut fehlerfrei (`npm run build`).
+- [x] Keine fest kodierten Parameter (Einhaltung von `AGENTS.md`).
+- [x] Vollständige TypeScript-Typisierung ohne `any`.
+- [x] Baut fehlerfrei (`npm run build`).
 
 ---
 

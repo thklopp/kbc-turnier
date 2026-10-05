@@ -60,10 +60,10 @@ export function ScoreboardDisplay({
             <button
               onClick={() => onRecordGoal(true)}
               className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-emerald-500 transition-all active:scale-95 cursor-pointer"
-              title="Tor für Heimteam (spielt sofort Torjingle ab)"
+              title={homeTeam?.jingleUrl ? "Tor für Heimteam (spielt Torjingle ab)" : "Tor für Heimteam eintragen"}
             >
               <Plus className="h-4 w-4" />
-              <Music className="h-3.5 w-3.5" />
+              {homeTeam?.jingleUrl && <Music className="h-3.5 w-3.5 text-emerald-200" />}
               <span>Tor Heim (+1)</span>
             </button>
 
@@ -114,10 +114,10 @@ export function ScoreboardDisplay({
             <button
               onClick={() => onRecordGoal(false)}
               className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-emerald-500 transition-all active:scale-95 cursor-pointer"
-              title="Tor für Gastteam (spielt sofort Torjingle ab)"
+              title={awayTeam?.jingleUrl ? "Tor für Gastteam (spielt Torjingle ab)" : "Tor für Gastteam eintragen"}
             >
               <Plus className="h-4 w-4" />
-              <Music className="h-3.5 w-3.5" />
+              {awayTeam?.jingleUrl && <Music className="h-3.5 w-3.5 text-emerald-200" />}
               <span>Tor Gast (+1)</span>
             </button>
 
