@@ -96,8 +96,8 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 ---
 
 ### Meilenstein 7: End-to-End Tests, Optimierung & Railway Deployment
-- [ ] End-to-End Test des gesamten Turnierablaufs (Simulieren aller 40 Spiele).
-- [ ] Audio-Latenz- und Kompatibilitätstest auf Mobilgeräten und Desktop.
-- [ ] Multi-Stage Dockerfile verifizieren (`docker build`).
-- [ ] Nginx SPA-Routing auf Railway testen (Deep Links wie `/admin` oder `/kiosk` dürfen keinen 404 erzeugen).
-- [ ] Finale Abnahme und Übergabe an den Nutzer.
+- [x] End-to-End Test des gesamten Turnierablaufs (Simulieren aller 40 Spiele).
+- [x] Audio-Latenz- und Kompatibilitätstest auf Mobilgeräten und Desktop.
+- [x] Multi-Stage Dockerfile verifizieren (`docker build`).
+- [x] Nginx SPA-Routing auf Railway testen (Deep Links wie `/admin` oder `/kiosk` dürfen keinen 404 erzeugen).
+- [x] Finale Abnahme und Übergabe an den Nutzer.

@@ -3,13 +3,15 @@ import { getAuth, type Auth } from "firebase/auth"
 import { getFirestore, type Firestore } from "firebase/firestore"
 import { getStorage, type FirebaseStorage } from "firebase/storage"
 
+const env = (typeof import.meta !== "undefined" && import.meta.env) ? import.meta.env : ({} as Record<string, string | undefined>)
+
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: env.VITE_FIREBASE_API_KEY,
+  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: env.VITE_FIREBASE_APP_ID,
 }
 
 export const isFirebaseConfigured = Boolean(
@@ -25,9 +27,18 @@ if (!isFirebaseConfigured) {
   )
 }
 
+const mockConfig = {
+  apiKey: "AIzaSyDummyKeyForMockingTesting123",
+  authDomain: "kbc-turnier-mock.firebaseapp.com",
+  projectId: "kbc-turnier-mock",
+  storageBucket: "kbc-turnier-mock.appspot.com",
+  messagingSenderId: "1234567890",
+  appId: "1:1234567890:web:abcdef123456",
+}
+
 const app: FirebaseApp = getApps().length > 0 
   ? getApps()[0] 
-  : initializeApp(firebaseConfig)
+  : initializeApp(isFirebaseConfigured ? firebaseConfig : mockConfig)
 
 export const auth: Auth = getAuth(app)
 export const db: Firestore = getFirestore(app)

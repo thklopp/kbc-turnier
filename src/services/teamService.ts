@@ -186,11 +186,8 @@ export async function uploadTeamJingle(teamId: string, file: File): Promise<stri
   return downloadUrl
 }
 
-/**
- * Initialisiert die 16 Standard-Teams (8x mU14, 8x wU14), falls noch keine vorhanden sind.
- */
-export async function seedDefaultTeams(): Promise<void> {
-  const defaultTeams: Omit<Team, "createdAt" | "updatedAt">[] = [
+export function getDefaultTeams(): Team[] {
+  return [
     // 8x wU14
     { id: "team-wu14-1", name: "Kreuznacher HC (w)", shortName: "KHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null },
     { id: "team-wu14-2", name: "Dürkheimer HC (w)", shortName: "DHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null },
@@ -211,6 +208,13 @@ export async function seedDefaultTeams(): Promise<void> {
     { id: "team-mu14-7", name: "HTC Stuttgarter Kickers (m)", shortName: "KICK", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null },
     { id: "team-mu14-8", name: "TSV Schott Mainz (m)", shortName: "TSVM", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null },
   ]
+}
+
+/**
+ * Initialisiert die 16 Standard-Teams (8x mU14, 8x wU14), falls noch keine vorhanden sind.
+ */
+export async function seedDefaultTeams(): Promise<void> {
+  const defaultTeams = getDefaultTeams()
 
   if (!isFirebaseConfigured) {
     localMockTeams = defaultTeams.map((t) => ({ ...t }))

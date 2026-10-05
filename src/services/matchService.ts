@@ -291,6 +291,25 @@ export async function generateTournamentSchedule(
 }
 
 /**
+ * Verschiebt geplante Spiele eines Tages rein im Speicher (pure function).
+ */
+export function shiftMatchesInArray(
+  matches: Match[],
+  day: "saturday" | "sunday",
+  shiftMinutes: number
+): Match[] {
+  return matches.map((m) => {
+    if (m.day === day && m.status === "scheduled") {
+      return {
+        ...m,
+        scheduledTime: addMinutesToTimeString(m.scheduledTime, shiftMinutes),
+      }
+    }
+    return m
+  })
+}
+
+/**
  * Verschiebt alle geplanten Spiele eines Tages um shiftMinutes (Kaskadierung bei Verzögerung).
  */
 export async function shiftScheduleTimes(
@@ -298,15 +317,7 @@ export async function shiftScheduleTimes(
   shiftMinutes: number
 ): Promise<void> {
   if (!isFirebaseConfigured) {
-    localMockMatches = localMockMatches.map((m) => {
-      if (m.day === day && m.status === "scheduled") {
-        return {
-          ...m,
-          scheduledTime: addMinutesToTimeString(m.scheduledTime, shiftMinutes),
-        }
-      }
-      return m
-    })
+    localMockMatches = shiftMatchesInArray(localMockMatches, day, shiftMinutes)
     notifyMatchListeners()
     return
   }
