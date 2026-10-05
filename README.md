@@ -8,10 +8,10 @@ Eine moderne, echtzeitfähige Web-Applikation zur Durchführung und Begleitung v
 
 - **16 Teams & 2 Wettbewerbe**: 8x mU14 (männliche U14) und 8x wU14 (weibliche U14).
 - **Medienverwaltung**: Für jedes Team wird ein Wappen/Logo und ein individueller Torjingle (MP3) gepflegt.
-- **Dynamische Zeitsteuerung**: Spielzeit (Standard: 20 Min.), Pausen (Standard: 5 Min.) sowie Startzeiten (Sa: 10:00 Uhr, So: 09:00 Uhr) sind über das Kampfgericht konfigurierbar und bei Turnierverzögerungen flexibel verschiebbar.
+- **Dynamische Zeitsteuerung**: Spielzeit (Standard: 20 Min.), Pausen (Standard: 5 Min.) sowie Startzeiten (Sa: 10:00 Uhr, So: 09:00 Uhr) sind über die Turnierleitung konfigurierbar und bei Turnierverzögerungen flexibel verschiebbar.
 - **1-Platz-System mit festem Wechselrhythmus**: Strikt 2 Mädchenspiele gefolgt von 2 Jungsspielen.
 - **Echtzeit-Aktualisierung (Firestore `onSnapshot`)**: Alle Spielstände, Zeiten und Tabellen aktualisieren sich sekundenschnell ohne manuelles Neuladen.
-- **Torjingle-Player im Kampfgericht**: Bei Tor-Eingabe kann der Audio-Jingle des jeweiligen Teams sofort per Klick abgespielt werden.
+- **Torjingle-Player in der Turnierleitung**: Bei Tor-Eingabe kann der Audio-Jingle des jeweiligen Teams sofort per Klick abgespielt werden.
 
 ---
 
@@ -20,7 +20,7 @@ Eine moderne, echtzeitfähige Web-Applikation zur Durchführung und Begleitung v
 | Pfad | Zielgruppe | Beschreibung |
 | :--- | :--- | :--- |
 | `/` | **Gäste / Zuschauer** | Übersichtlicher Spielplan, Live-Ticker des aktuellen Spiels, Gruppen- und Finaltabellen, Teamübersichten. Für Smartphones optimiert. |
-| `/admin` | **Kampfgericht & Turnierleitung** | Geschützter Bereich (Firebase Auth). Teamverwaltung (Logos, Jingles), globale Zeitkonfiguration, Live-Spielsteuerung (Tore, Karten, Timer, Jingle-Playback). |
+| `/admin` | **Turnierleitung** | Geschützter Bereich (Firebase Auth). Teamverwaltung (Logos, Jingles), globale Zeitkonfiguration, Live-Spielsteuerung (Tore, Karten, Timer, Jingle-Playback). |
 | `/kiosk` | **Hallen-Monitore (TV-Modus)** | Großformatige Vollbild-Ansicht für Bildschirme in der Halle. Automatisches Umschalten zwischen aktuellem Live-Spiel, nächster Partie und Live-Tabellen. |
 
 ---
@@ -33,7 +33,7 @@ Eine moderne, echtzeitfähige Web-Applikation zur Durchführung und Begleitung v
 - **Backend & Cloud Services**: Firebase
   - **Cloud Firestore**: Dokumenten-Datenbank für Live-Spielstände, Spielpläne, Tabellen & Konfiguration
   - **Firebase Storage**: Speicherung von Team-Logos (Bilder) und Torjingles (MP3-Dateien)
-  - **Firebase Authentication**: Authentifizierung des Kampfgerichts
+  - **Firebase Authentication**: Authentifizierung der Turnierleitung
 - **Hosting & Deployment**: Railway via Multi-Stage Dockerfile (Node Build + Nginx Alpine)
 
 ---
@@ -82,7 +82,7 @@ Um das Projekt mit einem eigenen Firebase-Projekt zu verbinden, führe die folge
 1. Wähle im linken Menü **Erstellen** > **Authentication**.
 2. Klicke auf **"Jetzt starten"**.
 3. Aktiviere unter **Anmeldemethode** den Provider **E-Mail/Passwort**.
-4. Lege unter **Nutzer** mindestens einen Turnierleitungs-Account für das Kampfgericht an.
+4. Lege unter **Nutzer** mindestens einen Account für die Turnierleitung an.
 
 ---
 
@@ -117,6 +117,7 @@ Das Projekt enthält ein für Railway optimiertes Multi-Stage `Dockerfile`:
 
 ## 📖 Dokumentation (Spec Driven Development)
 
+- [spec/README.md](./spec/README.md) – Spezifikations-Richtlinien, Vorlage & Lifecycle für neue Features und Bugfixes.
 - [ARCHITECTURE.md](./ARCHITECTURE.md) – Detaillierte Systemarchitektur, Datenfluss und Docker/Railway-Setup.
 - [DATABASE.md](./DATABASE.md) – NoSQL-Datenmodell (Collections, Schemas & Security Rules).
 - [TASKS.md](./TASKS.md) – Roadmap, Meilensteine und Backlog.

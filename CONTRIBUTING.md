@@ -39,17 +39,22 @@ Alle Commit-Nachrichten müssen dem Standard [Conventional Commits](https://www.
 
 ---
 
-## 🚀 Workflow für Änderungen
+## 🚀 Workflow für Änderungen (Spec Driven Development)
 
-1. **Branch erstellen**:
-   ```bash
-   git checkout -b feat/milestone-1-firebase-setup
-   ```
-2. **Inkrementell committen**:
-   Kleine, in sich geschlossene Commits mit aussagekräftigen Nachrichten nach obigem Schema erstellen.
-3. **Vor dem Push prüfen**:
+1. **Spec & Branch erstellen**:
+   - Für jede Änderung wird ein eigener Branch angelegt:
+     ```bash
+     git checkout -b feat/SPEC-001-team-logo-upload
+     ```
+   - Kopiere [`spec/TEMPLATE.md`](spec/TEMPLATE.md) nach `spec/SPEC-[NUMMER]-[name].md` und fülle die Spezifikation vollständig aus (siehe [`spec/README.md`](spec/README.md)).
+2. **Freigabe einholen (`APPROVED`)**:
+   - Die Spec dem Product Owner / Nutzer vorlegen.
+   - **Erst nach Freigabe mit dem Signalwort `APPROVED`** beginnt die Code-Implementierung!
+3. **Inkrementell committen**:
+   - Kleine, in sich geschlossene Commits mit aussagekräftigen Conventional Commits erstellen.
+4. **Vor der Abnahme prüfen**:
    - `npm run lint` (keine Linter-Fehler)
    - `npm run build` (erfolgreicher TypeScript- und Vite-Build)
-4. **Pull Request / Merge**:
-   - PR erstellen und Verlinkung zur relevanten Aufgabe in `TASKS.md` angeben.
-   - Nach erfolgreichem Review Merge auf `main`.
+5. **Nutzertest & Merge (`MERGE`)**:
+   - Der Stand wird dem Nutzer zur manuellen Abnahme vorgelegt.
+   - **Erst nach ausdrücklicher Freigabe mit dem Signalwort `MERGE`** wird der Branch in `main` gemergt.

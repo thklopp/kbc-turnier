@@ -8,6 +8,8 @@ Dieses Dokument definiert die Verhaltensregeln, Architekturprinzipien und Qualit
 
 1. **Dokumentation als Single Source of Truth**:
    - Die Dateien `DATABASE.md`, `ARCHITECTURE.md`, `TASKS.md` und `README.md` bilden das unveränderliche Fundament.
+   - **Feature- & Fix-Spezifikationen**: Vor jeder Implementierung eines neuen Features oder Fixes muss zwingend eine Spezifikation im Ordner `spec/` nach der Vorlage [`spec/TEMPLATE.md`](spec/TEMPLATE.md) erstellt und gemäß [`spec/README.md`](spec/README.md) freigegeben werden.
+   - **Branching & Freigabe-Gates**: Jede Spec wird auf einem eigenen Branch umgesetzt (`feat/SPEC-...` oder `fix/SPEC-...`). Die Implementierung darf erst nach ausdrücklicher Freigabe der Spec durch den Nutzer mit **`APPROVED`** beginnen. Der Merge in `main` darf erst nach erfolgreichem Nutzertest und Freigabe mit **`MERGE`** erfolgen.
    - Bevor Code geschrieben wird, muss geprüft werden, ob die geplante Änderung durch die Spezifikation gedeckt ist.
    - Falls sich Anforderungen während der Entwicklung ändern, muss **zuerst** die entsprechende Spezifikationsdatei aktualisiert werden, bevor die Codeänderung erfolgt.
 
@@ -34,10 +36,10 @@ Dieses Dokument definiert die Verhaltensregeln, Architekturprinzipien und Qualit
 
 3. **UI & Design mit Tailwind und shadcn/ui**:
    - Verwendung bestehender shadcn/ui Primitives statt Neuerfindung von Dialogen, Buttons oder Tabellen.
-   - Responsives Design: Die Gast-Ansicht (`/`) muss uneingeschränkt mobil bedienbar sein. Das Kampfgericht (`/admin`) ist primär für Tablets/Laptops optimiert. Der Kiosk (`/kiosk`) ist für Großbildschirme ausgelegt.
+   - Responsives Design: Die Gast-Ansicht (`/`) muss uneingeschränkt mobil bedienbar sein. Die Turnierleitung (`/admin`) ist primär für Tablets/Laptops optimiert. Der Kiosk (`/kiosk`) ist für Großbildschirme ausgelegt.
 
 4. **Audio Playback Best Practices**:
-   - Torjingles müssen für den Kampfgericht-Bereich gepuffert werden.
+   - Torjingles müssen für den Bereich der Turnierleitung gepuffert werden.
    - Saubere Fehlerbehandlung, falls Audio durch Browser-Autoplay-Richtlinien blockiert wird (Benutzerinteraktion sicherstellen).
 
 ---
