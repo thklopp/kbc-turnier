@@ -1,6 +1,6 @@
 # SPEC-001: Konsolidierung der Admin-Navigation & Reaktivierung der oberen Reiterleiste
 
-> **Status**: In Review  
+> **Status**: In Abnahme  
 > **Typ**: UX-Optimierung / Refactoring  
 > **Branch**: `feat/SPEC-001-admin-navigation`  
 > **Autor**: Antigravity Agent  
@@ -44,19 +44,19 @@ Auf der Admin-Seite (`/admin`, Turnierleitung) existieren aktuell zwei redundant
 ## 3. Fachliche Anforderungen & Scope
 
 ### 3.1 Im Scope (Must-Have)
-- [ ] **Entfernung der redundanten Button-Leiste**: Löschen des Abschnitts `/* Mode Switcher Tabs */` aus `AdminPage.tsx`.
-- [ ] **Hash-basierte Zustandssynchronisation**:
+- [x] **Entfernung der redundanten Button-Leiste**: Löschen des Abschnitts `/* Mode Switcher Tabs */` aus `AdminPage.tsx`.
+- [x] **Hash-basierte Zustandssynchronisation**:
   - `AdminPage.tsx` liest den aktuellen Hash aus der URL (`useLocation().hash`).
   - Standard (Fallback bei leerem Hash `""` oder unbekanntem Hash): Anzeige des `LiveMatchDesk` (Reiter `desk`).
   - `#teams`: Anzeige von `TeamList`.
   - `#schedule`: Anzeige von `ScheduleManager`.
-- [ ] **Aktive Anzeige in der oberen Navigationsleiste (`AdminLayout.tsx`)**:
+- [x] **Aktive Anzeige in der oberen Navigationsleiste (`AdminLayout.tsx`)**:
   - Dynamische Hervorhebung des tatsächlich aktiven Reiters anhand des URL-Hashes (`border-b-2 border-blue-400 text-blue-400`).
-  - Nicht-aktive Reiter besitzen das dezente Hover-Styling (`text-slate-400 hover:text-white`).
-- [ ] **Browser History & Deep Linking**:
+  - Nicht-aktive Reiter besitzen das dezente Hover-Styling (`border-transparent text-slate-400 hover:border-slate-600 hover:text-white`).
+- [x] **Browser History & Deep Linking**:
   - Wechsel per Klick auf die Links aktualisiert den Hash ohne Voll-Reload (`<Link to="/admin#...">`).
   - Vor-/Zurück-Navigation im Browser wechselt den angezeigten Tab synchron mit.
-- [ ] **Bereinigung der Bezeichnungen**:
+- [x] **Bereinigung der Bezeichnungen**:
   - Entfernen der temporären Meilenstein-Kürzel `(M2)`, `(M3)`, `(M4)` für eine professionelle Produktiv-UI (siehe Abschnitt 5 und 9).
 
 ### 3.2 Explizit Out-of-Scope
@@ -187,8 +187,8 @@ Auf der Admin-Seite (`/admin`, Turnierleitung) existieren aktuell zwei redundant
 6. [ ] Sichtprüfung: Sicherstellen, dass keine doppelten Reiter mehr in der Seitenmitte zu sehen sind.
 
 ### 8.2 Automatisierte Tests / Validierung
-- [ ] `npm run build` wird ohne Fehler und Warnungen ausgeführt.
-- [ ] `npm run lint` validiert fehlerfrei.
+- [x] `npm run build` wird ohne Fehler und Warnungen ausgeführt.
+- [x] `npm run lint` validiert fehlerfrei.
 
 ---
 
