@@ -1,13 +1,20 @@
-import { useState } from "react"
+import { useLocation } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
 import { TeamList } from "@/components/admin/TeamList"
 import { ScheduleManager } from "@/components/admin/ScheduleManager"
 import { LiveMatchDesk } from "@/components/admin/live/LiveMatchDesk"
-import { Users, Calendar, PlayCircle, Clock, Volume2, ShieldCheck } from "lucide-react"
+import { Clock, Volume2, ShieldCheck } from "lucide-react"
 
 export function AdminPage() {
   const { currentUser } = useAuth()
-  const [activeTab, setActiveTab] = useState<"teams" | "desk" | "schedule">("teams")
+  const location = useLocation()
+
+  const activeTab =
+    location.hash === "#teams"
+      ? "teams"
+      : location.hash === "#schedule"
+      ? "schedule"
+      : "desk"
 
   return (
     <div className="space-y-6">
@@ -58,44 +65,7 @@ export function AdminPage() {
         </div>
       </div>
 
-      {/* Mode Switcher Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
-        <button
-          onClick={() => setActiveTab("teams")}
-          className={`inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs font-bold transition-colors cursor-pointer ${
-            activeTab === "teams"
-              ? "bg-blue-600 text-white shadow-sm"
-              : "text-slate-600 hover:bg-slate-200 hover:text-slate-900"
-          }`}
-        >
-          <Users className="h-4 w-4" />
-          <span>Mannschaften & Torjingles (M2)</span>
-        </button>
 
-        <button
-          onClick={() => setActiveTab("schedule")}
-          className={`inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs font-bold transition-colors cursor-pointer ${
-            activeTab === "schedule"
-              ? "bg-blue-600 text-white shadow-sm"
-              : "text-slate-600 hover:bg-slate-200 hover:text-slate-900"
-          }`}
-        >
-          <Calendar className="h-4 w-4" />
-          <span>Zeitsteuerung & Spielplan (M3)</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab("desk")}
-          className={`inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs font-bold transition-colors cursor-pointer ${
-            activeTab === "desk"
-              ? "bg-blue-600 text-white shadow-sm"
-              : "text-slate-600 hover:bg-slate-200 hover:text-slate-900"
-          }`}
-        >
-          <PlayCircle className="h-4 w-4" />
-          <span>Turnierleitung Live-Desk (M4)</span>
-        </button>
-      </div>
 
       {/* Main Tab Content */}
       {activeTab === "teams" && (

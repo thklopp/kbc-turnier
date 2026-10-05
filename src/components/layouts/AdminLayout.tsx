@@ -16,6 +16,10 @@ export function AdminLayout() {
     }
   }
 
+  const isTeams = location.pathname === "/admin" && location.hash === "#teams"
+  const isSchedule = location.pathname === "/admin" && location.hash === "#schedule"
+  const isLiveDesk = location.pathname === "/admin" && !isTeams && !isSchedule
+
   return (
     <div className="flex min-h-screen flex-col bg-slate-100 text-slate-900">
       {/* Admin Top Navigation Bar */}
@@ -63,28 +67,36 @@ export function AdminLayout() {
           <div className="container mx-auto flex max-w-6xl gap-6 overflow-x-auto py-2 text-xs font-semibold">
             <Link
               to="/admin"
-              className={`flex items-center gap-1.5 py-1 transition-colors ${
-                location.pathname === "/admin"
-                  ? "text-blue-400 border-b-2 border-blue-400"
-                  : "text-slate-400 hover:text-white"
+              className={`flex items-center gap-1.5 py-1 border-b-2 transition-colors ${
+                isLiveDesk
+                  ? "border-blue-400 text-blue-400"
+                  : "border-transparent text-slate-400 hover:border-slate-600 hover:text-white"
               }`}
             >
               <PlayCircle className="h-3.5 w-3.5" />
-              Live-Desk (Turnierleitung)
+              <span>Live-Desk (Turnierleitung)</span>
             </Link>
             <Link
               to="/admin#teams"
-              className="flex items-center gap-1.5 py-1 text-slate-400 hover:text-white transition-colors"
+              className={`flex items-center gap-1.5 py-1 border-b-2 transition-colors ${
+                isTeams
+                  ? "border-blue-400 text-blue-400"
+                  : "border-transparent text-slate-400 hover:border-slate-600 hover:text-white"
+              }`}
             >
               <Users className="h-3.5 w-3.5" />
-              Teams & Torjingles (M2)
+              <span>Teams & Torjingles</span>
             </Link>
             <Link
               to="/admin#schedule"
-              className="flex items-center gap-1.5 py-1 text-slate-400 hover:text-white transition-colors"
+              className={`flex items-center gap-1.5 py-1 border-b-2 transition-colors ${
+                isSchedule
+                  ? "border-blue-400 text-blue-400"
+                  : "border-transparent text-slate-400 hover:border-slate-600 hover:text-white"
+              }`}
             >
               <Calendar className="h-3.5 w-3.5" />
-              Zeiten & Spielplan (M3)
+              <span>Zeiten & Spielplan</span>
             </Link>
           </div>
         </div>
