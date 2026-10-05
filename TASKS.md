@@ -88,10 +88,10 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 ---
 
 ### Meilenstein 6: Hallen-Kiosk – TV-Display & automatisierte Rotation
-- [ ] Vollbild-Layout optimiert für 1080p / 4K Monitore ohne störende Scrollbalken.
-- [ ] Live-Scoreboard mit Teamlogos, aktuellem Spielstand und Spieluhr.
-- [ ] Automatische Bildlauf- oder Ticker-Rotation (Live-Spiel -> Nächste Spiele -> Tabellenstand).
-- [ ] Wiederverbindungssicherheit bei instabilem Hallen-WLAN (Offline-Hinweis, automatischer Reconnect).
+- [x] Vollbild-Layout optimiert für 1080p / 4K Monitore ohne störende Scrollbalken.
+- [x] Live-Scoreboard mit Teamlogos, aktuellem Spielstand und Spieluhr.
+- [x] Automatische Bildlauf- oder Ticker-Rotation (Live-Spiel -> Nächste Spiele -> Tabellenstand).
+- [x] Wiederverbindungssicherheit bei instabilem Hallen-WLAN (Offline-Hinweis, automatischer Reconnect).
 
 ---
 
