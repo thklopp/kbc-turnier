@@ -28,7 +28,7 @@ export function AppRouter() {
           </Route>
         </Route>
 
-        {/* Kiosk-Modus für Hallenbildschirme (Fullscreen, Dark Mode) */}
+        {/* Kiosk-Modus für Hallenbildschirme (Fullscreen, Heller Kiosk-Modus) */}
         <Route path="/kiosk" element={<KioskLayout />}>
           <Route index element={<KioskPage />} />
         </Route>

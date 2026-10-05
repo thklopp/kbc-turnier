@@ -23,12 +23,12 @@ export function AdminLayout() {
   return (
     <div className="flex min-h-screen flex-col bg-slate-100 text-slate-900">
       {/* Admin Top Navigation Bar */}
-      <header className="border-b border-slate-800 bg-slate-900 text-white">
+      <header className="border-b border-slate-200 bg-white text-slate-900 shadow-sm">
         <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
           <div className="flex items-center gap-4">
             <Link
               to="/"
-              className="inline-flex items-center gap-1.5 rounded-md bg-slate-800 px-2.5 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:bg-slate-700 hover:text-white"
+              className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               <span>Gäste-Ansicht</span>
@@ -38,10 +38,10 @@ export function AdminLayout() {
                 <ShieldCheck className="h-4 w-4" />
               </div>
               <div>
-                <span className="block text-sm font-bold leading-tight">
+                <span className="block text-sm font-bold leading-tight text-slate-900">
                   Turnierleitung
                 </span>
-                <span className="block text-[11px] text-slate-400">
+                <span className="block text-[11px] text-slate-500">
                   KBC Turnier-Administration
                 </span>
               </div>
@@ -49,12 +49,12 @@ export function AdminLayout() {
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="hidden sm:inline text-xs text-slate-300 font-mono bg-slate-800 px-2 py-1 rounded">
+            <span className="hidden sm:inline text-xs text-slate-600 font-mono bg-slate-100 border border-slate-200 px-2 py-1 rounded">
               {currentUser?.email || "Admin"}
             </span>
             <button
               onClick={handleLogout}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs font-semibold text-rose-300 transition-colors hover:bg-rose-950/40 hover:border-rose-800"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 transition-colors hover:bg-rose-100 hover:border-rose-300 cursor-pointer"
             >
               <LogOut className="h-3.5 w-3.5" />
               <span>Abmelden</span>
@@ -63,14 +63,14 @@ export function AdminLayout() {
         </div>
 
         {/* Sub-Navigation for Admin Functions */}
-        <div className="border-t border-slate-800 bg-slate-900/60 px-4">
+        <div className="border-t border-slate-100 bg-slate-50/60 px-4">
           <div className="container mx-auto flex max-w-6xl gap-6 overflow-x-auto py-2 text-xs font-semibold">
             <Link
               to="/admin"
               className={`flex items-center gap-1.5 py-1 border-b-2 transition-colors ${
                 isLiveDesk
-                  ? "border-blue-400 text-blue-400"
-                  : "border-transparent text-slate-400 hover:border-slate-600 hover:text-white"
+                  ? "border-blue-600 text-blue-600 font-bold"
+                  : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
               }`}
             >
               <PlayCircle className="h-3.5 w-3.5" />
@@ -80,8 +80,8 @@ export function AdminLayout() {
               to="/admin#teams"
               className={`flex items-center gap-1.5 py-1 border-b-2 transition-colors ${
                 isTeams
-                  ? "border-blue-400 text-blue-400"
-                  : "border-transparent text-slate-400 hover:border-slate-600 hover:text-white"
+                  ? "border-blue-600 text-blue-600 font-bold"
+                  : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
               }`}
             >
               <Users className="h-3.5 w-3.5" />
@@ -91,8 +91,8 @@ export function AdminLayout() {
               to="/admin#schedule"
               className={`flex items-center gap-1.5 py-1 border-b-2 transition-colors ${
                 isSchedule
-                  ? "border-blue-400 text-blue-400"
-                  : "border-transparent text-slate-400 hover:border-slate-600 hover:text-white"
+                  ? "border-blue-600 text-blue-600 font-bold"
+                  : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
               }`}
             >
               <Calendar className="h-3.5 w-3.5" />

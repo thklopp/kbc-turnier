@@ -1,6 +1,6 @@
 # SPEC-004: Vollständige Entfernung des Darkmodes und dunkler Hintergründe
 
-> **Status**: In Review  
+> **Status**: In Abnahme  
 > **Typ**: Refactoring / UI-Optimierung  
 > **Branch**: `refactor/SPEC-004-entfernung-darkmode-und-dunkle-hintergruende`  
 > **Autor**: Antigravity Agent  
@@ -51,8 +51,8 @@ Gemäß Nutzeranforderung soll die gesamte Applikation geprüft und **nirgends e
 ### 3.1 Im Scope (Must-Have)
 
 #### A. Kiosk-Display (`/kiosk`)
-- [ ] **KioskLayout (`KioskLayout.tsx`)**: Umstellung des Hauptcontainers von `bg-slate-950 text-slate-100` auf `bg-slate-100 text-slate-900`. Umstellung des „Beenden“-Buttons auf ein dezentes helles Styling (`bg-white/90 border border-slate-300 text-slate-700 hover:text-slate-900 shadow-sm`).
-- [ ] **KioskHeader (`KioskHeader.tsx`)**:
+- [x] **KioskLayout (`KioskLayout.tsx`)**: Umstellung des Hauptcontainers von `bg-slate-950 text-slate-100` auf `bg-slate-100 text-slate-900`. Umstellung des „Beenden“-Buttons auf ein dezentes helles Styling (`bg-white/90 border border-slate-300 text-slate-700 hover:text-slate-900 shadow-sm`).
+- [x] **KioskHeader (`KioskHeader.tsx`)**:
   - Kopfzeilen-Container: Umstellung von `border-slate-800 bg-slate-900/90` auf `border-slate-200 bg-white/95 shadow-md text-slate-900`.
   - Folien-Umschalter-Pill: Umstellung des Hintergrunds von `bg-slate-950/80 border-slate-800` auf `bg-slate-100 border border-slate-200`. Inaktive Buttons: `text-slate-600 hover:text-slate-900 hover:bg-slate-200/60`.
   - Pause-Schaltfläche: Helle Hover-Zustände (`text-slate-600 hover:text-slate-900 hover:bg-slate-200`).
@@ -60,58 +60,58 @@ Gemäß Nutzeranforderung soll die gesamte Applikation geprüft und **nirgends e
   - Online/Offline-Badges: Helle Tönungen (`bg-emerald-50 text-emerald-700 border-emerald-200` bzw. `bg-rose-50 text-rose-700 border-rose-200`).
   - Echtzeituhr-Container: `bg-slate-50 border border-slate-200 text-slate-900` statt dunkler Kasten.
   - Vollbild-Button: `bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-slate-900 shadow-xs`.
-- [ ] **Live-Scoreboard-Folie (`KioskScoreboardSlide.tsx`)**:
+- [x] **Live-Scoreboard-Folie (`KioskScoreboardSlide.tsx`)**:
   - Scoreboard-Hauptkarte: Ersetzen des dunklen Verlaufs (`from-slate-900/95 to-slate-950/95`) durch eine strahlend weiße Karte mit dezentem Schatten (`bg-white border-2 border-slate-200 shadow-xl text-slate-900`).
   - Team-Logo-Kacheln: Helle Hintergründe (`bg-slate-50 border-2 border-slate-200 shadow-sm`) statt `bg-slate-800/90`.
   - Spielstands-Anzeige: `text-slate-900` in ultra-fetter Typografie auf hellem Untergrund.
   - Meta-Badges oben (Spielnummer, Phase): Helle Badges (`bg-white border border-slate-200 text-slate-700 shadow-xs`) statt dunkler `bg-slate-800/90`-Pills.
   - Zeit- und Statuskarten: Hell gestaltet mit gestochen scharfen Statusfarben.
   - Pausen-Zustand („Keine weiteren Spiele“): Weiße Karte auf hellem Grund.
-- [ ] **Kommende Partien (`KioskUpcomingSlide.tsx`)**:
+- [x] **Kommende Partien (`KioskUpcomingSlide.tsx`)**:
   - Spielkarten: Helle Karten (`bg-white border border-slate-200 shadow-md`), hervorgehobene nächste Partie mit dezentem blauen Rahmen (`border-blue-500 bg-blue-50/40 ring-1 ring-blue-500/20`), Live-Spiel mit grünem Rahmen (`border-emerald-500 bg-emerald-50/40 ring-1 ring-emerald-500/20`).
   - Spielzeit-Pill oben rechts: `bg-white border border-slate-200 text-slate-700` statt `bg-slate-900`.
   - Team-Logos & Badges: Heller Hintergrund (`bg-slate-50 border border-slate-200`).
-- [ ] **Tabellen-Folien (`KioskStandingsSlide.tsx`)**:
+- [x] **Tabellen-Folien (`KioskStandingsSlide.tsx`)**:
   - Gruppenkarten: `bg-white border-2 border-slate-200 shadow-xl text-slate-900`.
   - Header: `bg-slate-50 border-b border-slate-200`.
   - Tabellenzeilen: Helle Kontraste, Playoff-Zeilen in sanftem Hellgrün (`bg-emerald-50/60 hover:bg-emerald-50`), Standard-Zeilen `hover:bg-slate-50`.
   - Team-Logo-Container: `bg-slate-50 border border-slate-200`.
-- [ ] **Kiosk Ticker-Footer (`KioskPage.tsx`)**:
+- [x] **Kiosk Ticker-Footer (`KioskPage.tsx`)**:
   - Footer-Bar: Umstellung von `border-slate-800 bg-slate-900/90` auf `border-slate-200 bg-white/95 shadow-lg text-slate-900`.
   - Ticker-Pill (Turnier-Ticker): `bg-slate-100 border border-slate-200 text-slate-700`.
 
 #### B. Turnierleitung & Authentifizierung (`/admin`, `/login`)
-- [ ] **AdminLayout (`AdminLayout.tsx`)**:
+- [x] **AdminLayout (`AdminLayout.tsx`)**:
   - Header: Umstellung von `border-slate-800 bg-slate-900 text-white` auf `border-slate-200 bg-white text-slate-900 shadow-sm`.
   - Button „Gäste-Ansicht“: `border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 hover:text-slate-900`.
   - E-Mail-Badge: `bg-slate-100 text-slate-600 border border-slate-200`.
   - Abmelde-Button: `border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 hover:border-rose-300`.
   - Subnavigation: `border-t border-slate-100 bg-slate-50/60`. Inaktive Tabs: `text-slate-500 hover:text-slate-900 hover:border-slate-300`, aktive Tabs: `border-blue-600 text-blue-600 font-bold`.
-- [ ] **LoginPage (`LoginPage.tsx`)**:
+- [x] **LoginPage (`LoginPage.tsx`)**:
   - Seiten-Hintergrund: Umstellung von `bg-slate-900 text-slate-100` auf `bg-slate-50 text-slate-900`.
   - Formular-Kachel: `border border-slate-200 bg-white p-8 shadow-xl text-slate-900`.
   - Formular-Eingabefelder (E-Mail, Passwort): `border border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500`.
   - Hinweiskästen: Helle Tönungen (`border-amber-200 bg-amber-50 text-amber-800` bzw. `border-rose-200 bg-rose-50 text-rose-800`).
   - Zurück-Link: `text-slate-600 hover:text-slate-900`.
-- [ ] **Admin Live-Desk Komponenten**:
+- [x] **Admin Live-Desk Komponenten**:
   - `MatchTimerControl.tsx`: Umstellung der Reset-Schaltfläche und der +/- 1 Min Feinabstimmungsknöpfe von `bg-slate-900 border-slate-800 text-slate-300` auf helle sekundäre Schaltflächen (`bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900 shadow-xs`).
   - `PenaltyCardManager.tsx`: Umstellung des Buttons „Karte erteilen“ von `bg-slate-900 text-white` auf Primär-Button `bg-blue-600 text-white hover:bg-blue-500`.
   - `LiveMatchDesk.tsx`: Umstellung des Buttons „Spiel hinzufügen“ von `bg-slate-900 text-white` auf `bg-blue-600 text-white hover:bg-blue-500`.
   - Modal-Backdrops (`MatchEditModal.tsx`, `TeamEditModal.tsx`, `DelayShiftModal.tsx`): Vereinheitlichung auf ein dezentes, helles / neutrales Backdrop (`bg-slate-900/30 backdrop-blur-xs`), sodass die Modalkarten selbst klar im Fokus stehen.
 
 #### C. Gäste-Ansicht (`/`)
-- [ ] **LiveHeroCard (`LiveHeroCard.tsx`)**:
+- [x] **LiveHeroCard (`LiveHeroCard.tsx`)**:
   - Umstellung des Hauptcontainers von dunklem Verlauf (`from-slate-900 via-slate-950 to-blue-950`) auf eine helle Karte mit dezentem Blau-Schimmer (`border border-blue-100 bg-gradient-to-br from-blue-50/60 via-white to-indigo-50/40 p-6 sm:p-8 text-slate-900 shadow-md`).
   - Team-Logo-Boxen: `border-2 border-slate-100 bg-white shadow-sm`.
   - Meta-Badges (Feld-Angabe, Phase): `bg-white/90 border border-slate-200 text-slate-700`.
   - Live-Ticker-Ereignisse: `border border-slate-200 bg-white text-slate-800 shadow-xs`.
-- [ ] **GuestLayout (`GuestLayout.tsx`)**:
+- [x] **GuestLayout (`GuestLayout.tsx`)**:
   - Button „Turnierleitung“: Umstellung von `bg-slate-900 text-white hover:bg-slate-800` auf Primär-Styling (`bg-blue-600 text-white hover:bg-blue-500`).
 
 #### D. Tailwind & CSS-Bereinigung
-- [ ] **`src/index.css`**: Entfernung des ungenutzten `.dark`-Blocks.
-- [ ] **`tailwind.config.js`**: Entfernung der Konfigurationszeile `darkMode: ["class"]`.
-- [ ] **`src/routes/AppRouter.tsx`**: Aktualisierung des Kiosk-Routen-Kommentars von `(Fullscreen, Dark Mode)` auf `(Fullscreen, Heller Kiosk-Modus)`.
+- [x] **`src/index.css`**: Entfernung des ungenutzten `.dark`-Blocks.
+- [x] **`tailwind.config.js`**: Entfernung der Konfigurationszeile `darkMode: ["class"]`.
+- [x] **`src/routes/AppRouter.tsx`**: Aktualisierung des Kiosk-Routen-Kommentars von `(Fullscreen, Dark Mode)` auf `(Fullscreen, Heller Kiosk-Modus)`.
 
 ### 3.2 Explizit Out-of-Scope (Nicht Teil dieser Spec)
 - Änderung von Fachlogiken, Match-Regeln, Tabellenberechnungen oder Firestore-Datenstrukturen.
@@ -123,7 +123,7 @@ Gemäß Nutzeranforderung soll die gesamte Applikation geprüft und **nirgends e
 
 ### 4.1 Szenarien / Kriterien
 
-- [ ] **AC-1: Kiosk-Display im vollflächigen, kontrastreichen Light-Theme**
+- [x] **AC-1: Kiosk-Display im vollflächigen, kontrastreichen Light-Theme**
   - **Gegeben sei (Given)**: Der Hallenmonitor öffnet `/kiosk`.
   - **Wenn (When)**: Die Folien (Scoreboard, Nächste Partien, Tabellen wU14/mU14) gerendert oder rotiert werden.
   - **Dann (Then)**:
@@ -132,7 +132,7 @@ Gemäß Nutzeranforderung soll die gesamte Applikation geprüft und **nirgends e
     - Alle Texte und Zahlen (Spielstände, Teamnamen, Spielzeiten) sind in tiefem Schwarz/Dunkelgrau (`text-slate-900`) klar ablesbar.
     - Status-Farben (Live-Rot, Führende Teams in Grün, Pausen/Pässe in Blau/Amber) stechen kontrastreich auf hellem Untergrund hervor.
 
-- [ ] **AC-2: Admin-Header und Navigation in durchgängigem Light-Design**
+- [x] **AC-2: Admin-Header und Navigation in durchgängigem Light-Design**
   - **Gegeben sei**: Ein angemeldeter Benutzer befindet sich auf `/admin`.
   - **Wenn**: Der Header und die Subnavigation gerendert werden.
   - **Dann**:
@@ -140,7 +140,7 @@ Gemäß Nutzeranforderung soll die gesamte Applikation geprüft und **nirgends e
     - Sind alle Buttons („Gäste-Ansicht“, „Abmelden“, Tabs) hell gestaltet und besitzen keine dunklen Hintergründe.
     - Gibt es keinen visuellen Bruch zwischen Navigation und dem Inhaltsbereich.
 
-- [ ] **AC-3: Login-Maske im Light-Theme**
+- [x] **AC-3: Login-Maske im Light-Theme**
   - **Gegeben sei**: Ein nicht angemeldeter Benutzer ruft `/login` auf.
   - **Wenn**: Die Seite geladen wird.
   - **Dann**:
@@ -148,23 +148,23 @@ Gemäß Nutzeranforderung soll die gesamte Applikation geprüft und **nirgends e
     - Ist die Anmeldekarte weiß mit hellem Rand (`bg-white border-slate-200 shadow-xl`).
     - Sind die Eingabefelder für E-Mail und Passwort weiß mit sauberem dunklem Text und hellem Rand.
 
-- [ ] **AC-4: LiveHeroCard der Gäste-Ansicht im Light-Design**
+- [x] **AC-4: LiveHeroCard der Gäste-Ansicht im Light-Design**
   - **Gegeben sei**: Ein Gast ruft `/` auf dem Smartphone oder Desktop auf.
   - **Wenn**: Ein Live-Spiel oder nächstes Spiel aktiv ist.
   - **Dann**:
     - Wird die `LiveHeroCard` mit hellem Grund und dunklem Text dargestellt.
     - Sind die Logo-Container und Ticker-Badges weiß mit dezenten Rahmen.
 
-- [ ] **AC-5: Vollständige Abwesenheit von Darkmode-Rückständen**
+- [x] **AC-5: Vollständige Abwesenheit von Darkmode-Rückständen**
   - **Gegeben sei**: Eine statische Analyse des Quellcodes über `src/`.
   - **Wenn**: Nach `dark:`, `.dark`, `bg-slate-900`, `bg-slate-950`, `bg-slate-800` (in Hintergründen/Karten) gesucht wird.
   - **Dann**: Gibt es keine Kacheln, Screens oder Hintergründe mehr, die dunkle Farbtöne verwenden.
 
 ### 4.2 Allgemeine Qualitätskriterien
-- [ ] TypeScript-Typisierung bleibt zu 100 % strikt ohne `any`.
-- [ ] Erfolgreicher Build ohne Fehler (`npm run build`).
-- [ ] Sauberes Linting ohne Warnungen (`npm run lint`).
-- [ ] Keine Funktionsverluste bei Reaktivität, Ticker, Jingles oder Timern.
+- [x] TypeScript-Typisierung bleibt zu 100 % strikt ohne `any`.
+- [x] Erfolgreicher Build ohne Fehler (`npm run build`).
+- [x] Sauberes Linting ohne Warnungen (`npm run lint`).
+- [x] Keine Funktionsverluste bei Reaktivität, Ticker, Jingles oder Timern.
 
 ---
 

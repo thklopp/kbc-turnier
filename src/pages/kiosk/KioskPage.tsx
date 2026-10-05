@@ -158,17 +158,17 @@ export function KioskPage() {
     <div className="flex h-full w-full flex-col justify-between overflow-hidden select-none">
       {/* Offline Toast Banner */}
       {showOfflineBanner && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 rounded-2xl bg-red-950/95 border-2 border-red-700 px-6 py-3 shadow-2xl text-red-200 backdrop-blur">
-          <WifiOff className="h-5 w-5 text-red-400 animate-pulse" />
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 rounded-2xl bg-rose-50 border-2 border-rose-300 px-6 py-3 shadow-xl text-rose-900 backdrop-blur">
+          <WifiOff className="h-5 w-5 text-rose-600 animate-pulse" />
           <div>
-            <p className="font-bold text-sm">Hallen-WLAN unterbrochen</p>
-            <p className="text-xs text-red-300">
+            <p className="font-bold text-sm text-rose-950">Hallen-WLAN unterbrochen</p>
+            <p className="text-xs text-rose-700">
               Der Bildschirm zeigt gecachte Daten. Automatische Wiederverbindung aktiv...
             </p>
           </div>
           <button
             onClick={() => setShowOfflineBanner(false)}
-            className="ml-2 text-xs font-bold text-red-400 hover:text-white"
+            className="ml-2 text-xs font-bold text-rose-700 hover:text-rose-950"
           >
             Ausblenden
           </button>
@@ -221,34 +221,34 @@ export function KioskPage() {
       </div>
 
       {/* Permanent Live Ticker Footer Bar */}
-      <footer className="flex-none rounded-2xl border border-slate-800 bg-slate-900/90 px-6 py-3 shadow-xl backdrop-blur-md">
+      <footer className="flex-none rounded-2xl border border-slate-200 bg-white/95 px-6 py-3 shadow-lg backdrop-blur-md">
         <div className="flex items-center justify-between">
           {/* Left: Ticker Status & Match details */}
           <div className="flex items-center gap-3">
             {tickerInfo.isLive ? (
-              <span className="flex items-center gap-2 rounded-xl bg-red-500/20 border border-red-500/40 px-3 py-1 text-xs font-black uppercase tracking-wider text-red-400 animate-pulse">
+              <span className="flex items-center gap-2 rounded-xl bg-red-50 border border-red-200 px-3 py-1 text-xs font-black uppercase tracking-wider text-red-600 animate-pulse">
                 <Radio className="h-4 w-4" />
                 Live auf Feld 1
               </span>
             ) : (
-              <span className="flex items-center gap-2 rounded-xl bg-slate-800 px-3 py-1 text-xs font-bold text-slate-300 border border-slate-700">
-                <Trophy className="h-3.5 w-3.5 text-amber-400" />
+              <span className="flex items-center gap-2 rounded-xl bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700 border border-slate-200">
+                <Trophy className="h-3.5 w-3.5 text-amber-500" />
                 Turnier-Ticker
               </span>
             )}
 
-            <span className="text-sm font-bold text-white tracking-wide">
+            <span className="text-sm font-bold text-slate-900 tracking-wide">
               {tickerInfo.text}
             </span>
           </div>
 
           {/* Right: Rotation & Sync Info */}
-          <div className="hidden sm:flex items-center gap-4 text-xs text-slate-400">
+          <div className="hidden sm:flex items-center gap-4 text-xs text-slate-600">
             <span className="flex items-center gap-1.5 font-medium">
-              <span className="h-2 w-2 rounded-full bg-emerald-400" />
+              <span className="h-2 w-2 rounded-full bg-emerald-500" />
               Echtzeit-Synchronisierung aktiv
             </span>
-            <span className="font-mono text-slate-500">
+            <span className="font-mono text-slate-400">
               Ansicht wechselt alle 12s
             </span>
           </div>

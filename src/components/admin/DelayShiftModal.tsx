@@ -170,7 +170,7 @@ export function DelayShiftModal({ isOpen, onClose, currentDay }: DelayShiftModal
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/30 backdrop-blur-xs p-4 overflow-y-auto">
       <DelayShiftForm onClose={onClose} currentDay={currentDay} />
     </div>
   )

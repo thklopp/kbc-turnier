@@ -149,7 +149,7 @@ export function PenaltyCardManager({
         <button
           type="button"
           onClick={handleAdd}
-          className="inline-flex items-center gap-1 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-bold text-white hover:bg-slate-800 transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-blue-500 shadow-xs transition-colors cursor-pointer"
         >
           <Plus className="h-3.5 w-3.5" />
           <span>Karte erteilen</span>

@@ -171,11 +171,11 @@ export function LiveMatchDesk() {
 
           <button
             onClick={handleFinishAndNext}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white shadow hover:bg-slate-800 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-blue-500 transition-colors cursor-pointer"
             title="Spiel beenden und Ergebnis fixieren"
           >
-            <CheckCircle className="h-3.5 w-3.5 text-emerald-400" />
-            <span>Spiel beenden & weiter</span>
+            <CheckCircle className="h-3.5 w-3.5 text-white" />
+            <span>Spiel beenden &amp; weiter</span>
           </button>
         </div>
       </div>

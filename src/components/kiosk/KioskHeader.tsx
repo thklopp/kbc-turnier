@@ -63,21 +63,21 @@ export function KioskHeader({
   const dayLabel = config?.activeDay === "sunday" ? "Sonntag (Finaltag)" : "Samstag (Vorrunde)"
 
   return (
-    <header className="relative flex-none rounded-2xl border border-slate-800 bg-slate-900/90 px-6 py-3.5 shadow-xl backdrop-blur-md">
+    <header className="relative flex-none rounded-2xl border border-slate-200 bg-white/95 px-6 py-3.5 shadow-md backdrop-blur-md">
       <div className="flex items-center justify-between">
         {/* Left: Tournament Branding */}
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-2xl font-bold shadow-lg shadow-blue-500/20">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-2xl font-bold shadow-md shadow-blue-500/10">
             🏑
           </div>
           <div>
-            <h1 className="text-xl font-black tracking-tight text-white flex items-center gap-2">
+            <h1 className="text-xl font-black tracking-tight text-slate-900 flex items-center gap-2">
               {config?.tournamentName || "KBC Hallenhockey Cup 2026"}
-              <span className="rounded-md bg-blue-500/20 px-2 py-0.5 text-xs font-semibold text-blue-400 border border-blue-500/30">
+              <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-600 border border-blue-200">
                 Feld 1
               </span>
             </h1>
-            <p className="text-xs font-semibold text-slate-400">
+            <p className="text-xs font-semibold text-slate-500">
               {dayLabel} &bull; 16 Teams (wU14 &amp; mU14)
             </p>
           </div>
@@ -85,7 +85,7 @@ export function KioskHeader({
 
         {/* Center: Slide Switcher & Progress */}
         <div className="hidden lg:flex flex-col items-center gap-1.5">
-          <div className="flex items-center gap-1 rounded-xl bg-slate-950/80 p-1 border border-slate-800">
+          <div className="flex items-center gap-1 rounded-xl bg-slate-100 p-1 border border-slate-200">
             {slideNames.map((name, index) => {
               const isActive = activeSlide === index
               return (
@@ -94,8 +94,8 @@ export function KioskHeader({
                   onClick={() => onSelectSlide(index)}
                   className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
                     isActive
-                      ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
-                      : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                      ? "bg-blue-600 text-white shadow-sm shadow-blue-600/20"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
                   }`}
                 >
                   {name}
@@ -105,9 +105,9 @@ export function KioskHeader({
             <button
               onClick={onTogglePause}
               title={isPaused ? "Rotation fortsetzen" : "Rotation anhalten"}
-              className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors ml-1"
+              className="p-1 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-200 transition-colors ml-1"
             >
-              {isPaused ? <Play className="h-3.5 w-3.5 text-emerald-400" /> : <Pause className="h-3.5 w-3.5" />}
+              {isPaused ? <Play className="h-3.5 w-3.5 text-emerald-600" /> : <Pause className="h-3.5 w-3.5 text-slate-700" />}
             </button>
           </div>
 
@@ -116,7 +116,7 @@ export function KioskHeader({
             <span className="text-[10px] font-mono text-slate-500 whitespace-nowrap">
               {activeSlide + 1}/{totalSlides}
             </span>
-            <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
+            <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
               <div
                 className={`h-full transition-all duration-300 ${
                   isPaused ? "bg-amber-500" : "bg-blue-500"
@@ -133,8 +133,8 @@ export function KioskHeader({
           <div
             className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold border ${
               isOnline
-                ? "bg-emerald-950/50 text-emerald-400 border-emerald-800/60"
-                : "bg-red-950/60 text-red-400 border-red-800 animate-pulse"
+                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                : "bg-rose-50 text-rose-700 border-rose-200 animate-pulse"
             }`}
           >
             {isOnline ? (
@@ -151,9 +151,9 @@ export function KioskHeader({
           </div>
 
           {/* Real-time Clock */}
-          <div className="flex items-center gap-2 rounded-xl bg-slate-950/80 border border-slate-800 px-3.5 py-1.5">
-            <Clock className="h-4 w-4 text-blue-400" />
-            <span className="text-sm font-mono font-bold text-white tracking-wider">
+          <div className="flex items-center gap-2 rounded-xl bg-slate-50 border border-slate-200 px-3.5 py-1.5">
+            <Clock className="h-4 w-4 text-blue-600" />
+            <span className="text-sm font-mono font-bold text-slate-900 tracking-wider">
               {currentTime || "--:--:--"}
             </span>
           </div>
@@ -162,7 +162,7 @@ export function KioskHeader({
           <button
             onClick={toggleFullscreen}
             title={isFullscreen ? "Vollbild beenden" : "Vollbildmodus aktivieren"}
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-800/80 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-50 shadow-xs transition-colors"
           >
             {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
           </button>

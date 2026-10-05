@@ -95,7 +95,7 @@ export function SoundboardPanel({
         <div className="mt-3 flex justify-end">
           <button
             onClick={onStopAudio}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-slate-800 px-3 py-1.5 text-xs font-semibold text-rose-300 hover:bg-slate-700 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 hover:bg-rose-100 hover:border-rose-300 transition-colors shadow-xs"
           >
             <Square className="h-3.5 w-3.5 fill-current" />
             <span>Ton stoppen</span>
