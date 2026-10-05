@@ -24,7 +24,7 @@ export function SoundboardPanel({
       <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
         <div className="flex items-center gap-2">
           <Volume2 className="h-4 w-4 text-purple-600" />
-          <h4 className="text-sm font-bold text-slate-900">Kampfgericht Soundboard</h4>
+          <h4 className="text-sm font-bold text-slate-900">Turnierleitungs-Soundboard</h4>
         </div>
         <span className="text-[11px] text-slate-400">Verzögerungsfreie Hallen-Audios</span>
       </div>

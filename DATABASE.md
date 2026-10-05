@@ -15,7 +15,7 @@ firestore/
 ├── matches/
 │   └── {matchId}              # 40 Spiele (24 Samstag Gruppenphase, 16 Sonntag Finalphase)
 └── auditLogs/
-    └── {logId}                # Protokollierung von Kampfgericht-Aktionen (optional / audit)
+    └── {logId}                # Protokollierung von Turnierleitungs-Aktionen (optional / audit)
 ```
 
 ---

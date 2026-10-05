@@ -10,7 +10,7 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 - [x] **Meilenstein 1: Basis-Infrastruktur, Routing & Firebase-Anbindung**
 - [x] **Meilenstein 2: Admin-Bereich – Teamverwaltung & Medien-Upload (Logo + MP3)**
 - [x] **Meilenstein 3: Admin-Bereich – Zeitkonfiguration & Spielplan-Generierung**
-- [x] **Meilenstein 4: Admin-Bereich – Kampfgericht Live-Desk & Torjingle-Playback**
+- [x] **Meilenstein 4: Admin-Bereich – Turnierleitung Live-Desk & Torjingle-Playback**
 - [x] **Meilenstein 5: Öffentliche Gast-Ansicht – Spielplan, Live-Ticker & Tabellen**
 - [ ] **Meilenstein 6: Hallen-Kiosk – TV-Display & automatisierte Rotation**
 - [ ] **Meilenstein 7: End-to-End Tests, Optimierung & Railway Deployment**
@@ -37,7 +37,7 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
   - `/` -> Guest Layout & Hauptansicht
   - `/admin` -> Admin Layout & Login-Guard
   - `/kiosk` -> Minimales Fullscreen Kiosk Layout
-- [x] Authentication Context (`AuthContext`) für Kampfgericht-Login via Firebase Auth.
+- [x] Authentication Context (`AuthContext`) für Turnierleitungs-Login via Firebase Auth.
 - [x] Responsive Navigation / Header mit Turnierstatus und Datumsanzeige.
 - [x] Theme & Styling Konsistenz sicherstellen (Hockey-Branding, Kontraste).
 
@@ -68,8 +68,8 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 
 ---
 
-### Meilenstein 4: Admin-Bereich – Kampfgericht Live-Desk & Torjingle-Playback
-- [x] Kampfgericht-Steuerkonsole für das aktuell laufende Spiel:
+### Meilenstein 4: Admin-Bereich – Turnierleitung Live-Desk & Torjingle-Playback
+- [x] Turnierleitungs-Steuerkonsole für das aktuell laufende Spiel:
   - Spieluhr (Start, Stopp, Reset, Restzeit-Anzeige)
   - Tor-Eingabe (Heim / Gast) mit Erfassung der Spielminute
   - Schneller Torjingle-Auslöser: Beim Torerfolg spielt der Jingle des Teams unmittelbar ab

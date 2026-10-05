@@ -208,7 +208,7 @@ export function KioskUpcomingSlide({
       <div className="mt-4 flex items-center justify-between text-xs text-slate-400 px-2">
         <span className="flex items-center gap-1.5">
           <ArrowRight className="h-3.5 w-3.5 text-blue-400" />
-          Spielerinnen &amp; Spieler bitte 10 Minuten vor Anpfiff am Kampfgericht spielbereit einfinden.
+          Spielerinnen &amp; Spieler bitte 10 Minuten vor Anpfiff an der Turnierleitung spielbereit einfinden.
         </span>
         <span className="font-mono text-slate-500">
           KBC Kiosk System &bull; Feld 1

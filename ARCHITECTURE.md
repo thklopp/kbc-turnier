@@ -9,7 +9,7 @@ Dieses Dokument beschreibt die Architektur der **KBC Hallenhockey-Turnierverwalt
 ```mermaid
 flowchart TD
     subgraph Clients["Clients / Endgeräte"]
-        AdminUI["/admin (Kampfgericht)<br/>Laptop / Tablet"]
+        AdminUI["/admin (Turnierleitung)<br/>Laptop / Tablet"]
         GuestUI["/ (Gäste & Zuschauer)<br/>Smartphones"]
         KioskUI["/kiosk (Hallen-Display)<br/>Smart TV / Großbildschirm"]
     end
@@ -17,7 +17,7 @@ flowchart TD
     subgraph FirebaseServices["Google Firebase Backend"]
         Firestore["Cloud Firestore<br/>(Live NoSQL Database)"]
         Storage["Firebase Storage<br/>(Team-Logos & MP3-Jingles)"]
-        Auth["Firebase Authentication<br/>(Kampfgericht Login)"]
+        Auth["Firebase Authentication<br/>(Turnierleitung Login)"]
     end
 
     subgraph Deployment["Hosting & CI/CD"]
@@ -50,7 +50,7 @@ src/
 ├── assets/             # Statische Assets (Icons, Platzhalter)
 ├── components/         # Wiederverwendbare UI-Komponenten
 │   ├── ui/             # shadcn/ui Basiskomponenten (Button, Card, Dialog, Table etc.)
-│   ├── admin/          # Kampfgericht-Komponenten (TimerControl, GoalModal, JinglePlayer)
+│   ├── admin/          # Turnierleitungs-Komponenten (TimerControl, GoalModal, JinglePlayer)
 │   ├── guest/          # Zuschauer-Komponenten (ScheduleView, StandingsTable, LiveMatchCard)
 │   └── kiosk/          # Hallen-Display-Komponenten (KioskTicker, FullscreenBoard)
 ├── contexts/           # React Contexts (AuthContext, TournamentContext, AudioContext)
@@ -68,8 +68,8 @@ src/
 
 Um Latenzen und unnötige Polling-Requests zu vermeiden, basiert die gesamte Spielstands- und Zeitübertragung auf Firestore-Echtzeit-Subscriptions:
 
-1. **Kampfgericht (`/admin`)**:
-   - Schiedsrichter/Kampfgericht klickt auf "Tor Team Heim".
+1. **Turnierleitung (`/admin`)**:
+   - Turnierleitung klickt auf "Tor Team Heim".
    - Der lokale AudioContext spielt sofort den gecachten MP3-Jingle des Heimteams ab.
    - Ein Firestore-Update erhöht `scoreHome` und hängt das Tor-Event an die Match-Historie an.
 2. **Cloud Firestore**:

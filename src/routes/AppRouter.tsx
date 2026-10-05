@@ -18,10 +18,10 @@ export function AppRouter() {
           <Route path="/" element={<HomePage />} />
         </Route>
 
-        {/* Kampfgericht Login */}
+        {/* Turnierleitung Login */}
         <Route path="/admin/login" element={<LoginPage />} />
 
-        {/* Kampfgericht & Admin-Bereich (geschützt durch Firebase Auth) */}
+        {/* Turnierleitung & Admin-Bereich (geschützt durch Firebase Auth) */}
         <Route path="/admin" element={<ProtectedRoute />}>
           <Route element={<AdminLayout />}>
             <Route index element={<AdminPage />} />

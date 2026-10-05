@@ -35,7 +35,7 @@ export function AdminLayout() {
               </div>
               <div>
                 <span className="block text-sm font-bold leading-tight">
-                  Kampfgericht & Turnierleitung
+                  Turnierleitung
                 </span>
                 <span className="block text-[11px] text-slate-400">
                   KBC Turnier-Administration
@@ -70,7 +70,7 @@ export function AdminLayout() {
               }`}
             >
               <PlayCircle className="h-3.5 w-3.5" />
-              Live-Desk (Kampfgericht)
+              Live-Desk (Turnierleitung)
             </Link>
             <Link
               to="/admin#teams"

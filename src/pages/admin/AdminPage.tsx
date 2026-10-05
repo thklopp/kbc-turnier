@@ -15,7 +15,7 @@ export function AdminPage() {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-4">
         <div>
           <h1 className="text-xl font-bold tracking-tight text-slate-900">
-            Kampfgericht Leitstand
+            Turnierleitung Leitstand
           </h1>
           <p className="text-xs text-slate-500">
             Angemeldet als: <strong className="text-slate-800">{currentUser?.email}</strong>
@@ -93,7 +93,7 @@ export function AdminPage() {
           }`}
         >
           <PlayCircle className="h-4 w-4" />
-          <span>Kampfgericht Live-Desk (M4)</span>
+          <span>Turnierleitung Live-Desk (M4)</span>
         </button>
       </div>
 

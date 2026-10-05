@@ -99,7 +99,7 @@ export function LiveMatchDesk() {
       <div className="flex h-64 items-center justify-center rounded-2xl border border-dashed border-slate-300">
         <div className="flex flex-col items-center gap-2 text-slate-400">
           <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
-          <span className="text-xs font-medium">Lade Kampfgericht-Desk...</span>
+          <span className="text-xs font-medium">Lade Turnierleitungs-Desk...</span>
         </div>
       </div>
     )

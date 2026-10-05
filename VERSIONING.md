@@ -22,7 +22,7 @@ Format: `vX.Y.Z` (z. B. `v1.0.0`)
 | `v0.2.0` | **M1: Foundation** | Firebase Client, Layouts & Basis-Routing |
 | `v0.3.0` | **M2: Team & Media** | Team-Verwaltung mit Logo- & Jingle-Upload |
 | `v0.4.0` | **M3: Schedule & Config** | Zeit-Konfiguration & Spielplan-Generator |
-| `v0.5.0` | **M4: Live Score Desk** | Kampfgericht Live-Modus & Torjingle-Playback |
+| `v0.5.0` | **M4: Live Score Desk** | Turnierleitung Live-Modus & Torjingle-Playback |
 | `v0.6.0` | **M5: Public Guest View** | Mobile Gast-Ansicht, Spielplan & Live-Tabellen |
 | `v0.7.0` | **M6: Kiosk Hallen-Display**| Großbildschirm-Ansicht mit automatischer Rotation |
 | `v1.0.0` | **M7: Production Release** | Finale Abnahme, End-to-End getestet, Railway Live-Betrieb |

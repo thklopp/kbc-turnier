@@ -13,7 +13,7 @@ export function LoginPage() {
   const navigate = useNavigate()
   const location = useLocation()
 
-  // Falls bereits eingeloggt, direkt ins Kampfgericht leiten
+  // Falls bereits eingeloggt, direkt zur Turnierleitung leiten
   if (currentUser) {
     const destination = (location.state as { from?: { pathname: string } })?.from?.pathname || "/admin"
     navigate(destination, { replace: true })
@@ -56,7 +56,7 @@ export function LoginPage() {
           </div>
 
           <h1 className="text-xl font-bold text-center text-white">
-            Kampfgericht & Turnierleitung
+            Turnierleitung
           </h1>
           <p className="mt-1 text-center text-xs text-slate-400 mb-6">
             Bitte melde dich an, um Spiele, Timer und Jingles zu steuern.
@@ -90,7 +90,7 @@ export function LoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="kampfgericht@kbc-turnier.de"
+                  placeholder="turnierleitung@kbc-turnier.de"
                   className="w-full rounded-lg border border-slate-800 bg-slate-900 py-2 pl-9 pr-3 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
