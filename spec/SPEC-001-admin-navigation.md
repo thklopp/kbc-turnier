@@ -1,6 +1,6 @@
 # SPEC-001: Konsolidierung der Admin-Navigation & Reaktivierung der oberen Reiterleiste
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: UX-Optimierung / Refactoring  
 > **Branch**: `feat/SPEC-001-admin-navigation`  
 > **Autor**: Antigravity Agent  
@@ -70,41 +70,41 @@ Auf der Admin-Seite (`/admin`, Turnierleitung) existieren aktuell zwei redundant
 
 ### 4.1 Szenarien / Kriterien
 
-- [ ] **AC-1: Umschalten per oberer Navigationsleiste**
+- [x] **AC-1: Umschalten per oberer Navigationsleiste**
   - **Gegeben sei (Given)**: Der Turnierleiter ist unter `/admin` eingeloggt.
   - **Wenn (When)**: Der Nutzer in der oberen Navigationsleiste auf „Teams & Torjingles“ klickt.
   - **Dann (Then)**: Wechselt die URL zu `/admin#teams`, der Reiter „Teams & Torjingles“ wird optisch als aktiv hervorgehoben und die Team-Verwaltungskomponente (`TeamList`) wird angezeigt.
 
-- [ ] **AC-2: Umschalten auf Zeiten & Spielplan**
+- [x] **AC-2: Umschalten auf Zeiten & Spielplan**
   - **Gegeben sei**: Der Nutzer befindet sich auf `/admin#teams`.
   - **Wenn**: Der Nutzer auf „Zeiten & Spielplan“ klickt.
   - **Dann**: Wechselt die URL zu `/admin#schedule`, der Reiter „Zeiten & Spielplan“ wird aktiv markiert und `ScheduleManager` wird angezeigt.
 
-- [ ] **AC-3: Deep Linking / Direktaufruf mit Hash**
+- [x] **AC-3: Deep Linking / Direktaufruf mit Hash**
   - **Gegeben sei**: Ein Browser öffnet direkt die URL `https://kbc.rrk08.club/admin#teams`.
   - **Wenn**: Die Seite lädt und der Auth-Guard passiert ist.
   - **Dann**: Wird sofort der Tab `Teams & Torjingles` geöffnet und der entsprechende Reiter oben ist markiert.
 
-- [ ] **AC-4: Standardansicht ohne Hash**
+- [x] **AC-4: Standardansicht ohne Hash**
   - **Gegeben sei**: Der Nutzer ruft `/admin` ohne Hash auf.
   - **Wenn**: Die Seite gerendert wird.
   - **Dann**: Wird standardmäßig der `Live-Desk (Turnierleitung)` angezeigt und der erste Reiter ist als aktiv markiert.
 
-- [ ] **AC-5: Keine redundanten Reiter im Seiteninhalt**
+- [x] **AC-5: Keine redundanten Reiter im Seiteninhalt**
   - **Gegeben sei**: Der Nutzer befindet sich auf einer beliebigen Admin-Ansicht (`/admin`, `/admin#teams`, `/admin#schedule`).
   - **Wenn**: Die Seite betrachtet wird.
   - **Dann**: Gibt es in der Seitenmitte keine zweite Leiste mit Buttons („Mannschaften & Torjingles“, „Zeitsteuerung & Spielplan“, „Turnierleitung Live-Desk“) mehr.
 
-- [ ] **AC-6: Browser-Historie (Vor / Zurück)**
+- [x] **AC-6: Browser-Historie (Vor / Zurück)**
   - **Gegeben sei**: Der Nutzer navigiert von `/admin` zu `/admin#teams` und dann zu `/admin#schedule`.
   - **Wenn**: Der Nutzer den Browser-Zurück-Button betätigt.
   - **Dann**: Wechselt die URL zu `/admin#teams` und der Inhalt wechselt automatisch zu `TeamList`.
 
 ### 4.2 Allgemeine Qualitätskriterien
-- [ ] Keine fest kodierten Parameter.
-- [ ] Vollständige TypeScript-Typisierung ohne `any`.
-- [ ] Fehlerfreie Ausführung von `npm run build` und `npm run lint`.
-- [ ] Keine React-Warnungen bezüglich unkontrollierter Komponenten oder fehlender Keys.
+- [x] Keine fest kodierten Parameter.
+- [x] Vollständige TypeScript-Typisierung ohne `any`.
+- [x] Fehlerfreie Ausführung von `npm run build` und `npm run lint`.
+- [x] Keine React-Warnungen bezüglich unkontrollierter Komponenten oder fehlender Keys.
 
 ---
 
@@ -179,12 +179,12 @@ Auf der Admin-Seite (`/admin`, Turnierleitung) existieren aktuell zwei redundant
 ## 8. Verifikations- & Testplan
 
 ### 8.1 Manuelle Tests
-1. [ ] Aufruf von `/admin` -> Prüfen, ob `Live-Desk` geöffnet ist und der Reiter `Live-Desk (Turnierleitung)` aktiv unterstrichen ist.
-2. [ ] Klick auf `Teams & Torjingles` -> Prüfen, ob URL auf `/admin#teams` springt, der zweite Reiter aktiv ist und `TeamList` angezeigt wird.
-3. [ ] Klick auf `Zeiten & Spielplan` -> Prüfen, ob URL auf `/admin#schedule` springt, der dritte Reiter aktiv ist und `ScheduleManager` angezeigt wird.
-4. [ ] Browser-Reload auf `/admin#schedule` -> Prüfen, ob `ScheduleManager` nach Reload geöffnet bleibt.
-5. [ ] Betätigen des Browser-Zurück-Buttons -> Prüfen, ob die Ansicht zurück zu `#teams` springt.
-6. [ ] Sichtprüfung: Sicherstellen, dass keine doppelten Reiter mehr in der Seitenmitte zu sehen sind.
+1. [x] Aufruf von `/admin` -> Prüfen, ob `Live-Desk` geöffnet ist und der Reiter `Live-Desk (Turnierleitung)` aktiv unterstrichen ist.
+2. [x] Klick auf `Teams & Torjingles` -> Prüfen, ob URL auf `/admin#teams` springt, der zweite Reiter aktiv ist und `TeamList` angezeigt wird.
+3. [x] Klick auf `Zeiten & Spielplan` -> Prüfen, ob URL auf `/admin#schedule` springt, der dritte Reiter aktiv ist und `ScheduleManager` angezeigt wird.
+4. [x] Browser-Reload auf `/admin#schedule` -> Prüfen, ob `ScheduleManager` nach Reload geöffnet bleibt.
+5. [x] Betätigen des Browser-Zurück-Buttons -> Prüfen, ob die Ansicht zurück zu `#teams` springt.
+6. [x] Sichtprüfung: Sicherstellen, dass keine doppelten Reiter mehr in der Seitenmitte zu sehen sind.
 
 ### 8.2 Automatisierte Tests / Validierung
 - [x] `npm run build` wird ohne Fehler und Warnungen ausgeführt.
