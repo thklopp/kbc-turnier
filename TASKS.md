@@ -7,7 +7,7 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 ## 📌 Meilenstein-Übersicht
 
 - [x] **Meilenstein 0: Initiales Projekt-Setup & SDD-Dokumentation**
-- [ ] **Meilenstein 1: Basis-Infrastruktur, Routing & Firebase-Anbindung**
+- [x] **Meilenstein 1: Basis-Infrastruktur, Routing & Firebase-Anbindung**
 - [ ] **Meilenstein 2: Admin-Bereich – Teamverwaltung & Medien-Upload (Logo + MP3)**
 - [ ] **Meilenstein 3: Admin-Bereich – Zeitkonfiguration & Spielplan-Generierung**
 - [ ] **Meilenstein 4: Admin-Bereich – Kampfgericht Live-Desk & Torjingle-Playback**
@@ -21,25 +21,25 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 
 ### Meilenstein 0: Initiales Projekt-Setup & SDD-Dokumentation
 - [x] Erstellung aller SDD-Dokumente (`README.md`, `ARCHITECTURE.md`, `DATABASE.md`, `TASKS.md`, `AGENTS.md`, `CONTRIBUTING.md`, `VERSIONING.md`).
-- [ ] Initialisierung des Vite-Projekts mit React 18/19 & TypeScript.
-- [ ] Git-Repository initialisieren und saubere `.gitignore` konfigurieren.
-- [ ] Installation und Konfiguration von Tailwind CSS & PostCSS.
-- [ ] Initialisierung von `shadcn/ui` (Design-Tokens, Utility-Funktionen, Theme).
-- [ ] Installation von `react-router-dom` und `firebase`.
-- [ ] Bereitstellung der `.env.example` Datei für alle Firebase-Konfigurationskeys.
-- [ ] Erstellung des Multi-Stage `Dockerfile` und `nginx.conf` für Railway.
+- [x] Initialisierung des Vite-Projekts mit React 18/19 & TypeScript.
+- [x] Git-Repository initialisieren und saubere `.gitignore` konfigurieren.
+- [x] Installation und Konfiguration von Tailwind CSS & PostCSS.
+- [x] Initialisierung von `shadcn/ui` (Design-Tokens, Utility-Funktionen, Theme).
+- [x] Installation von `react-router-dom` und `firebase`.
+- [x] Bereitstellung der `.env.example` Datei für alle Firebase-Konfigurationskeys.
+- [x] Erstellung des Multi-Stage `Dockerfile` und `nginx.conf` für Railway.
 
 ---
 
 ### Meilenstein 1: Basis-Infrastruktur, Routing & Firebase-Anbindung
-- [ ] Firebase SDK Client initialisieren (`src/lib/firebase.ts`).
-- [ ] React Router einrichten mit Routen:
+- [x] Firebase SDK Client initialisieren (`src/lib/firebase.ts`).
+- [x] React Router einrichten mit Routen:
   - `/` -> Guest Layout & Hauptansicht
   - `/admin` -> Admin Layout & Login-Guard
   - `/kiosk` -> Minimales Fullscreen Kiosk Layout
-- [ ] Authentication Context (`AuthContext`) für Kampfgericht-Login via Firebase Auth.
-- [ ] Responsive Navigation / Header mit Turnierstatus und Datumsanzeige.
-- [ ] Theme & Styling Konsistenz sicherstellen (Hockey-Branding, Kontraste).
+- [x] Authentication Context (`AuthContext`) für Kampfgericht-Login via Firebase Auth.
+- [x] Responsive Navigation / Header mit Turnierstatus und Datumsanzeige.
+- [x] Theme & Styling Konsistenz sicherstellen (Hockey-Branding, Kontraste).
 
 ---
 
