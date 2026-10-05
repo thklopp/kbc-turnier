@@ -8,7 +8,7 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 
 - [x] **Meilenstein 0: Initiales Projekt-Setup & SDD-Dokumentation**
 - [x] **Meilenstein 1: Basis-Infrastruktur, Routing & Firebase-Anbindung**
-- [ ] **Meilenstein 2: Admin-Bereich – Teamverwaltung & Medien-Upload (Logo + MP3)**
+- [x] **Meilenstein 2: Admin-Bereich – Teamverwaltung & Medien-Upload (Logo + MP3)**
 - [ ] **Meilenstein 3: Admin-Bereich – Zeitkonfiguration & Spielplan-Generierung**
 - [ ] **Meilenstein 4: Admin-Bereich – Kampfgericht Live-Desk & Torjingle-Playback**
 - [ ] **Meilenstein 5: Öffentliche Gast-Ansicht – Spielplan, Live-Ticker & Tabellen**
@@ -44,12 +44,12 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 ---
 
 ### Meilenstein 2: Admin-Bereich – Teamverwaltung & Medien-Upload (Logo + MP3)
-- [ ] UI-Übersicht aller 16 Teams (Filter nach `mU14` / `wU14` und Gruppe A/B).
-- [ ] Team-Editor-Modal: Name, Kürzel, Gruppe, Geschlecht bearbeiten.
-- [ ] Logo-Upload nach Firebase Storage (`/teams/{teamId}/logo.*`) mit Bildvorschau.
-- [ ] Torjingle-Upload nach Firebase Storage (`/teams/{teamId}/jingle.mp3`).
-- [ ] Integrierter Audio-Player zum Probehören des Torjingles direkt in der Team-Tabelle.
-- [ ] Validierung: Max. Dateigrößen (Logo: 2MB, Jingle: 5MB MP3) und MIME-Types.
+- [x] UI-Übersicht aller 16 Teams (Filter nach `mU14` / `wU14` und Gruppe A/B).
+- [x] Team-Editor-Modal: Name, Kürzel, Gruppe, Geschlecht bearbeiten.
+- [x] Logo-Upload nach Firebase Storage (`/teams/{teamId}/logo.*`) mit Bildvorschau.
+- [x] Torjingle-Upload nach Firebase Storage (`/teams/{teamId}/jingle.mp3`).
+- [x] Integrierter Audio-Player zum Probehören des Torjingles direkt in der Team-Tabelle.
+- [x] Validierung: Max. Dateigrößen (Logo: 2MB, Jingle: 5MB MP3) und MIME-Types.
 
 ---
 

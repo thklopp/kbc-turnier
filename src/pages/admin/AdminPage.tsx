@@ -1,8 +1,11 @@
+import { useState } from "react"
 import { useAuth } from "@/hooks/useAuth"
+import { TeamList } from "@/components/admin/TeamList"
 import { Users, Calendar, PlayCircle, Clock, Volume2, ShieldCheck } from "lucide-react"
 
 export function AdminPage() {
   const { currentUser } = useAuth()
+  const [activeTab, setActiveTab] = useState<"teams" | "desk" | "schedule">("teams")
 
   return (
     <div className="space-y-6">
@@ -23,7 +26,7 @@ export function AdminPage() {
         </div>
       </div>
 
-      {/* Control Tiles */}
+      {/* Control Summary Tiles */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="flex items-center justify-between">
@@ -48,52 +51,76 @@ export function AdminPage() {
             <span className="text-xs font-semibold text-slate-500">Audio Jingle Engine</span>
             <Volume2 className="h-4 w-4 text-purple-500" />
           </div>
-          <div className="mt-2 text-2xl font-black text-slate-900">Bereit</div>
-          <p className="mt-1 text-xs text-slate-500">HTML5 Audio API gepuffert</p>
+          <div className="mt-2 text-2xl font-black text-slate-900">Aktiv</div>
+          <p className="mt-1 text-xs text-slate-500">MP3-Sofortauslöser bereit</p>
         </div>
       </div>
 
-      {/* Admin Modules Preview */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center gap-2 font-bold text-slate-900 text-sm mb-2">
-            <Users className="h-4 w-4 text-blue-600" />
-            <span>1. Teamverwaltung & Torjingles</span>
-          </div>
-          <p className="text-xs text-slate-600 mb-4">
-            Upload und Pflege der Vereinswappen (PNG) und Torjingles (MP3) für alle 16 Mannschaften.
-          </p>
-          <div className="text-xs font-semibold text-slate-400">
-            Nächster Meilenstein (M2)
-          </div>
-        </div>
+      {/* Mode Switcher Tabs */}
+      <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
+        <button
+          onClick={() => setActiveTab("teams")}
+          className={`inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs font-bold transition-colors cursor-pointer ${
+            activeTab === "teams"
+              ? "bg-blue-600 text-white shadow-sm"
+              : "text-slate-600 hover:bg-slate-200 hover:text-slate-900"
+          }`}
+        >
+          <Users className="h-4 w-4" />
+          <span>Mannschaften & Torjingles (M2)</span>
+        </button>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center gap-2 font-bold text-slate-900 text-sm mb-2">
-            <Calendar className="h-4 w-4 text-amber-600" />
-            <span>2. Zeitsteuerung & Spielplan</span>
-          </div>
-          <p className="text-xs text-slate-600 mb-4">
-            Dynamische Zeitberechnung (10:00 Uhr Start Sa / 09:00 Uhr So), Verzögerungs-Kaskade.
-          </p>
-          <div className="text-xs font-semibold text-slate-400">
-            In Meilenstein 3
-          </div>
-        </div>
+        <button
+          onClick={() => setActiveTab("schedule")}
+          className={`inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs font-bold transition-colors cursor-pointer ${
+            activeTab === "schedule"
+              ? "bg-blue-600 text-white shadow-sm"
+              : "text-slate-600 hover:bg-slate-200 hover:text-slate-900"
+          }`}
+        >
+          <Calendar className="h-4 w-4" />
+          <span>Zeitsteuerung & Spielplan (M3)</span>
+        </button>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex items-center gap-2 font-bold text-slate-900 text-sm mb-2">
-            <PlayCircle className="h-4 w-4 text-emerald-600" />
-            <span>3. Live-Desk (Spieluhr & Tore)</span>
-          </div>
-          <p className="text-xs text-slate-600 mb-4">
-            Echtzeit-Torerfassung, Karten mit Strafzeit-Countdown, Sofort-Jingle bei Torjubel.
-          </p>
-          <div className="text-xs font-semibold text-slate-400">
-            In Meilenstein 4
-          </div>
-        </div>
+        <button
+          onClick={() => setActiveTab("desk")}
+          className={`inline-flex items-center gap-2 rounded-lg px-3.5 py-2 text-xs font-bold transition-colors cursor-pointer ${
+            activeTab === "desk"
+              ? "bg-blue-600 text-white shadow-sm"
+              : "text-slate-600 hover:bg-slate-200 hover:text-slate-900"
+          }`}
+        >
+          <PlayCircle className="h-4 w-4" />
+          <span>Kampfgericht Live-Desk (M4)</span>
+        </button>
       </div>
+
+      {/* Main Tab Content */}
+      {activeTab === "teams" && (
+        <section>
+          <TeamList />
+        </section>
+      )}
+
+      {activeTab === "schedule" && (
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
+          <Calendar className="h-10 w-10 text-amber-500 mx-auto mb-3" />
+          <h3 className="text-base font-bold text-slate-900">Meilenstein 3: Zeitsteuerung & Spielplan</h3>
+          <p className="mt-1 text-xs text-slate-500 max-w-md mx-auto">
+            Hier konfigurierst du globale Spielzeiten, Pausenzeiten und Anstoßzeiten (Sa 10:00, So 09:00 Uhr) und generierst den 40-Spiele-Spielplan im 2w_2m-Rhythmus.
+          </p>
+        </div>
+      )}
+
+      {activeTab === "desk" && (
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
+          <PlayCircle className="h-10 w-10 text-emerald-500 mx-auto mb-3" />
+          <h3 className="text-base font-bold text-slate-900">Meilenstein 4: Kampfgericht Live-Desk</h3>
+          <p className="mt-1 text-xs text-slate-500 max-w-md mx-auto">
+            Hier steuerst du während der laufenden Spiele die Spieluhr, die Tore mit direktem Jingle-Auslöser sowie die Strafzeiten.
+          </p>
+        </div>
+      )}
     </div>
   )
 }
