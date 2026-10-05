@@ -9,7 +9,7 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 - [x] **Meilenstein 0: Initiales Projekt-Setup & SDD-Dokumentation**
 - [x] **Meilenstein 1: Basis-Infrastruktur, Routing & Firebase-Anbindung**
 - [x] **Meilenstein 2: Admin-Bereich – Teamverwaltung & Medien-Upload (Logo + MP3)**
-- [ ] **Meilenstein 3: Admin-Bereich – Zeitkonfiguration & Spielplan-Generierung**
+- [x] **Meilenstein 3: Admin-Bereich – Zeitkonfiguration & Spielplan-Generierung**
 - [ ] **Meilenstein 4: Admin-Bereich – Kampfgericht Live-Desk & Torjingle-Playback**
 - [ ] **Meilenstein 5: Öffentliche Gast-Ansicht – Spielplan, Live-Ticker & Tabellen**
 - [ ] **Meilenstein 6: Hallen-Kiosk – TV-Display & automatisierte Rotation**
@@ -54,17 +54,17 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 ---
 
 ### Meilenstein 3: Admin-Bereich – Zeitkonfiguration & Spielplan-Generierung
-- [ ] Konfigurationsmaske für globale Turnierzeiten:
+- [x] Konfigurationsmaske für globale Turnierzeiten:
   - Spielzeit (Minuten)
   - Pausendauer (Minuten)
   - Startzeit Samstag (Standard 10:00 Uhr)
   - Startzeit Sonntag (Standard 09:00 Uhr)
-- [ ] Automatisierter Spielplan-Generator:
+- [x] Automatisierter Spielplan-Generator:
   - Samstag: 24 Gruppenspiele (2 Gruppen à 4 Teams pro Geschlecht)
   - Einhaltung der Vorgabe: Strikt 2 Mädchenspiele (`wU14`), gefolgt von 2 Jungsspielen (`mU14`)
   - Sonntag: 16 Finalspiele (Platzierungsspiele & Halbfinals/Finals)
-- [ ] Zeit-Kaskadierung: Möglichkeit, den gesamten Spielplan bei Verzögerungen um X Minuten nach hinten zu verschieben.
-- [ ] Manuelle Editiermöglichkeit einzelner Spiele (Verschieben, Paarungsänderung).
+- [x] Zeit-Kaskadierung: Möglichkeit, den gesamten Spielplan bei Verzögerungen um X Minuten nach hinten zu verschieben.
+- [x] Manuelle Editiermöglichkeit einzelner Spiele (Verschieben, Paarungsänderung).
 
 ---
 

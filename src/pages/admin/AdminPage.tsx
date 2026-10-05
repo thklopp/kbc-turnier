@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useAuth } from "@/hooks/useAuth"
 import { TeamList } from "@/components/admin/TeamList"
+import { ScheduleManager } from "@/components/admin/ScheduleManager"
 import { Users, Calendar, PlayCircle, Clock, Volume2, ShieldCheck } from "lucide-react"
 
 export function AdminPage() {
@@ -103,13 +104,9 @@ export function AdminPage() {
       )}
 
       {activeTab === "schedule" && (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
-          <Calendar className="h-10 w-10 text-amber-500 mx-auto mb-3" />
-          <h3 className="text-base font-bold text-slate-900">Meilenstein 3: Zeitsteuerung & Spielplan</h3>
-          <p className="mt-1 text-xs text-slate-500 max-w-md mx-auto">
-            Hier konfigurierst du globale Spielzeiten, Pausenzeiten und Anstoßzeiten (Sa 10:00, So 09:00 Uhr) und generierst den 40-Spiele-Spielplan im 2w_2m-Rhythmus.
-          </p>
-        </div>
+        <section>
+          <ScheduleManager />
+        </section>
       )}
 
       {activeTab === "desk" && (
