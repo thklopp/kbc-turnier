@@ -1,6 +1,6 @@
 # SPEC-002: Entfernung des redundanten oberen Leitstand-Headers und der statischen Info-Kacheln
 
-> **Status**: In Review  
+> **Status**: In Abnahme  
 > **Typ**: Refactoring / UI-Optimierung  
 > **Branch**: `refactor/SPEC-002-cleanup-leitstand-header`  
 > **Autor**: Antigravity Agent  
@@ -46,10 +46,10 @@ Dieser Bereich weist mehrere Schwachstellen auf:
 ## 3. Fachliche Anforderungen & Scope
 
 ### 3.1 Im Scope (Must-Have)
-- [ ] Vollständige Entfernung des Header-Bereichs (`{/* Header Info */}`) in `AdminPage.tsx`.
-- [ ] Vollständige Entfernung der drei Informationskacheln (`{/* Control Summary Tiles */}`) in `AdminPage.tsx`.
-- [ ] Bereinigung ungenutzter Imports in `AdminPage.tsx` (`useAuth`, `Clock`, `Volume2`, `ShieldCheck`).
-- [ ] Beibehaltung der Hash-basierten Umschaltung der Reiter (`teams`, `schedule`, `desk`) und der Darstellung der entsprechenden Inhaltskomponenten (`TeamList`, `ScheduleManager`, `LiveMatchDesk`).
+- [x] Vollständige Entfernung des Header-Bereichs (`{/* Header Info */}`) in `AdminPage.tsx`.
+- [x] Vollständige Entfernung der drei Informationskacheln (`{/* Control Summary Tiles */}`) in `AdminPage.tsx`.
+- [x] Bereinigung ungenutzter Imports in `AdminPage.tsx` (`useAuth`, `Clock`, `Volume2`, `ShieldCheck`).
+- [x] Beibehaltung der Hash-basierten Umschaltung der Reiter (`teams`, `schedule`, `desk`) und der Darstellung der entsprechenden Inhaltskomponenten (`TeamList`, `ScheduleManager`, `LiveMatchDesk`).
 
 ### 3.2 Explizit Out-of-Scope
 - Änderungen am übergeordneten `AdminLayout.tsx` (die dortige Navbar und der Header bleiben unberührt).
@@ -61,20 +61,20 @@ Dieser Bereich weist mehrere Schwachstellen auf:
 ## 4. Akzeptanzkriterien
 
 ### 4.1 Szenarien / Kriterien
-- [ ] **AC-1: Arbeitsbereich startet direkt ohne Header-Vorschaltseite**
+- [x] **AC-1: Arbeitsbereich startet direkt ohne Header-Vorschaltseite**
   - **Gegeben sei (Given)**: Der Turnierleiter ist eingeloggt und ruft `/admin` (bzw. `/admin#desk`, `/admin#teams`, `/admin#schedule`) auf.
   - **Wenn (When)**: Die Seite gerendert wird.
   - **Dann (Then)**: Sind weder die Überschrift „Turnierleitung Leitstand“, noch die E-Mail-Zeile, noch das Badge „Autorisiert für Turniersteuerung“, noch die drei Kacheln („Turniertag“, „Rhythmus“, „Audio Jingle Engine“) sichtbar. Der Inhalt des gewählten Reiters beginnt direkt im oberen Inhaltsbereich.
 
-- [ ] **AC-2: Vollständige Funktionalität der Reiter**
+- [x] **AC-2: Vollständige Funktionalität der Reiter**
   - **Gegeben sei**: Der Nutzer wechselt über die obere Menüleiste zwischen „Live-Desk“, „Teams & Torjingles“ und „Zeiten & Spielplan“.
   - **Wenn**: Der Reiter gewechselt wird.
   - **Dann**: Schaltet die Ansicht fehlerfrei und ohne Layout-Verschiebungen zwischen den entsprechenden Komponenten um.
 
 ### 4.2 Allgemeine Qualitätskriterien
-- [ ] Keine toten/ungenutzten Imports oder Variablen in `AdminPage.tsx`.
-- [ ] Fehlerfreie TypeScript-Kompilierung (`npm run build`).
-- [ ] Fehlerfreies Linting (`npm run lint`).
+- [x] Keine toten/ungenutzten Imports oder Variablen in `AdminPage.tsx`.
+- [x] Fehlerfreie TypeScript-Kompilierung (`npm run build`).
+- [x] Fehlerfreies Linting (`npm run lint`).
 
 ---
 
@@ -132,8 +132,8 @@ Dieser Bereich weist mehrere Schwachstellen auf:
 6. [ ] Prüfen auf Tablet-/Desktop-Auflösung: Optimierte Platzausnutzung.
 
 ### 8.2 Automatisierte Tests / Validierung
-- [ ] `npm run lint` fehlerfrei.
-- [ ] `npm run build` fehlerfrei ohne TypeScript-Fehler.
+- [x] `npm run lint` fehlerfrei.
+- [x] `npm run build` fehlerfrei ohne TypeScript-Fehler.
 
 ---
 
