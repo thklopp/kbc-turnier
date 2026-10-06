@@ -1,6 +1,6 @@
 # SPEC-008: Optimierung der Gast-Navigation, einklappbare Spielplan-Filter und Bereinigung der Spielkarten
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: UX-Optimierung / Refactoring  
 > **Branch**: `feat/SPEC-008-guest-navigation-und-spielplan-cleanup`  
 > **Autor**: Antigravity Agent  
