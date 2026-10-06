@@ -6,7 +6,6 @@ import { subscribeTournamentConfig, getDefaultConfig } from "@/services/configSe
 import { useLiveMatchDesk } from "@/hooks/useLiveMatchDesk"
 import { MatchTimerControl } from "./MatchTimerControl"
 import { ScoreboardDisplay } from "./ScoreboardDisplay"
-import { PenaltyCardManager } from "./PenaltyCardManager"
 import { SoundboardPanel } from "./SoundboardPanel"
 import {
   ChevronLeft,
@@ -63,13 +62,12 @@ export function LiveMatchDesk() {
     adjustTime,
     recordGoal,
     decrementScore,
-    addPenalty,
-    removePenalty,
-    activePenalties,
     finishMatch,
     playJingle,
     stopAudio,
+    fadeOutAudio,
     isPlayingAudio,
+    isFadingAudio,
     currentMinute,
   } = useLiveMatchDesk(currentMatch, teams, config.gameDurationMinutes)
 
@@ -111,17 +109,19 @@ export function LiveMatchDesk() {
         <AlertCircle className="h-10 w-10 text-amber-500 mx-auto mb-3" />
         <h3 className="text-base font-bold text-slate-900">Keine Spiele vorhanden</h3>
         <p className="mt-1 text-xs text-slate-500 max-w-sm mx-auto">
-          Bitte wechsle zum Tab &quot;Zeitsteuerung & Spielplan (M3)&quot; und generiere zuerst die 40 Partien.
+          Bitte wechsle zum Tab &quot;Zeitsteuerung & Spielplan (M3)&quot; und generiere zuerst die Partien.
         </p>
       </div>
     )
   }
 
+  const goalEvents = currentMatch?.events?.filter((ev) => ev.type === "goal") || []
+
   return (
     <div className="space-y-6">
-      {/* Match Selector & Navigation Bar */}
-      <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2">
+      {/* ZEILE 1: Match Selector & Navigation Bar & Quick Finish Action */}
+      <div className="w-full flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-2 flex-1 max-w-2xl">
           <button
             onClick={handlePrevMatch}
             disabled={currentMatchIndex <= 0}
@@ -134,12 +134,12 @@ export function LiveMatchDesk() {
           <select
             value={selectedMatchId || ""}
             onChange={(e) => setSelectedMatchId(e.target.value)}
-            className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs sm:text-sm font-bold text-slate-900 focus:border-blue-500 focus:outline-none"
+            className="flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs sm:text-sm font-bold text-slate-900 focus:border-blue-500 focus:outline-none"
           >
             {matches.map((m) => {
               const h = teams.find((t) => t.id === m.teamHomeId)?.shortName || m.teamHomePlaceholder || "TBD"
               const a = teams.find((t) => t.id === m.teamAwayId)?.shortName || m.teamAwayPlaceholder || "TBD"
-              const statusSymbol = m.status === "finished" ? "✓" : m.status === "live" ? "🔴" : "⏳"
+              const statusSymbol = m.status === "finished" ? "✓" : m.status === "live" ? "🔴" : m.status === "paused" ? "⏸" : "⏳"
               return (
                 <option key={m.id} value={m.id}>
                   {statusSymbol} #{m.matchNumber} ({m.scheduledTime}) - {m.gender} {m.group ? `Gr.${m.group}` : ""}: {h} vs. {a}
@@ -159,7 +159,7 @@ export function LiveMatchDesk() {
         </div>
 
         {/* Current Match Metadata & Quick Finish Action */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4 justify-between sm:justify-end">
           <div className="text-right hidden sm:block">
             <span className="block text-xs font-bold text-slate-900">
               Spiel #{currentMatch?.matchNumber} &bull; Feld {currentMatch?.court}
@@ -171,85 +171,73 @@ export function LiveMatchDesk() {
 
           <button
             onClick={handleFinishAndNext}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-blue-500 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-blue-500 active:scale-95 transition-all cursor-pointer"
             title="Spiel beenden und Ergebnis fixieren"
           >
-            <CheckCircle className="h-3.5 w-3.5 text-white" />
+            <CheckCircle className="h-4 w-4 text-white" />
             <span>Spiel beenden &amp; weiter</span>
           </button>
         </div>
       </div>
 
-      {/* Grid: Timer & Scoreboard */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-        <div className="lg:col-span-1 flex flex-col">
-          <MatchTimerControl
-            secondsRemaining={secondsRemaining}
-            isRunning={isRunning}
-            onStart={startTimer}
-            onPause={pauseTimer}
-            onReset={resetTimer}
-            onAdjustTime={adjustTime}
-            status={currentMatch?.status || "scheduled"}
-          />
-        </div>
+      {/* ZEILE 2: Spieluhr (Volle Zeilenbreite) */}
+      <MatchTimerControl
+        secondsRemaining={secondsRemaining}
+        isRunning={isRunning}
+        onStart={startTimer}
+        onPause={pauseTimer}
+        onReset={resetTimer}
+        onAdjustTime={adjustTime}
+        status={currentMatch?.status || "scheduled"}
+      />
 
-        <div className="lg:col-span-2 flex flex-col">
-          <ScoreboardDisplay
-            homeTeam={homeTeam}
-            awayTeam={awayTeam}
-            homePlaceholder={currentMatch?.teamHomePlaceholder}
-            awayPlaceholder={currentMatch?.teamAwayPlaceholder}
-            scoreHome={currentMatch?.scoreHome || 0}
-            scoreAway={currentMatch?.scoreAway || 0}
-            currentMinute={currentMinute}
-            onRecordGoal={recordGoal}
-            onDecrementScore={decrementScore}
-          />
-        </div>
-      </div>
+      {/* ZEILE 3: Aktueller Spielstand (Volle Zeilenbreite) */}
+      <ScoreboardDisplay
+        homeTeam={homeTeam}
+        awayTeam={awayTeam}
+        homePlaceholder={currentMatch?.teamHomePlaceholder}
+        awayPlaceholder={currentMatch?.teamAwayPlaceholder}
+        scoreHome={currentMatch?.scoreHome || 0}
+        scoreAway={currentMatch?.scoreAway || 0}
+        currentMinute={currentMinute}
+        onRecordGoal={recordGoal}
+        onDecrementScore={decrementScore}
+      />
 
-      {/* Grid: Penalty Card Manager & Soundboard */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-        <PenaltyCardManager
-          homeTeam={homeTeam}
-          awayTeam={awayTeam}
-          activePenalties={activePenalties}
-          onAddPenalty={addPenalty}
-          onRemovePenalty={removePenalty}
-        />
+      {/* ZEILE 4: Soundboard (Volle Zeilenbreite) */}
+      <SoundboardPanel
+        homeTeam={homeTeam}
+        awayTeam={awayTeam}
+        onPlayJingle={playJingle}
+        onStopAudio={stopAudio}
+        onFadeOutAudio={fadeOutAudio}
+        isPlayingAudio={isPlayingAudio}
+        isFadingAudio={isFadingAudio}
+      />
 
-        <SoundboardPanel
-          homeTeam={homeTeam}
-          awayTeam={awayTeam}
-          onPlayJingle={playJingle}
-          onStopAudio={stopAudio}
-          isPlayingAudio={isPlayingAudio}
-        />
-      </div>
-
-      {/* Match Events History */}
-      {currentMatch?.events && currentMatch.events.length > 0 && (
+      {/* Tor-Ereignis-Protokoll (falls Tore gefallen sind) */}
+      {goalEvents.length > 0 && (
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">
-            Ereignis-Protokoll Spiel #{currentMatch.matchNumber} ({currentMatch.events.length})
+            Tore-Chronik Spiel #{currentMatch?.matchNumber} ({goalEvents.length} Tore)
           </h4>
           <div className="flex flex-wrap gap-2">
-            {currentMatch.events.map((ev, i) => (
-              <span
-                key={ev.id || i}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-800"
-              >
-                <Clock className="h-3 w-3 text-slate-400" />
-                <span className="font-bold">{ev.matchMinute}. Min</span>
-                <span>&bull;</span>
-                {ev.type === "goal" && <span className="font-bold text-emerald-700">⚽ Tor ({ev.teamId})</span>}
-                {ev.type === "card_green" && <span className="font-bold text-emerald-700">🟩 Grüne Karte</span>}
-                {ev.type === "card_yellow" && <span className="font-bold text-amber-700">🟨 Gelbe Karte</span>}
-                {ev.type === "card_red" && <span className="font-bold text-rose-700">🟥 Rote Karte</span>}
-                {ev.playerNumber && <span className="text-slate-500">#{ev.playerNumber}</span>}
-              </span>
-            ))}
+            {goalEvents.map((ev, i) => {
+              const team = teams.find((t) => t.id === ev.teamId)
+              const teamName = team?.shortName || team?.name || (ev.teamId === "home" ? "Heim" : "Gast")
+              return (
+                <span
+                  key={ev.id || i}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-800"
+                >
+                  <Clock className="h-3 w-3 text-slate-400" />
+                  <span className="font-bold">{ev.matchMinute}. Min</span>
+                  <span>&bull;</span>
+                  <span className="font-bold text-emerald-700">⚽ Tor: {teamName}</span>
+                  {ev.playerNumber && <span className="text-slate-500 font-mono">#{ev.playerNumber}</span>}
+                </span>
+              )
+            })}
           </div>
         </div>
       )}

@@ -4,16 +4,6 @@ import { updateMatch } from "@/services/matchService"
 import { useAudioPlayer } from "./useAudioPlayer"
 import { playBuzzerHorn } from "@/lib/soundboard"
 
-export interface ActivePenalty {
-  id: string
-  teamId: string
-  teamName: string
-  playerNumber?: number
-  cardType: "green" | "yellow"
-  totalSeconds: number
-  secondsRemaining: number
-}
-
 export function useLiveMatchDesk(
   match: Match | null,
   teams: Team[],
@@ -26,19 +16,17 @@ export function useLiveMatchDesk(
     match?.timerSecondsRemaining !== undefined ? match.timerSecondsRemaining : durationInSeconds
   )
   const [isRunning, setIsRunning] = useState<boolean>(match?.isTimerRunning || false)
-  const [activePenalties, setActivePenalties] = useState<ActivePenalty[]>([])
 
-  // Offizielles React-Pattern: State synchronisieren, wenn sich die übergebene match-ID ändert
+  // State synchronisieren, wenn sich die match-ID ändert
   if (match && match.id !== prevMatchId) {
     setPrevMatchId(match.id)
     setSecondsRemaining(
       match.timerSecondsRemaining !== undefined ? match.timerSecondsRemaining : durationInSeconds
     )
     setIsRunning(Boolean(match.isTimerRunning))
-    setActivePenalties([])
   }
 
-  const { play, stop, isPlaying } = useAudioPlayer()
+  const { play, stop, fadeOut, isPlaying, isFading } = useAudioPlayer()
   const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Helper zum Berechnen der aktuellen Spielminute
@@ -70,7 +58,7 @@ export function useLiveMatchDesk(
     const interval = setInterval(() => {
       setSecondsRemaining((prev) => {
         if (prev <= 1) {
-          // Spielzeit abgelaufen -> Schlusshorn auslösen!
+          // Spielzeit abgelaufen -> Schlusshorn auslösen
           setIsRunning(false)
           playBuzzerHorn()
           syncToFirestore({
@@ -81,7 +69,7 @@ export function useLiveMatchDesk(
           return 0
         }
         const next = prev - 1
-        // Regelmäßiger Sync alle 5 Sekunden zur Schonung von Firestore
+        // Regelmäßiger Sync alle 5 Sekunden
         if (next % 5 === 0) {
           syncToFirestore({
             timerSecondsRemaining: next,
@@ -91,14 +79,6 @@ export function useLiveMatchDesk(
         }
         return next
       })
-
-      // Aktive Strafzeiten herunterzählen
-      setActivePenalties((prevList) =>
-        prevList.map((p) => ({
-          ...p,
-          secondsRemaining: Math.max(0, p.secondsRemaining - 1),
-        }))
-      )
     }, 1000)
 
     return () => clearInterval(interval)
@@ -171,7 +151,7 @@ export function useLiveMatchDesk(
       const newScoreHome = isHome ? (match.scoreHome || 0) + 1 : match.scoreHome || 0
       const newScoreAway = !isHome ? (match.scoreAway || 0) + 1 : match.scoreAway || 0
 
-      // 1. Torjingle abspielen falls vorhanden (strikt fehlertolerant & entkoppelt)
+      // 1. Torjingle abspielen falls vorhanden
       if (scoringTeam?.jingleUrl && scoringTeam.jingleUrl.trim() !== "") {
         try {
           play(scoringTeam.jingleUrl)
@@ -196,6 +176,7 @@ export function useLiveMatchDesk(
     [match, teams, getCurrentMinute, play]
   )
 
+  // Tor abziehen (Sicherheitskorrektur ohne Jingle)
   const decrementScore = useCallback(
     async (isHome: boolean) => {
       if (!match) return
@@ -205,7 +186,7 @@ export function useLiveMatchDesk(
       const newScoreHome = isHome ? currentScore - 1 : match.scoreHome || 0
       const newScoreAway = !isHome ? currentScore - 1 : match.scoreAway || 0
 
-      // Letztes Goal-Event des jeweiligen Teams entfernen, falls vorhanden
+      // Letztes Goal-Event des jeweiligen Teams entfernen
       const events = match.events || []
       const targetTeamId = isHome ? match.teamHomeId : match.teamAwayId
       const fallbackId = isHome ? "home" : "away"
@@ -238,71 +219,6 @@ export function useLiveMatchDesk(
     [match]
   )
 
-  // Verwarnung / Zeitstrafe hinzufügen
-  const addPenalty = useCallback(
-    async (
-      teamId: string,
-      playerNumber: number | undefined,
-      cardType: "green" | "yellow" | "red",
-      durationPenaltySeconds = 120
-    ) => {
-      if (!match) return
-
-      const team = teams.find((t) => t.id === teamId)
-      const minute = getCurrentMinute()
-
-      const eventType =
-        cardType === "green"
-          ? "card_green"
-          : cardType === "yellow"
-          ? "card_yellow"
-          : "card_red"
-
-      const validPlayerNumber =
-        typeof playerNumber === "number" && !isNaN(playerNumber) ? playerNumber : undefined
-
-      const newEvent: MatchEvent = {
-        id: `card-${Date.now().toString(36)}`,
-        type: eventType,
-        teamId,
-        matchMinute: minute,
-        timestamp: { seconds: Math.floor(Date.now() / 1000), nanoseconds: 0 } as MatchEvent["timestamp"],
-        ...(validPlayerNumber !== undefined ? { playerNumber: validPlayerNumber } : {}),
-      }
-
-      const updatedEvents = [...(match.events || []), newEvent]
-
-      if (cardType === "green" || cardType === "yellow") {
-        setActivePenalties((prev) => [
-          ...prev,
-          {
-            id: newEvent.id,
-            teamId,
-            teamName: team?.name || "Team",
-            ...(validPlayerNumber !== undefined ? { playerNumber: validPlayerNumber } : {}),
-            cardType,
-            totalSeconds: durationPenaltySeconds,
-            secondsRemaining: durationPenaltySeconds,
-          },
-        ])
-      }
-
-      try {
-        await updateMatch(match.id, {
-          events: updatedEvents,
-        })
-      } catch (err) {
-        console.error("Fehler beim Speichern der Karte in Firestore:", err)
-        throw err
-      }
-    },
-    [match, teams, getCurrentMinute]
-  )
-
-  const removePenalty = useCallback((penaltyId: string) => {
-    setActivePenalties((prev) => prev.filter((p) => p.id !== penaltyId))
-  }, [])
-
   // Spiel abschließen
   const finishMatch = useCallback(async () => {
     if (!match) return
@@ -325,13 +241,12 @@ export function useLiveMatchDesk(
     adjustTime,
     recordGoal,
     decrementScore,
-    addPenalty,
-    removePenalty,
-    activePenalties,
     finishMatch,
     playJingle: play,
     stopAudio: stop,
+    fadeOutAudio: fadeOut,
     isPlayingAudio: isPlaying,
+    isFadingAudio: isFading,
     currentMinute: getCurrentMinute(),
   }
 }

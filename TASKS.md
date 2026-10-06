@@ -74,7 +74,7 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
   - Tor-Eingabe (Heim / Gast) mit Erfassung der Spielminute
   - Schneller Torjingle-Auslöser: Beim Torerfolg spielt der Jingle des Teams unmittelbar ab
   - Manueller Soundboard-Button für Schlusshorn & Hallenjingles
-  - Verwarnungen & Zeitstrafen (Grüne Karte, Gelbe Karte) mit automatischem Strafzeit-Countdown
+  - [SPEC-006] Redesign Live-Desk: Full-Width 4-Zeilen Stack (Spielauswahl, Spieluhr, Spielstand, Soundboard), Entfernung Strafkarten, sanftes Jingle-Fade-Out & sichere Tor-Korrektur
 - [x] Spiel beenden und automatischer Übergang zum nächsten Spiel.
 
 ---
