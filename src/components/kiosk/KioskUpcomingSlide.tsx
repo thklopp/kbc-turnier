@@ -81,6 +81,7 @@ export function KioskUpcomingSlide({
           const away = getTeam(match.teamAwayId, match.teamAwayPlaceholder, teams)
           const isNext = index === 0 && match.status !== "finished"
           const isLive = match.status === "live"
+          const isPaused = match.status === "paused"
 
           const genderBadge =
             match.gender === "wU14"
@@ -100,6 +101,8 @@ export function KioskUpcomingSlide({
               className={`relative overflow-hidden rounded-2xl border p-5 shadow-md transition-all ${
                 isLive
                   ? "border-emerald-500 bg-emerald-50/40 ring-1 ring-emerald-500/20"
+                  : isPaused
+                  ? "border-amber-500 bg-amber-50/40 ring-1 ring-amber-500/20"
                   : isNext
                   ? "border-blue-500 bg-blue-50/30 ring-1 ring-blue-500/20"
                   : "border-slate-200 bg-white"
@@ -128,7 +131,12 @@ export function KioskUpcomingSlide({
                       LIVE
                     </span>
                   )}
-                  {isNext && !isLive && (
+                  {isPaused && (
+                    <span className="rounded-full bg-amber-50 border border-amber-300 px-2.5 py-0.5 text-xs font-black text-amber-700">
+                      PAUSIERT
+                    </span>
+                  )}
+                  {isNext && !isLive && !isPaused && (
                     <span className="rounded-full bg-blue-50 border border-blue-200 px-2.5 py-0.5 text-xs font-black text-blue-700">
                       Als Nächstes
                     </span>
@@ -164,7 +172,7 @@ export function KioskUpcomingSlide({
 
                 {/* VS / Score */}
                 <div className="col-span-1 flex flex-col items-center justify-center">
-                  {match.status === "finished" || match.status === "live" ? (
+                  {match.status === "finished" || match.status === "live" || match.status === "paused" ? (
                     <span className="font-mono text-lg font-black text-slate-900">
                       {match.scoreHome}:{match.scoreAway}
                     </span>

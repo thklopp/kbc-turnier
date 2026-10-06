@@ -1,5 +1,5 @@
 import type { Match, Team } from "@/types/database"
-import { Clock, ShieldAlert, Sparkles } from "lucide-react"
+import { Clock, Pause, ShieldAlert, Sparkles } from "lucide-react"
 
 interface LiveHeroCardProps {
   matches: Match[]
@@ -7,10 +7,10 @@ interface LiveHeroCardProps {
 }
 
 export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
-  // Suche nach aktuellem Live-Spiel oder nächstem geplanten Spiel
-  const liveMatch = matches.find((m) => m.status === "live")
+  // Suche nach aktuellem Spiel (live oder pausiert) oder nächstem geplanten Spiel
+  const activeMatch = matches.find((m) => m.status === "live" || m.status === "paused")
   const nextMatch = matches.find((m) => m.status === "scheduled")
-  const currentMatch = liveMatch || nextMatch
+  const currentMatch = activeMatch || nextMatch
 
   if (!currentMatch) {
     return (
@@ -27,6 +27,8 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
   const homeTeam = teams.find((t) => t.id === currentMatch.teamHomeId)
   const awayTeam = teams.find((t) => t.id === currentMatch.teamAwayId)
   const isLive = currentMatch.status === "live"
+  const isPaused = currentMatch.status === "paused"
+  const isFinished = currentMatch.status === "finished"
 
   return (
     <div className="relative overflow-hidden rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-50/70 via-white to-indigo-50/40 p-6 sm:p-8 text-slate-900 shadow-sm">
@@ -40,6 +42,11 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
             <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 border border-rose-200 px-3 py-1 text-xs font-black text-rose-600">
               <span className="h-2 w-2 rounded-full bg-rose-500 animate-ping" />
               LIVE &bull; {currentMatch.currentPeriodMinute || 1}. Minute
+            </span>
+          ) : isPaused ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-300 px-3 py-1 text-xs font-black text-amber-700">
+              <Pause className="h-3.5 w-3.5 fill-current" />
+              PAUSIERT &bull; {currentMatch.currentPeriodMinute || 1}. Minute
             </span>
           ) : (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 border border-blue-200 px-3 py-1 text-xs font-bold text-blue-700">
@@ -94,7 +101,7 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
         {/* Center Score */}
         <div className="col-span-1 flex flex-col items-center">
           <div className="font-mono text-3xl sm:text-5xl font-black tracking-tight text-slate-900">
-            {isLive || currentMatch.status === "finished" ? (
+            {isLive || isPaused || isFinished ? (
               `${currentMatch.scoreHome} : ${currentMatch.scoreAway}`
             ) : (
               <span className="text-slate-400 text-2xl sm:text-3xl font-sans font-bold">vs</span>
@@ -128,8 +135,8 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
         </div>
       </div>
 
-      {/* Events Ticker for Live Match */}
-      {isLive && currentMatch.events && currentMatch.events.length > 0 && (
+      {/* Events Ticker for Live or Paused Match */}
+      {(isLive || isPaused) && currentMatch.events && currentMatch.events.length > 0 && (
         <div className="relative z-10 mt-6 border-t border-slate-200/80 pt-4">
           <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
             <ShieldAlert className="h-3.5 w-3.5 text-blue-600" />

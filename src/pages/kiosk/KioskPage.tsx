@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react"
-import { Trophy, Radio, WifiOff } from "lucide-react"
+import { Trophy, Radio, WifiOff, Pause } from "lucide-react"
 import type { Match, Team, TournamentConfig } from "@/types/database"
 import { subscribeMatches } from "@/services/matchService"
 import { subscribeTeams } from "@/services/teamService"
@@ -133,9 +133,11 @@ export function KioskPage() {
     if (liveMatch) {
       const home = teams.find((t) => t.id === liveMatch.teamHomeId)?.shortName || liveMatch.teamHomePlaceholder || "Heim"
       const away = teams.find((t) => t.id === liveMatch.teamAwayId)?.shortName || liveMatch.teamAwayPlaceholder || "Gast"
+      const isPaused = liveMatch.status === "paused"
       return {
-        isLive: true,
-        text: `Spiel #${liveMatch.matchNumber} (${liveMatch.gender}): ${home} ${liveMatch.scoreHome} : ${liveMatch.scoreAway} ${away}`,
+        isLive: !isPaused,
+        isPaused,
+        text: `Spiel #${liveMatch.matchNumber} (${liveMatch.gender}): ${home} ${liveMatch.scoreHome} : ${liveMatch.scoreAway} ${away}${isPaused ? " (Pausiert)" : ""}`,
       }
     }
     if (nextMatch) {
@@ -143,11 +145,13 @@ export function KioskPage() {
       const away = teams.find((t) => t.id === nextMatch.teamAwayId)?.shortName || nextMatch.teamAwayPlaceholder || "Gast"
       return {
         isLive: false,
+        isPaused: false,
         text: `Nächstes Spiel #${nextMatch.matchNumber} (${nextMatch.gender}, ${nextMatch.scheduledTime} Uhr): ${home} vs. ${away}`,
       }
     }
     return {
       isLive: false,
+      isPaused: false,
       text: "Turnierplan beendet oder in Vorbereitung.",
     }
   }
@@ -229,6 +233,11 @@ export function KioskPage() {
               <span className="flex items-center gap-2 rounded-xl bg-red-50 border border-red-200 px-3 py-1 text-xs font-black uppercase tracking-wider text-red-600 animate-pulse">
                 <Radio className="h-4 w-4" />
                 Live auf Feld 1
+              </span>
+            ) : tickerInfo.isPaused ? (
+              <span className="flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-300 px-3 py-1 text-xs font-black uppercase tracking-wider text-amber-700">
+                <Pause className="h-4 w-4 fill-current" />
+                Pausiert auf Feld 1
               </span>
             ) : (
               <span className="flex items-center gap-2 rounded-xl bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700 border border-slate-200">

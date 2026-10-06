@@ -7,7 +7,8 @@ import { playBuzzerHorn } from "@/lib/soundboard"
 export function useLiveMatchDesk(
   match: Match | null,
   teams: Team[],
-  gameDurationMinutes: number
+  gameDurationMinutes: number,
+  allMatches: Match[] = []
 ) {
   const durationInSeconds = (gameDurationMinutes || 20) * 60
 
@@ -85,8 +86,34 @@ export function useLiveMatchDesk(
   }, [isRunning, durationInSeconds, syncToFirestore])
 
   // Timer Controls
-  const startTimer = useCallback(() => {
-    if (secondsRemaining <= 0) return
+  const startTimer = useCallback(async () => {
+    if (!match || secondsRemaining <= 0) return
+
+    // Exklusivitäts-Prüfung: Darf nur genau ein aktives Spiel geben (Option A)
+    const otherActiveMatch = allMatches.find(
+      (m) => m.id !== match.id && (m.status === "live" || m.status === "paused")
+    )
+
+    if (otherActiveMatch) {
+      const statusText = otherActiveMatch.status === "live" ? "aktiv (live)" : "pausiert"
+      const confirmed = window.confirm(
+        `Spiel #${otherActiveMatch.matchNumber} ist aktuell noch ${statusText}.\n\nMöchtest du Spiel #${otherActiveMatch.matchNumber} offiziell beenden, um Spiel #${match.matchNumber} zu starten?`
+      )
+      if (!confirmed) {
+        return
+      }
+
+      try {
+        await updateMatch(otherActiveMatch.id, {
+          status: "finished",
+          isTimerRunning: false,
+          timerSecondsRemaining: 0,
+        })
+      } catch (err) {
+        console.error("Fehler beim Beenden des bisherigen aktiven Spiels:", err)
+      }
+    }
+
     setIsRunning(true)
     syncToFirestore({
       isTimerRunning: true,
@@ -94,16 +121,22 @@ export function useLiveMatchDesk(
       timerSecondsRemaining: secondsRemaining,
       currentPeriodMinute: getCurrentMinute(),
     })
-  }, [secondsRemaining, syncToFirestore, getCurrentMinute])
+  }, [match, secondsRemaining, allMatches, syncToFirestore, getCurrentMinute])
 
   const pauseTimer = useCallback(() => {
+    if (!match) return
     setIsRunning(false)
-    syncToFirestore({
+    if (syncTimeoutRef.current) {
+      clearTimeout(syncTimeoutRef.current)
+      syncTimeoutRef.current = null
+    }
+    const nextStatus = match.status === "scheduled" ? "scheduled" : "paused"
+    updateMatch(match.id, {
       isTimerRunning: false,
-      status: match?.status === "scheduled" ? "scheduled" : "paused",
+      status: nextStatus,
       timerSecondsRemaining: secondsRemaining,
-    })
-  }, [match?.status, secondsRemaining, syncToFirestore])
+    }).catch((err) => console.error("Firestore Match-Pause Fehler:", err))
+  }, [match, secondsRemaining])
 
   const resetTimer = useCallback(() => {
     setIsRunning(false)

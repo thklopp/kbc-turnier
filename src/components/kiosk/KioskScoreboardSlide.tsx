@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Flame, Clock, Calendar, CheckCircle2 } from "lucide-react"
+import { Flame, Clock, Calendar, CheckCircle2, Pause } from "lucide-react"
 import type { Match, Team } from "@/types/database"
 import rrkLogo from "@/assets/images/RRK.webp"
 
@@ -108,6 +108,12 @@ export function KioskScoreboardSlide({
           <span className="flex items-center gap-1.5 rounded-full bg-red-50 border border-red-200 px-3.5 py-1 text-xs font-black tracking-wide uppercase text-red-600 animate-pulse">
             <span className="h-2 w-2 rounded-full bg-red-500" />
             Live im Spiel
+          </span>
+        )}
+        {isPaused && (
+          <span className="flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-300 px-3.5 py-1 text-xs font-black tracking-wide uppercase text-amber-700">
+            <Pause className="h-3.5 w-3.5 fill-current" />
+            Pausiert
           </span>
         )}
       </div>
@@ -256,8 +262,8 @@ export function KioskScoreboardSlide({
         )}
       </div>
 
-      {/* Up Next Preview sub-bar if currently live */}
-      {isLive && nextMatch && (
+      {/* Up Next Preview sub-bar if currently live or paused */}
+      {(isLive || isPaused) && nextMatch && (
         <div className="mt-4 flex items-center gap-3 rounded-2xl bg-white border border-slate-200 px-6 py-2 text-sm text-slate-700 shadow-md">
           <span className="font-bold text-blue-600 uppercase text-xs tracking-wider">
             Als Nächstes:

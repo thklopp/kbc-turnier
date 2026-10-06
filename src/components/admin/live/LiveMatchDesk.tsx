@@ -25,11 +25,11 @@ export function LiveMatchDesk() {
       (m) => {
         setMatches(m)
         setLoading(false)
-        // Automatisch das erste Live-Spiel oder erste geplante Spiel vorwählen
+        // Automatisch das aktive Spiel (live oder paused) oder erste geplante Spiel vorwählen
         if (!selectedMatchId && m.length > 0) {
-          const live = m.find((x) => x.status === "live")
+          const active = m.find((x) => x.status === "live" || x.status === "paused")
           const next = m.find((x) => x.status === "scheduled")
-          setSelectedMatchId((live || next || m[0]).id)
+          setSelectedMatchId((active || next || m[0]).id)
         }
       },
       (err) => console.error("LiveDesk Matches Fehler:", err)
@@ -67,7 +67,7 @@ export function LiveMatchDesk() {
     isPlayingAudio,
     isFadingAudio,
     currentMinute,
-  } = useLiveMatchDesk(currentMatch, teams, config.gameDurationMinutes)
+  } = useLiveMatchDesk(currentMatch, teams, config.gameDurationMinutes, matches)
 
   const handleNextMatch = () => {
     if (currentMatchIndex < matches.length - 1) {

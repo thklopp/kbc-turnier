@@ -187,6 +187,7 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
             const away = teamMap.get(match.teamAwayId)
             const isFemale = match.gender === "wU14"
             const isLive = match.status === "live"
+            const isPaused = match.status === "paused"
             const isFinished = match.status === "finished"
 
             return (
@@ -195,6 +196,8 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
                 className={`rounded-2xl border p-4 transition-all shadow-xs ${
                   isLive
                     ? "border-rose-300 bg-rose-50/40 ring-1 ring-rose-400"
+                    : isPaused
+                    ? "border-amber-300 bg-amber-50/40 ring-1 ring-amber-400"
                     : "border-slate-200 bg-white hover:border-slate-300"
                 }`}
               >
@@ -236,6 +239,11 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
                         LIVE
                       </span>
                     )}
+                    {isPaused && (
+                      <span className="rounded-full bg-amber-500 text-white px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                        PAUSIERT
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -246,7 +254,7 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 overflow-hidden">
                       {home?.logoUrl ? (
                         <img
-                          src={home.logoUrl}
+                          src={home?.logoUrl}
                           alt=""
                           className="h-full w-full object-contain p-0.5"
                         />
@@ -267,7 +275,7 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
                   {/* Score */}
                   <div className="flex flex-col items-center shrink-0 px-3">
                     <div className="font-mono text-base font-black tracking-tight text-slate-900 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1">
-                      {isLive || isFinished ? (
+                      {isLive || isPaused || isFinished ? (
                         `${match.scoreHome} : ${match.scoreAway}`
                       ) : (
                         <span className="text-slate-400 text-xs font-sans">vs</span>
@@ -275,6 +283,11 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
                     </div>
                     {isLive && (
                       <span className="text-[10px] font-bold text-rose-600 mt-0.5">
+                        {match.currentPeriodMinute || 1}&apos;
+                      </span>
+                    )}
+                    {isPaused && (
+                      <span className="text-[10px] font-bold text-amber-600 mt-0.5">
                         {match.currentPeriodMinute || 1}&apos;
                       </span>
                     )}
