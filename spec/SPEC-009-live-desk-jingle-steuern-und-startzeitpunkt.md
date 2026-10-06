@@ -1,6 +1,6 @@
 # SPEC-009: Live-Desk Jingle-Steuerung & Startzeitpunkt-Konfiguration
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature & Optimierung  
 > **Branch**: feat/SPEC-009-live-desk-jingle-steuern-und-startzeitpunkt  
 > **Autor**: Thorsten / Antigravity  
