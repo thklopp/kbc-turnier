@@ -174,6 +174,9 @@ export function LiveMatchDesk() {
         onResetTimer={resetTimer}
         onAdjustTime={adjustTime}
         onFinishMatch={handleFinishAndNext}
+        onFadeOutAudio={fadeOutAudio}
+        isPlayingAudio={isPlayingAudio}
+        isFadingAudio={isFadingAudio}
       />
 
       {/* ZEILE 4: Soundboard (Volle Zeilenbreite) */}

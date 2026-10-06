@@ -151,10 +151,10 @@ export function useLiveMatchDesk(
       const newScoreHome = isHome ? (match.scoreHome || 0) + 1 : match.scoreHome || 0
       const newScoreAway = !isHome ? (match.scoreAway || 0) + 1 : match.scoreAway || 0
 
-      // 1. Torjingle abspielen falls vorhanden
+      // 1. Torjingle abspielen falls vorhanden (inkl. individuellem Startzeitpunkt)
       if (scoringTeam?.jingleUrl && scoringTeam.jingleUrl.trim() !== "") {
         try {
-          play(scoringTeam.jingleUrl)
+          play(scoringTeam.jingleUrl, scoringTeam.jingleStartTimeMs || 0)
         } catch (audioErr) {
           console.warn("Torjingle konnte nicht abgespielt werden:", audioErr)
         }

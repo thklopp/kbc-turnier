@@ -25,6 +25,7 @@ export interface Team {
   group: TournamentGroup
   logoUrl: string | null
   jingleUrl: string | null
+  jingleStartTimeMs?: number
   contactPerson?: {
     name: string
     phone: string

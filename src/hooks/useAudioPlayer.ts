@@ -24,8 +24,8 @@ export function useAudioPlayer() {
   }, [])
 
   const fadeOut = useCallback(
-    (durationMs = 800) => {
-      if (!audioRef.current || !isPlaying) return
+    (durationMs = 1000) => {
+      if (!audioRef.current || !isPlaying || isFading) return
 
       if (fadeTimerRef.current) {
         clearInterval(fadeTimerRef.current)
@@ -34,7 +34,7 @@ export function useAudioPlayer() {
 
       const audio = audioRef.current
       const startVolume = audio.volume
-      const steps = 16
+      const steps = 20
       const stepInterval = Math.max(20, Math.floor(durationMs / steps))
       let currentStep = 0
 
@@ -63,11 +63,11 @@ export function useAudioPlayer() {
         }
       }, stepInterval)
     },
-    [isPlaying]
+    [isPlaying, isFading]
   )
 
   const play = useCallback(
-    (url?: string | null) => {
+    (url?: string | null, startTimeMs?: number) => {
       setError(null)
 
       if (!url || typeof url !== "string" || !url.trim()) {
@@ -81,7 +81,7 @@ export function useAudioPlayer() {
       setIsFading(false)
 
       if (currentUrl === url && isPlaying) {
-        fadeOut()
+        fadeOut(1000)
         return
       }
 
@@ -92,7 +92,25 @@ export function useAudioPlayer() {
       const audio = audioRef.current
       audio.volume = 1
       audio.src = url
-      audio.currentTime = 0
+
+      const startSeconds = Math.max(0, (startTimeMs || 0) / 1000)
+
+      const applyStartTime = () => {
+        try {
+          if (startSeconds > 0) {
+            audio.currentTime = startSeconds
+          } else {
+            audio.currentTime = 0
+          }
+        } catch {
+          // Falls Audio-Metadaten noch laden, wird dies unten über onloadedmetadata abgesichert
+        }
+      }
+
+      applyStartTime()
+      audio.onloadedmetadata = () => {
+        applyStartTime()
+      }
 
       audio.onended = () => {
         setIsPlaying(false)
@@ -112,6 +130,7 @@ export function useAudioPlayer() {
         .then(() => {
           setIsPlaying(true)
           setCurrentUrl(url)
+          applyStartTime()
         })
         .catch((err) => {
           console.warn("Autoplay / Wiedergabe-Fehler:", err)

@@ -9,6 +9,7 @@ import {
   RotateCcw,
   Clock,
   CheckCircle,
+  Square,
 } from "lucide-react"
 
 interface ScoreboardDisplayProps {
@@ -31,6 +32,10 @@ interface ScoreboardDisplayProps {
   onAdjustTime: (deltaSeconds: number) => void
   // Match finish action
   onFinishMatch: () => void
+  // Audio / Jingle control integration
+  onFadeOutAudio?: (durationMs?: number) => void
+  isPlayingAudio?: (url?: string) => boolean
+  isFadingAudio?: boolean
 }
 
 export function ScoreboardDisplay({
@@ -51,7 +56,17 @@ export function ScoreboardDisplay({
   onResetTimer,
   onAdjustTime,
   onFinishMatch,
+  onFadeOutAudio,
+  isPlayingAudio,
+  isFadingAudio,
 }: ScoreboardDisplayProps) {
+  const isHomeJinglePlaying = Boolean(
+    homeTeam?.jingleUrl && isPlayingAudio?.(homeTeam.jingleUrl)
+  )
+  const isAwayJinglePlaying = Boolean(
+    awayTeam?.jingleUrl && isPlayingAudio?.(awayTeam.jingleUrl)
+  )
+
   const minutes = Math.floor(secondsRemaining / 60)
   const seconds = secondsRemaining % 60
   const formattedTime = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
@@ -220,15 +235,26 @@ export function ScoreboardDisplay({
 
           {/* Goal Action Buttons Heim */}
           <div className="w-full flex flex-col items-center gap-1.5 mt-4">
-            <button
-              onClick={() => onRecordGoal(true)}
-              className="w-full max-w-[220px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-black text-white shadow-md hover:bg-emerald-500 active:scale-98 transition-all cursor-pointer"
-              title={homeTeam?.jingleUrl ? "Tor für Heimteam (spielt Torjingle ab)" : "Tor für Heimteam eintragen"}
-            >
-              <Plus className="h-5 w-5" />
-              <span>Tor Heim (+1)</span>
-              {homeTeam?.jingleUrl && <Music className="h-4 w-4 text-emerald-200 ml-0.5" />}
-            </button>
+            {isHomeJinglePlaying ? (
+              <button
+                onClick={() => onFadeOutAudio?.(1000)}
+                className="w-full max-w-[220px] inline-flex items-center justify-center gap-2 rounded-xl bg-purple-600 px-4 py-3 text-sm font-black text-white shadow-md hover:bg-purple-500 active:scale-98 transition-all cursor-pointer animate-pulse"
+                title="Torjingle innerhalb von 1 Sekunde sanft ausblenden"
+              >
+                <Square className="h-5 w-5 fill-current" />
+                <span>{isFadingAudio ? "Blende aus..." : "Jingle stoppen"}</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => onRecordGoal(true)}
+                className="w-full max-w-[220px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-black text-white shadow-md hover:bg-emerald-500 active:scale-98 transition-all cursor-pointer"
+                title={homeTeam?.jingleUrl ? "Tor für Heimteam (spielt Torjingle ab)" : "Tor für Heimteam eintragen"}
+              >
+                <Plus className="h-5 w-5" />
+                <span>Tor Heim (+1)</span>
+                {homeTeam?.jingleUrl && <Music className="h-4 w-4 text-emerald-200 ml-0.5" />}
+              </button>
+            )}
 
             <button
               onClick={() => onDecrementScore(true)}
@@ -275,15 +301,26 @@ export function ScoreboardDisplay({
 
           {/* Goal Action Buttons Gast */}
           <div className="w-full flex flex-col items-center gap-1.5 mt-4">
-            <button
-              onClick={() => onRecordGoal(false)}
-              className="w-full max-w-[220px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-black text-white shadow-md hover:bg-emerald-500 active:scale-98 transition-all cursor-pointer"
-              title={awayTeam?.jingleUrl ? "Tor für Gastteam (spielt Torjingle ab)" : "Tor für Gastteam eintragen"}
-            >
-              <Plus className="h-5 w-5" />
-              <span>Tor Gast (+1)</span>
-              {awayTeam?.jingleUrl && <Music className="h-4 w-4 text-emerald-200 ml-0.5" />}
-            </button>
+            {isAwayJinglePlaying ? (
+              <button
+                onClick={() => onFadeOutAudio?.(1000)}
+                className="w-full max-w-[220px] inline-flex items-center justify-center gap-2 rounded-xl bg-purple-600 px-4 py-3 text-sm font-black text-white shadow-md hover:bg-purple-500 active:scale-98 transition-all cursor-pointer animate-pulse"
+                title="Torjingle innerhalb von 1 Sekunde sanft ausblenden"
+              >
+                <Square className="h-5 w-5 fill-current" />
+                <span>{isFadingAudio ? "Blende aus..." : "Jingle stoppen"}</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => onRecordGoal(false)}
+                className="w-full max-w-[220px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-black text-white shadow-md hover:bg-emerald-500 active:scale-98 transition-all cursor-pointer"
+                title={awayTeam?.jingleUrl ? "Tor für Gastteam (spielt Torjingle ab)" : "Tor für Gastteam eintragen"}
+              >
+                <Plus className="h-5 w-5" />
+                <span>Tor Gast (+1)</span>
+                {awayTeam?.jingleUrl && <Music className="h-4 w-4 text-emerald-200 ml-0.5" />}
+              </button>
+            )}
 
             <button
               onClick={() => onDecrementScore(false)}

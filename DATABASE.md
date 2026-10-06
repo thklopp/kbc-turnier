@@ -72,6 +72,7 @@ export interface Team {
   group: TournamentGroup;            // Gruppe "A" oder "B" für die Samstags-Gruppenphase
   logoUrl: string | null;            // Firebase Storage Download-URL (PNG/SVG/WebP)
   jingleUrl: string | null;          // Firebase Storage Download-URL (MP3)
+  jingleStartTimeMs?: number;        // Startzeitpunkt in Millisekunden (Standard: 0)
   contactPerson?: {
     name: string;
     phone: string;

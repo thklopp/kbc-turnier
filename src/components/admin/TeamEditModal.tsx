@@ -1,7 +1,8 @@
 import { useState, useRef, type ChangeEvent, type FormEvent } from "react"
 import type { Team, GenderCategory, TournamentGroup } from "@/types/database"
 import { uploadTeamLogo, uploadTeamJingle, saveTeam, deleteTeam } from "@/services/teamService"
-import { X, Upload, Music, Image as ImageIcon, Trash2, AlertCircle, CheckCircle } from "lucide-react"
+import { useAudioPlayer } from "@/hooks/useAudioPlayer"
+import { X, Upload, Music, Image as ImageIcon, Trash2, AlertCircle, CheckCircle, Play, Square } from "lucide-react"
 
 interface TeamEditModalProps {
   team: Team | null
@@ -18,6 +19,10 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [logoPreview, setLogoPreview] = useState<string | null>(team.logoUrl)
   const [jingleFile, setJingleFile] = useState<File | null>(null)
+  const [previewAudioUrl, setPreviewAudioUrl] = useState<string | null>(team.jingleUrl)
+  const [jingleStartTimeMs, setJingleStartTimeMs] = useState<number>(team.jingleStartTimeMs ?? 0)
+
+  const { play: playPreview, stop: stopPreview, isPlaying: isPreviewPlaying } = useAudioPlayer()
 
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -63,6 +68,8 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
     }
 
     setJingleFile(file)
+    const objectUrl = URL.createObjectURL(file)
+    setPreviewAudioUrl(objectUrl)
   }
 
   const handleSubmit = async (e: FormEvent) => {
@@ -94,8 +101,10 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
         group,
         logoUrl: finalLogoUrl,
         jingleUrl: finalJingleUrl,
+        jingleStartTimeMs: Math.max(0, Number(jingleStartTimeMs) || 0),
       })
 
+      stopPreview()
       setSuccess("Team erfolgreich aktualisiert!")
       setTimeout(() => {
         onClose()
@@ -111,12 +120,17 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
     }
   }
 
+  const handleClose = () => {
+    stopPreview()
+    onClose()
+  }
+
   const handleDelete = async () => {
     if (!confirm(`Soll das Team "${team.name}" wirklich gelöscht werden?`)) return
     setSaving(true)
     try {
       await deleteTeam(team.id)
-      onClose()
+      handleClose()
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message)
@@ -136,7 +150,7 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
           <p className="text-xs text-slate-500">ID: {team.id}</p>
         </div>
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
         >
           <X className="h-5 w-5" />
@@ -299,6 +313,80 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
           </div>
         </div>
 
+        {/* Startzeitpunkt Konfiguration (nur sichtbar, wenn Jingle vorhanden) */}
+        {(team.jingleUrl || jingleFile) && (
+          <div className="rounded-xl border border-purple-200 bg-purple-50/50 p-3.5 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <label className="block text-xs font-bold text-slate-800">
+                Startzeitpunkt des Jingles
+              </label>
+              <span className="text-[11px] font-mono font-bold text-purple-700 bg-purple-100 border border-purple-200 px-2 py-0.5 rounded-md">
+                {(jingleStartTimeMs / 1000).toFixed(1)}s Versatz
+              </span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 items-center">
+              <div className="col-span-2">
+                <div className="relative">
+                  <input
+                    type="number"
+                    min={0}
+                    step={100}
+                    value={jingleStartTimeMs}
+                    onChange={(e) =>
+                      setJingleStartTimeMs(Math.max(0, parseInt(e.target.value, 10) || 0))
+                    }
+                    placeholder="0"
+                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-mono font-bold text-slate-900 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 pr-10"
+                  />
+                  <span className="absolute right-3 top-1.5 text-xs text-slate-400 font-medium">
+                    ms
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const url = previewAudioUrl || team.jingleUrl
+                    if (!url) return
+                    if (isPreviewPlaying(url)) {
+                      stopPreview()
+                    } else {
+                      playPreview(url, jingleStartTimeMs)
+                    }
+                  }}
+                  className={`w-full inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-bold transition-colors cursor-pointer ${
+                    (previewAudioUrl || team.jingleUrl) &&
+                    isPreviewPlaying(previewAudioUrl || team.jingleUrl || undefined)
+                      ? "bg-purple-600 text-white animate-pulse"
+                      : "bg-white border border-purple-300 text-purple-700 hover:bg-purple-100"
+                  }`}
+                  title="Spielt den Jingle ab dem angegebenen Startzeitpunkt ab"
+                >
+                  {(previewAudioUrl || team.jingleUrl) &&
+                  isPreviewPlaying(previewAudioUrl || team.jingleUrl || undefined) ? (
+                    <>
+                      <Square className="h-3 w-3 fill-current" />
+                      <span>Stopp</span>
+                    </>
+                  ) : (
+                    <>
+                      <Play className="h-3 w-3 fill-current" />
+                      <span>Testen</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <p className="text-[11px] text-slate-500 leading-relaxed">
+              Legt fest, ab welcher Millisekunde der Torjingle startet (z. B. <strong>1500</strong> für 1,5s oder <strong>3200</strong> für 3,2s Intro-Übersprung).
+            </p>
+          </div>
+        )}
+
         {/* Buttons */}
         <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-6">
           <button
@@ -314,7 +402,7 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleClose}
               disabled={saving}
               className="rounded-lg border border-slate-300 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer disabled:opacity-50"
             >

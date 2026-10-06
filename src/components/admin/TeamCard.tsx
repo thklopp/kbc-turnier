@@ -4,7 +4,7 @@ import { Play, Square, Edit2, ShieldAlert } from "lucide-react"
 interface TeamCardProps {
   team: Team
   onEdit: (team: Team) => void
-  onPlayJingle: (url: string) => void
+  onPlayJingle: (url: string, startTimeMs?: number) => void
   onStopJingle: () => void
   isPlayingJingle: boolean
 }
@@ -72,7 +72,7 @@ export function TeamCard({
         <div className="flex items-center gap-2">
           {team.jingleUrl ? (
             <button
-              onClick={() => (isPlayingJingle ? onStopJingle() : onPlayJingle(team.jingleUrl!))}
+              onClick={() => (isPlayingJingle ? onStopJingle() : onPlayJingle(team.jingleUrl!, team.jingleStartTimeMs || 0))}
               className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold transition-colors cursor-pointer ${
                 isPlayingJingle
                   ? "bg-purple-600 text-white animate-pulse"
