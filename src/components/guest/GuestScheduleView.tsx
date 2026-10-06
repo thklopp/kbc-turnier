@@ -1,6 +1,6 @@
 import { useState } from "react"
 import type { Match, Team, GenderCategory, TournamentGroup } from "@/types/database"
-import { Filter } from "lucide-react"
+import { Filter, ChevronDown, ChevronUp, RotateCcw } from "lucide-react"
 
 interface GuestScheduleViewProps {
   matches: Match[]
@@ -11,9 +11,22 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
   const [dayFilter, setDayFilter] = useState<"all" | "saturday" | "sunday">("all")
   const [genderFilter, setGenderFilter] = useState<"all" | GenderCategory>("all")
   const [groupFilter, setGroupFilter] = useState<"all" | TournamentGroup>("all")
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
 
   const teamMap = new Map<string, Team>()
   teams.forEach((t) => teamMap.set(t.id, t))
+
+  const hasActiveFilters = dayFilter !== "all" || genderFilter !== "all" || groupFilter !== "all"
+  const activeFilterCount =
+    (dayFilter !== "all" ? 1 : 0) +
+    (genderFilter !== "all" ? 1 : 0) +
+    (groupFilter !== "all" ? 1 : 0)
+
+  const handleResetFilters = () => {
+    setDayFilter("all")
+    setGenderFilter("all")
+    setGroupFilter("all")
+  }
 
   const filteredMatches = matches.filter((m) => {
     const matchDay = dayFilter === "all" || m.day === dayFilter
@@ -24,96 +37,142 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
 
   return (
     <div className="space-y-4">
-      {/* Filter Bar */}
-      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white p-3.5 shadow-sm text-xs font-semibold">
-        <span className="inline-flex items-center gap-1 text-slate-400 mr-1">
-          <Filter className="h-3.5 w-3.5" />
-          Filter:
-        </span>
+      {/* Collapsible Filter Bar */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-3 shadow-xs">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-slate-800">
+              Spielplan
+            </span>
+            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-500">
+              {filteredMatches.length} {filteredMatches.length === 1 ? "Spiel" : "Spiele"}
+            </span>
+            {hasActiveFilters && (
+              <span className="rounded-full bg-blue-50 border border-blue-200 px-2 py-0.5 text-[10px] font-bold text-blue-700">
+                {activeFilterCount} {activeFilterCount === 1 ? "Filter aktiv" : "Filter aktiv"}
+              </span>
+            )}
+          </div>
 
-        {/* Day Filter */}
-        <div className="flex rounded-lg bg-slate-100 p-0.5 border border-slate-200">
-          <button
-            onClick={() => setDayFilter("all")}
-            className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-              dayFilter === "all" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            Alle Tage
-          </button>
-          <button
-            onClick={() => setDayFilter("saturday")}
-            className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-              dayFilter === "saturday" ? "bg-white text-blue-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            Samstag (Sa)
-          </button>
-          <button
-            onClick={() => setDayFilter("sunday")}
-            className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-              dayFilter === "sunday" ? "bg-white text-purple-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            Sonntag (So)
-          </button>
+          <div className="flex items-center gap-1.5">
+            {hasActiveFilters && (
+              <button
+                onClick={handleResetFilters}
+                className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-semibold text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors cursor-pointer"
+                title="Filter zurücksetzen"
+              >
+                <RotateCcw className="h-3 w-3" />
+                <span className="hidden sm:inline">Zurücksetzen</span>
+              </button>
+            )}
+
+            <button
+              onClick={() => setIsFilterOpen((prev) => !prev)}
+              className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
+                isFilterOpen || hasActiveFilters
+                  ? "border-blue-300 bg-blue-50 text-blue-700 shadow-xs"
+                  : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
+              }`}
+            >
+              <Filter className="h-3.5 w-3.5" />
+              <span>{isFilterOpen ? "Filter ausblenden" : "Filter anzeigen"}</span>
+              {isFilterOpen ? (
+                <ChevronUp className="h-3.5 w-3.5 ml-0.5" />
+              ) : (
+                <ChevronDown className="h-3.5 w-3.5 ml-0.5" />
+              )}
+            </button>
+          </div>
         </div>
 
-        {/* Gender Filter */}
-        <div className="flex rounded-lg bg-slate-100 p-0.5 border border-slate-200">
-          <button
-            onClick={() => setGenderFilter("all")}
-            className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-              genderFilter === "all" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            Alle Teams
-          </button>
-          <button
-            onClick={() => setGenderFilter("wU14")}
-            className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-              genderFilter === "wU14" ? "bg-white text-pink-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            wU14
-          </button>
-          <button
-            onClick={() => setGenderFilter("mU14")}
-            className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-              genderFilter === "mU14" ? "bg-white text-blue-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            mU14
-          </button>
-        </div>
+        {/* Filter Options (Collapsible) */}
+        {isFilterOpen && (
+          <div className="mt-3 pt-3 border-t border-slate-100 flex flex-wrap items-center gap-2 text-xs font-semibold">
+            {/* Day Filter */}
+            <div className="flex rounded-lg bg-slate-100 p-0.5 border border-slate-200">
+              <button
+                onClick={() => setDayFilter("all")}
+                className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
+                  dayFilter === "all" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                Alle Tage
+              </button>
+              <button
+                onClick={() => setDayFilter("saturday")}
+                className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
+                  dayFilter === "saturday" ? "bg-white text-blue-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                Samstag (Sa)
+              </button>
+              <button
+                onClick={() => setDayFilter("sunday")}
+                className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
+                  dayFilter === "sunday" ? "bg-white text-purple-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                Sonntag (So)
+              </button>
+            </div>
 
-        {/* Group Filter */}
-        <div className="flex rounded-lg bg-slate-100 p-0.5 border border-slate-200">
-          <button
-            onClick={() => setGroupFilter("all")}
-            className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-              groupFilter === "all" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            Alle Gr.
-          </button>
-          <button
-            onClick={() => setGroupFilter("A")}
-            className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-              groupFilter === "A" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            Gr. A
-          </button>
-          <button
-            onClick={() => setGroupFilter("B")}
-            className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-              groupFilter === "B" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            Gr. B
-          </button>
-        </div>
+            {/* Gender Filter */}
+            <div className="flex rounded-lg bg-slate-100 p-0.5 border border-slate-200">
+              <button
+                onClick={() => setGenderFilter("all")}
+                className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
+                  genderFilter === "all" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                Alle Teams
+              </button>
+              <button
+                onClick={() => setGenderFilter("wU14")}
+                className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
+                  genderFilter === "wU14" ? "bg-white text-pink-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                wU14
+              </button>
+              <button
+                onClick={() => setGenderFilter("mU14")}
+                className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
+                  genderFilter === "mU14" ? "bg-white text-blue-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                mU14
+              </button>
+            </div>
+
+            {/* Group Filter */}
+            <div className="flex rounded-lg bg-slate-100 p-0.5 border border-slate-200">
+              <button
+                onClick={() => setGroupFilter("all")}
+                className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
+                  groupFilter === "all" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                Alle Gr.
+              </button>
+              <button
+                onClick={() => setGroupFilter("A")}
+                className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
+                  groupFilter === "A" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                Gr. A
+              </button>
+              <button
+                onClick={() => setGroupFilter("B")}
+                className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
+                  groupFilter === "B" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                Gr. B
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Match Cards List */}
@@ -172,17 +231,11 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
                       </span>
                     )}
 
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
-                        isLive
-                          ? "bg-rose-500 text-white animate-pulse"
-                          : isFinished
-                          ? "bg-slate-200 text-slate-700"
-                          : "bg-slate-100 text-slate-500"
-                      }`}
-                    >
-                      {match.status}
-                    </span>
+                    {isLive && (
+                      <span className="rounded-full bg-rose-500 text-white px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider animate-pulse">
+                        LIVE
+                      </span>
+                    )}
                   </div>
                 </div>
 

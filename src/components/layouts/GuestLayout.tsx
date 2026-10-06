@@ -1,9 +1,14 @@
 import { Outlet, Link, useLocation } from "react-router-dom"
-import { Tv, UserRoundKey } from "lucide-react"
+import { Tv, UserRoundKey, Calendar, Trophy, Medal } from "lucide-react"
 import rrkLogo from "@/assets/images/RRK.webp"
 
 export function GuestLayout() {
   const location = useLocation()
+  const hash = location.hash
+
+  const isStandings = hash === "#standings"
+  const isFinals = hash === "#finals"
+  const isSchedule = !isStandings && !isFinals
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 text-slate-900">
@@ -48,16 +53,41 @@ export function GuestLayout() {
 
         {/* Tab Sub-Navigation */}
         <div className="border-t border-slate-100 bg-white">
-          <div className="container mx-auto flex max-w-5xl gap-4 px-4 overflow-x-auto py-2 text-sm font-medium">
+          <div className="container mx-auto flex max-w-5xl gap-6 px-4 overflow-x-auto py-2 text-xs sm:text-sm font-medium">
             <Link
-              to="/"
-              className={`pb-1 border-b-2 transition-colors ${
-                location.pathname === "/"
-                  ? "border-blue-600 text-blue-600 font-semibold"
-                  : "border-transparent text-slate-600 hover:text-slate-900"
+              to="/#schedule"
+              className={`flex items-center gap-1.5 py-1 border-b-2 transition-colors shrink-0 ${
+                isSchedule
+                  ? "border-blue-600 text-blue-600 font-bold"
+                  : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
               }`}
             >
-              Übersicht & Live
+              <Calendar className="h-4 w-4" />
+              <span>Spielplan</span>
+            </Link>
+
+            <Link
+              to="/#standings"
+              className={`flex items-center gap-1.5 py-1 border-b-2 transition-colors shrink-0 ${
+                isStandings
+                  ? "border-blue-600 text-blue-600 font-bold"
+                  : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
+              }`}
+            >
+              <Trophy className="h-4 w-4" />
+              <span>Live-Tabellen</span>
+            </Link>
+
+            <Link
+              to="/#finals"
+              className={`flex items-center gap-1.5 py-1 border-b-2 transition-colors shrink-0 ${
+                isFinals
+                  ? "border-blue-600 text-blue-600 font-bold"
+                  : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
+              }`}
+            >
+              <Medal className="h-4 w-4" />
+              <span>Finalphase</span>
             </Link>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useLocation } from "react-router-dom"
 import type { Match, Team, TournamentConfig } from "@/types/database"
 import { subscribeMatches } from "@/services/matchService"
 import { subscribeTeams } from "@/services/teamService"
@@ -7,14 +8,17 @@ import { LiveHeroCard } from "@/components/guest/LiveHeroCard"
 import { GuestScheduleView } from "@/components/guest/GuestScheduleView"
 import { StandingsView } from "@/components/guest/StandingsView"
 import { FinalsBracketView } from "@/components/guest/FinalsBracketView"
-import { Calendar, Trophy, Medal } from "lucide-react"
 
 export function HomePage() {
+  const location = useLocation()
   const [matches, setMatches] = useState<Match[]>([])
   const [teams, setTeams] = useState<Team[]>([])
   const [config, setConfig] = useState<TournamentConfig>(getDefaultConfig())
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<"schedule" | "standings" | "finals">("schedule")
+
+  const hash = location.hash
+  const activeTab: "schedule" | "standings" | "finals" =
+    hash === "#standings" ? "standings" : hash === "#finals" ? "finals" : "schedule"
 
   useEffect(() => {
     const unsubMatches = subscribeMatches(
@@ -58,46 +62,7 @@ export function HomePage() {
       {/* 1. Live Hero Card (laufendes Spiel oder nächste Partie) */}
       <LiveHeroCard matches={matches} teams={teams} />
 
-      {/* 2. Public Guest Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
-        <button
-          onClick={() => setActiveTab("schedule")}
-          className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
-            activeTab === "schedule"
-              ? "bg-blue-600 text-white shadow-sm"
-              : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-          }`}
-        >
-          <Calendar className="h-4 w-4" />
-          <span>Spielplan ({matches.length})</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab("standings")}
-          className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
-            activeTab === "standings"
-              ? "bg-blue-600 text-white shadow-sm"
-              : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-          }`}
-        >
-          <Trophy className="h-4 w-4" />
-          <span>Live-Tabellen</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab("finals")}
-          className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
-            activeTab === "finals"
-              ? "bg-blue-600 text-white shadow-sm"
-              : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
-          }`}
-        >
-          <Medal className="h-4 w-4" />
-          <span>Finalphase</span>
-        </button>
-      </div>
-
-      {/* 3. Tab Contents */}
+      {/* 2. Tab Contents */}
       {activeTab === "schedule" && (
         <section>
           <GuestScheduleView matches={matches} teams={teams} />

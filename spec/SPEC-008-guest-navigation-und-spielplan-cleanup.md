@@ -1,6 +1,6 @@
 # SPEC-008: Optimierung der Gast-Navigation, einklappbare Spielplan-Filter und Bereinigung der Spielkarten
 
-> **Status**: In Review  
+> **Status**: In Abnahme  
 > **Typ**: UX-Optimierung / Refactoring  
 > **Branch**: `feat/SPEC-008-guest-navigation-und-spielplan-cleanup`  
 > **Autor**: Antigravity Agent  
@@ -39,29 +39,29 @@ In der mobilen Gast-Ansicht (`/`) für Zuschauer und Mannschaften gibt es aktuel
 ## 3. Fachliche Anforderungen & Scope
 
 ### 3.1 Im Scope (Must-Have)
-- [ ] **1. Obere Navigation im Header (`GuestLayout.tsx`)**:
+- [x] **1. Obere Navigation im Header (`GuestLayout.tsx`)**:
   - Ersetzen des Eintrags „Übersicht & Live“ durch die drei Reiter:
     - **Spielplan** (URL: `/#schedule` bzw. Standard `/`)
     - **Live-Tabellen** (URL: `/#standings`)
     - **Finalphase** (URL: `/#finals`)
   - Aktiver Reiter wird optisch klar hervorgehoben (`border-b-2 border-blue-600 text-blue-600 font-semibold`).
   - Inaktive Reiter besitzen das Standard-Styling (`text-slate-600 hover:text-slate-900`).
-- [ ] **2. Zustandssynchronisation & Bereinigung in `HomePage.tsx`**:
+- [x] **2. Zustandssynchronisation & Bereinigung in `HomePage.tsx`**:
   - Entfernung der redundanten zweiten Reiterleiste aus dem Inhaltsbereich von `HomePage.tsx`.
   - Erkennung des aktiven Reiters anhand des URL-Hashes (`useLocation().hash`):
     - Standard / leerer Hash / `#schedule` -> Spielplan (`activeTab = "schedule"`)
     - `#standings` -> Live-Tabellen (`activeTab = "standings"`)
     - `#finals` -> Finalphase (`activeTab = "finals"`)
   - Die `LiveHeroCard` bleibt oberhalb der Reiterinhalte auf der Startseite erhalten, sodass laufende/anstehende Partien stets prominent sichtbar sind.
-- [ ] **3. Einklappbarer Filter-Bereich in `GuestScheduleView.tsx`**:
+- [x] **3. Einklappbarer Filter-Bereich in `GuestScheduleView.tsx`**:
   - Neuer lokaler Zustand `isFilterOpen` (Initialwert: `false`, standardmäßig zugeklappt).
   - Kompakter Toggle-Button im Header des Spielplans (z. B. mit `Filter`-Icon, Text „Filter anzeigen“ / „Filter ausblenden“ sowie `ChevronDown` / `ChevronUp`).
   - Ein Indikator (z. B. Punkt oder Zähler aktiver Filter), wenn Filter von der Standardeinstellung („Alle Tage“, „Alle Teams“, „Alle Gr.“) abweichen.
   - Beim Klick auf den Toggle-Button klappt der Filterblock auf bzw. zu (animiert oder sauber ein-/ausgeblendet).
   - Ein optionaler Schnell-Reset-Button („Filter zurücksetzen“), wenn Filter aktiv sind.
-- [ ] **4. Entfernung von „Feld 1“ in `LiveHeroCard.tsx`**:
+- [x] **4. Entfernung von „Feld 1“ in `LiveHeroCard.tsx`**:
   - Entfernung des Badges `<span ...>Feld {currentMatch.court}</span>` aus dem Header der `LiveHeroCard`.
-- [ ] **5. Entfernung der Status-Tags (`SCHEDULED`, `PAUSED` etc.) in `GuestScheduleView.tsx`**:
+- [x] **5. Entfernung der Status-Tags (`SCHEDULED`, `PAUSED` etc.) in `GuestScheduleView.tsx`**:
   - Entfernung des Badges mit `{match.status}` aus den Spielkarten.
   - Das Styling für Live-Spiele (pulsierender roter Indikator, Live-Spielminute, rote Rahmenakzentuierung) bleibt unverändert erhalten.
 
@@ -75,50 +75,50 @@ In der mobilen Gast-Ansicht (`/`) für Zuschauer und Mannschaften gibt es aktuel
 ## 4. Akzeptanzkriterien
 
 ### 4.1 Szenarien / Kriterien
-- [ ] **AC-1: Header-Subnavigation mit drei Reitern**
+- [x] **AC-1: Header-Subnavigation mit drei Reitern**
   - **Gegeben sei**: Ein Gast öffnet die Seite `/`.
   - **Wenn**: Der Header geladen wird.
   - **Dann**: Enthält die Sub-Navigationsleiste exakt die drei Menüpunkte „Spielplan“, „Live-Tabellen“ und „Finalphase“. Der Eintrag „Übersicht & Live“ existiert nicht mehr.
 
-- [ ] **AC-2: Hash-basierte Navigation & Synchronisation**
+- [x] **AC-2: Hash-basierte Navigation & Synchronisation**
   - **Gegeben sei**: Ein Gast klickt in der oberen Leiste auf „Live-Tabellen“.
   - **Wenn**: Der Link aktiviert wird.
   - **Dann**: Wechselt die URL auf `/#standings`, der Reiter „Live-Tabellen“ wird als aktiv hervorgehoben und darunter wird die Tabellenansicht (`StandingsView`) angezeigt.
   - **Wenn**: Der Nutzer im Browser auf „Zurück“ klickt.
   - **Dann**: Wechselt die Ansicht synchron zurück zum Spielplan (`/#schedule` bzw. `/`).
 
-- [ ] **AC-3: Keine redundante Reiterleiste im Inhaltsbereich**
+- [x] **AC-3: Keine redundante Reiterleiste im Inhaltsbereich**
   - **Gegeben sei**: Die Startseite `/` wird angezeigt.
   - **Wenn**: Der Nutzer unter die `LiveHeroCard` blickt.
   - **Dann**: Wird direkt der jeweilige Inhalt (Spielplan, Tabellen oder Finalphase) gerendert, ohne dass eine zweite Tab-Leiste dazwischengeschaltet ist.
 
-- [ ] **AC-4: Einklappbare Filter (Standard: zugeklappt)**
+- [x] **AC-4: Einklappbare Filter (Standard: zugeklappt)**
   - **Gegeben sei**: Der Reiter „Spielplan“ ist aktiv.
   - **Wenn**: Die Seite initial aufgerufen wird.
   - **Dann**: Ist der Filterbereich eingeklappt. Sichtbar ist eine kompakte Leiste mit dem Toggle-Button „Filter anzeigen“ (und der Gesamtzahl der Spiele).
   - **Wenn**: Der Nutzer auf „Filter anzeigen“ klickt.
   - **Dann**: Klappen die Filteroptionen (Tage, Geschlecht, Gruppen) auf und der Button wechselt zu „Filter ausblenden“.
 
-- [ ] **AC-5: Aktiver Filterindikator**
+- [x] **AC-5: Aktiver Filterindikator**
   - **Gegeben sei**: Die Filter sind aufgeklappt und der Nutzer filtert nach „wU14“.
   - **Wenn**: Der Nutzer die Filter wieder zuklappt.
   - **Dann**: Zeigt der Filter-Button optisch an, dass mindestens ein Filter aktiv ist (z. B. farbiger Badge / Punkt „1 Filter aktiv“), sodass für den Gast nachvollziehbar bleibt, warum die Liste gefiltert ist.
 
-- [ ] **AC-6: Entfernung von „Feld 1“**
+- [x] **AC-6: Entfernung von „Feld 1“**
   - **Gegeben sei**: In der `LiveHeroCard` wird das aktuelle oder nächste Spiel angezeigt.
   - **Wenn**: Die Karte gerendert wird.
   - **Dann**: Ist kein Badge mit der Aufschrift „Feld 1“ (oder „Feld {court}“) sichtbar.
 
-- [ ] **AC-7: Entfernung der technischen Status-Badges**
+- [x] **AC-7: Entfernung der technischen Status-Badges**
   - **Gegeben sei**: Die Liste der Spiele im Spielplan wird angezeigt.
   - **Wenn**: Geplante (`scheduled`), pausierte (`paused`) oder beendete (`finished`) Partien gerendert werden.
   - **Dann**: Erscheint kein Badge mehr mit den Texten `SCHEDULED`, `PAUSED` oder `FINISHED`. Anstoßzeit, Altersklasse, Gruppe/Phase und Spielstand bleiben intakt.
 
 ### 4.2 Allgemeine Qualitätskriterien
-- [ ] Keine fest kodierten Parameter gemäß `AGENTS.md`.
-- [ ] Vollständige TypeScript-Typisierung ohne `any`.
-- [ ] Fehlerfreier Build (`npm run build`) und Linter (`npm run lint`).
-- [ ] Responsiv und nahtlos auf Smartphones bedienbar.
+- [x] Keine fest kodierten Parameter gemäß `AGENTS.md`.
+- [x] Vollständige TypeScript-Typisierung ohne `any`.
+- [x] Fehlerfreier Build (`npm run build`) und Linter (`npm run lint`).
+- [x] Responsiv und nahtlos auf Smartphones bedienbar.
 
 ---
 

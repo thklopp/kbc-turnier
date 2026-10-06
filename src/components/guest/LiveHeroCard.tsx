@@ -47,10 +47,6 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
               Nächstes Spiel &bull; {currentMatch.scheduledTime} Uhr
             </span>
           )}
-
-          <span className="rounded-md bg-white border border-slate-200 px-2 py-0.5 text-[11px] font-bold text-slate-700 shadow-xs">
-            Feld {currentMatch.court}
-          </span>
         </div>
 
         <div className="flex items-center gap-2">
