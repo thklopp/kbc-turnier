@@ -1,6 +1,6 @@
 # SPEC-010: Exklusiv aktives Spiel & Vollständiger Pausenstatus (Live-Desk, Gast-Ansicht, Kiosk)
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature & Optimierung  
 > **Branch**: `feat/SPEC-010-single-active-match-und-pause-status`  
 > **Autor**: Thorsten / Antigravity  
