@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { Clock, Wifi, WifiOff, Maximize2, Minimize2, Pause, Play } from "lucide-react"
 import type { TournamentConfig } from "@/types/database"
+import rrkLogo from "@/assets/images/RRK.webp"
 
 interface KioskHeaderProps {
   config: TournamentConfig | null
@@ -67,12 +68,14 @@ export function KioskHeader({
       <div className="flex items-center justify-between">
         {/* Left: Tournament Branding */}
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-2xl font-bold shadow-md shadow-blue-500/10">
-            🏑
-          </div>
+          <img
+            src={rrkLogo}
+            alt="RRK Logo"
+            className="h-11 w-11 object-contain rounded-xl shadow-sm"
+          />
           <div>
             <h1 className="text-xl font-black tracking-tight text-slate-900 flex items-center gap-2">
-              {config?.tournamentName || "KBC Hallenhockey Cup 2026"}
+              {config?.tournamentName || "20. Kurt-Becker-Cup"}
               <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-600 border border-blue-200">
                 Feld 1
               </span>

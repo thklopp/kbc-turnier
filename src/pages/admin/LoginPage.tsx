@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react"
 import { useNavigate, useLocation, Link } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
-import { ShieldCheck, ArrowLeft, AlertCircle, Lock, Mail } from "lucide-react"
+import { UserRoundKey, ArrowLeft, AlertCircle, Lock, Mail } from "lucide-react"
 
 export function LoginPage() {
   const [email, setEmail] = useState("")
@@ -52,7 +52,7 @@ export function LoginPage() {
 
         <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-xl">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-white mx-auto mb-4 shadow-md shadow-blue-500/20">
-            <ShieldCheck className="h-6 w-6" />
+            <UserRoundKey className="h-6 w-6" />
           </div>
 
           <h1 className="text-xl font-bold text-center text-slate-900">

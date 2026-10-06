@@ -1,6 +1,6 @@
 import { Outlet, Link, useNavigate, useLocation } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
-import { ShieldCheck, LogOut, ArrowLeft, Users, Calendar, PlayCircle } from "lucide-react"
+import { UserRoundKey, LogOut, ArrowLeft, Users, Calendar, PlayCircle } from "lucide-react"
 
 export function AdminLayout() {
   const { currentUser, logout } = useAuth()
@@ -35,14 +35,14 @@ export function AdminLayout() {
             </Link>
             <div className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white shadow-sm">
-                <ShieldCheck className="h-4 w-4" />
+                <UserRoundKey className="h-4 w-4" />
               </div>
               <div>
                 <span className="block text-sm font-bold leading-tight text-slate-900">
                   Turnierleitung
                 </span>
                 <span className="block text-[11px] text-slate-500">
-                  KBC Turnier-Administration
+                  20. Kurt-Becker-Cup Turnier-Administration
                 </span>
               </div>
             </div>

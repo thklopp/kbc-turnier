@@ -211,7 +211,7 @@ export function KioskUpcomingSlide({
           Spielerinnen &amp; Spieler bitte 10 Minuten vor Anpfiff an der Turnierleitung spielbereit einfinden.
         </span>
         <span className="font-mono text-slate-400">
-          KBC Kiosk System &bull; Feld 1
+          20. Kurt-Becker-Cup &bull; Feld 1
         </span>
       </div>
     </div>

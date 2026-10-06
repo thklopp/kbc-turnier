@@ -12,7 +12,7 @@ const CONFIG_DOC_PATH = "config/tournament"
 
 const DEFAULT_CONFIG: TournamentConfig = {
   id: "tournament",
-  tournamentName: "KBC Hallenhockey Cup 2026",
+  tournamentName: "20. Kurt-Becker-Cup",
   gameDurationMinutes: 20,
   breakDurationMinutes: 5,
   saturdayStartTime: "10:00",

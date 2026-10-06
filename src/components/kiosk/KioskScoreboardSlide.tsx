@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Flame, Clock, Calendar, CheckCircle2 } from "lucide-react"
 import type { Match, Team } from "@/types/database"
+import rrkLogo from "@/assets/images/RRK.webp"
 
 interface KioskScoreboardSlideProps {
   currentMatch: Match | null
@@ -45,9 +46,11 @@ export function KioskScoreboardSlide({
     return (
       <div className="flex h-full flex-col items-center justify-center text-center p-8">
         <div className="rounded-3xl border-2 border-slate-200 bg-white p-12 shadow-xl max-w-xl text-slate-900">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-slate-100 text-4xl mb-4 text-slate-700">
-            🏑
-          </div>
+          <img
+            src={rrkLogo}
+            alt="RRK Logo"
+            className="mx-auto h-20 w-20 object-contain rounded-2xl mb-4"
+          />
           <h2 className="text-3xl font-black text-slate-900 mb-2">Turnierpause</h2>
           <p className="text-slate-600 text-lg">
             Aktuell sind keine weiteren Spiele für Feld 1 angesetzt oder der Spielplan wird vorbereitet.
