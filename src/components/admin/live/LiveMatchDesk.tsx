@@ -4,13 +4,11 @@ import { subscribeMatches } from "@/services/matchService"
 import { subscribeTeams } from "@/services/teamService"
 import { subscribeTournamentConfig, getDefaultConfig } from "@/services/configService"
 import { useLiveMatchDesk } from "@/hooks/useLiveMatchDesk"
-import { MatchTimerControl } from "./MatchTimerControl"
 import { ScoreboardDisplay } from "./ScoreboardDisplay"
 import { SoundboardPanel } from "./SoundboardPanel"
 import {
   ChevronLeft,
   ChevronRight,
-  CheckCircle,
   Clock,
   AlertCircle,
 } from "lucide-react"
@@ -119,79 +117,45 @@ export function LiveMatchDesk() {
 
   return (
     <div className="space-y-6">
-      {/* ZEILE 1: Match Selector & Navigation Bar & Quick Finish Action */}
-      <div className="w-full flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2 flex-1 max-w-2xl">
-          <button
-            onClick={handlePrevMatch}
-            disabled={currentMatchIndex <= 0}
-            className="rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-700 hover:bg-slate-100 disabled:opacity-40 transition-colors cursor-pointer"
-            title="Vorheriges Spiel"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
+      {/* ZEILE 1: Spielauswahl & Navigation Bar (Volle Breite) */}
+      <div className="w-full flex items-center gap-2 rounded-2xl border border-slate-200 bg-white p-3 sm:p-4 shadow-sm">
+        <button
+          onClick={handlePrevMatch}
+          disabled={currentMatchIndex <= 0}
+          className="rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-700 hover:bg-slate-100 disabled:opacity-40 transition-colors cursor-pointer"
+          title="Vorheriges Spiel"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
 
-          <select
-            value={selectedMatchId || ""}
-            onChange={(e) => setSelectedMatchId(e.target.value)}
-            className="flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs sm:text-sm font-bold text-slate-900 focus:border-blue-500 focus:outline-none"
-          >
-            {matches.map((m) => {
-              const h = teams.find((t) => t.id === m.teamHomeId)?.shortName || m.teamHomePlaceholder || "TBD"
-              const a = teams.find((t) => t.id === m.teamAwayId)?.shortName || m.teamAwayPlaceholder || "TBD"
-              const statusSymbol = m.status === "finished" ? "✓" : m.status === "live" ? "🔴" : m.status === "paused" ? "⏸" : "⏳"
-              return (
-                <option key={m.id} value={m.id}>
-                  {statusSymbol} #{m.matchNumber} ({m.scheduledTime}) - {m.gender} {m.group ? `Gr.${m.group}` : ""}: {h} vs. {a}
-                </option>
-              )
-            })}
-          </select>
+        <select
+          value={selectedMatchId || ""}
+          onChange={(e) => setSelectedMatchId(e.target.value)}
+          className="flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs sm:text-sm font-bold text-slate-900 focus:border-blue-500 focus:outline-none"
+        >
+          {matches.map((m) => {
+            const h = teams.find((t) => t.id === m.teamHomeId)?.shortName || m.teamHomePlaceholder || "TBD"
+            const a = teams.find((t) => t.id === m.teamAwayId)?.shortName || m.teamAwayPlaceholder || "TBD"
+            const statusSymbol = m.status === "finished" ? "✓" : m.status === "live" ? "🔴" : m.status === "paused" ? "⏸" : "⏳"
+            return (
+              <option key={m.id} value={m.id}>
+                {statusSymbol} #{m.matchNumber} ({m.scheduledTime}) - {m.gender} {m.group ? `Gr.${m.group}` : ""}: {h} vs. {a}
+              </option>
+            )
+          })}
+        </select>
 
-          <button
-            onClick={handleNextMatch}
-            disabled={currentMatchIndex >= matches.length - 1}
-            className="rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-700 hover:bg-slate-100 disabled:opacity-40 transition-colors cursor-pointer"
-            title="Nächstes Spiel"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
-        </div>
-
-        {/* Current Match Metadata & Quick Finish Action */}
-        <div className="flex items-center gap-4 justify-between sm:justify-end">
-          <div className="text-right hidden sm:block">
-            <span className="block text-xs font-bold text-slate-900">
-              Spiel #{currentMatch?.matchNumber} &bull; Feld {currentMatch?.court}
-            </span>
-            <span className="block text-[11px] text-slate-500">
-              {currentMatch?.day === "saturday" ? "Samstag (Gruppe)" : "Sonntag (Finals)"} &bull; {currentMatch?.gender}
-            </span>
-          </div>
-
-          <button
-            onClick={handleFinishAndNext}
-            className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-blue-500 active:scale-95 transition-all cursor-pointer"
-            title="Spiel beenden und Ergebnis fixieren"
-          >
-            <CheckCircle className="h-4 w-4 text-white" />
-            <span>Spiel beenden &amp; weiter</span>
-          </button>
-        </div>
+        <button
+          onClick={handleNextMatch}
+          disabled={currentMatchIndex >= matches.length - 1}
+          className="rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-700 hover:bg-slate-100 disabled:opacity-40 transition-colors cursor-pointer"
+          title="Nächstes Spiel"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </button>
       </div>
 
-      {/* ZEILE 2: Spieluhr (Volle Zeilenbreite) */}
-      <MatchTimerControl
-        secondsRemaining={secondsRemaining}
-        isRunning={isRunning}
-        onStart={startTimer}
-        onPause={pauseTimer}
-        onReset={resetTimer}
-        onAdjustTime={adjustTime}
-        status={currentMatch?.status || "scheduled"}
-      />
-
-      {/* ZEILE 3: Aktueller Spielstand (Volle Zeilenbreite) */}
+      {/* ZEILE 2: Aktuelles Spiel (Zentrales Element mit Zeitsteuerung, Spielstand & Torerfassung, Spielabschluss) */}
       <ScoreboardDisplay
         homeTeam={homeTeam}
         awayTeam={awayTeam}
@@ -202,6 +166,14 @@ export function LiveMatchDesk() {
         currentMinute={currentMinute}
         onRecordGoal={recordGoal}
         onDecrementScore={decrementScore}
+        secondsRemaining={secondsRemaining}
+        isRunning={isRunning}
+        timerStatus={currentMatch?.status || "scheduled"}
+        onStartTimer={startTimer}
+        onPauseTimer={pauseTimer}
+        onResetTimer={resetTimer}
+        onAdjustTime={adjustTime}
+        onFinishMatch={handleFinishAndNext}
       />
 
       {/* ZEILE 4: Soundboard (Volle Zeilenbreite) */}
