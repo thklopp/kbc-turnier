@@ -28,15 +28,11 @@ function GroupTable({
         <table className="w-full text-left text-xs">
           <thead className="border-b border-slate-100 bg-slate-50/50 text-[10px] font-bold uppercase tracking-wider text-slate-400">
             <tr>
-              <th className="py-2.5 px-3 text-center">#</th>
+              <th className="py-2.5 px-3 text-center w-8">#</th>
               <th className="py-2.5 px-3">Mannschaft</th>
-              <th className="py-2.5 px-2 text-center" title="Gespielte Partien">Sp</th>
-              <th className="py-2.5 px-2 text-center" title="Siege (3 Pkt)">S</th>
-              <th className="py-2.5 px-2 text-center" title="Unentschieden (1 Pkt)">U</th>
-              <th className="py-2.5 px-2 text-center" title="Niederlagen (0 Pkt)">N</th>
-              <th className="py-2.5 px-2 text-center">Tore</th>
-              <th className="py-2.5 px-2 text-center">Diff</th>
-              <th className="py-2.5 px-3 text-center font-bold text-slate-900">Pkt</th>
+              <th className="py-2.5 px-2 text-center w-12" title="Gespielte Partien">SP</th>
+              <th className="py-2.5 px-2 text-center w-14 font-black text-slate-900" title="Punkte">PKT</th>
+              <th className="py-2.5 px-2 text-center w-14" title="Tore (Erzielt:Kassiert)">Tore</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
@@ -78,24 +74,22 @@ function GroupTable({
                           <span className="text-xs">🏑</span>
                         )}
                       </div>
-                      <span className="font-bold text-slate-900 truncate max-w-[140px] sm:max-w-none">
+                      <span className="font-bold text-slate-900 truncate max-w-[180px] sm:max-w-none">
                         {teamStanding.teamName}
                       </span>
                     </div>
                   </td>
 
-                  <td className="py-3 px-2 text-center font-mono">{teamStanding.played}</td>
-                  <td className="py-3 px-2 text-center font-mono">{teamStanding.won}</td>
-                  <td className="py-3 px-2 text-center font-mono">{teamStanding.drawn}</td>
-                  <td className="py-3 px-2 text-center font-mono">{teamStanding.lost}</td>
-                  <td className="py-3 px-2 text-center font-mono">
+                  <td className="py-3 px-2 text-center font-mono text-slate-600">
+                    {teamStanding.played}
+                  </td>
+                  <td className="py-3 px-2 text-center">
+                    <span className="inline-flex min-w-[28px] items-center justify-center rounded-md bg-blue-50 border border-blue-200 px-2 py-0.5 font-mono text-xs font-black text-blue-700 shadow-2xs">
+                      {teamStanding.points}
+                    </span>
+                  </td>
+                  <td className="py-3 px-2 text-center font-mono text-slate-600">
                     {teamStanding.goalsFor}:{teamStanding.goalsAgainst}
-                  </td>
-                  <td className="py-3 px-2 text-center font-mono font-semibold">
-                    {teamStanding.goalDifference > 0 ? `+${teamStanding.goalDifference}` : teamStanding.goalDifference}
-                  </td>
-                  <td className="py-3 px-3 text-center font-mono font-black text-slate-900 text-sm">
-                    {teamStanding.points}
                   </td>
                 </tr>
               )

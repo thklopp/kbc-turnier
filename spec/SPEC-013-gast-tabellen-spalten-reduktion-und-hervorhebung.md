@@ -1,6 +1,6 @@
 # SPEC-013: Reduktion und Neuordnung der Tabellenspalten in der Gästeansicht mit Punkthervorhebung
 
-> **Status**: In Review  
+> **Status**: In Abnahme  
 > **Typ**: UX-Optimierung  
 > **Branch**: `feat/SPEC-013-gast-tabellen-spalten-reduktion-und-hervorhebung`  
 > **Autor**: Antigravity Agent  
@@ -50,25 +50,25 @@ Auf mobilen Endgeräten (Smartphones), die von Zuschauern und Teams in der Halle
 ## 3. Fachliche Anforderungen & Scope
 
 ### 3.1 Im Scope (Must-Have)
-- [ ] **Spaltenreduktion in `StandingsView.tsx`**:
+- [x] **Spaltenreduktion in `StandingsView.tsx`**:
   - Entfernung der Header- und Body-Zellen für:
     - Siege (`S`)
     - Unentschieden (`U`)
     - Niederlagen (`N`)
     - Tordifferenz (`Diff`)
-- [ ] **Feste Spaltenreihenfolge**:
+- [x] **Feste Spaltenreihenfolge**:
   - `Rang (#)`
   - `Mannschaft`
   - `SP` (Anzahl gespielter Partien)
   - `PKT` (Punkte)
   - `Tore` (Erzielte : Gegentore, z. B. `8:3`)
-- [ ] **Hervorhebung der Punkte (PKT)**:
-  - Header `PKT`: Markanter formatiert (z. B. dunklere/kräftigere Schrift `font-black text-slate-900`).
-  - Zellen `PKT`: Visuelle Akzentuierung (z. B. dezent hinterlegte Zelle oder Badge-Look mit `font-black text-sm text-slate-900 bg-slate-100/80 rounded-md py-1 px-2 text-center` oder kräftiger Akzent), sodass Punkte sofort als Leitwert wahrgenommen werden.
-- [ ] **Labels im Tabellenkopf**:
+- [x] **Hervorhebung der Punkte (PKT)**:
+  - Header `PKT`: Markanter formatiert (`font-black text-slate-900`).
+  - Zellen `PKT`: Visuelle Akzentuierung mit Badge-Look (`font-mono text-xs font-black text-blue-700 bg-blue-50 border border-blue-200 rounded-md py-0.5 px-2`), sodass Punkte sofort als Leitwert wahrgenommen werden.
+- [x] **Labels im Tabellenkopf**:
   - Kurze, prägnante Spaltenbezeichnungen: `SP`, `PKT`, `Tore` (gemäß Nutzeranforderung).
-- [ ] **Responsive Darstellung**:
-  - Auf schmalen mobilen Bildschirmen (ab 360px Breite) kein horizontales Scrollen erforderlich; der Teamname erhält maximale Breite und bricht bei Bedarf mit Ellipsis um.
+- [x] **Responsive Darstellung**:
+  - Auf schmalen mobilen Bildschirmen (ab 360px Breite) kein horizontales Scrollen erforderlich; der Teamname erhält maximale Breite (`max-w-[180px] sm:max-w-none`).
 
 ### 3.2 Explizit Out-of-Scope (Nicht Teil dieser Spec)
 - **Kiosk-Ansicht (`KioskStandingsSlide.tsx`)**: Der Hallen-Großbildschirm behält seine detaillierte 9-Spalten-Tabelle, da dort ausreichend Bildschirmbreite zur Verfügung steht.
@@ -80,30 +80,30 @@ Auf mobilen Endgeräten (Smartphones), die von Zuschauern und Teams in der Halle
 ## 4. Akzeptanzkriterien
 
 ### 4.1 Szenarien / Kriterien
-- [ ] **AC-1: Reduzierte Spaltenanzahl in der Gast-Tabelle**
+- [x] **AC-1: Reduzierte Spaltenanzahl in der Gast-Tabelle**
   - **Gegeben sei**: Ein Nutzer ruft in der Gästeansicht den Reiter „Tabellen“ (`/#standings`) auf.
   - **Wenn**: Die Gruppentabellen (Gruppe A und B) gerendert werden.
   - **Dann**: Enthalten beide Tabellen ausschließlich die Spalten `#`, `Mannschaft`, `SP`, `PKT` und `Tore`. Es gibt keine Spalten für `S`, `U`, `N` oder `Diff`.
 
-- [ ] **AC-2: Korrekte Reihenfolge der Datenspalten**
+- [x] **AC-2: Korrekte Reihenfolge der Datenspalten**
   - **Gegeben sei**: Eine Gruppentabelle wird angezeigt.
   - **Wenn**: Die Spalten von links nach rechts betrachtet werden.
   - **Dann**: Folgt nach der Spalte `Mannschaft` unmittelbar die Spalte `SP`, gefolgt von `PKT` und abschließend `Tore`.
 
-- [ ] **AC-3: Visuelle Hervorhebung der Punkte**
+- [x] **AC-3: Visuelle Hervorhebung der Punkte**
   - **Gegeben sei**: Die Zeilen der Tabelle werden angezeigt.
   - **Wenn**: Der Nutzer die Tabelle betrachtet.
   - **Dann**: Hebt sich die Spalte `PKT` durch fettere Typografie und kontrastierende Hinterlegung optisch klar von den Spalten `SP` und `Tore` ab.
 
-- [ ] **AC-4: Mobiloptimierte Passgenauigkeit**
+- [x] **AC-4: Mobiloptimierte Passgenauigkeit**
   - **Gegeben sei**: Die Gästeansicht wird auf einem mobilen Viewport (z. B. 375x667px) geöffnet.
   - **Wenn**: Die Tabelle geladen ist.
   - **Dann**: Werden alle 5 Spalten vollständig ohne horizontales Scrollen dargestellt.
 
 ### 4.2 Allgemeine Qualitätskriterien
-- [ ] Keine fest kodierten Parameter gemäß `AGENTS.md`.
-- [ ] Vollständige TypeScript-Typisierung ohne `any`.
-- [ ] Fehlerfreie Ausführung von `npm run build` und Linting.
+- [x] Keine fest kodierten Parameter gemäß `AGENTS.md`.
+- [x] Vollständige TypeScript-Typisierung ohne `any`.
+- [x] Fehlerfreie Ausführung von `npm run build` und Linting.
 
 ---
 
