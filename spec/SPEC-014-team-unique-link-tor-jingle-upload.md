@@ -1,6 +1,6 @@
 # SPEC-014: Unique-Links für Teams zum eigenständigen Tor-Jingle Upload & Startzeit-Konfiguration
 
-> **Status**: In Umsetzung  
+> **Status**: In Abnahme  
 > **Typ**: Feature  
 > **Branch**: `feat/SPEC-014-team-unique-link-tor-jingle-upload`  
 > **Autor**: Agent / Antigravity (nach /grill-me Abstimmung mit Nutzer)  
