@@ -12,7 +12,7 @@ const INFO_DOC_PATH = "config/info"
 
 export const DEFAULT_INFO_MARKDOWN = `# Willkommen zum 20. Kurt-Becker-Cup! 🏑
 
-Wir begrüßen alle Mannschaften, Betreuer, Eltern und Hockey-Fans ganz herzlich beim **Rüsselsheimer Ruder-Klub 08 e.V.** in der Sporthalle Dicker Busch zum traditionellen 20. Kurt-Becker-Cup der Altersklassen **mU14** und **wU14**!
+Wir begrüßen alle Mannschaften, Betreuer, Eltern und Hockey-Fans ganz herzlich beim **Rüsselsheimer Ruder-Klub 08 e.V.** in der Großsporthalle Rüsselsheim zum traditionellen 20. Kurt-Becker-Cup der Altersklassen **mU14** und **wU14**!
 
 ---
 

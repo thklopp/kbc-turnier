@@ -44,8 +44,8 @@ export function ImpressumPage() {
 
           <section className="space-y-1">
             <h2 className="font-semibold text-slate-900 text-base">Austragungsort</h2>
-            <p>Sporthalle Dicker Busch</p>
-            <p>Hessenring 75</p>
+            <p className="font-medium text-slate-900">Großsporthalle Rüsselsheim</p>
+            <p>Evreuxring 31</p>
             <p>65428 Rüsselsheim am Main</p>
           </section>
 

@@ -47,7 +47,7 @@ export function InfoPage() {
             20. Kurt-Becker-Cup
           </h1>
           <p className="mt-2 max-w-2xl text-sm sm:text-base text-blue-100 leading-relaxed">
-            Wichtige Hinweise zum Spielbetrieb, Ablauf, Penalty-Regeln und Verpflegung in der Sporthalle Dicker Busch.
+            Wichtige Hinweise zum Spielbetrieb, Ablauf, Penalty-Regeln und Verpflegung in der Großsporthalle Rüsselsheim.
           </p>
 
           {/* Quick Info Badges */}
