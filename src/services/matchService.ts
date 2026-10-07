@@ -104,6 +104,35 @@ function createGroupPairings(
 }
 
 /**
+ * Liefert den sprechenden Anzeigenamen eines Spiels.
+ * Fallback-Kette: match.matchName -> Gruppenspiel #X bzw. Finaltyp-Formatierung.
+ */
+export function getMatchDisplayName(match: Match): string {
+  if (match.matchName && match.matchName.trim().length > 0) {
+    return match.matchName.trim()
+  }
+  if (match.phase === "group") {
+    return `Gruppenspiel #${match.matchNumber}`
+  }
+  switch (match.finalType) {
+    case "semi_final":
+      return "Halbfinale"
+    case "final":
+      return "Finale"
+    case "placement_3_4":
+      return "Spiel um Platz 3"
+    case "placement_5_6":
+      return "Spiel um Platz 5"
+    case "placement_7_8":
+      return "Spiel um Platz 7"
+    case "quarter_final":
+      return "Viertelfinale"
+    default:
+      return `Spiel #${match.matchNumber}`
+  }
+}
+
+/**
  * Generiert den vollständigen Spielplan für 40 Spiele (24 Sa, 16 So).
  * Einhaltung des strikten Wechselrhythmus: 2 Mädchenspiele, 2 Jungsspiele.
  */
@@ -129,9 +158,11 @@ export async function generateTournamentSchedule(
   for (let round = 0; round < 6; round++) {
     // 2 Mädchenspiele (abwechselnd Gruppe A und Gruppe B)
     const wMatch1 = wu14A[round]
+    const wMatch1Num = matchNumber++
     matches.push({
-      id: `match-${String(matchNumber).padStart(2, "0")}`,
-      matchNumber: matchNumber++,
+      id: `match-${String(wMatch1Num).padStart(2, "0")}`,
+      matchNumber: wMatch1Num,
+      matchName: `Gruppenspiel #${wMatch1Num}`,
       day: "saturday",
       gender: "wU14",
       phase: "group",
@@ -148,9 +179,11 @@ export async function generateTournamentSchedule(
     satTime = addMinutesToTimeString(satTime, slotMinutes)
 
     const wMatch2 = wu14B[round]
+    const wMatch2Num = matchNumber++
     matches.push({
-      id: `match-${String(matchNumber).padStart(2, "0")}`,
-      matchNumber: matchNumber++,
+      id: `match-${String(wMatch2Num).padStart(2, "0")}`,
+      matchNumber: wMatch2Num,
+      matchName: `Gruppenspiel #${wMatch2Num}`,
       day: "saturday",
       gender: "wU14",
       phase: "group",
@@ -168,9 +201,11 @@ export async function generateTournamentSchedule(
 
     // 2 Jungsspiele (abwechselnd Gruppe A und Gruppe B)
     const mMatch1 = mu14A[round]
+    const mMatch1Num = matchNumber++
     matches.push({
-      id: `match-${String(matchNumber).padStart(2, "0")}`,
-      matchNumber: matchNumber++,
+      id: `match-${String(mMatch1Num).padStart(2, "0")}`,
+      matchNumber: mMatch1Num,
+      matchName: `Gruppenspiel #${mMatch1Num}`,
       day: "saturday",
       gender: "mU14",
       phase: "group",
@@ -187,9 +222,11 @@ export async function generateTournamentSchedule(
     satTime = addMinutesToTimeString(satTime, slotMinutes)
 
     const mMatch2 = mu14B[round]
+    const mMatch2Num = matchNumber++
     matches.push({
-      id: `match-${String(matchNumber).padStart(2, "0")}`,
-      matchNumber: matchNumber++,
+      id: `match-${String(mMatch2Num).padStart(2, "0")}`,
+      matchNumber: mMatch2Num,
+      matchName: `Gruppenspiel #${mMatch2Num}`,
       day: "saturday",
       gender: "mU14",
       phase: "group",
@@ -213,6 +250,7 @@ export async function generateTournamentSchedule(
   type FinalDefinition = {
     gender: GenderCategory
     finalType: FinalMatchType
+    matchName: string
     homePlaceholder: string
     awayPlaceholder: string
   }
@@ -220,39 +258,41 @@ export async function generateTournamentSchedule(
   const sundayBlocks: FinalDefinition[][] = [
     // Block 1 (Spiele 25-28): Halbfinals (2x wU14, 2x mU14)
     [
-      { gender: "wU14", finalType: "semi_final", homePlaceholder: "1. Gruppe A", awayPlaceholder: "2. Gruppe B" },
-      { gender: "wU14", finalType: "semi_final", homePlaceholder: "1. Gruppe B", awayPlaceholder: "2. Gruppe A" },
-      { gender: "mU14", finalType: "semi_final", homePlaceholder: "1. Gruppe A", awayPlaceholder: "2. Gruppe B" },
-      { gender: "mU14", finalType: "semi_final", homePlaceholder: "1. Gruppe B", awayPlaceholder: "2. Gruppe A" },
+      { gender: "wU14", finalType: "semi_final", matchName: "Halbfinale 1", homePlaceholder: "1. Gruppe A", awayPlaceholder: "2. Gruppe B" },
+      { gender: "wU14", finalType: "semi_final", matchName: "Halbfinale 2", homePlaceholder: "1. Gruppe B", awayPlaceholder: "2. Gruppe A" },
+      { gender: "mU14", finalType: "semi_final", matchName: "Halbfinale 1", homePlaceholder: "1. Gruppe A", awayPlaceholder: "2. Gruppe B" },
+      { gender: "mU14", finalType: "semi_final", matchName: "Halbfinale 2", homePlaceholder: "1. Gruppe B", awayPlaceholder: "2. Gruppe A" },
     ],
     // Block 2 (Spiele 29-32): Platzierungs-Qualifikation 5-8 (2x wU14, 2x mU14)
     [
-      { gender: "wU14", finalType: "placement_7_8", homePlaceholder: "3. Gruppe A", awayPlaceholder: "4. Gruppe B" },
-      { gender: "wU14", finalType: "placement_7_8", homePlaceholder: "3. Gruppe B", awayPlaceholder: "4. Gruppe A" },
-      { gender: "mU14", finalType: "placement_7_8", homePlaceholder: "3. Gruppe A", awayPlaceholder: "4. Gruppe B" },
-      { gender: "mU14", finalType: "placement_7_8", homePlaceholder: "3. Gruppe B", awayPlaceholder: "4. Gruppe A" },
+      { gender: "wU14", finalType: "placement_7_8", matchName: "Qualifikation 5-8", homePlaceholder: "3. Gruppe A", awayPlaceholder: "4. Gruppe B" },
+      { gender: "wU14", finalType: "placement_7_8", matchName: "Qualifikation 5-8", homePlaceholder: "3. Gruppe B", awayPlaceholder: "4. Gruppe A" },
+      { gender: "mU14", finalType: "placement_7_8", matchName: "Qualifikation 5-8", homePlaceholder: "3. Gruppe A", awayPlaceholder: "4. Gruppe B" },
+      { gender: "mU14", finalType: "placement_7_8", matchName: "Qualifikation 5-8", homePlaceholder: "3. Gruppe B", awayPlaceholder: "4. Gruppe A" },
     ],
     // Block 3 (Spiele 33-36): Platzierungsspiele Platz 7/8 und Platz 5/6 (2x wU14, 2x mU14)
     [
-      { gender: "wU14", finalType: "placement_7_8", homePlaceholder: "Verlierer Pl. 1 (w)", awayPlaceholder: "Verlierer Pl. 2 (w)" },
-      { gender: "wU14", finalType: "placement_5_6", homePlaceholder: "Gewinner Pl. 1 (w)", awayPlaceholder: "Gewinner Pl. 2 (w)" },
-      { gender: "mU14", finalType: "placement_7_8", homePlaceholder: "Verlierer Pl. 1 (m)", awayPlaceholder: "Verlierer Pl. 2 (m)" },
-      { gender: "mU14", finalType: "placement_5_6", homePlaceholder: "Gewinner Pl. 1 (m)", awayPlaceholder: "Gewinner Pl. 2 (m)" },
+      { gender: "wU14", finalType: "placement_7_8", matchName: "Spiel um Platz 7", homePlaceholder: "Verlierer Pl. 1 (w)", awayPlaceholder: "Verlierer Pl. 2 (w)" },
+      { gender: "wU14", finalType: "placement_5_6", matchName: "Spiel um Platz 5", homePlaceholder: "Gewinner Pl. 1 (w)", awayPlaceholder: "Gewinner Pl. 2 (w)" },
+      { gender: "mU14", finalType: "placement_7_8", matchName: "Spiel um Platz 7", homePlaceholder: "Verlierer Pl. 1 (m)", awayPlaceholder: "Verlierer Pl. 2 (m)" },
+      { gender: "mU14", finalType: "placement_5_6", matchName: "Spiel um Platz 5", homePlaceholder: "Gewinner Pl. 1 (m)", awayPlaceholder: "Gewinner Pl. 2 (m)" },
     ],
     // Block 4 (Spiele 37-40): Medaillenspiele: Kleines Finale & Großes Finale (2x wU14, 2x mU14)
     [
-      { gender: "wU14", finalType: "placement_3_4", homePlaceholder: "Verlierer HF 1 (w)", awayPlaceholder: "Verlierer HF 2 (w)" },
-      { gender: "wU14", finalType: "final", homePlaceholder: "Sieger HF 1 (w)", awayPlaceholder: "Sieger HF 2 (w)" },
-      { gender: "mU14", finalType: "placement_3_4", homePlaceholder: "Verlierer HF 1 (m)", awayPlaceholder: "Verlierer HF 2 (m)" },
-      { gender: "mU14", finalType: "final", homePlaceholder: "Sieger HF 1 (m)", awayPlaceholder: "Sieger HF 2 (m)" },
+      { gender: "wU14", finalType: "placement_3_4", matchName: "Spiel um Platz 3", homePlaceholder: "Verlierer HF 1 (w)", awayPlaceholder: "Verlierer HF 2 (w)" },
+      { gender: "wU14", finalType: "final", matchName: "Finale", homePlaceholder: "Sieger HF 1 (w)", awayPlaceholder: "Sieger HF 2 (w)" },
+      { gender: "mU14", finalType: "placement_3_4", matchName: "Spiel um Platz 3", homePlaceholder: "Verlierer HF 1 (m)", awayPlaceholder: "Verlierer HF 2 (m)" },
+      { gender: "mU14", finalType: "final", matchName: "Finale", homePlaceholder: "Sieger HF 1 (m)", awayPlaceholder: "Sieger HF 2 (m)" },
     ],
   ]
 
   for (const block of sundayBlocks) {
     for (const def of block) {
+      const thisMatchNumber = matchNumber++
       matches.push({
-        id: `match-${String(matchNumber).padStart(2, "0")}`,
-        matchNumber: matchNumber++,
+        id: `match-${String(thisMatchNumber).padStart(2, "0")}`,
+        matchNumber: thisMatchNumber,
+        matchName: def.matchName,
         day: "sunday",
         gender: def.gender,
         phase: "final",

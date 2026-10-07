@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react"
 import type { Match, Team, TournamentConfig, GenderCategory } from "@/types/database"
-import { subscribeMatches, generateTournamentSchedule, resetSchedule } from "@/services/matchService"
+import {
+  subscribeMatches,
+  generateTournamentSchedule,
+  resetSchedule,
+  getMatchDisplayName,
+} from "@/services/matchService"
 import { subscribeTeams } from "@/services/teamService"
 import { subscribeTournamentConfig, getDefaultConfig } from "@/services/configService"
 import { DelayShiftModal } from "./DelayShiftModal"
@@ -249,7 +254,8 @@ export function ScheduleManager() {
                   <th className="py-3 px-4">#</th>
                   <th className="py-3 px-4">Anstoß</th>
                   <th className="py-3 px-4">Wettbewerb</th>
-                  <th className="py-3 px-4">Phase / Gruppe</th>
+                  <th className="py-3 px-4">Spielname</th>
+                  <th className="py-3 px-4 text-center">Gruppe</th>
                   <th className="py-3 px-4 text-right">Team Heim</th>
                   <th className="py-3 px-2 text-center">Ergebnis</th>
                   <th className="py-3 px-4">Team Gast</th>
@@ -292,15 +298,17 @@ export function ScheduleManager() {
                         </span>
                       </td>
 
-                      <td className="py-3 px-4">
+                      <td className="py-3 px-4 font-semibold text-slate-900">
+                        {getMatchDisplayName(match)}
+                      </td>
+
+                      <td className="py-3 px-4 text-center">
                         {match.phase === "group" ? (
-                          <span className="font-semibold text-slate-600">
-                            Gruppe {match.group}
+                          <span className="rounded bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-700">
+                            Gr. {match.group}
                           </span>
                         ) : (
-                          <span className="font-semibold text-purple-700 uppercase text-[10px] bg-purple-50 px-1.5 py-0.5 rounded border border-purple-200">
-                            {match.finalType || "Finale"}
-                          </span>
+                          <span className="text-slate-400 text-[11px]">-</span>
                         )}
                       </td>
 

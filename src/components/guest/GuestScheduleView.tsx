@@ -1,5 +1,6 @@
 import { useState } from "react"
 import type { Match, Team, GenderCategory, TournamentGroup } from "@/types/database"
+import { getMatchDisplayName } from "@/services/matchService"
 import { Filter, ChevronDown, ChevronUp, RotateCcw } from "lucide-react"
 
 interface GuestScheduleViewProps {
@@ -202,18 +203,18 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
                 }`}
               >
                 {/* Header bar of the card */}
-                <div className="flex items-center justify-between text-xs pb-2.5 mb-2.5 border-b border-slate-100">
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono font-black text-slate-900 text-sm">
+                <div className="flex items-center justify-between gap-2 text-xs pb-2.5 mb-2.5 border-b border-slate-100">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="font-mono font-black text-slate-900 text-sm shrink-0">
                       {match.scheduledTime} Uhr
                     </span>
-                    <span className="text-slate-400">&bull;</span>
-                    <span className="text-slate-500 font-semibold">
-                      Spiel #{match.matchNumber}
+                    <span className="text-slate-300 shrink-0">&bull;</span>
+                    <span className="truncate text-xs font-semibold text-slate-700" title={getMatchDisplayName(match)}>
+                      {getMatchDisplayName(match)}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 shrink-0">
                     <span
                       className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${
                         isFemale
@@ -224,33 +225,18 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
                       {match.gender}
                     </span>
 
-                    {match.phase === "group" ? (
-                      <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-600">
-                        Gruppe {match.group}
-                      </span>
-                    ) : (
-                      <span className="rounded bg-purple-100 px-1.5 py-0.5 text-[10px] font-bold text-purple-700 uppercase">
-                        {match.finalType || "Finalphase"}
-                      </span>
-                    )}
-
-                    {isLive && (
-                      <span className="rounded-full bg-rose-500 text-white px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider animate-pulse">
-                        LIVE
-                      </span>
-                    )}
-                    {isPaused && (
-                      <span className="rounded-full bg-amber-500 text-white px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
-                        PAUSIERT
+                    {match.phase === "group" && (
+                      <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-700">
+                        Gr. {match.group}
                       </span>
                     )}
                   </div>
                 </div>
 
                 {/* Match Teams Row */}
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center justify-between gap-2 sm:gap-3">
                   {/* Home */}
-                  <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 overflow-hidden">
                       {home?.logoUrl ? (
                         <img
@@ -262,45 +248,52 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
                         <span className="text-sm">🏑</span>
                       )}
                     </div>
-                    <div className="truncate">
-                      <span className="block truncate text-xs font-bold text-slate-900" title={home?.name}>
-                        {home?.name || match.teamHomePlaceholder || "Team Heim"}
-                      </span>
-                      <span className="block text-[10px] font-mono text-slate-400">
+                    <div className="truncate min-w-0">
+                      <span className="block truncate text-xs font-bold text-slate-900" title={home?.shortName || "HEIM"}>
                         {home?.shortName || "HEIM"}
+                      </span>
+                      <span className="block truncate text-[10px] text-slate-500 font-medium" title={home?.name}>
+                        {home?.name || match.teamHomePlaceholder || "Team Heim"}
                       </span>
                     </div>
                   </div>
 
-                  {/* Score */}
-                  <div className="flex flex-col items-center shrink-0 px-3">
-                    <div className="font-mono text-base font-black tracking-tight text-slate-900 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1">
+                  {/* Score & Status */}
+                  <div className="flex flex-col items-center shrink-0 px-2 sm:px-3">
+                    {isLive && (
+                      <span className="rounded-full bg-rose-500 text-white px-2 py-0.5 text-[9px] font-black uppercase tracking-wider animate-pulse mb-1 whitespace-nowrap">
+                        LIVE
+                      </span>
+                    )}
+                    {isPaused && (
+                      <span className="rounded-full bg-amber-500 text-white px-2 py-0.5 text-[9px] font-black uppercase tracking-wider mb-1 whitespace-nowrap">
+                        PAUSIERT
+                      </span>
+                    )}
+
+                    <div className="font-mono text-base font-black tracking-tight text-slate-900 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 whitespace-nowrap">
                       {isLive || isPaused || isFinished ? (
                         `${match.scoreHome} : ${match.scoreAway}`
                       ) : (
                         <span className="text-slate-400 text-xs font-sans">vs</span>
                       )}
                     </div>
-                    {isLive && (
-                      <span className="text-[10px] font-bold text-rose-600 mt-0.5">
-                        {match.currentPeriodMinute || 1}&apos;
-                      </span>
-                    )}
-                    {isPaused && (
-                      <span className="text-[10px] font-bold text-amber-600 mt-0.5">
+
+                    {(isLive || isPaused) && (
+                      <span className={`text-[10px] font-bold mt-0.5 whitespace-nowrap ${isLive ? "text-rose-600" : "text-amber-600"}`}>
                         {match.currentPeriodMinute || 1}&apos;
                       </span>
                     )}
                   </div>
 
                   {/* Away */}
-                  <div className="flex items-center justify-end gap-2.5 flex-1 min-w-0 text-right">
-                    <div className="truncate">
-                      <span className="block truncate text-xs font-bold text-slate-900" title={away?.name}>
-                        {away?.name || match.teamAwayPlaceholder || "Team Gast"}
-                      </span>
-                      <span className="block text-[10px] font-mono text-slate-400">
+                  <div className="flex items-center justify-end gap-2 flex-1 min-w-0 text-right">
+                    <div className="truncate min-w-0">
+                      <span className="block truncate text-xs font-bold text-slate-900" title={away?.shortName || "GAST"}>
                         {away?.shortName || "GAST"}
+                      </span>
+                      <span className="block truncate text-[10px] text-slate-500 font-medium" title={away?.name}>
+                        {away?.name || match.teamAwayPlaceholder || "Team Gast"}
                       </span>
                     </div>
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 overflow-hidden">

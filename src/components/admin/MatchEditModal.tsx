@@ -20,6 +20,7 @@ function MatchEditForm({
   onClose: () => void
 }) {
   const [scheduledTime, setScheduledTime] = useState(match.scheduledTime)
+  const [matchName, setMatchName] = useState(match.matchName || "")
   const [teamHomeId, setTeamHomeId] = useState(match.teamHomeId)
   const [teamAwayId, setTeamAwayId] = useState(match.teamAwayId)
   const [teamHomePlaceholder, setTeamHomePlaceholder] = useState(match.teamHomePlaceholder || "")
@@ -41,6 +42,7 @@ function MatchEditForm({
     try {
       await updateMatch(match.id, {
         scheduledTime,
+        matchName: matchName.trim() || undefined,
         teamHomeId,
         teamAwayId,
         teamHomePlaceholder: teamHomePlaceholder || undefined,
@@ -131,6 +133,20 @@ function MatchEditForm({
               <option value="finished">Beendet</option>
             </select>
           </div>
+        </div>
+
+        {/* Match Name */}
+        <div>
+          <label className="block text-xs font-semibold text-slate-700 mb-1">
+            Spielname (z. B. Gruppenspiel #1, Halbfinale, Finale)
+          </label>
+          <input
+            type="text"
+            value={matchName}
+            onChange={(e) => setMatchName(e.target.value)}
+            placeholder={match.phase === "group" ? `Gruppenspiel #${match.matchNumber}` : "Finale"}
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
         </div>
 
         {/* Home Team Selection */}

@@ -84,6 +84,7 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 - [x] Filterbarer Spielplan (nach Tag, Geschlecht `mU14`/`wU14`, Gruppe A/B).
 - [x] Live-Tabellen: Automatische Berechnung von Punkten, Toren, Gegentoren und Tordifferenz.
 - [x] Team-Detailansichten mit Logo, Kader und bisherigen Spielergebnissen.
+- [x] [SPEC-012] Spielplan-Kompaktierung (Gr. A/B, No-Wrap Score, Teamnamen-Tausch), konfigurierbare Spielnamen & Statusanzeigen.
 
 ---
 

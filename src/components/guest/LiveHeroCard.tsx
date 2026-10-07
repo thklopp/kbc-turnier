@@ -1,5 +1,6 @@
 import type { Match, Team } from "@/types/database"
-import { Clock, Pause, ShieldAlert, Sparkles } from "lucide-react"
+import { getMatchDisplayName } from "@/services/matchService"
+import { ShieldAlert, Sparkles } from "lucide-react"
 
 interface LiveHeroCardProps {
   matches: Match[]
@@ -38,25 +39,16 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
       {/* Header Info */}
       <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/80 pb-4 mb-6">
         <div className="flex items-center gap-2">
-          {isLive ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 border border-rose-200 px-3 py-1 text-xs font-black text-rose-600">
-              <span className="h-2 w-2 rounded-full bg-rose-500 animate-ping" />
-              LIVE &bull; {currentMatch.currentPeriodMinute || 1}. Minute
-            </span>
-          ) : isPaused ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-300 px-3 py-1 text-xs font-black text-amber-700">
-              <Pause className="h-3.5 w-3.5 fill-current" />
-              PAUSIERT &bull; {currentMatch.currentPeriodMinute || 1}. Minute
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 border border-blue-200 px-3 py-1 text-xs font-bold text-blue-700">
-              <Clock className="h-3.5 w-3.5" />
-              Nächstes Spiel &bull; {currentMatch.scheduledTime} Uhr
-            </span>
-          )}
+          <span className="font-mono font-bold text-slate-700 text-xs sm:text-sm">
+            {currentMatch.scheduledTime} Uhr
+          </span>
+          <span className="text-slate-300">&bull;</span>
+          <span className="text-xs sm:text-sm font-black text-slate-900">
+            {getMatchDisplayName(currentMatch)}
+          </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <span
             className={`rounded-md px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider ${
               currentMatch.gender === "wU14"
@@ -66,11 +58,15 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
           >
             {currentMatch.gender}
           </span>
-          <span className="text-xs text-slate-500 font-medium">
-            {currentMatch.phase === "group"
-              ? `Gruppe ${currentMatch.group}`
-              : currentMatch.finalType || "Finalphase"}
-          </span>
+          {currentMatch.phase === "group" ? (
+            <span className="rounded bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-700">
+              Gruppe {currentMatch.group}
+            </span>
+          ) : (
+            <span className="rounded bg-purple-50 px-2 py-0.5 text-[11px] font-bold text-purple-700 uppercase border border-purple-200">
+              {currentMatch.finalType || "Finalphase"}
+            </span>
+          )}
         </div>
       </div>
 
@@ -90,26 +86,56 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
             )}
           </div>
 
-          <h3 className="text-sm sm:text-base font-black text-slate-900 line-clamp-1">
-            {homeTeam?.name || currentMatch.teamHomePlaceholder || "Team Heim"}
-          </h3>
-          <span className="text-xs font-mono font-bold text-slate-500">
+          <h3 className="text-sm sm:text-base font-black text-slate-900 line-clamp-1" title={homeTeam?.shortName || "HEIM"}>
             {homeTeam?.shortName || "HEIM"}
+          </h3>
+          <span className="text-xs font-medium text-slate-500 line-clamp-1" title={homeTeam?.name}>
+            {homeTeam?.name || currentMatch.teamHomePlaceholder || "Team Heim"}
           </span>
         </div>
 
         {/* Center Score */}
-        <div className="col-span-1 flex flex-col items-center">
-          <div className="font-mono text-3xl sm:text-5xl font-black tracking-tight text-slate-900">
+        <div className="col-span-1 flex flex-col items-center justify-center">
+          {/* Status small ABOVE the score */}
+          {isLive && (
+            <span className="rounded-full bg-rose-500 text-white px-2 py-0.5 text-[10px] font-black uppercase tracking-wider animate-pulse mb-1.5 whitespace-nowrap">
+              LIVE
+            </span>
+          )}
+          {isPaused && (
+            <span className="rounded-full bg-amber-500 text-white px-2 py-0.5 text-[10px] font-black uppercase tracking-wider mb-1.5 whitespace-nowrap">
+              PAUSIERT
+            </span>
+          )}
+          {!isLive && !isPaused && isFinished && (
+            <span className="rounded-full bg-slate-200 text-slate-700 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider mb-1.5 whitespace-nowrap">
+              BEENDET
+            </span>
+          )}
+          {!isLive && !isPaused && !isFinished && (
+            <span className="rounded-full bg-blue-100 text-blue-700 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider mb-1.5 whitespace-nowrap">
+              GEPLANT
+            </span>
+          )}
+
+          <div className="font-mono text-3xl sm:text-5xl font-black tracking-tight text-slate-900 whitespace-nowrap">
             {isLive || isPaused || isFinished ? (
               `${currentMatch.scoreHome} : ${currentMatch.scoreAway}`
             ) : (
               <span className="text-slate-400 text-2xl sm:text-3xl font-sans font-bold">vs</span>
             )}
           </div>
-          <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 mt-1">
-            Spiel #{currentMatch.matchNumber}
-          </span>
+
+          {/* Minute BELOW the score */}
+          {(isLive || isPaused) ? (
+            <span className={`text-[11px] sm:text-xs font-bold uppercase tracking-wider mt-1.5 whitespace-nowrap ${isLive ? "text-rose-600" : "text-amber-600"}`}>
+              {currentMatch.currentPeriodMinute || 1}. Minute
+            </span>
+          ) : (
+            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mt-1.5 whitespace-nowrap">
+              Spiel #{currentMatch.matchNumber}
+            </span>
+          )}
         </div>
 
         {/* Away Team */}
@@ -126,11 +152,11 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
             )}
           </div>
 
-          <h3 className="text-sm sm:text-base font-black text-slate-900 line-clamp-1">
-            {awayTeam?.name || currentMatch.teamAwayPlaceholder || "Team Gast"}
-          </h3>
-          <span className="text-xs font-mono font-bold text-slate-500">
+          <h3 className="text-sm sm:text-base font-black text-slate-900 line-clamp-1" title={awayTeam?.shortName || "GAST"}>
             {awayTeam?.shortName || "GAST"}
+          </h3>
+          <span className="text-xs font-medium text-slate-500 line-clamp-1" title={awayTeam?.name}>
+            {awayTeam?.name || currentMatch.teamAwayPlaceholder || "Team Gast"}
           </span>
         </div>
       </div>

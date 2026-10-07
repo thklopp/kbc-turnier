@@ -58,6 +58,7 @@ export interface MatchEvent {
 export interface Match {
   id: string
   matchNumber: number
+  matchName?: string
   day: "saturday" | "sunday"
   gender: GenderCategory
   phase: MatchPhase

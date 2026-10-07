@@ -113,6 +113,7 @@ export interface MatchEvent {
 export interface Match {
   id: string;                        // z. B. "match-01"
   matchNumber: number;               // 1 bis 40 (chronologische Reihenfolge)
+  matchName?: string;                // Sprechender Spielname (z. B. "Gruppenspiel #1", "Finale")
   day: "saturday" | "sunday";
   gender: GenderCategory;            // "mU14" oder "wU14"
   phase: MatchPhase;                 // "group" oder "final"
