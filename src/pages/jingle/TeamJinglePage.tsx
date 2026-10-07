@@ -71,6 +71,7 @@ export function TeamJinglePage() {
           setStartTimeMs(teamData.jingleStartTimeMs ?? 0)
         }
       } catch (err) {
+        console.error("Fehler beim Laden der Team-Daten per Token:", err)
         if (!isMounted) return
         setLoadError("Fehler beim Laden der Team-Daten. Bitte versuche es später erneut.")
       } finally {

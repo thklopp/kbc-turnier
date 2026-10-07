@@ -1,6 +1,6 @@
 import { useState, useRef, type ChangeEvent, type FormEvent } from "react"
 import type { Team, GenderCategory, TournamentGroup } from "@/types/database"
-import { uploadTeamLogo, uploadTeamJingle, saveTeam, deleteTeam, regenerateTeamJingleToken } from "@/services/teamService"
+import { uploadTeamLogo, uploadTeamJingle, saveTeam, deleteTeam, regenerateTeamJingleToken, generateJingleToken } from "@/services/teamService"
 import { useAudioPlayer } from "@/hooks/useAudioPlayer"
 import { X, Upload, Music, Image as ImageIcon, Trash2, AlertCircle, CheckCircle, Play, Square, Link as LinkIcon, RefreshCw, Copy, Check } from "lucide-react"
 
@@ -28,7 +28,12 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
 
-  const [currentToken, setCurrentToken] = useState<string>(team.jingleToken || team.id)
+  const [currentToken, setCurrentToken] = useState<string>(() => {
+    if (team.jingleToken && team.jingleToken.length >= 16 && !team.jingleToken.startsWith("token-team-")) {
+      return team.jingleToken
+    }
+    return generateJingleToken()
+  })
   const [copiedLink, setCopiedLink] = useState(false)
   const [regeneratingToken, setRegeneratingToken] = useState(false)
 
@@ -135,6 +140,7 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
         logoUrl: finalLogoUrl,
         jingleUrl: finalJingleUrl,
         jingleStartTimeMs: Math.max(0, Number(jingleStartTimeMs) || 0),
+        jingleToken: currentToken,
       })
 
       stopPreview()
