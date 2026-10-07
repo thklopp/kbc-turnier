@@ -7,6 +7,7 @@ import { HomePage } from "@/pages/guest/HomePage"
 import { AdminPage } from "@/pages/admin/AdminPage"
 import { LoginPage } from "@/pages/admin/LoginPage"
 import { KioskPage } from "@/pages/kiosk/KioskPage"
+import { TeamJinglePage } from "@/pages/jingle/TeamJinglePage"
 import { NotFoundPage } from "@/pages/NotFoundPage"
 
 export function AppRouter() {
@@ -17,6 +18,9 @@ export function AppRouter() {
         <Route element={<GuestLayout />}>
           <Route path="/" element={<HomePage />} />
         </Route>
+
+        {/* Betreuer Tor-Jingle Upload über Unique-Link (ohne Login) */}
+        <Route path="/jingle/:token" element={<TeamJinglePage />} />
 
         {/* Turnierleitung Login */}
         <Route path="/admin/login" element={<LoginPage />} />

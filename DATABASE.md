@@ -73,6 +73,8 @@ export interface Team {
   logoUrl: string | null;            // Firebase Storage Download-URL (PNG/SVG/WebP)
   jingleUrl: string | null;          // Firebase Storage Download-URL (MP3)
   jingleStartTimeMs?: number;        // Startzeitpunkt in Millisekunden (Standard: 0)
+  jingleToken?: string;              // Eindeutiger Secret-Token für den Betreuer-Upload ohne Login
+  jingleUpdatedAt?: FirebaseFirestore.Timestamp | null; // Zeitpunkt der letzten Jingle-Aktualisierung
   contactPerson?: {
     name: string;
     phone: string;

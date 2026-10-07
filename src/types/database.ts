@@ -26,6 +26,8 @@ export interface Team {
   logoUrl: string | null
   jingleUrl: string | null
   jingleStartTimeMs?: number
+  jingleToken?: string
+  jingleUpdatedAt?: Timestamp | null
   contactPerson?: {
     name: string
     phone: string

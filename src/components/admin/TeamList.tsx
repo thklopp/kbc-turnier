@@ -4,7 +4,8 @@ import { subscribeTeams, seedDefaultTeams, saveTeam } from "@/services/teamServi
 import { useAudioPlayer } from "@/hooks/useAudioPlayer"
 import { TeamCard } from "./TeamCard"
 import { TeamEditModal } from "./TeamEditModal"
-import { Users, Plus, Sparkles, Filter, AlertCircle } from "lucide-react"
+import { TeamJingleOverviewModal } from "./TeamJingleOverviewModal"
+import { Users, Plus, Sparkles, Filter, AlertCircle, Music } from "lucide-react"
 
 export function TeamList() {
   const [teams, setTeams] = useState<Team[]>([])
@@ -13,6 +14,7 @@ export function TeamList() {
   const [groupFilter, setGroupFilter] = useState<"all" | TournamentGroup>("all")
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isJingleOverviewOpen, setIsJingleOverviewOpen] = useState(false)
   const [seeding, setSeeding] = useState(false)
 
   const { play, stop, isPlaying } = useAudioPlayer()
@@ -105,6 +107,15 @@ export function TeamList() {
               <span>{seeding ? "Initialisiere..." : "16 Standardteams anlegen"}</span>
             </button>
           )}
+
+          <button
+            onClick={() => setIsJingleOverviewOpen(true)}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-sm hover:bg-slate-50 transition-colors cursor-pointer"
+            title="Sammel-Übersicht aller 16 Betreuer-Links und Jingle-Stati"
+          >
+            <Music className="h-3.5 w-3.5 text-purple-600" />
+            <span>Jingle-Links & Übersicht</span>
+          </button>
 
           <button
             onClick={handleCreateNew}
@@ -227,6 +238,16 @@ export function TeamList() {
           setIsModalOpen(false)
           setSelectedTeam(null)
         }}
+      />
+
+      {/* Jingle-Links & Übersicht Modal */}
+      <TeamJingleOverviewModal
+        teams={teams}
+        isOpen={isJingleOverviewOpen}
+        onClose={() => setIsJingleOverviewOpen(false)}
+        onPlayJingle={play}
+        onStopJingle={stop}
+        isPlayingJingle={isPlaying}
       />
     </div>
   )

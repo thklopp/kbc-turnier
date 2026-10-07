@@ -1,52 +1,106 @@
 import {
   collection,
   doc,
+  getDoc,
   setDoc,
   updateDoc,
   deleteDoc,
   onSnapshot,
   serverTimestamp,
   writeBatch,
+  query,
+  where,
+  getDocs,
   type Unsubscribe,
 } from "firebase/firestore"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
-import { db, storage, isFirebaseConfigured } from "@/lib/firebase"
+import { db, storage, isFirebaseConfigured, ensureAnonymousAuth } from "@/lib/firebase"
 import type { Team } from "@/types/database"
 
 const TEAMS_COLLECTION = "teams"
+const MOCK_STORAGE_KEY = "kbc_mock_teams"
+
+/**
+ * Erzeugt einen kryptografisch sicheren, nicht erratbaren 32-Zeichen Hex-Secret-Token.
+ */
+export function generateJingleToken(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function") {
+    const bytes = new Uint8Array(16)
+    crypto.getRandomValues(bytes)
+    return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("")
+  }
+  return (
+    Math.random().toString(36).substring(2, 10) +
+    Math.random().toString(36).substring(2, 10) +
+    Date.now().toString(36)
+  )
+}
+
+function getStoredMockTeams(): Team[] {
+  if (typeof window === "undefined" || !window.localStorage) {
+    return localMockTeams
+  }
+  try {
+    const raw = localStorage.getItem(MOCK_STORAGE_KEY)
+    if (raw) {
+      const parsed = JSON.parse(raw) as Team[]
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed
+      }
+    }
+  } catch (err) {
+    console.warn("Fehler beim Lesen aus localStorage:", err)
+  }
+  return localMockTeams
+}
+
+function saveStoredMockTeams(teams: Team[]) {
+  if (typeof window !== "undefined" && window.localStorage) {
+    try {
+      localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(teams))
+    } catch (err) {
+      console.warn("Fehler beim Speichern in localStorage:", err)
+    }
+  }
+}
 
 // Lokaler Speicher-Fallback, falls Firebase noch nicht mit Cloud-Keys verbunden ist
 let localMockTeams: Team[] = [
   // 8x wU14 (Gruppe A: 4, Gruppe B: 4)
-  { id: "team-wu14-1", name: "Kreuznacher HC (w)", shortName: "KHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-  { id: "team-wu14-2", name: "Dürkheimer HC (w)", shortName: "DHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-  { id: "team-wu14-3", name: "Wiesbadener THC (w)", shortName: "WTHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-  { id: "team-wu14-4", name: "TG Frankenthal (w)", shortName: "TGF", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-  { id: "team-wu14-5", name: "Mannheimer HC (w)", shortName: "MHC", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-  { id: "team-wu14-6", name: "SC Frankfurt 1880 (w)", shortName: "SCF", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-  { id: "team-wu14-7", name: "HTC Stuttgarter Kickers (w)", shortName: "KICK", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-  { id: "team-wu14-8", name: "TSV Schott Mainz (w)", shortName: "TSVM", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
+  { id: "team-wu14-1", name: "Kreuznacher HC (w)", shortName: "KHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+  { id: "team-wu14-2", name: "Dürkheimer HC (w)", shortName: "DHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+  { id: "team-wu14-3", name: "Wiesbadener THC (w)", shortName: "WTHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+  { id: "team-wu14-4", name: "TG Frankenthal (w)", shortName: "TGF", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+  { id: "team-wu14-5", name: "Mannheimer HC (w)", shortName: "MHC", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+  { id: "team-wu14-6", name: "SC Frankfurt 1880 (w)", shortName: "SCF", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+  { id: "team-wu14-7", name: "HTC Stuttgarter Kickers (w)", shortName: "KICK", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+  { id: "team-wu14-8", name: "TSV Schott Mainz (w)", shortName: "TSVM", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
   // 8x mU14 (Gruppe A: 4, Gruppe B: 4)
-  { id: "team-mu14-1", name: "Kreuznacher HC (m)", shortName: "KHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-  { id: "team-mu14-2", name: "Dürkheimer HC (m)", shortName: "DHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-  { id: "team-mu14-3", name: "Wiesbadener THC (m)", shortName: "WTHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-  { id: "team-mu14-4", name: "TG Frankenthal (m)", shortName: "TGF", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-  { id: "team-mu14-5", name: "Mannheimer HC (m)", shortName: "MHC", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-  { id: "team-mu14-6", name: "SC Frankfurt 1880 (m)", shortName: "SCF", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-  { id: "team-mu14-7", name: "HTC Stuttgarter Kickers (m)", shortName: "KICK", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-  { id: "team-mu14-8", name: "TSV Schott Mainz (m)", shortName: "TSVM", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
+  { id: "team-mu14-1", name: "Kreuznacher HC (m)", shortName: "KHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+  { id: "team-mu14-2", name: "Dürkheimer HC (m)", shortName: "DHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+  { id: "team-mu14-3", name: "Wiesbadener THC (m)", shortName: "WTHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+  { id: "team-mu14-4", name: "TG Frankenthal (m)", shortName: "TGF", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+  { id: "team-mu14-5", name: "Mannheimer HC (m)", shortName: "MHC", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+  { id: "team-mu14-6", name: "SC Frankfurt 1880 (m)", shortName: "SCF", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+  { id: "team-mu14-7", name: "HTC Stuttgarter Kickers (m)", shortName: "KICK", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+  { id: "team-mu14-8", name: "TSV Schott Mainz (m)", shortName: "TSVM", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
 ]
+
+// Initialisiere mit localStorage, falls vorhanden
+localMockTeams = getStoredMockTeams()
 
 type TeamsListener = (teams: Team[]) => void
 const mockListeners: Set<TeamsListener> = new Set()
 
 function notifyMockListeners() {
+  saveStoredMockTeams(localMockTeams)
   const copy = [...localMockTeams]
   mockListeners.forEach((listener) => listener(copy))
 }
 
 /**
  * Abonniert alle Teams in Echtzeit über Firestore (bzw. Fallback).
+ * Stellt automatisch sicher, dass alle Teams einen sicheren kryptografischen jingleToken besitzen.
  */
 export function subscribeTeams(
   callback: (teams: Team[]) => void,
@@ -66,7 +120,18 @@ export function subscribeTeams(
     (snapshot) => {
       const teams: Team[] = []
       snapshot.forEach((docSnap) => {
-        teams.push({ ...(docSnap.data() as Team), id: docSnap.id })
+        const teamData = { ...(docSnap.data() as Team), id: docSnap.id }
+        // Auto-Backfill: Falls jingleToken in Firestore fehlt oder unsicher ist (z. B. altes Schema)
+        if (!teamData.jingleToken || teamData.jingleToken.length < 16 || teamData.jingleToken.startsWith("token-team-")) {
+          const newToken = generateJingleToken()
+          teamData.jingleToken = newToken
+          updateDoc(doc(db, TEAMS_COLLECTION, docSnap.id), {
+            jingleToken: newToken,
+          }).catch((err) => {
+            console.warn("Konnte jingleToken nicht nachpflegen:", err)
+          })
+        }
+        teams.push(teamData)
       })
       callback(teams)
     },
@@ -84,9 +149,16 @@ export async function saveTeam(team: Partial<Team> & { id: string }): Promise<vo
   if (!isFirebaseConfigured) {
     const index = localMockTeams.findIndex((t) => t.id === team.id)
     if (index >= 0) {
-      localMockTeams[index] = { ...localMockTeams[index], ...team }
+      localMockTeams[index] = {
+        ...localMockTeams[index],
+        ...team,
+        jingleToken: team.jingleToken || localMockTeams[index].jingleToken || generateJingleToken(),
+      }
     } else {
-      localMockTeams.push(team as Team)
+      localMockTeams.push({
+        ...team,
+        jingleToken: team.jingleToken || generateJingleToken(),
+      } as Team)
     }
     notifyMockListeners()
     return
@@ -97,6 +169,7 @@ export async function saveTeam(team: Partial<Team> & { id: string }): Promise<vo
     teamRef,
     {
       ...team,
+      jingleToken: team.jingleToken || generateJingleToken(),
       updatedAt: serverTimestamp(),
     },
     { merge: true }
@@ -180,6 +253,7 @@ export async function uploadTeamJingle(teamId: string, file: File): Promise<stri
 
   await updateDoc(doc(db, TEAMS_COLLECTION, teamId), {
     jingleUrl: downloadUrl,
+    jingleUpdatedAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   })
 
@@ -189,24 +263,24 @@ export async function uploadTeamJingle(teamId: string, file: File): Promise<stri
 export function getDefaultTeams(): Team[] {
   return [
     // 8x wU14
-    { id: "team-wu14-1", name: "Kreuznacher HC (w)", shortName: "KHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-    { id: "team-wu14-2", name: "Dürkheimer HC (w)", shortName: "DHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-    { id: "team-wu14-3", name: "Wiesbadener THC (w)", shortName: "WTHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-    { id: "team-wu14-4", name: "TG Frankenthal (w)", shortName: "TGF", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-    { id: "team-wu14-5", name: "Mannheimer HC (w)", shortName: "MHC", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-    { id: "team-wu14-6", name: "SC Frankfurt 1880 (w)", shortName: "SCF", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-    { id: "team-wu14-7", name: "HTC Stuttgarter Kickers (w)", shortName: "KICK", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-    { id: "team-wu14-8", name: "TSV Schott Mainz (w)", shortName: "TSVM", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
+    { id: "team-wu14-1", name: "Kreuznacher HC (w)", shortName: "KHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+    { id: "team-wu14-2", name: "Dürkheimer HC (w)", shortName: "DHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+    { id: "team-wu14-3", name: "Wiesbadener THC (w)", shortName: "WTHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+    { id: "team-wu14-4", name: "TG Frankenthal (w)", shortName: "TGF", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+    { id: "team-wu14-5", name: "Mannheimer HC (w)", shortName: "MHC", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+    { id: "team-wu14-6", name: "SC Frankfurt 1880 (w)", shortName: "SCF", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+    { id: "team-wu14-7", name: "HTC Stuttgarter Kickers (w)", shortName: "KICK", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+    { id: "team-wu14-8", name: "TSV Schott Mainz (w)", shortName: "TSVM", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
 
     // 8x mU14
-    { id: "team-mu14-1", name: "Kreuznacher HC (m)", shortName: "KHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-    { id: "team-mu14-2", name: "Dürkheimer HC (m)", shortName: "DHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-    { id: "team-mu14-3", name: "Wiesbadener THC (m)", shortName: "WTHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-    { id: "team-mu14-4", name: "TG Frankenthal (m)", shortName: "TGF", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-    { id: "team-mu14-5", name: "Mannheimer HC (m)", shortName: "MHC", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-    { id: "team-mu14-6", name: "SC Frankfurt 1880 (m)", shortName: "SCF", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-    { id: "team-mu14-7", name: "HTC Stuttgarter Kickers (m)", shortName: "KICK", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
-    { id: "team-mu14-8", name: "TSV Schott Mainz (m)", shortName: "TSVM", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0 },
+    { id: "team-mu14-1", name: "Kreuznacher HC (m)", shortName: "KHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+    { id: "team-mu14-2", name: "Dürkheimer HC (m)", shortName: "DHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+    { id: "team-mu14-3", name: "Wiesbadener THC (m)", shortName: "WTHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+    { id: "team-mu14-4", name: "TG Frankenthal (m)", shortName: "TGF", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+    { id: "team-mu14-5", name: "Mannheimer HC (m)", shortName: "MHC", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+    { id: "team-mu14-6", name: "SC Frankfurt 1880 (m)", shortName: "SCF", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+    { id: "team-mu14-7", name: "HTC Stuttgarter Kickers (m)", shortName: "KICK", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
+    { id: "team-mu14-8", name: "TSV Schott Mainz (m)", shortName: "TSVM", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: generateJingleToken() },
   ]
 }
 
@@ -236,4 +310,183 @@ export async function seedDefaultTeams(): Promise<void> {
     )
   }
   await batch.commit()
+}
+
+/**
+ * Sucht ein Team anhand seines geheimen Jingle-Tokens.
+ * Unterstützt Fallback auf Dokument-ID und sichert ab, dass ein Token vorhanden ist.
+ */
+export async function getTeamByJingleToken(token: string): Promise<Team | null> {
+  if (!token || typeof token !== "string") return null
+  const cleanToken = token.trim()
+  if (!cleanToken) return null
+
+  await ensureAnonymousAuth()
+
+  if (!isFirebaseConfigured) {
+    const teams = getStoredMockTeams()
+    const found = teams.find((t) => t.jingleToken === cleanToken || t.id === cleanToken)
+    return found ? { ...found } : null
+  }
+
+  try {
+    // 1. Suche nach jingleToken
+    const q = query(collection(db, TEAMS_COLLECTION), where("jingleToken", "==", cleanToken))
+    const snap = await getDocs(q)
+    if (!snap.empty) {
+      const docSnap = snap.docs[0]
+      return { ...(docSnap.data() as Team), id: docSnap.id }
+    }
+
+    // 2. Fallback: Falls die ID direkt als Token übergeben wurde
+    const docRef = doc(db, TEAMS_COLLECTION, cleanToken)
+    const docSnap = await getDoc(docRef)
+    if (docSnap.exists()) {
+      const teamData = docSnap.data() as Team
+      let activeToken = teamData.jingleToken
+      if (!activeToken || activeToken.length < 16) {
+        activeToken = generateJingleToken()
+        updateDoc(docRef, { jingleToken: activeToken }).catch((err) => {
+          console.warn("Konnte jingleToken nicht nachpflegen:", err)
+        })
+      }
+      return { ...teamData, jingleToken: activeToken, id: docSnap.id }
+    }
+
+    return null
+  } catch (err) {
+    console.error("Fehler beim Abrufen des Teams per Jingle-Token:", err)
+    throw err
+  }
+}
+
+/**
+ * Speichert Tor-Jingle und Startzeitpunkt für ein Team über den geheimen Token.
+ */
+export async function saveTeamJingleByToken(
+  token: string,
+  options: {
+    file?: File | null
+    startTimeMs: number
+    removeJingle?: boolean
+  }
+): Promise<Team> {
+  await ensureAnonymousAuth()
+
+  const currentTeam = await getTeamByJingleToken(token)
+  if (!currentTeam) {
+    throw new Error("Ungültiger oder abgelaufener Link. Bitte wende dich an die Turnierleitung.")
+  }
+
+  if (options.removeJingle) {
+    if (!isFirebaseConfigured) {
+      const idx = localMockTeams.findIndex((t) => t.id === currentTeam.id)
+      if (idx >= 0) {
+        localMockTeams[idx] = {
+          ...localMockTeams[idx],
+          jingleUrl: null,
+          jingleStartTimeMs: 0,
+        }
+        notifyMockListeners()
+        return { ...localMockTeams[idx] }
+      }
+      return currentTeam
+    }
+
+    const teamRef = doc(db, TEAMS_COLLECTION, currentTeam.id)
+    await updateDoc(teamRef, {
+      jingleUrl: null,
+      jingleStartTimeMs: 0,
+      jingleUpdatedAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    })
+    return {
+      ...currentTeam,
+      jingleUrl: null,
+      jingleStartTimeMs: 0,
+    }
+  }
+
+  let finalJingleUrl = currentTeam.jingleUrl
+
+  if (options.file) {
+    const MAX_SIZE = 5 * 1024 * 1024 // 5 MB
+    if (options.file.size > MAX_SIZE) {
+      throw new Error("Der Torjingle darf maximal 5 MB groß sein.")
+    }
+
+    const isMp3 = options.file.type.includes("audio") || options.file.name.toLowerCase().endsWith(".mp3")
+    if (!isMp3) {
+      throw new Error("Bitte lade eine MP3-Audiodatei hoch.")
+    }
+
+    if (!isFirebaseConfigured) {
+      finalJingleUrl = await new Promise<string>((resolve) => {
+        const reader = new FileReader()
+        reader.onload = (e) => resolve(e.target?.result as string)
+        reader.readAsDataURL(options.file as File)
+      })
+    } else {
+      const storageRef = ref(storage, `teams/${currentTeam.id}/jingle_${Date.now()}.mp3`)
+      const snapshot = await uploadBytes(storageRef, options.file)
+      finalJingleUrl = await getDownloadURL(snapshot.ref)
+    }
+  }
+
+  const startTime = Math.max(0, Math.round(options.startTimeMs || 0))
+
+  if (!isFirebaseConfigured) {
+    const idx = localMockTeams.findIndex((t) => t.id === currentTeam.id)
+    if (idx >= 0) {
+      localMockTeams[idx] = {
+        ...localMockTeams[idx],
+        jingleUrl: finalJingleUrl,
+        jingleStartTimeMs: startTime,
+      }
+      notifyMockListeners()
+      return { ...localMockTeams[idx] }
+    }
+    return currentTeam
+  }
+
+  const teamRef = doc(db, TEAMS_COLLECTION, currentTeam.id)
+  await updateDoc(teamRef, {
+    jingleUrl: finalJingleUrl,
+    jingleStartTimeMs: startTime,
+    jingleUpdatedAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  })
+
+  return {
+    ...currentTeam,
+    jingleUrl: finalJingleUrl,
+    jingleStartTimeMs: startTime,
+  }
+}
+
+/**
+ * Generiert einen neuen Token für ein Team (widerruft vorherigen Link).
+ */
+export async function regenerateTeamJingleToken(teamId: string): Promise<string> {
+  const newToken = generateJingleToken()
+
+  if (!isFirebaseConfigured) {
+    const idx = localMockTeams.findIndex((t) => t.id === teamId)
+    if (idx >= 0) {
+      localMockTeams[idx] = {
+        ...localMockTeams[idx],
+        jingleToken: newToken,
+      }
+      notifyMockListeners()
+    }
+    return newToken
+  }
+
+  const teamRef = doc(db, TEAMS_COLLECTION, teamId)
+  await updateDoc(teamRef, {
+    jingleToken: newToken,
+    updatedAt: serverTimestamp(),
+  })
+
+  return newToken
 }
