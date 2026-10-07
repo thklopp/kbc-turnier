@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from "react-router-dom"
-import { Tv, UserRoundKey, Radio, Calendar, Trophy, Medal, Info } from "lucide-react"
+import { Radio, Calendar, Trophy, Medal, Info } from "lucide-react"
 import rrkLogo from "@/assets/images/RRK.webp"
 
 export function GuestLayout() {
@@ -126,24 +126,18 @@ export function GuestLayout() {
             <span>Made with ❤️ in Rüsselsheim</span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             <Link
               to="/kiosk"
-              className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
-              title="Hallen-Display Vollbild öffnen"
-              aria-label="Hallen-Display"
+              className="font-medium text-slate-600 hover:text-slate-900 hover:underline transition-colors"
             >
-              <Tv className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Kiosk</span>
+              Kiosk
             </Link>
             <Link
               to="/admin"
-              className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 text-xs text-slate-600 shadow-sm transition-colors hover:bg-blue-600 hover:text-white hover:border-blue-600"
-              title="Turnierleitung Anmeldung"
-              aria-label="Turnierleitung"
+              className="font-medium text-slate-600 hover:text-slate-900 hover:underline transition-colors"
             >
-              <UserRoundKey className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Admin</span>
+              Admin
             </Link>
           </div>
         </div>
