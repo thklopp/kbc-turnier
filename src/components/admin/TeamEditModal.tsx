@@ -181,7 +181,7 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
   }
 
   return (
-    <div className="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl border border-slate-200">
+    <div className="relative w-full max-w-2xl rounded-2xl bg-white p-6 shadow-2xl border border-slate-200">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
         <div>
@@ -314,16 +314,30 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
           </div>
         </div>
 
-        {/* Torjingle Upload Section */}
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5">
-          <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-            Torjingle (MP3-Audiodatei - max. 5 MB)
-          </label>
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-purple-700">
-              <Music className="h-5 w-5" />
+        {/* Torjingle & Startzeitpunkt (Zusammengefasster Block) */}
+        <div className="rounded-xl border border-purple-200 bg-purple-50/40 p-3.5 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-purple-100 text-purple-700">
+                <Music className="h-4 w-4" />
+              </div>
+              <label className="text-xs font-bold text-slate-800">
+                Torjingle & Startzeitpunkt
+              </label>
             </div>
-            <div className="flex-1">
+            {(team.jingleUrl || jingleFile) && (
+              <span className="text-[11px] font-mono font-bold text-purple-700 bg-purple-100 border border-purple-200 px-2 py-0.5 rounded-md">
+                {jingleStartTimeMs} ms Versatz
+              </span>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+            {/* Linke Spalte: MP3 Datei-Auswahl */}
+            <div className="space-y-1.5">
+              <span className="block text-[11px] font-semibold text-slate-600">
+                MP3-Datei (max. 5 MB)
+              </span>
               <input
                 type="file"
                 ref={jingleInputRef}
@@ -331,42 +345,36 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
                 accept="audio/mp3,audio/mpeg,.mp3"
                 className="hidden"
               />
-              <button
-                type="button"
-                onClick={() => jingleInputRef.current?.click()}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
-              >
-                <Upload className="h-3.5 w-3.5 text-slate-500" />
-                <span>
-                  {team.jingleUrl || jingleFile ? "Anderen Jingle wählen" : "MP3 hochladen"}
-                </span>
-              </button>
-              {(jingleFile || team.jingleUrl) && (
-                <span className="block mt-1 truncate text-[11px] text-purple-700 font-medium">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => jingleInputRef.current?.click()}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
+                >
+                  <Upload className="h-3.5 w-3.5 text-slate-500" />
+                  <span>
+                    {team.jingleUrl || jingleFile ? "Anderen Jingle wählen" : "MP3 hochladen"}
+                  </span>
+                </button>
+              </div>
+              {(jingleFile || team.jingleUrl) ? (
+                <p className="truncate text-[11px] text-purple-700 font-medium">
                   {jingleFile
                     ? `${jingleFile.name} (${(jingleFile.size / 1024).toFixed(0)} KB)`
                     : "Jingle bereits hinterlegt"}
-                </span>
+                </p>
+              ) : (
+                <p className="text-[11px] text-slate-400">Noch kein Jingle vorhanden</p>
               )}
             </div>
-          </div>
-        </div>
 
-        {/* Startzeitpunkt Konfiguration (nur sichtbar, wenn Jingle vorhanden) */}
-        {(team.jingleUrl || jingleFile) && (
-          <div className="rounded-xl border border-purple-200 bg-purple-50/50 p-3.5 space-y-2.5">
-            <div className="flex items-center justify-between">
-              <label className="block text-xs font-bold text-slate-800">
-                Startzeitpunkt des Jingles
-              </label>
-              <span className="text-[11px] font-mono font-bold text-purple-700 bg-purple-100 border border-purple-200 px-2 py-0.5 rounded-md">
-                {(jingleStartTimeMs / 1000).toFixed(1)}s Versatz
+            {/* Rechte Spalte: Startzeitpunkt in ms & Audio-Test */}
+            <div className="space-y-1.5 border-t border-purple-100 pt-3 md:border-t-0 md:border-l md:border-purple-200 md:pt-0 md:pl-4">
+              <span className="block text-[11px] font-semibold text-slate-600">
+                Startversatz & Vorhören
               </span>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2 items-center">
-              <div className="col-span-2">
-                <div className="relative">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center">
                   <input
                     type="number"
                     min={0}
@@ -376,17 +384,17 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
                       setJingleStartTimeMs(Math.max(0, parseInt(e.target.value, 10) || 0))
                     }
                     placeholder="0"
-                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-mono font-bold text-slate-900 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 pr-10"
+                    disabled={!team.jingleUrl && !jingleFile}
+                    className="w-24 rounded-l-lg border border-r-0 border-slate-300 bg-white px-2.5 py-1.5 text-xs font-mono font-bold text-slate-900 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 disabled:opacity-50 disabled:bg-slate-50"
                   />
-                  <span className="absolute right-3 top-1.5 text-xs text-slate-400 font-medium">
+                  <span className="inline-flex items-center rounded-r-lg border border-l-0 border-slate-300 bg-slate-100 px-2 py-1.5 text-xs font-mono font-medium text-slate-500">
                     ms
                   </span>
                 </div>
-              </div>
 
-              <div>
                 <button
                   type="button"
+                  disabled={!previewAudioUrl && !team.jingleUrl}
                   onClick={() => {
                     const url = previewAudioUrl || team.jingleUrl
                     if (!url) return
@@ -396,7 +404,7 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
                       playPreview(url, jingleStartTimeMs)
                     }
                   }}
-                  className={`w-full inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-bold transition-colors cursor-pointer ${
+                  className={`inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
                     (previewAudioUrl || team.jingleUrl) &&
                     isPreviewPlaying(previewAudioUrl || team.jingleUrl || undefined)
                       ? "bg-purple-600 text-white animate-pulse"
@@ -418,13 +426,12 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
                   )}
                 </button>
               </div>
+              <p className="text-[10px] text-slate-500 leading-tight">
+                Gibt an, ab welcher Millisekunde abgespielt wird.
+              </p>
             </div>
-
-            <p className="text-[11px] text-slate-500 leading-relaxed">
-              Legt fest, ab welcher Millisekunde der Torjingle startet (z. B. <strong>1500</strong> für 1,5s oder <strong>3200</strong> für 3,2s Intro-Übersprung).
-            </p>
           </div>
-        )}
+        </div>
 
         {/* Betreuer Unique-Link für Tor-Jingle Upload (ohne Login) */}
         <div className="rounded-xl border border-blue-200 bg-blue-50/40 p-3.5 space-y-2">
