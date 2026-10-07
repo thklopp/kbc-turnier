@@ -17,6 +17,13 @@ export interface TournamentConfig {
   updatedBy?: string
 }
 
+export interface TournamentInfoConfig {
+  id: "info"
+  content: string
+  updatedAt?: Timestamp
+  updatedBy?: string
+}
+
 export interface Team {
   id: string
   name: string
