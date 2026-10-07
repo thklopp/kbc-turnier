@@ -1,15 +1,17 @@
 import { Outlet, Link, useLocation } from "react-router-dom"
-import { Tv, UserRoundKey, Radio, Calendar, Trophy, Medal } from "lucide-react"
+import { Tv, UserRoundKey, Radio, Calendar, Trophy, Medal, Info } from "lucide-react"
 import rrkLogo from "@/assets/images/RRK.webp"
 
 export function GuestLayout() {
   const location = useLocation()
   const hash = location.hash
 
-  const isLive = hash === "#live"
-  const isStandings = hash === "#standings"
-  const isFinals = hash === "#finals"
-  const isSchedule = !isLive && !isStandings && !isFinals
+  const isHome = location.pathname === "/"
+  const isLive = isHome && hash === "#live"
+  const isStandings = isHome && hash === "#standings"
+  const isFinals = isHome && hash === "#finals"
+  const isSchedule = isHome && !isLive && !isStandings && !isFinals
+  const isInfo = location.pathname === "/info"
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 text-slate-900">
@@ -34,20 +36,16 @@ export function GuestLayout() {
 
           <nav className="flex items-center gap-2">
             <Link
-              to="/kiosk"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
-              title="Hallen-Display Vollbild öffnen"
-              aria-label="Hallen-Display"
+              to="/info"
+              className={`inline-flex h-9 w-9 items-center justify-center rounded-lg border shadow-sm transition-colors ${
+                isInfo
+                  ? "border-blue-600 bg-blue-50 text-blue-600 font-bold"
+                  : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+              }`}
+              title="Turnierinformationen"
+              aria-label="Turnierinformationen"
             >
-              <Tv className="h-4 w-4" />
-            </Link>
-            <Link
-              to="/admin"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white shadow-sm transition-colors hover:bg-blue-500"
-              title="Turnierleitung Anmeldung"
-              aria-label="Turnierleitung"
-            >
-              <UserRoundKey className="h-4 w-4" />
+              <Info className="h-4 w-4" />
             </Link>
           </nav>
         </div>
@@ -113,8 +111,40 @@ export function GuestLayout() {
 
       {/* Footer */}
       <footer className="border-t border-slate-200 bg-white py-6">
-        <div className="container mx-auto flex max-w-5xl items-center justify-center px-4 text-xs text-slate-500">
-          <span>Made with ❤️ in Rüsselsheim</span>
+        <div className="container mx-auto flex max-w-5xl flex-col sm:flex-row items-center justify-between gap-4 px-4 text-xs text-slate-500">
+          <div className="flex items-center gap-4">
+            <Link
+              to="/impressum"
+              className="font-medium text-slate-600 hover:text-slate-900 hover:underline transition-colors"
+            >
+              Impressum
+            </Link>
+          </div>
+
+          <div className="text-center text-slate-400">
+            <span>Made with ❤️ in Rüsselsheim</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Link
+              to="/kiosk"
+              className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 text-xs text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
+              title="Hallen-Display Vollbild öffnen"
+              aria-label="Hallen-Display"
+            >
+              <Tv className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Kiosk</span>
+            </Link>
+            <Link
+              to="/admin"
+              className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 text-xs text-slate-600 shadow-sm transition-colors hover:bg-blue-600 hover:text-white hover:border-blue-600"
+              title="Turnierleitung Anmeldung"
+              aria-label="Turnierleitung"
+            >
+              <UserRoundKey className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Admin</span>
+            </Link>
+          </div>
         </div>
       </footer>
     </div>

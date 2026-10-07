@@ -4,6 +4,8 @@ import { AdminLayout } from "@/components/layouts/AdminLayout"
 import { KioskLayout } from "@/components/layouts/KioskLayout"
 import { ProtectedRoute } from "@/routes/ProtectedRoute"
 import { HomePage } from "@/pages/guest/HomePage"
+import { InfoPage } from "@/pages/guest/InfoPage"
+import { ImpressumPage } from "@/pages/guest/ImpressumPage"
 import { AdminPage } from "@/pages/admin/AdminPage"
 import { LoginPage } from "@/pages/admin/LoginPage"
 import { KioskPage } from "@/pages/kiosk/KioskPage"
@@ -17,6 +19,8 @@ export function AppRouter() {
         {/* Gast- und Zuschauer-Bereich (Mobil-optimiert) */}
         <Route element={<GuestLayout />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/info" element={<InfoPage />} />
+          <Route path="/impressum" element={<ImpressumPage />} />
         </Route>
 
         {/* Betreuer Tor-Jingle Upload über Unique-Link (ohne Login) */}

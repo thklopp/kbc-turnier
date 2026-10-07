@@ -1,6 +1,6 @@
 # SPEC-015: Info-Seite mit Markdown-Editor, Footer-Redesign und Impressum-Link
 
-> **Status**: In Review  
+> **Status**: In Abnahme  
 > **Typ**: Feature  
 > **Branch**: `feat/SPEC-015-info-page-markdown-und-footer-redesign`  
 > **Autor**: Agent / Antigravity  
@@ -47,21 +47,21 @@ In der aktuellen Gast-Ansicht befinden sich die Links/Buttons für den Kiosk-Mod
 ### 3.1 Im Scope (Must-Have)
 
 #### A. Header- & Footer-Anpassung in `GuestLayout`
-- [ ] **Header oben rechts**:
+- [x] **Header oben rechts**:
   - Entfernung der Buttons für Kiosk (`/kiosk`) und Admin (`/admin`) aus dem Header.
   - Hinzufügen eines Info-Buttons (`<Link to="/info">` mit Info-Icon aus `lucide-react`, Tooltip/Aria-Label „Turnierinformationen“).
   - Befindet sich der Nutzer bereits auf `/info`, wird der Button optisch aktiv hervorgehoben oder bietet eine klare Navigation zurück zur Hauptansicht.
-- [ ] **Footer-Redesign**:
+- [x] **Footer-Redesign**:
   - Links: Link „Impressum“ (`<Link to="/impressum">`).
   - Mitte: „Made with ❤️ in Rüsselsheim“ (auf mobilen Geräten zentriert oder flexibel gestapelt).
   - Rechts: Buttons für Kiosk (`/kiosk`) und Admin-Login (`/admin`) als dezente Icons/Buttons.
 
 #### B. Info-Seite (`/info`)
-- [ ] Eigenständige Gast-Unterseite im `GuestLayout`, nahtlos in das KBC-Design integriert.
-- [ ] Kopfbereich mit Zurück-Button zur Turnierübersicht (`/`) und Titel „Turnierinformationen“.
-- [ ] Vollständiges Rendering des Markdown-Inhalts mit Formatierungen (Überschriften h1-h3, Absätze, Bullet-Lists, Fettung, Hinweiskästen).
-- [ ] Responsives Styling mittels Tailwind Typography (`prose prose-slate max-w-none`) oder Tailwind-Klassen.
-- [ ] Initiale Standard-Inhalte (Fallback), falls in Firestore noch kein Datensatz existiert:
+- [x] Eigenständige Gast-Unterseite im `GuestLayout`, nahtlos in das KBC-Design integriert.
+- [x] Kopfbereich mit Zurück-Button zur Turnierübersicht (`/`) und Titel „Turnierinformationen“.
+- [x] Vollständiges Rendering des Markdown-Inhalts mit Formatierungen (Überschriften h1-h3, Absätze, Bullet-Lists, Fettung, Hinweiskästen).
+- [x] Responsives Styling mittels Tailwind Typography (`prose prose-slate max-w-none`) oder Tailwind-Klassen.
+- [x] Initiale Standard-Inhalte (Fallback), falls in Firestore noch kein Datensatz existiert:
   1. **Begrüßung**: Willkommen aller Mannschaften, Betreuer und Fans zum 20. Kurt-Becker-Cup des Rüsselsheimer RK.
   2. **Zeitraum & Startzeiten**:
      - Samstag, 31.10.2026 ab 10:00 Uhr
@@ -81,20 +81,20 @@ In der aktuellen Gast-Ansicht befinden sich die Links/Buttons für den Kiosk-Mod
      - Platzhalter-Abschnitt zur Tradition und Historie des traditionsreichen Jugendturniers des RRK.
 
 #### C. Admin Markdown-Editor (`/admin#info`)
-- [ ] Neuer Navigationstab „Info-Seite“ in `AdminLayout` (Icon z. B. `FileText` oder `Info`).
-- [ ] Anzeige des Editors im `AdminPage`-Routing bei Hash `#info`.
-- [ ] Editor-Features:
+- [x] Neuer Navigationstab „Info-Seite“ in `AdminLayout` (Icon z. B. `FileText` oder `Info`).
+- [x] Anzeige des Editors im `AdminPage`-Routing bei Hash `#info`.
+- [x] Editor-Features:
   - Textarea / Markdown-Eingabe mit Monospace-Schriftart und komfortabler Zeilenhöhe.
   - Schnelle Formatierungs-Hilfen / Toolbar (Überschrift, Fett, Kursiv, Liste, Tabelle, Zitat).
   - Umschaltbare Vorschau (Preview) oder Side-by-Side-Ansicht auf Desktop / Split-Screen.
   - Button „Speichern & Veröffentlichen“ mit Ladezustand und Erfolgs-Toast/Feedback.
   - Button „Auf Standard zurücksetzen“ (mit Sicherheitsabfrage).
-- [ ] Echtzeit-Synchronisation bzw. sofortige Verfügbarkeit nach dem Speichern für alle Gäste.
+- [x] Echtzeit-Synchronisation bzw. sofortige Verfügbarkeit nach dem Speichern für alle Gäste.
 
 #### D. Impressum-Seite (`/impressum`)
-- [ ] Routing `/impressum` im `GuestLayout`.
-- [ ] Klare Platzhalter-Struktur für Anbieterkennzeichnung gemäß § 5 TMG (Rüsselsheimer Ruder-Klub 08 e.V., Anschrift, Vertretungsberechtigte, Kontakt-E-Mail, Haftungshinweis).
-- [ ] Zurück-Button zur Turnierübersicht (`/`).
+- [x] Routing `/impressum` im `GuestLayout`.
+- [x] Klare Platzhalter-Struktur für Anbieterkennzeichnung gemäß § 5 TMG (Rüsselsheimer Ruder-Klub 08 e.V., Anschrift, Vertretungsberechtigte, Kontakt-E-Mail, Haftungshinweis).
+- [x] Zurück-Button zur Turnierübersicht (`/`).
 
 ---
 
@@ -109,33 +109,33 @@ In der aktuellen Gast-Ansicht befinden sich die Links/Buttons für den Kiosk-Mod
 
 ### 4.1 Szenarien / Kriterien
 
-- [ ] **AC-1: Header- und Footer-Navigation in der Gast-Ansicht**
+- [x] **AC-1: Header- und Footer-Navigation in der Gast-Ansicht**
   - **Gegeben sei**: Ein Besucher ruft die Hauptseite `/` auf.
   - **Wenn**: Der Header betrachtet wird.
   - **Dann**: Sind die Kiosk- und Admin-Buttons NICHT mehr im oberen Header sichtbar; stattdessen befindet sich oben rechts ein Info-Button (`/info`).
   - **Wenn**: Der Footer betrachtet wird.
   - **Dann**: Befindet sich auf der linken Seite ein klickbarer Link „Impressum“ (`/impressum`) und auf der rechten Seite die beiden Buttons für Kiosk (`/kiosk`) und Admin (`/admin`).
 
-- [ ] **AC-2: Aufruf der Info-Seite (`/info`)**
+- [x] **AC-2: Aufruf der Info-Seite (`/info`)**
   - **Gegeben sei**: Ein Gast klickt auf den Info-Button im Header.
   - **Wenn**: Die Route `/info` geladen wird.
   - **Dann**: Wird der strukturierte Text der Turnierinformationen vollständig als formatierter Markdown-Inhalt angezeigt.
   - **Dann**: Sind alle Pflichtbereiche enthalten: Begrüßung, Zeitraum (31.10.26 ab 10:00 Uhr, 01.11.26 ab 9:00 Uhr), Jugend/Gruppen/Spielzeiten/Pausen, Finalphase mit Penalty (3 Schützen), Schiedsrichterstellung durch Teams, Mannschafts-Mittagessen Samstag (11:00 - 13:00 Uhr), Kiosk-Verkauf und KBC-Historie.
   - **Dann**: Existiert ein Zurück-Link zur Startseite.
 
-- [ ] **AC-3: Info-Tab & Markdown-Editor im Admin-Bereich**
+- [x] **AC-3: Info-Tab & Markdown-Editor im Admin-Bereich**
   - **Gegeben sei**: Ein angemeldeter Turnierleiter öffnet `/admin`.
   - **Wenn**: Er auf den Tab „Info“ klickt (Hash: `#info`).
   - **Dann**: Wird der Markdown-Editor mit dem aktuell hinterlegten Text aus Firestore geladen.
   - **Wenn**: Der Turnierleiter Änderungen am Text vornimmt und auf „Speichern“ klickt.
   - **Dann**: Wird der geänderte Inhalt in Firestore (`config/info`) gespeichert, eine Erfolgsmeldung erscheint und die Seite `/info` zeigt unmittelbar den neuen Text an.
 
-- [ ] **AC-4: Vorschau-Modus im Editor**
+- [x] **AC-4: Vorschau-Modus im Editor**
   - **Gegeben sei**: Die Turnierleitung editiert den Text im Admin-Tab „Info“.
   - **Wenn**: Die Vorschau aktiviert wird (oder in der Side-by-Side-Ansicht).
   - **Dann**: Sieht der Admin exakt die gerenderte Markdown-Darstellung, wie sie auch Gäste auf `/info` sehen.
 
-- [ ] **AC-5: Aufruf des Impressums (`/impressum`)**
+- [x] **AC-5: Aufruf des Impressums (`/impressum`)**
   - **Gegeben sei**: Ein Nutzer klickt im Footer auf „Impressum“.
   - **Wenn**: Die Seite `/impressum` aufgerufen wird.
   - **Dann**: Wird die strukturierte Impressums-Seite mit Vorlage für Verein, Anschrift, Kontakt und Haftungsausschluss angezeigt.

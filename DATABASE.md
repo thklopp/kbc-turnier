@@ -9,7 +9,8 @@ Dieses Dokument definiert das vollständige Datenmodell der **KBC Hallenhockey-T
 ```
 firestore/
 ├── config/
-│   └── tournament             # Globale Turnierkonfiguration (Zeiten, Pausen, Rhythmus)
+│   ├── tournament             # Globale Turnierkonfiguration (Zeiten, Pausen, Rhythmus)
+│   └── info                   # Info-Seite Markdown-Inhalt (Regeln, Zeiten, Catering, Historie)
 ├── teams/
 │   └── {teamId}               # 16 Mannschaften (8x mU14, 8x wU14) mit Logos & Jingles
 ├── matches/
@@ -51,6 +52,21 @@ export interface TournamentConfig {
   "activeDay": "saturday",
   "courtsCount": 1,
   "rotationPattern": "2w_2m"
+}
+```
+
+---
+
+### 1.2 Dokument `info`
+
+Speichert den redaktionellen Inhalt der Info-Seite (`/info`) im Markdown-Format.
+
+```typescript
+export interface TournamentInfoConfig {
+  id: "info";
+  content: string;                   // Vollständiger Markdown-Text der Info-Seite
+  updatedAt: FirebaseFirestore.Timestamp;
+  updatedBy?: string;                // User-ID des bearbeitenden Admins
 }
 ```
 
