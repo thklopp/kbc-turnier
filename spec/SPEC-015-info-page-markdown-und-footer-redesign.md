@@ -1,6 +1,6 @@
 # SPEC-015: Info-Seite mit Markdown-Editor, Footer-Redesign und Impressum-Link
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature  
 > **Branch**: `feat/SPEC-015-info-page-markdown-und-footer-redesign`  
 > **Autor**: Agent / Antigravity  
