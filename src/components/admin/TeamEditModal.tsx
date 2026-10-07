@@ -1,8 +1,8 @@
 import { useState, useRef, type ChangeEvent, type FormEvent } from "react"
 import type { Team, GenderCategory, TournamentGroup } from "@/types/database"
-import { uploadTeamLogo, uploadTeamJingle, saveTeam, deleteTeam } from "@/services/teamService"
+import { uploadTeamLogo, uploadTeamJingle, saveTeam, deleteTeam, regenerateTeamJingleToken } from "@/services/teamService"
 import { useAudioPlayer } from "@/hooks/useAudioPlayer"
-import { X, Upload, Music, Image as ImageIcon, Trash2, AlertCircle, CheckCircle, Play, Square } from "lucide-react"
+import { X, Upload, Music, Image as ImageIcon, Trash2, AlertCircle, CheckCircle, Play, Square, Link as LinkIcon, RefreshCw, Copy, Check } from "lucide-react"
 
 interface TeamEditModalProps {
   team: Team | null
@@ -27,6 +27,39 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+
+  const [currentToken, setCurrentToken] = useState<string>(team.jingleToken || team.id)
+  const [copiedLink, setCopiedLink] = useState(false)
+  const [regeneratingToken, setRegeneratingToken] = useState(false)
+
+  const handleCopyLink = async () => {
+    const url = `${window.location.origin}/jingle/${currentToken}`
+    try {
+      await navigator.clipboard.writeText(url)
+      setCopiedLink(true)
+      setTimeout(() => setCopiedLink(false), 2000)
+    } catch {
+      prompt("Upload-Link für dieses Team:", url)
+    }
+  }
+
+  const handleRegenerateToken = async () => {
+    if (!window.confirm("Möchtest du wirklich einen neuen Link für dieses Team generieren? Der alte Link verliert sofort seine Gültigkeit.")) {
+      return
+    }
+    setRegeneratingToken(true)
+    setError(null)
+    try {
+      const newToken = await regenerateTeamJingleToken(team.id)
+      setCurrentToken(newToken)
+      setSuccess("Neuer Upload-Link wurde generiert!")
+      setTimeout(() => setSuccess(null), 3000)
+    } catch {
+      setError("Fehler beim Generieren des neuen Tokens.")
+    } finally {
+      setRegeneratingToken(false)
+    }
+  }
 
   const logoInputRef = useRef<HTMLInputElement>(null)
   const jingleInputRef = useRef<HTMLInputElement>(null)
@@ -386,6 +419,68 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
             </p>
           </div>
         )}
+
+        {/* Betreuer Unique-Link für Tor-Jingle Upload (ohne Login) */}
+        <div className="rounded-xl border border-blue-200 bg-blue-50/40 p-3.5 space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <LinkIcon className="h-4 w-4 text-blue-600" />
+              <label className="block text-xs font-bold text-slate-900">
+                Betreuer-Upload Link (ohne Login)
+              </label>
+            </div>
+            {team.jingleUpdatedAt && (
+              <span className="text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full font-medium">
+                Vom Betreuer gepflegt
+              </span>
+            )}
+          </div>
+
+          <p className="text-[11px] text-slate-600">
+            Diesen Link kannst du an Trainer oder Betreuer weitergeben. Sie können ihren Jingle darüber selbst hochladen, testen und die Startzeit einstellen:
+          </p>
+
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              readOnly
+              value={`${window.location.origin}/jingle/${currentToken}`}
+              className="flex-1 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 font-mono text-[11px] text-slate-700 select-all"
+            />
+
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer shrink-0 ${
+                copiedLink
+                  ? "border-emerald-300 bg-emerald-50 text-emerald-700"
+                  : "border-slate-300 bg-white text-slate-700 hover:bg-slate-100"
+              }`}
+            >
+              {copiedLink ? (
+                <>
+                  <Check className="h-3.5 w-3.5 text-emerald-600" />
+                  <span>Kopiert!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="h-3.5 w-3.5 text-slate-500" />
+                  <span>Kopieren</span>
+                </>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleRegenerateToken}
+              disabled={regeneratingToken}
+              title="Neuen Token erzeugen (macht bisherigen Link ungültig)"
+              className="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-xs text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer shrink-0 disabled:opacity-50"
+            >
+              <RefreshCw className={`h-3.5 w-3.5 ${regeneratingToken ? "animate-spin" : ""}`} />
+            </button>
+          </div>
+        </div>
 
         {/* Buttons */}
         <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-6">

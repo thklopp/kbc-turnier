@@ -1,5 +1,5 @@
 import { initializeApp, getApps, type FirebaseApp } from "firebase/app"
-import { getAuth, type Auth } from "firebase/auth"
+import { getAuth, signInAnonymously, type Auth } from "firebase/auth"
 import { initializeFirestore, type Firestore } from "firebase/firestore"
 import { getStorage, type FirebaseStorage } from "firebase/storage"
 
@@ -45,4 +45,19 @@ export const db: Firestore = initializeFirestore(app, {
   ignoreUndefinedProperties: true,
 })
 export const storage: FirebaseStorage = getStorage(app)
+
+/**
+ * Stellt sicher, dass ein Firebase-Nutzer angemeldet ist (anonym, falls nicht eingeloggt).
+ */
+export async function ensureAnonymousAuth(): Promise<void> {
+  if (!isFirebaseConfigured) return
+  if (!auth.currentUser) {
+    try {
+      await signInAnonymously(auth)
+    } catch (err) {
+      console.warn("Anonyme Anmeldung fehlgeschlagen:", err)
+    }
+  }
+}
+
 export default app
