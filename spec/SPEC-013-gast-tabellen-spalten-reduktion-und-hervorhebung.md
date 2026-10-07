@@ -1,6 +1,6 @@
 # SPEC-013: Reduktion und Neuordnung der Tabellenspalten in der Gästeansicht mit Punkthervorhebung
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: UX-Optimierung  
 > **Branch**: `feat/SPEC-013-gast-tabellen-spalten-reduktion-und-hervorhebung`  
 > **Autor**: Antigravity Agent  
