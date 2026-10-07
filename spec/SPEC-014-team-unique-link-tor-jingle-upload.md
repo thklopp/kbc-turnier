@@ -1,6 +1,6 @@
 # SPEC-014: Unique-Links für Teams zum eigenständigen Tor-Jingle Upload & Startzeit-Konfiguration
 
-> **Status**: In Abnahme  
+> **Status**: Umgesetzt  
 > **Typ**: Feature  
 > **Branch**: `feat/SPEC-014-team-unique-link-tor-jingle-upload`  
 > **Autor**: Agent / Antigravity (nach /grill-me Abstimmung mit Nutzer)  
@@ -19,7 +19,7 @@ Bislang können Tor-Jingles und deren Startzeitpunkt nur von der Turnierleitung 
 - Jedes Team erhält einen kryptografisch sicheren, eindeutigen Link (z. B. `https://<domain>/jingle/<secret-token>`).
 - Betreuer können über diesen Link auf dem Smartphone oder Desktop ohne Login ihren Vereins-Torjingle (MP3, max. 5 MB) hochladen.
 - Betreuer können die Startzeit in Millisekunden exakt festlegen (mittels Zeitleiste/Slider, direktem Millisekunden-Feld und einem Button „Aktuelle Position als Startzeit übernehmen“).
-- Ein Test-Play-Button ermöglicht das direkte Vorhören ab der gewählten Startzeit (mit automatischem Stopp nach maximal 15 Sekunden).
+- Play-, Pause- und Stopp-Buttons ermöglichen das Vorhören (Stopp springt zur Startzeit zurück; MP3-Vorschau ohne Längenbegrenzung bis zu max. 5 MB).
 - **Sicherheits- & Abbruch-Logik**: Änderungen und neue Audio-Dateien werden zunächst rein lokal im Browser (Blob-URL) vorgehört. Erst beim Klick auf „Speichern“ erfolgt der Upload in Firebase Storage und das Update in Firestore. Bei „Abbrechen“ oder Verlassen des Browsers bleibt der bisherige Zustand vollständig erhalten und es entsteht kein Speicher- oder Dateimüll.
 - Die Turnierleitung kann im Admin-Bereich:
   - Links pro Team mit einem Klick kopieren.
@@ -42,20 +42,20 @@ Bislang können Tor-Jingles und deren Startzeitpunkt nur von der Turnierleitung 
 ## 3. Fachliche Anforderungen & Scope
 
 ### 3.1 Im Scope (Must-Have)
-- [ ] **Token-Generierung & Datenmodell**:
-  - Jedes Team besitzt ein Feld `jingleToken` (kryptografisch zufälliger String, z. B. UUID v4 oder nanoid) sowie `jingleUpdatedAt` (Timestamp).
+- [x] **Token-Generierung & Datenmodell**:
+  - Jedes Team besitzt ein Feld `jingleToken` (kryptografisch zufälliger String, 32 Hex-Zeichen via `crypto.getRandomValues`) sowie `jingleUpdatedAt` (Timestamp).
   - Existierende Teams erhalten bei Bedarf automatisch einen initialen Token.
-- [ ] **Upload-Webseite für Teams (`/jingle/:token`)**:
+- [x] **Upload-Webseite für Teams (`/jingle/:token`)**:
   - Eigenständige, mobil-optimierte Ansicht im KBC-Design (ohne Admin-Navigation, ohne Login).
   - Anzeige des Teamnamens, Wappens und Altersklasse (mU14 / wU14).
   - Drag & Drop oder Datei-Auswahl für MP3 (max. 5 MB, Format-Validierung).
   - Anzeige des aktuellen Jingles (falls bereits vorhanden) mit Abspielmöglichkeit.
   - Client-seitige Vorschau neuer Dateien via `URL.createObjectURL` ohne vorzeitigen Upload.
   - Startzeit-Steuerung:
-    - Numerisches Eingabefeld (Millisekunden).
-    - Interaktiver Zeitleisten-Slider (Sekunden & Millisekunden).
+    - Numerisches Eingabefeld (Millisekunden) mit bündig angefügter `ms`-Einheit.
+    - Interaktiver Zeitleisten-Slider (Millisekunden).
     - Button: „Aktuelle Abspielposition als Startzeit übernehmen“.
-  - Test-Play-Button: Spielt die Audiodatei ab der konfigurierten Startzeit ab und stoppt automatisch nach **15 Sekunden**.
+  - Play-, Pause- und Stopp-Steuerung (Stopp setzt Position und Slider auf Startzeit zurück).
   - Aktionen:
     - „Speichern & Übernehmen“: Upload nach Firebase Storage (`teams/{teamId}/jingle.mp3`), Update des Team-Dokuments in Firestore, Erfolgsmeldung.
     - „Abbrechen / Zurücksetzen“: Verwirft die lokale Dateiauswahl und setzt alle Felder auf den zuletzt gespeicherten Stand zurück.
@@ -168,10 +168,10 @@ export interface Team {
 ---
 
 ## 8. Verifikations- & Testplan
-1. [ ] TypeScript Type-Check & `npm run build` fehlerfrei.
-2. [ ] Aufruf von `/jingle/ungueltiger-token` zeigt Fehlermeldung.
-3. [ ] Aufruf von `/jingle/<valid-token>` zeigt korrektes Team.
-4. [ ] MP3 auswählen -> Vorhören ab 4500 ms -> Stoppt nach 15s.
-5. [ ] Klick auf „Abbrechen“ -> Audio-Auswahl zurückgesetzt, keine Änderung in Firestore.
-6. [ ] Klick auf „Speichern“ -> Erfolgreich gespeichert, Status in Admin-Übersicht aktualisiert sich in Echtzeit.
-7. [ ] Link kopieren und Token neu generieren in Admin-Übersicht verifizieren.
+1. [x] TypeScript Type-Check & `npm run build` fehlerfrei.
+2. [x] Aufruf von `/jingle/ungueltiger-token` zeigt Fehlermeldung.
+3. [x] Aufruf von `/jingle/<valid-token>` zeigt korrektes Team.
+4. [x] MP3 auswählen -> Vorhören ab konfigurierter ms-Startzeit -> Play/Pause/Stopp.
+5. [x] Klick auf „Abbrechen“ -> Audio-Auswahl zurückgesetzt, keine Änderung in Firestore.
+6. [x] Klick auf „Speichern“ -> Erfolgreich gespeichert, Status in Admin-Übersicht aktualisiert sich in Echtzeit.
+7. [x] Link kopieren und Token neu generieren in Admin-Übersicht verifiziert.

@@ -75,6 +75,7 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
   - Schneller Torjingle-Auslöser: Beim Torerfolg spielt der Jingle des Teams unmittelbar ab
   - Manueller Soundboard-Button für Schlusshorn & Hallenjingles
   - [SPEC-006] Redesign Live-Desk: Full-Width 4-Zeilen Stack (Spielauswahl, Spieluhr, Spielstand, Soundboard), Entfernung Strafkarten, sanftes Jingle-Fade-Out & sichere Tor-Korrektur
+  - [SPEC-014] Unique-Links für Teams zum eigenständigen Tor-Jingle Upload & Startzeit-Konfiguration ohne Login
 - [x] Spiel beenden und automatischer Übergang zum nächsten Spiel.
 
 ---
