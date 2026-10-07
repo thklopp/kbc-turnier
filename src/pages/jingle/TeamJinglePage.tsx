@@ -6,6 +6,7 @@ import {
   Music,
   Upload,
   Play,
+  Pause,
   Square,
   CheckCircle,
   AlertCircle,
@@ -68,7 +69,9 @@ export function TeamJinglePage() {
         } else {
           setTeam(teamData)
           setPreviewUrl(teamData.jingleUrl)
-          setStartTimeMs(teamData.jingleStartTimeMs ?? 0)
+          const startMs = teamData.jingleStartTimeMs ?? 0
+          setStartTimeMs(startMs)
+          setCurrentTimeSec(startMs / 1000)
         }
       } catch (err) {
         console.error("Fehler beim Laden der Team-Daten per Token:", err)
@@ -86,18 +89,32 @@ export function TeamJinglePage() {
     }
   }, [token])
 
-  // Stop playback and cleanup audio on unmount or URL switch
+  // Aktualisiert die Startzeit und synchronisiert bei Inaktivität den Slider
+  const updateStartTime = (ms: number) => {
+    const validMs = Math.max(0, ms)
+    setStartTimeMs(validMs)
+    if (!isPlaying) {
+      const sec = validMs / 1000
+      setCurrentTimeSec(sec)
+      if (audioRef.current) {
+        audioRef.current.currentTime = sec
+      }
+    }
+  }
+
+  // Stoppt die Wiedergabe. Bei Stopp steht der Slider immer auf der eingestellten Startzeit
   const stopAudio = () => {
     if (autoStopTimeoutRef.current) {
       clearTimeout(autoStopTimeoutRef.current)
       autoStopTimeoutRef.current = null
     }
+    const targetSec = Math.max(0, startTimeMs / 1000)
     if (audioRef.current) {
       audioRef.current.pause()
-      audioRef.current.currentTime = 0
+      audioRef.current.currentTime = targetSec
     }
     setIsPlaying(false)
-    setCurrentTimeSec(0)
+    setCurrentTimeSec(targetSec)
   }
 
   useEffect(() => {
@@ -141,6 +158,11 @@ export function TeamJinglePage() {
   const handleLoadedMetadata = () => {
     if (audioRef.current) {
       setDurationSec(audioRef.current.duration || 0)
+      if (!isPlaying) {
+        const startSec = Math.max(0, startTimeMs / 1000)
+        audioRef.current.currentTime = startSec
+        setCurrentTimeSec(startSec)
+      }
     }
   }
 
@@ -148,25 +170,29 @@ export function TeamJinglePage() {
     stopAudio()
   }
 
-  // 4. Test Play from startTimeMs (auto-stop after max 15 seconds)
-  const handleTestPlay = () => {
+  // 4. Toggle Play / Pause
+  const handleTogglePlayPause = () => {
     if (!previewUrl || !audioRef.current) return
     setActionError(null)
 
     if (isPlaying) {
-      stopAudio()
+      // Pause
+      if (autoStopTimeoutRef.current) {
+        clearTimeout(autoStopTimeoutRef.current)
+        autoStopTimeoutRef.current = null
+      }
+      audioRef.current.pause()
+      setIsPlaying(false)
       return
     }
 
-    const startInSec = Math.max(0, startTimeMs / 1000)
-    audioRef.current.currentTime = startInSec
-
+    // Play / Resume
     audioRef.current
       .play()
       .then(() => {
         setIsPlaying(true)
 
-        // Auto-stop after 15 seconds
+        // Auto-stop nach maximal 15 Sekunden
         if (autoStopTimeoutRef.current) {
           clearTimeout(autoStopTimeoutRef.current)
         }
@@ -179,6 +205,11 @@ export function TeamJinglePage() {
         setActionError("Die Audiowiedergabe konnte nicht gestartet werden.")
         setIsPlaying(false)
       })
+  }
+
+  // Stopp Button: stoppt und setzt Slider auf die Startzeit zurück
+  const handleStop = () => {
+    stopAudio()
   }
 
   // 5. Seek slider change
@@ -197,10 +228,17 @@ export function TeamJinglePage() {
 
   // 7. Reset / Abbrechen
   const handleReset = () => {
-    stopAudio()
+    const originalMs = team?.jingleStartTimeMs ?? 0
     setSelectedFile(null)
     setPreviewUrl(team?.jingleUrl ?? null)
-    setStartTimeMs(team?.jingleStartTimeMs ?? 0)
+    setStartTimeMs(originalMs)
+    const targetSec = originalMs / 1000
+    if (audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current.currentTime = targetSec
+    }
+    setIsPlaying(false)
+    setCurrentTimeSec(targetSec)
     setActionError(null)
     setSaveSuccess(false)
     if (fileInputRef.current) {
@@ -468,7 +506,7 @@ export function TeamJinglePage() {
                     </span>
                   </div>
                   <div className="text-[11px] text-slate-500">
-                    Testlauf stoppt nach max. 15 Sekunden
+                    Stopp springt zur Startzeit ({(startTimeMs / 1000).toFixed(1)}s) zurück
                   </div>
                 </div>
 
@@ -505,7 +543,7 @@ export function TeamJinglePage() {
                           max="300000"
                           step="100"
                           value={startTimeMs}
-                          onChange={(e) => setStartTimeMs(Math.max(0, parseInt(e.target.value, 10) || 0))}
+                          onChange={(e) => updateStartTime(parseInt(e.target.value, 10) || 0)}
                           className="w-28 rounded-md border border-slate-300 px-2.5 py-1.5 text-right font-mono text-sm focus:border-blue-500 focus:outline-none"
                         />
                         <span className="absolute right-8 top-2 text-xs text-slate-400 pointer-events-none">
@@ -527,7 +565,7 @@ export function TeamJinglePage() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setStartTimeMs(0)}
+                      onClick={() => updateStartTime(0)}
                       className="inline-flex items-center gap-1 rounded-md bg-slate-50 hover:bg-slate-100 text-slate-600 px-2 py-1.5 text-xs transition-colors"
                     >
                       Auf 0 ms zurücksetzen
@@ -535,29 +573,44 @@ export function TeamJinglePage() {
                   </div>
                 </div>
 
-                {/* Test Play Controls */}
+                {/* Play, Pause & Stopp Controls */}
                 <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={handleTestPlay}
-                    className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold shadow-sm transition-all ${
-                      isPlaying
-                        ? "bg-amber-600 text-white hover:bg-amber-700"
-                        : "bg-blue-600 text-white hover:bg-blue-700"
-                    }`}
-                  >
-                    {isPlaying ? (
-                      <>
-                        <Square className="h-4 w-4 fill-current" />
-                        Wiedergabe stoppen
-                      </>
-                    ) : (
-                      <>
-                        <Play className="h-4 w-4 fill-current" />
-                        Test abspielen (ab {startTimeMs} ms)
-                      </>
-                    )}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    {/* Play / Pause Toggle Button */}
+                    <button
+                      type="button"
+                      onClick={handleTogglePlayPause}
+                      className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold shadow-sm transition-all cursor-pointer ${
+                        isPlaying
+                          ? "bg-amber-600 text-white hover:bg-amber-700"
+                          : "bg-blue-600 text-white hover:bg-blue-700"
+                      }`}
+                      title={isPlaying ? "Wiedergabe pausieren" : "Wiedergabe abspielen"}
+                    >
+                      {isPlaying ? (
+                        <>
+                          <Pause className="h-4 w-4 fill-current" />
+                          <span>Pause</span>
+                        </>
+                      ) : (
+                        <>
+                          <Play className="h-4 w-4 fill-current" />
+                          <span>Play</span>
+                        </>
+                      )}
+                    </button>
+
+                    {/* Stopp Button */}
+                    <button
+                      type="button"
+                      onClick={handleStop}
+                      className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100 transition-all cursor-pointer shadow-sm"
+                      title="Wiedergabe stoppen und Slider auf Startzeit zurücksetzen"
+                    >
+                      <Square className="h-4 w-4 fill-current text-slate-600" />
+                      <span>Stopp</span>
+                    </button>
+                  </div>
 
                   {team.jingleUrl && (
                     <button
