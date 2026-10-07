@@ -37,15 +37,16 @@ export function GuestLayout() {
           <nav className="flex items-center gap-2">
             <Link
               to="/info"
-              className={`inline-flex h-9 w-9 items-center justify-center rounded-lg border shadow-sm transition-colors ${
+              className={`inline-flex h-9 items-center gap-1.5 px-3 rounded-lg border shadow-sm transition-colors text-xs font-semibold ${
                 isInfo
-                  ? "border-blue-600 bg-blue-50 text-blue-600 font-bold"
-                  : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  ? "border-blue-600 bg-blue-50 text-blue-600"
+                  : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900"
               }`}
               title="Turnierinformationen"
               aria-label="Turnierinformationen"
             >
-              <Info className="h-4 w-4" />
+              <Info className="h-4 w-4 text-blue-600" />
+              <span>Info</span>
             </Link>
           </nav>
         </div>
