@@ -1,14 +1,15 @@
 import { Outlet, Link, useLocation } from "react-router-dom"
-import { Tv, UserRoundKey, Calendar, Trophy, Medal } from "lucide-react"
+import { Tv, UserRoundKey, Radio, Calendar, Trophy, Medal } from "lucide-react"
 import rrkLogo from "@/assets/images/RRK.webp"
 
 export function GuestLayout() {
   const location = useLocation()
   const hash = location.hash
 
+  const isLive = hash === "#live"
   const isStandings = hash === "#standings"
   const isFinals = hash === "#finals"
-  const isSchedule = !isStandings && !isFinals
+  const isSchedule = !isLive && !isStandings && !isFinals
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 text-slate-900">
@@ -55,6 +56,18 @@ export function GuestLayout() {
         <div className="border-t border-slate-100 bg-white">
           <div className="container mx-auto flex max-w-5xl gap-6 px-4 overflow-x-auto py-2 text-xs sm:text-sm font-medium">
             <Link
+              to="/#live"
+              className={`flex items-center gap-1.5 py-1 border-b-2 transition-colors shrink-0 ${
+                isLive
+                  ? "border-blue-600 text-blue-600 font-bold"
+                  : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
+              }`}
+            >
+              <Radio className="h-4 w-4" />
+              <span>Live</span>
+            </Link>
+
+            <Link
               to="/#schedule"
               className={`flex items-center gap-1.5 py-1 border-b-2 transition-colors shrink-0 ${
                 isSchedule
@@ -75,7 +88,7 @@ export function GuestLayout() {
               }`}
             >
               <Trophy className="h-4 w-4" />
-              <span>Live-Tabellen</span>
+              <span>Tabellen</span>
             </Link>
 
             <Link

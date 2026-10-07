@@ -17,8 +17,14 @@ export function HomePage() {
   const [loading, setLoading] = useState(true)
 
   const hash = location.hash
-  const activeTab: "schedule" | "standings" | "finals" =
-    hash === "#standings" ? "standings" : hash === "#finals" ? "finals" : "schedule"
+  const activeTab: "live" | "schedule" | "standings" | "finals" =
+    hash === "#live"
+      ? "live"
+      : hash === "#standings"
+      ? "standings"
+      : hash === "#finals"
+      ? "finals"
+      : "schedule"
 
   useEffect(() => {
     const unsubMatches = subscribeMatches(
@@ -59,10 +65,13 @@ export function HomePage() {
 
   return (
     <div className="space-y-6 pb-8">
-      {/* 1. Live Hero Card (laufendes Spiel oder nächste Partie) */}
-      <LiveHeroCard matches={matches} teams={teams} />
+      {/* Tab Contents */}
+      {activeTab === "live" && (
+        <section>
+          <LiveHeroCard matches={matches} teams={teams} />
+        </section>
+      )}
 
-      {/* 2. Tab Contents */}
       {activeTab === "schedule" && (
         <section>
           <GuestScheduleView matches={matches} teams={teams} />

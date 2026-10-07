@@ -1,6 +1,6 @@
 import { useState } from "react"
 import type { Match, Team, GenderCategory } from "@/types/database"
-import { Trophy, Medal, Sparkles } from "lucide-react"
+import { Medal, Sparkles } from "lucide-react"
 
 interface FinalsBracketViewProps {
   matches: Match[]
@@ -85,12 +85,7 @@ export function FinalsBracketView({ matches, teams }: FinalsBracketViewProps) {
   return (
     <div className="space-y-6">
       {/* Header & Gender Switcher */}
-      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-        <div className="flex items-center gap-2">
-          <Trophy className="h-5 w-5 text-purple-600" />
-          <h3 className="text-base font-bold text-slate-900">Finalphase Sonntag</h3>
-        </div>
-
+      <div className="flex items-center justify-end border-b border-slate-200 pb-3">
         <div className="flex rounded-xl bg-slate-100 p-1 border border-slate-200">
           <button
             onClick={() => setSelectedGender("wU14")}
@@ -100,7 +95,7 @@ export function FinalsBracketView({ matches, teams }: FinalsBracketViewProps) {
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            wU14 Finals
+            wU14
           </button>
           <button
             onClick={() => setSelectedGender("mU14")}
@@ -110,7 +105,7 @@ export function FinalsBracketView({ matches, teams }: FinalsBracketViewProps) {
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            mU14 Finals
+            mU14
           </button>
         </div>
       </div>

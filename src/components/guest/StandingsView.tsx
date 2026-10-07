@@ -1,7 +1,7 @@
 import { useState } from "react"
 import type { Team, Match, GenderCategory } from "@/types/database"
 import { calculateGroupStandings } from "@/services/standingsService"
-import { Trophy, Award } from "lucide-react"
+import { Award } from "lucide-react"
 
 interface StandingsViewProps {
   teams: Team[]
@@ -116,12 +116,7 @@ export function StandingsView({ teams, matches }: StandingsViewProps) {
   return (
     <div className="space-y-6">
       {/* Gender Switcher */}
-      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-        <div className="flex items-center gap-2">
-          <Trophy className="h-5 w-5 text-amber-500" />
-          <h3 className="text-base font-bold text-slate-900">Gruppentabellen</h3>
-        </div>
-
+      <div className="flex items-center justify-end border-b border-slate-200 pb-3">
         <div className="flex rounded-xl bg-slate-100 p-1 border border-slate-200">
           <button
             onClick={() => setSelectedGender("wU14")}
@@ -131,7 +126,7 @@ export function StandingsView({ teams, matches }: StandingsViewProps) {
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            wU14 Tabellen
+            wU14
           </button>
           <button
             onClick={() => setSelectedGender("mU14")}
@@ -141,7 +136,7 @@ export function StandingsView({ teams, matches }: StandingsViewProps) {
                 : "text-slate-600 hover:text-slate-900"
             }`}
           >
-            mU14 Tabellen
+            mU14
           </button>
         </div>
       </div>
