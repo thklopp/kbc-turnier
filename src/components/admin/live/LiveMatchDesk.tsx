@@ -60,6 +60,7 @@ export function LiveMatchDesk() {
     adjustTime,
     recordGoal,
     decrementScore,
+    updateGoalScorer,
     finishMatch,
     playJingle,
     stopAudio,
@@ -190,27 +191,67 @@ export function LiveMatchDesk() {
         isFadingAudio={isFadingAudio}
       />
 
-      {/* Tor-Ereignis-Protokoll (falls Tore gefallen sind) */}
+      {/* Tor-Ereignis-Protokoll mit Schützenzuordnung (falls Tore gefallen sind) */}
       {goalEvents.length > 0 && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">
-            Tore-Chronik Spiel #{currentMatch?.matchNumber} ({goalEvents.length} Tore)
-          </h4>
-          <div className="flex flex-wrap gap-2">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-3">
+          <div className="flex items-center justify-between">
+            <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+              <span>⚽ Tore-Chronik &amp; Schützen</span>
+              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-mono font-bold text-slate-600">
+                {goalEvents.length} {goalEvents.length === 1 ? "Tor" : "Tore"}
+              </span>
+            </h4>
+            <span className="text-[11px] text-slate-400 hidden sm:inline">
+              Torschützen werden automatisch gespeichert
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
             {goalEvents.map((ev, i) => {
               const team = teams.find((t) => t.id === ev.teamId)
               const teamName = team?.shortName || team?.name || (ev.teamId === "home" ? "Heim" : "Gast")
+              const teamPlayers = team?.players || []
+              const selectedValue = ev.playerId || ""
+
               return (
-                <span
+                <div
                   key={ev.id || i}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-800"
+                  className="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50/70 p-2.5 shadow-2xs hover:bg-slate-50 transition-colors"
                 >
-                  <Clock className="h-3 w-3 text-slate-400" />
-                  <span className="font-bold">{ev.matchMinute}. Min</span>
-                  <span>&bull;</span>
-                  <span className="font-bold text-emerald-700">⚽ Tor: {teamName}</span>
-                  {ev.playerNumber && <span className="text-slate-500 font-mono">#{ev.playerNumber}</span>}
-                </span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="inline-flex items-center gap-1 rounded-md bg-white border border-slate-200 px-1.5 py-0.5 text-xs font-mono font-bold text-slate-700">
+                      <Clock className="h-3 w-3 text-slate-400" />
+                      {ev.matchMinute}&apos;
+                    </span>
+                    <span className="text-xs font-black text-slate-800">
+                      ⚽ {teamName}
+                    </span>
+                  </div>
+
+                  <div className="flex-1 min-w-[130px]">
+                    <select
+                      value={selectedValue}
+                      onChange={(e) => {
+                        const targetPlayerId = e.target.value
+                        const player = teamPlayers.find((p) => p.id === targetPlayerId) || null
+                        updateGoalScorer(ev.id, player)
+                      }}
+                      className="w-full rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer"
+                    >
+                      <option value="">Schütze unbekannt</option>
+                      {teamPlayers.map((p) => (
+                        <option key={p.id} value={p.id}>
+                          #{p.number} {p.firstName ? p.firstName.charAt(0) + ". " : ""}{p.lastName}
+                        </option>
+                      ))}
+                      {teamPlayers.length === 0 && (
+                        <option value="" disabled>
+                          (Kein Kader hinterlegt)
+                        </option>
+                      )}
+                    </select>
+                  </div>
+                </div>
               )
             })}
           </div>

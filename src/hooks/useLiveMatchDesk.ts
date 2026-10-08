@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react"
-import type { Match, Team, MatchEvent } from "@/types/database"
-import { updateMatch } from "@/services/matchService"
+import type { Match, Team, MatchEvent, Player } from "@/types/database"
+import { updateMatch, updateMatchEventScorer } from "@/services/matchService"
 import { useAudioPlayer } from "./useAudioPlayer"
 import { playBuzzerHorn } from "@/lib/soundboard"
 
@@ -252,6 +252,19 @@ export function useLiveMatchDesk(
     [match]
   )
 
+  // Torschütze eines konkreten Tors zuweisen oder korrigieren
+  const updateGoalScorer = useCallback(
+    async (eventId: string, player?: Player | null) => {
+      if (!match) return
+      try {
+        await updateMatchEventScorer(match.id, eventId, player)
+      } catch (err) {
+        console.error("Fehler beim Aktualisieren des Torschützen:", err)
+      }
+    },
+    [match]
+  )
+
   // Spiel abschließen
   const finishMatch = useCallback(async () => {
     if (!match) return
@@ -274,6 +287,7 @@ export function useLiveMatchDesk(
     adjustTime,
     recordGoal,
     decrementScore,
+    updateGoalScorer,
     finishMatch,
     playJingle: play,
     stopAudio: stop,

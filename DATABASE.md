@@ -80,6 +80,13 @@ Enthält genau 16 Teams (8 männliche U14, 8 weibliche U14).
 export type GenderCategory = "mU14" | "wU14";
 export type TournamentGroup = "A" | "B";
 
+export interface Player {
+  id: string;                        // Eindeutige ID (z. B. UUID / Nanoid)
+  number: number;                    // Trikotnummer (z. B. 10)
+  firstName: string;                 // Vorname (z. B. "Max")
+  lastName: string;                  // Nachname (z. B. "Mustermann")
+}
+
 export interface Team {
   id: string;                        // Eindeutige Team-ID (z. B. "team-mu14-kbc")
   name: string;                      // Offizieller Vereinsname (z. B. "Kreuznacher HC")
@@ -91,6 +98,7 @@ export interface Team {
   jingleStartTimeMs?: number;        // Startzeitpunkt in Millisekunden (Standard: 0)
   jingleToken?: string;              // Eindeutiger Secret-Token für den Betreuer-Upload ohne Login
   jingleUpdatedAt?: FirebaseFirestore.Timestamp | null; // Zeitpunkt der letzten Jingle-Aktualisierung
+  players?: Player[];                // Liste der gemeldeten Spielerinnen und Spieler
   contactPerson?: {
     name: string;
     phone: string;
@@ -123,7 +131,9 @@ export interface MatchEvent {
   id: string;
   type: "goal" | "card_green" | "card_yellow" | "card_red";
   teamId: string;                    // Team, das das Event ausgelöst hat
-  playerNumber?: number;             // Torschütze / Verwarnter (optional)
+  playerId?: string;                 // ID des Spielers aus dem Team-Kader (optional)
+  playerNumber?: number;             // Trikotnummer (optional)
+  playerName?: string;               // Formatierter Name z. B. "M. Mustermann" (optional)
   matchMinute: number;               // Spielminute (1 - gameDurationMinutes)
   timestamp: FirebaseFirestore.Timestamp;
 }

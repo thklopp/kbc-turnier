@@ -1,9 +1,15 @@
 import { useState, useEffect, useRef, type ChangeEvent } from "react"
 import { useParams, Link } from "react-router-dom"
-import { getTeamByJingleToken, saveTeamJingleByToken } from "@/services/teamService"
-import type { Team } from "@/types/database"
+import {
+  getTeamByJingleToken,
+  saveTeamJingleByToken,
+  saveTeamPlayersByToken,
+} from "@/services/teamService"
+import type { Team, Player } from "@/types/database"
+import { TeamRosterManager } from "@/components/common/TeamRosterManager"
 import {
   Music,
+  Users,
   Upload,
   Play,
   Pause,
@@ -23,6 +29,7 @@ export function TeamJinglePage() {
 
   const [loading, setLoading] = useState(true)
   const [team, setTeam] = useState<Team | null>(null)
+  const [activeTab, setActiveTab] = useState<"jingle" | "roster">("jingle")
   const [loadError, setLoadError] = useState<string | null>(null)
 
   // Audio & File State
@@ -254,6 +261,14 @@ export function TeamJinglePage() {
     }
   }
 
+  // 8b. Kader speichern
+  const handleSavePlayers = async (players: Player[]) => {
+    if (!token || !team) return
+    setActionError(null)
+    const updated = await saveTeamPlayersByToken(token, players)
+    setTeam(updated)
+  }
+
   // 9. Jingle entfernen
   const handleRemoveJingle = async () => {
     if (!token || !team) return
@@ -356,7 +371,7 @@ export function TeamJinglePage() {
                 20. Kurt-Becker-Cup
               </span>
               <span className="block text-xs font-medium text-slate-500">
-                Tor-Jingle Upload
+                Team-Verwaltung
               </span>
             </div>
           </div>
@@ -388,9 +403,40 @@ export function TeamJinglePage() {
             </span>
             <h1 className="text-xl font-bold text-slate-900 truncate">{team.name}</h1>
             <p className="text-xs text-slate-500 mt-0.5">
-              Lade hier den Vereinssong hoch, der bei jedem erzielten Tor eurer Mannschaft gespielt wird.
+              Verwalte hier den Tor-Jingle und den Spielerkader eurer Mannschaft.
             </p>
           </div>
+        </div>
+
+        {/* Tab Navigation */}
+        <div className="flex items-center gap-2 mb-6 border-b border-slate-200">
+          <button
+            type="button"
+            onClick={() => setActiveTab("jingle")}
+            className={`inline-flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
+              activeTab === "jingle"
+                ? "border-blue-600 text-blue-600 bg-blue-50/50 rounded-t-xl"
+                : "border-transparent text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            <Music className="h-4 w-4" />
+            <span>Torjingle</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("roster")}
+            className={`inline-flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
+              activeTab === "roster"
+                ? "border-blue-600 text-blue-600 bg-blue-50/50 rounded-t-xl"
+                : "border-transparent text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            <Users className="h-4 w-4" />
+            <span>Spielerkader</span>
+            <span className="ml-1 rounded-full bg-slate-200 px-2 py-0.5 text-[11px] font-mono text-slate-700">
+              {team.players?.length || 0}
+            </span>
+          </button>
         </div>
 
         {/* Feedback Banners */}
@@ -400,7 +446,7 @@ export function TeamJinglePage() {
             <div>
               <p className="font-semibold">Erfolgreich gespeichert!</p>
               <p className="text-xs text-emerald-700 mt-0.5">
-                Euer Tor-Jingle ist nun live hinterlegt und wird beim nächsten Tor eures Teams abgespielt.
+                Eure Änderungen wurden erfolgreich gespeichert und sind sofort live aktiv.
               </p>
             </div>
           </div>
@@ -416,7 +462,16 @@ export function TeamJinglePage() {
           </div>
         )}
 
-        {/* Upload & Audio Card */}
+        {activeTab === "roster" ? (
+          <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 mb-6">
+            <TeamRosterManager
+              players={team.players}
+              onSavePlayers={handleSavePlayers}
+            />
+          </div>
+        ) : (
+          <>
+            {/* Upload & Audio Card */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-6">
           <div className="p-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -657,6 +712,8 @@ export function TeamJinglePage() {
             <li>Der Jingle wird bei einem Tor von der Turnierleitung für ca. 15 Sekunden eingespielt.</li>
           </ul>
         </div>
+        </>
+        )}
       </main>
 
       {/* Footer */}

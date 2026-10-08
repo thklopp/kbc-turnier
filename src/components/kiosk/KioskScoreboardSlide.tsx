@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Flame, Clock, Calendar, CheckCircle2, Pause } from "lucide-react"
+import { Clock, Calendar, CheckCircle2, Pause } from "lucide-react"
 import type { Match, Team } from "@/types/database"
 import rrkLogo from "@/assets/images/RRK.webp"
 
@@ -90,6 +90,17 @@ export function KioskScoreboardSlide({
       : displayMatch.finalType
       ? finalTypeLabels[displayMatch.finalType] || "Finalrunde"
       : "Finalrunde"
+
+  const homeGoals = (displayMatch.events || []).filter(
+    (e) => e.type === "goal" && (e.teamId === displayMatch.teamHomeId || e.teamId === "home")
+  )
+  const awayGoals = (displayMatch.events || []).filter(
+    (e) =>
+      e.type === "goal" &&
+      e.teamId !== displayMatch.teamHomeId &&
+      e.teamId !== "home"
+  )
+  const cardEvents = (displayMatch.events || []).filter((e) => e.type !== "goal")
 
   return (
     <div className="flex h-full flex-col justify-center items-center py-2 px-4 max-w-7xl mx-auto w-full">
@@ -232,31 +243,90 @@ export function KioskScoreboardSlide({
           </div>
         </div>
 
-        {/* Live Match Events Feed (if any events logged) */}
-        {displayMatch.events && displayMatch.events.length > 0 && (
+        {/* Torschützen-Übersicht im Kiosk (2-Spalten-Layout) */}
+        {(homeGoals.length > 0 || awayGoals.length > 0) && (
           <div className="mt-8 border-t border-slate-200 pt-5">
-            <div className="flex items-center justify-center gap-6 overflow-hidden">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                <Flame className="h-3.5 w-3.5 text-amber-500" />
-                Letzte Ereignisse:
-              </span>
-              <div className="flex items-center gap-4">
-                {displayMatch.events.slice(-3).map((event) => {
-                  const eventTeam = event.teamId === displayMatch.teamHomeId ? home : away
-                  return (
-                    <span
-                      key={event.id}
-                      className="inline-flex items-center gap-2 rounded-xl bg-slate-50 border border-slate-200 px-3.5 py-1 text-xs font-bold text-slate-800 shadow-xs"
-                    >
-                      {event.type === "goal" && <span className="text-emerald-600">⚽ Tor ({event.matchMinute}&apos;)</span>}
-                      {event.type === "card_green" && <span className="text-emerald-600">🟩 Grüne Karte ({event.matchMinute}&apos;)</span>}
-                      {event.type === "card_yellow" && <span className="text-amber-600">🟨 Gelbe Karte ({event.matchMinute}&apos;)</span>}
-                      {event.type === "card_red" && <span className="text-red-600">🟥 Rote Karte ({event.matchMinute}&apos;)</span>}
-                      <span className="text-slate-600 font-medium">{eventTeam.shortName || eventTeam.name}</span>
-                    </span>
-                  )
-                })}
+            <div className="grid grid-cols-2 gap-8 text-sm">
+              {/* Heim Tore */}
+              <div className="space-y-2">
+                <div className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                  <span>⚽ Tore {home.shortName || home.name}</span>
+                  <span className="font-mono text-slate-400 font-semibold">({homeGoals.length})</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {homeGoals.map((g, idx) => {
+                    const label = g.playerName
+                      ? `#${g.playerNumber ?? ""} ${g.playerName}`.trim()
+                      : g.playerNumber
+                      ? `#${g.playerNumber}`
+                      : "Tor"
+                    return (
+                      <span
+                        key={g.id || idx}
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-slate-50 border border-slate-200 px-3.5 py-1.5 text-xs font-bold text-slate-800 shadow-2xs"
+                      >
+                        <span className="font-mono text-blue-600 font-extrabold">{g.matchMinute}&apos;</span>
+                        <span>⚽</span>
+                        <span className="text-slate-900">{label}</span>
+                      </span>
+                    )
+                  })}
+                </div>
               </div>
+
+              {/* Gast Tore */}
+              <div className="space-y-2 text-right">
+                <div className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center justify-end gap-1.5">
+                  <span className="font-mono text-slate-400 font-semibold">({awayGoals.length})</span>
+                  <span>Tore {away.shortName || away.name} ⚽</span>
+                </div>
+                <div className="flex flex-wrap gap-2 justify-end">
+                  {awayGoals.map((g, idx) => {
+                    const label = g.playerName
+                      ? `#${g.playerNumber ?? ""} ${g.playerName}`.trim()
+                      : g.playerNumber
+                      ? `#${g.playerNumber}`
+                      : "Tor"
+                    return (
+                      <span
+                        key={g.id || idx}
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-slate-50 border border-slate-200 px-3.5 py-1.5 text-xs font-bold text-slate-800 shadow-2xs"
+                      >
+                        <span className="text-slate-900">{label}</span>
+                        <span>⚽</span>
+                        <span className="font-mono text-blue-600 font-extrabold">{g.matchMinute}&apos;</span>
+                      </span>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Karten-Feed falls Verwarnungen vorliegen */}
+        {cardEvents.length > 0 && (
+          <div className="mt-4 border-t border-slate-100 pt-3 flex items-center justify-center gap-4">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              Karten:
+            </span>
+            <div className="flex items-center gap-2">
+              {cardEvents.map((event, idx) => {
+                const eventTeam = event.teamId === displayMatch.teamHomeId ? home : away
+                return (
+                  <span
+                    key={event.id || idx}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-slate-50 border border-slate-200 px-2.5 py-1 text-xs font-bold text-slate-700 shadow-2xs"
+                  >
+                    <span className="font-mono font-medium text-slate-500">{event.matchMinute}&apos;</span>
+                    {event.type === "card_green" && <span>🟩</span>}
+                    {event.type === "card_yellow" && <span>🟨</span>}
+                    {event.type === "card_red" && <span>🟥</span>}
+                    <span>{eventTeam.shortName || eventTeam.name}</span>
+                    {event.playerNumber && <span className="font-mono text-slate-400">#{event.playerNumber}</span>}
+                  </span>
+                )
+              })}
             </div>
           </div>
         )}

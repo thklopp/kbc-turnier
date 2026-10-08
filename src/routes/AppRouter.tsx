@@ -23,8 +23,9 @@ export function AppRouter() {
           <Route path="/impressum" element={<ImpressumPage />} />
         </Route>
 
-        {/* Betreuer Tor-Jingle Upload über Unique-Link (ohne Login) */}
+        {/* Betreuer Tor-Jingle & Kader-Verwaltung über Unique-Link (ohne Login) */}
         <Route path="/jingle/:token" element={<TeamJinglePage />} />
+        <Route path="/team/:token" element={<TeamJinglePage />} />
 
         {/* Turnierleitung Login */}
         <Route path="/admin/login" element={<LoginPage />} />

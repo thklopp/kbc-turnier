@@ -1,8 +1,9 @@
 import { useState, useRef, type ChangeEvent, type FormEvent } from "react"
-import type { Team, GenderCategory, TournamentGroup } from "@/types/database"
-import { uploadTeamLogo, uploadTeamJingle, saveTeam, deleteTeam, regenerateTeamJingleToken, generateJingleToken } from "@/services/teamService"
+import type { Team, Player, GenderCategory, TournamentGroup } from "@/types/database"
+import { uploadTeamLogo, uploadTeamJingle, saveTeam, saveTeamPlayers, deleteTeam, regenerateTeamJingleToken, generateJingleToken } from "@/services/teamService"
 import { useAudioPlayer } from "@/hooks/useAudioPlayer"
-import { X, Upload, Music, Image as ImageIcon, Trash2, AlertCircle, CheckCircle, Play, Square, Link as LinkIcon, RefreshCw, Copy, Check } from "lucide-react"
+import { TeamRosterManager } from "@/components/common/TeamRosterManager"
+import { X, Upload, Music, Users, Image as ImageIcon, Trash2, AlertCircle, CheckCircle, Play, Square, Link as LinkIcon, RefreshCw, Copy, Check } from "lucide-react"
 
 interface TeamEditModalProps {
   team: Team | null
@@ -159,6 +160,21 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
     }
   }
 
+  const [modalTab, setModalTab] = useState<"metadata" | "roster">("metadata")
+  const [currentPlayers, setCurrentPlayers] = useState<Player[]>(team.players || [])
+
+  const handleSavePlayers = async (players: Player[]) => {
+    setError(null)
+    try {
+      await saveTeamPlayers(team.id, players)
+      setCurrentPlayers(players)
+      setSuccess("Kader erfolgreich aktualisiert!")
+      setTimeout(() => setSuccess(null), 2500)
+    } catch {
+      setError("Fehler beim Speichern des Kaders.")
+    }
+  }
+
   const handleClose = () => {
     stopPreview()
     onClose()
@@ -198,6 +214,41 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
         </button>
       </div>
 
+      {/* Tabs */}
+      <div className="flex items-center gap-2 border-b border-slate-100 pb-2 mb-3">
+        <button
+          type="button"
+          onClick={() => setModalTab("metadata")}
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg transition-colors cursor-pointer ${
+            modalTab === "metadata"
+              ? "bg-blue-600 text-white shadow-xs"
+              : "text-slate-600 hover:bg-slate-100"
+          }`}
+        >
+          <Music className="h-3.5 w-3.5" />
+          <span>Stammdaten &amp; Jingle</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setModalTab("roster")}
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg transition-colors cursor-pointer ${
+            modalTab === "roster"
+              ? "bg-blue-600 text-white shadow-xs"
+              : "text-slate-600 hover:bg-slate-100"
+          }`}
+        >
+          <Users className="h-3.5 w-3.5" />
+          <span>Spielerkader</span>
+          <span
+            className={`ml-1 rounded-full px-1.5 py-0.2 text-[10px] font-mono ${
+              modalTab === "roster" ? "bg-blue-500 text-white" : "bg-slate-200 text-slate-700"
+            }`}
+          >
+            {currentPlayers.length}
+          </span>
+        </button>
+      </div>
+
       {error && (
         <div className="mb-3 rounded-lg border border-rose-200 bg-rose-50 p-2 text-xs text-rose-700 flex items-center gap-2">
           <AlertCircle className="h-3.5 w-3.5 shrink-0 text-rose-600" />
@@ -212,6 +263,23 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
         </div>
       )}
 
+      {modalTab === "roster" ? (
+        <div className="space-y-4">
+          <TeamRosterManager
+            players={currentPlayers}
+            onSavePlayers={handleSavePlayers}
+          />
+          <div className="flex justify-end border-t border-slate-100 pt-3">
+            <button
+              type="button"
+              onClick={handleClose}
+              className="rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-200 transition-colors cursor-pointer"
+            >
+              Schließen
+            </button>
+          </div>
+        </div>
+      ) : (
       <form onSubmit={handleSubmit} className="space-y-3">
         {/* Zeile 1: Name, Kürzel, Wettbewerb, Gruppe in einem 4-Spalten-Grid */}
         <div className="grid grid-cols-12 gap-2.5">
@@ -504,6 +572,7 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
           </div>
         </div>
       </form>
+      )}
     </div>
   )
 }

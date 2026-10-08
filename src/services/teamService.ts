@@ -15,7 +15,7 @@ import {
 } from "firebase/firestore"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import { db, storage, isFirebaseConfigured, ensureAnonymousAuth } from "@/lib/firebase"
-import type { Team } from "@/types/database"
+import type { Team, Player } from "@/types/database"
 
 const TEAMS_COLLECTION = "teams"
 const MOCK_STORAGE_KEY = "kbc_mock_teams"
@@ -489,4 +489,67 @@ export async function regenerateTeamJingleToken(teamId: string): Promise<string>
   })
 
   return newToken
+}
+
+/**
+ * Speichert die Spielerliste eines Teams (Admin).
+ */
+export async function saveTeamPlayers(teamId: string, players: Player[]): Promise<void> {
+  const sortedPlayers = [...players].sort((a, b) => a.number - b.number)
+
+  if (!isFirebaseConfigured) {
+    const idx = localMockTeams.findIndex((t) => t.id === teamId)
+    if (idx >= 0) {
+      localMockTeams[idx] = {
+        ...localMockTeams[idx],
+        players: sortedPlayers,
+      }
+      notifyMockListeners()
+    }
+    return
+  }
+
+  const teamRef = doc(db, TEAMS_COLLECTION, teamId)
+  await updateDoc(teamRef, {
+    players: sortedPlayers,
+    updatedAt: serverTimestamp(),
+  })
+}
+
+/**
+ * Speichert die Spielerliste eines Teams über den Betreuer-Token.
+ */
+export async function saveTeamPlayersByToken(token: string, players: Player[]): Promise<Team> {
+  await ensureAnonymousAuth()
+
+  const currentTeam = await getTeamByJingleToken(token)
+  if (!currentTeam) {
+    throw new Error("Ungültiger oder abgelaufener Link. Bitte wende dich an die Turnierleitung.")
+  }
+
+  const sortedPlayers = [...players].sort((a, b) => a.number - b.number)
+
+  if (!isFirebaseConfigured) {
+    const idx = localMockTeams.findIndex((t) => t.id === currentTeam.id)
+    if (idx >= 0) {
+      localMockTeams[idx] = {
+        ...localMockTeams[idx],
+        players: sortedPlayers,
+      }
+      notifyMockListeners()
+      return { ...localMockTeams[idx] }
+    }
+    return currentTeam
+  }
+
+  const teamRef = doc(db, TEAMS_COLLECTION, currentTeam.id)
+  await updateDoc(teamRef, {
+    players: sortedPlayers,
+    updatedAt: serverTimestamp(),
+  })
+
+  return {
+    ...currentTeam,
+    players: sortedPlayers,
+  }
 }

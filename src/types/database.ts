@@ -24,6 +24,13 @@ export interface TournamentInfoConfig {
   updatedBy?: string
 }
 
+export interface Player {
+  id: string
+  number: number
+  firstName: string
+  lastName: string
+}
+
 export interface Team {
   id: string
   name: string
@@ -35,6 +42,7 @@ export interface Team {
   jingleStartTimeMs?: number
   jingleToken?: string
   jingleUpdatedAt?: Timestamp | null
+  players?: Player[]
   contactPerson?: {
     name: string
     phone: string
@@ -59,7 +67,9 @@ export interface MatchEvent {
   id: string
   type: "goal" | "card_green" | "card_yellow" | "card_red"
   teamId: string
+  playerId?: string
   playerNumber?: number
+  playerName?: string
   matchMinute: number
   timestamp: Timestamp
 }

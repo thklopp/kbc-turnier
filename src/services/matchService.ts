@@ -5,6 +5,7 @@ import {
   onSnapshot,
   updateDoc,
   getDocs,
+  getDoc,
   serverTimestamp,
   type Unsubscribe,
 } from "firebase/firestore"
@@ -12,6 +13,7 @@ import { db, isFirebaseConfigured } from "@/lib/firebase"
 import type {
   Match,
   Team,
+  Player,
   TournamentConfig,
   GenderCategory,
   TournamentGroup,
@@ -398,6 +400,70 @@ export async function updateMatch(matchId: string, updates: Partial<Match>): Pro
     updatedAt: serverTimestamp(),
   })
 }
+
+/**
+ * Aktualisiert den Torschützen eines konkreten Tor-Ereignisses in einem Match.
+ */
+export async function updateMatchEventScorer(
+  matchId: string,
+  eventId: string,
+  player?: Player | null
+): Promise<void> {
+  const formatName = (p: Player) =>
+    `${p.firstName ? p.firstName.trim().charAt(0) + ". " : ""}${p.lastName.trim()}`
+
+  if (!isFirebaseConfigured) {
+    const idx = localMockMatches.findIndex((m) => m.id === matchId)
+    if (idx >= 0) {
+      const match = localMockMatches[idx]
+      const updatedEvents = (match.events || []).map((ev) => {
+        if (ev.id === eventId) {
+          if (!player) {
+            const { playerId, playerNumber, playerName, ...rest } = ev
+            return rest
+          }
+          return {
+            ...ev,
+            playerId: player.id,
+            playerNumber: player.number,
+            playerName: formatName(player),
+          }
+        }
+        return ev
+      })
+      localMockMatches[idx] = { ...match, events: updatedEvents }
+      notifyMatchListeners()
+    }
+    return
+  }
+
+  const matchRef = doc(db, MATCHES_COLLECTION, matchId)
+  const snap = await getDoc(matchRef)
+  if (!snap.exists()) return
+
+  const matchData = snap.data() as Match
+  const updatedEvents = (matchData.events || []).map((ev) => {
+    if (ev.id === eventId) {
+      if (!player) {
+        const { playerId, playerNumber, playerName, ...rest } = ev
+        return rest
+      }
+      return {
+        ...ev,
+        playerId: player.id,
+        playerNumber: player.number,
+        playerName: formatName(player),
+      }
+    }
+    return ev
+  })
+
+  await updateDoc(matchRef, {
+    events: updatedEvents,
+    updatedAt: serverTimestamp(),
+  })
+}
+
 
 /**
  * Löscht alle Spiele (Reset).

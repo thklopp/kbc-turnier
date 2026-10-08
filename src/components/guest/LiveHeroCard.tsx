@@ -31,6 +31,17 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
   const isPaused = currentMatch.status === "paused"
   const isFinished = currentMatch.status === "finished"
 
+  const homeGoals = (currentMatch.events || []).filter(
+    (e) => e.type === "goal" && (e.teamId === currentMatch.teamHomeId || e.teamId === "home")
+  )
+  const awayGoals = (currentMatch.events || []).filter(
+    (e) =>
+      e.type === "goal" &&
+      e.teamId !== currentMatch.teamHomeId &&
+      e.teamId !== "home"
+  )
+  const cardEvents = (currentMatch.events || []).filter((e) => e.type !== "goal")
+
   return (
     <div className="relative overflow-hidden rounded-3xl border border-blue-100 bg-gradient-to-br from-blue-50/70 via-white to-indigo-50/40 p-6 sm:p-8 text-slate-900 shadow-sm">
       {/* Background glow effect */}
@@ -161,45 +172,105 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
         </div>
       </div>
 
-      {/* Events Ticker for Live or Paused Match */}
-      {(isLive || isPaused) && currentMatch.events && currentMatch.events.length > 0 && (
+      {/* Torschützen-Übersicht (2-Spalten-Layout Heim vs. Gast) */}
+      {(homeGoals.length > 0 || awayGoals.length > 0) && (
         <div className="relative z-10 mt-6 border-t border-slate-200/80 pt-4">
-          <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
-            <ShieldAlert className="h-3.5 w-3.5 text-blue-600" />
-            <span>Live-Ticker Ereignisse</span>
-          </div>
+          <div className="grid grid-cols-2 gap-4 text-xs">
+            {/* Heim-Tore */}
+            <div className="space-y-1.5">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1 flex items-center gap-1">
+                <span>⚽ Tore {homeTeam?.shortName || "Heim"}</span>
+                <span className="font-mono text-slate-400 font-semibold">({homeGoals.length})</span>
+              </div>
+              {homeGoals.length === 0 ? (
+                <span className="text-slate-400 italic text-[11px]">- Keine Tore -</span>
+              ) : (
+                <div className="flex flex-col gap-1">
+                  {homeGoals.map((g, idx) => {
+                    const label = g.playerName
+                      ? `#${g.playerNumber ?? ""} ${g.playerName}`.trim()
+                      : g.playerNumber
+                      ? `#${g.playerNumber}`
+                      : "Tor"
+                    return (
+                      <div
+                        key={g.id || idx}
+                        className="inline-flex items-center gap-1.5 text-slate-800"
+                      >
+                        <span className="font-mono text-blue-600 font-bold text-[11px]">
+                          {g.matchMinute}&apos;
+                        </span>
+                        <span>⚽</span>
+                        <span className="font-semibold text-slate-900">{label}</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
 
-          <div className="flex flex-wrap gap-2 overflow-x-auto pb-1">
-            {currentMatch.events.map((ev, i) => {
-              const teamShort =
-                ev.teamId === currentMatch.teamHomeId
-                  ? homeTeam?.shortName || "Heim"
-                  : awayTeam?.shortName || "Gast"
-
-              return (
-                <span
-                  key={ev.id || i}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs text-slate-800 shadow-xs"
-                >
-                  <span className="font-bold text-blue-600">{ev.matchMinute}&apos;</span>
-                  {ev.type === "goal" && (
-                    <span className="font-semibold text-emerald-700">
-                      ⚽ Tor {teamShort} {ev.playerNumber ? `(#${ev.playerNumber})` : ""}
-                    </span>
-                  )}
-                  {ev.type === "card_green" && (
-                    <span className="text-emerald-700">🟩 Grüne Karte {teamShort}</span>
-                  )}
-                  {ev.type === "card_yellow" && (
-                    <span className="text-amber-700">🟨 Gelbe Karte {teamShort}</span>
-                  )}
-                  {ev.type === "card_red" && (
-                    <span className="text-rose-700 font-bold">🟥 Rote Karte {teamShort}</span>
-                  )}
-                </span>
-              )
-            })}
+            {/* Gast-Tore */}
+            <div className="space-y-1.5 text-right">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1 flex items-center justify-end gap-1">
+                <span className="font-mono text-slate-400 font-semibold">({awayGoals.length})</span>
+                <span>Tore {awayTeam?.shortName || "Gast"} ⚽</span>
+              </div>
+              {awayGoals.length === 0 ? (
+                <span className="text-slate-400 italic text-[11px]">- Keine Tore -</span>
+              ) : (
+                <div className="flex flex-col gap-1 items-end">
+                  {awayGoals.map((g, idx) => {
+                    const label = g.playerName
+                      ? `#${g.playerNumber ?? ""} ${g.playerName}`.trim()
+                      : g.playerNumber
+                      ? `#${g.playerNumber}`
+                      : "Tor"
+                    return (
+                      <div
+                        key={g.id || idx}
+                        className="inline-flex items-center gap-1.5 text-slate-800"
+                      >
+                        <span className="font-semibold text-slate-900">{label}</span>
+                        <span>⚽</span>
+                        <span className="font-mono text-blue-600 font-bold text-[11px]">
+                          {g.matchMinute}&apos;
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
           </div>
+        </div>
+      )}
+
+      {/* Karten-Ereignisse falls vorhanden */}
+      {cardEvents.length > 0 && (
+        <div className="relative z-10 mt-3 pt-2.5 border-t border-slate-100 flex flex-wrap gap-1.5 items-center">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mr-1 flex items-center gap-1">
+            <ShieldAlert className="h-3 w-3 text-slate-400" />
+            Karten:
+          </span>
+          {cardEvents.map((ev, idx) => {
+            const teamShort =
+              ev.teamId === currentMatch.teamHomeId
+                ? homeTeam?.shortName || "Heim"
+                : awayTeam?.shortName || "Gast"
+            return (
+              <span
+                key={ev.id || idx}
+                className="inline-flex items-center gap-1 rounded-md bg-white border border-slate-200 px-2 py-0.5 text-[10px] font-medium text-slate-700 shadow-2xs"
+              >
+                <span className="font-mono font-bold text-slate-500">{ev.matchMinute}&apos;</span>
+                {ev.type === "card_green" && <span>🟩</span>}
+                {ev.type === "card_yellow" && <span>🟨</span>}
+                {ev.type === "card_red" && <span>🟥</span>}
+                <span className="font-bold">{teamShort}</span>
+                {ev.playerNumber && <span className="font-mono text-slate-500">#{ev.playerNumber}</span>}
+              </span>
+            )
+          })}
         </div>
       )}
     </div>
