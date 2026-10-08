@@ -53,7 +53,7 @@ export function KioskScoreboardSlide({
           />
           <h2 className="text-3xl font-black text-slate-900 mb-2">Turnierpause</h2>
           <p className="text-slate-600 text-lg">
-            Aktuell sind keine weiteren Spiele für Feld 1 angesetzt oder der Spielplan wird vorbereitet.
+            Aktuell sind keine weiteren Spiele angesetzt oder der Spielplan wird vorbereitet.
           </p>
         </div>
       </div>
@@ -107,7 +107,7 @@ export function KioskScoreboardSlide({
       {/* Top Match Meta Badge */}
       <div className="flex items-center gap-3 mb-6">
         <span className="rounded-full bg-white border border-slate-200 px-4 py-1.5 text-sm font-bold text-slate-700 shadow-xs">
-          Spiel #{displayMatch.matchNumber} &bull; Feld {displayMatch.court}
+          Spiel #{displayMatch.matchNumber}
         </span>
         <span className={`rounded-full border px-4 py-1.5 text-sm font-black ${genderBadge}`}>
           {displayMatch.gender}
