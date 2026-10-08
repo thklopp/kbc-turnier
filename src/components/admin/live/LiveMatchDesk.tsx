@@ -185,7 +185,7 @@ export function LiveMatchDesk() {
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-3">
           <div className="flex items-center justify-between">
             <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
-              <span>⚽ Tore-Chronik &amp; Schützen</span>
+              <span>🥅 Tore-Chronik &amp; Schützen</span>
               <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-mono font-bold text-slate-600">
                 {goalEvents.length} {goalEvents.length === 1 ? "Tor" : "Tore"}
               </span>
@@ -213,7 +213,7 @@ export function LiveMatchDesk() {
                       {ev.matchMinute}&apos;
                     </span>
                     <span className="text-xs font-black text-slate-800">
-                      ⚽ {teamName}
+                      🥅 {teamName}
                     </span>
                   </div>
 

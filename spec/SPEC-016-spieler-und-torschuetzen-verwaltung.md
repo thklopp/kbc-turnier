@@ -62,9 +62,9 @@ Bisher werden Teams in der Turnierverwaltung nur mit Stammdaten (Name, Kürzel, 
   - Tor-Rücknahme erfolgt weiterhin über die bestehenden „- Tor“-Buttons (entfernt das jeweils letzte Tor des Teams).
 - [ ] **Gast-Ansicht (`LiveHeroCard`)**:
   - Geteilte 2-Spalten-Darstellung unter dem Spielstand:
-    - Links: Heim-Tore (z. B. `12' ⚽ #7 M. Muster`).
-    - Rechts: Gast-Tore (z. B. `18' ⚽ #10 K. Schmidt`).
-    - Tore ohne Schütze zeigen dezent `12' ⚽ Tor`.
+    - Links: Heim-Tore (z. B. `12' 🥅 #7 M. Muster`).
+    - Rechts: Gast-Tore (z. B. `18' 🥅 #10 K. Schmidt`).
+    - Tore ohne Schütze zeigen dezent `12' 🥅 Tor`.
 - [ ] **Kiosk-Modus (`KioskScoreboardSlide`)**:
   - Geteilte 2-Spalten-Darstellung der Torschützen unter dem zentralen Scoreboard, harmonisch integriert und auf Großbildschirmen gut lesbar.
 
@@ -98,7 +98,7 @@ Bisher werden Teams in der Turnierverwaltung nur mit Stammdaten (Name, Kürzel, 
 - [ ] **AC-5: Live-Synchronisation zu Gast-Ansicht und Kiosk**
   - **Gegeben sei**: Einem Tor wurde der Schütze „#9 M. Mustermann“ zugewiesen.
   - **Wenn**: Ein Gast die Seite `/` oder ein Hallenbildschirm `/kiosk` betrachtet.
-  - **Dann**: Erscheint unter dem Scoreboard in der Heim-Spalte der Eintrag `X' ⚽ #9 M. Mustermann` in Echtzeit.
+  - **Dann**: Erscheint unter dem Scoreboard in der Heim-Spalte der Eintrag `X' 🥅 #9 M. Mustermann` in Echtzeit.
 
 ### 4.2 Allgemeine Qualitätskriterien
 - [ ] Keine fest kodierten Parameter (`AGENTS.md`).

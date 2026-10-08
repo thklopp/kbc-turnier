@@ -250,7 +250,7 @@ export function KioskScoreboardSlide({
               {/* Heim Tore */}
               <div className="space-y-2">
                 <div className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                  <span>⚽ Tore {home.shortName || home.name}</span>
+                  <span>🥅 Tore {home.shortName || home.name}</span>
                   <span className="font-mono text-slate-400 font-semibold">({homeGoals.length})</span>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -266,7 +266,7 @@ export function KioskScoreboardSlide({
                         className="inline-flex items-center gap-1.5 rounded-xl bg-slate-50 border border-slate-200 px-3.5 py-1.5 text-xs font-bold text-slate-800 shadow-2xs"
                       >
                         <span className="font-mono text-blue-600 font-extrabold">{g.matchMinute}&apos;</span>
-                        <span>⚽</span>
+                        <span>🥅</span>
                         <span className="text-slate-900">{label}</span>
                       </span>
                     )
@@ -278,7 +278,7 @@ export function KioskScoreboardSlide({
               <div className="space-y-2 text-right">
                 <div className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center justify-end gap-1.5">
                   <span className="font-mono text-slate-400 font-semibold">({awayGoals.length})</span>
-                  <span>Tore {away.shortName || away.name} ⚽</span>
+                  <span>Tore {away.shortName || away.name} 🥅</span>
                 </div>
                 <div className="flex flex-wrap gap-2 justify-end">
                   {awayGoals.map((g, idx) => {
@@ -293,7 +293,7 @@ export function KioskScoreboardSlide({
                         className="inline-flex items-center gap-1.5 rounded-xl bg-slate-50 border border-slate-200 px-3.5 py-1.5 text-xs font-bold text-slate-800 shadow-2xs"
                       >
                         <span className="text-slate-900">{label}</span>
-                        <span>⚽</span>
+                        <span>🥅</span>
                         <span className="font-mono text-blue-600 font-extrabold">{g.matchMinute}&apos;</span>
                       </span>
                     )
