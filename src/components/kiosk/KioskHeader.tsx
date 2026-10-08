@@ -74,11 +74,8 @@ export function KioskHeader({
             className="h-11 w-11 object-contain rounded-xl shadow-sm"
           />
           <div>
-            <h1 className="text-xl font-black tracking-tight text-slate-900 flex items-center gap-2">
+            <h1 className="text-xl font-black tracking-tight text-slate-900">
               {config?.tournamentName || "20. Kurt-Becker-Cup"}
-              <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-600 border border-blue-200">
-                Feld 1
-              </span>
             </h1>
             <p className="text-xs font-semibold text-slate-500">
               {dayLabel} &bull; 16 Teams (wU14 &amp; mU14)

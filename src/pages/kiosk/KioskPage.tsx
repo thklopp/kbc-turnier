@@ -232,12 +232,12 @@ export function KioskPage() {
             {tickerInfo.isLive ? (
               <span className="flex items-center gap-2 rounded-xl bg-red-50 border border-red-200 px-3 py-1 text-xs font-black uppercase tracking-wider text-red-600 animate-pulse">
                 <Radio className="h-4 w-4" />
-                Live auf Feld 1
+                Live
               </span>
             ) : tickerInfo.isPaused ? (
               <span className="flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-300 px-3 py-1 text-xs font-black uppercase tracking-wider text-amber-700">
                 <Pause className="h-4 w-4 fill-current" />
-                Pausiert auf Feld 1
+                Pausiert
               </span>
             ) : (
               <span className="flex items-center gap-2 rounded-xl bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700 border border-slate-200">

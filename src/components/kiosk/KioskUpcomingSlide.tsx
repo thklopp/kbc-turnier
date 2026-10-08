@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Clock, ArrowRight, Sparkles } from "lucide-react"
+import { Clock, ArrowRight } from "lucide-react"
 import type { Match, Team } from "@/types/database"
 
 interface KioskUpcomingSlideProps {
@@ -58,10 +58,6 @@ export function KioskUpcomingSlide({
         <div>
           <h2 className="text-3xl font-black text-slate-900 flex items-center gap-3">
             <span>Kommende Partien &bull; Spielplan</span>
-            <span className="flex items-center gap-1.5 rounded-full bg-blue-50 border border-blue-200 px-3 py-1 text-xs font-bold text-blue-700">
-              <Sparkles className="h-3.5 w-3.5" />
-              Feld 1
-            </span>
           </h2>
           <p className="text-sm font-semibold text-slate-500 mt-1">
             Turnier-Wechselturnus: <strong className="text-slate-800">2x wU14</strong> gefolgt von <strong className="text-slate-800">2x mU14</strong>
@@ -219,7 +215,7 @@ export function KioskUpcomingSlide({
           Spielerinnen &amp; Spieler bitte 10 Minuten vor Anpfiff an der Turnierleitung spielbereit einfinden.
         </span>
         <span className="font-mono text-slate-400">
-          20. Kurt-Becker-Cup &bull; Feld 1
+          20. Kurt-Becker-Cup
         </span>
       </div>
     </div>
