@@ -1,8 +1,8 @@
 # SPEC-016: Spieler- und Torschützen-Verwaltung
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature  
-> **Branch**: `feat/SPEC-016-spieler-und-torschuetzen-verwaltung`  
+> **Branch**: `main`  
 > **Autor**: Antigravity / Pair-Programming  
 > **Erstellt am**: 2026-10-08  
 > **Letzte Änderung**: 2026-10-08  
