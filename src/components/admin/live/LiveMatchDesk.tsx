@@ -180,17 +180,6 @@ export function LiveMatchDesk() {
         isFadingAudio={isFadingAudio}
       />
 
-      {/* ZEILE 4: Soundboard (Volle Zeilenbreite) */}
-      <SoundboardPanel
-        homeTeam={homeTeam}
-        awayTeam={awayTeam}
-        onPlayJingle={playJingle}
-        onStopAudio={stopAudio}
-        onFadeOutAudio={fadeOutAudio}
-        isPlayingAudio={isPlayingAudio}
-        isFadingAudio={isFadingAudio}
-      />
-
       {/* Tor-Ereignis-Protokoll mit Schützenzuordnung (falls Tore gefallen sind) */}
       {goalEvents.length > 0 && (
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-3">
@@ -257,6 +246,17 @@ export function LiveMatchDesk() {
           </div>
         </div>
       )}
+
+      {/* Soundboard (Volle Zeilenbreite) */}
+      <SoundboardPanel
+        homeTeam={homeTeam}
+        awayTeam={awayTeam}
+        onPlayJingle={playJingle}
+        onStopAudio={stopAudio}
+        onFadeOutAudio={fadeOutAudio}
+        isPlayingAudio={isPlayingAudio}
+        isFadingAudio={isFadingAudio}
+      />
     </div>
   )
 }
