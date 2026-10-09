@@ -75,7 +75,7 @@ export function AdminLayout() {
               }`}
             >
               <PlayCircle className="h-3.5 w-3.5" />
-              <span>Live-Desk (Turnierleitung)</span>
+              <span>Live-Desk</span>
             </Link>
             <Link
               to="/admin#teams"
@@ -86,7 +86,7 @@ export function AdminLayout() {
               }`}
             >
               <Users className="h-3.5 w-3.5" />
-              <span>Teams & Torjingles</span>
+              <span>Teamverwaltung</span>
             </Link>
             <Link
               to="/admin#schedule"
@@ -108,7 +108,7 @@ export function AdminLayout() {
               }`}
             >
               <FileText className="h-3.5 w-3.5" />
-              <span>Info-Seite (Markdown)</span>
+              <span>Info-Seite</span>
             </Link>
           </div>
         </div>

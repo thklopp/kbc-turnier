@@ -88,7 +88,7 @@ export function TeamList() {
         <div>
           <div className="flex items-center gap-2">
             <Users className="h-5 w-5 text-blue-600" />
-            <h2 className="text-lg font-bold text-slate-900">Mannschaften & Torjingles</h2>
+            <h2 className="text-lg font-bold text-slate-900">Teamverwaltung</h2>
           </div>
           <p className="text-xs text-slate-500 mt-0.5">
             Soll: 16 Mannschaften gesamt (8x wU14 &bull; 8x mU14)

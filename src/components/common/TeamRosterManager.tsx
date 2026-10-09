@@ -12,7 +12,9 @@ import {
 
 interface TeamRosterManagerProps {
   players?: Player[]
-  onSavePlayers: (players: Player[]) => Promise<void>
+  onSavePlayers?: (players: Player[]) => Promise<void>
+  onChange?: (players: Player[], isValid: boolean) => void
+  hideHeader?: boolean
 }
 
 interface GridRow {
@@ -51,6 +53,8 @@ const initializeRows = (initialPlayers: Player[] = []): GridRow[] => {
 export function TeamRosterManager({
   players = [],
   onSavePlayers,
+  onChange,
+  hideHeader = false,
 }: TeamRosterManagerProps) {
   const [rows, setRows] = useState<GridRow[]>(() => initializeRows(players))
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -78,26 +82,80 @@ export function TeamRosterManager({
     ).length
   }, [rows])
 
-  // Live-Erkennung doppelter Trikotnummern
-  const duplicateNumbers = useMemo(() => {
-    const counts = new Map<number, number>()
-    rows.forEach((r) => {
-      const raw = r.numberStr.trim()
-      if (raw !== "") {
-        const num = parseInt(raw, 10)
-        if (!isNaN(num)) {
-          counts.set(num, (counts.get(num) || 0) + 1)
-        }
+  // Live-Validierung für unvollständige Zeilen und doppelte Trikotnummern
+  const validationResult = useMemo(() => {
+    const incompleteKeys = new Set<string>()
+    const activeRows: { row: GridRow; num: number }[] = []
+    const numberCounts = new Map<number, number>()
+
+    for (let i = 0; i < rows.length; i++) {
+      const r = rows[i]
+      const numTrim = r.numberStr.trim()
+      const fNameTrim = r.firstName.trim()
+      const lNameTrim = r.lastName.trim()
+
+      const isCompletelyEmpty = !numTrim && !fNameTrim && !lNameTrim
+      if (isCompletelyEmpty) continue
+
+      if (!numTrim || !fNameTrim || !lNameTrim) {
+        incompleteKeys.add(r.key)
+        continue
       }
-    })
-    const duplicates = new Set<number>()
-    counts.forEach((count, num) => {
+
+      const num = parseInt(numTrim, 10)
+      if (isNaN(num) || num < 0 || num > 99) {
+        incompleteKeys.add(r.key)
+        continue
+      }
+
+      numberCounts.set(num, (numberCounts.get(num) || 0) + 1)
+      activeRows.push({ row: r, num })
+    }
+
+    const duplicateNumbersSet = new Set<number>()
+    numberCounts.forEach((count, num) => {
       if (count > 1) {
-        duplicates.add(num)
+        duplicateNumbersSet.add(num)
       }
     })
-    return duplicates
+
+    const duplicateKeys = new Set<string>()
+    for (const item of activeRows) {
+      if (duplicateNumbersSet.has(item.num)) {
+        duplicateKeys.add(item.row.key)
+      }
+    }
+
+    const isValid = incompleteKeys.size === 0 && duplicateNumbersSet.size === 0
+    const parsedPlayers: Player[] = activeRows
+      .map(({ row, num }) => ({
+        id: row.id || row.key,
+        number: num,
+        firstName: row.firstName.trim(),
+        lastName: row.lastName.trim(),
+      }))
+      .sort((a, b) => a.number - b.number)
+
+    return {
+      isValid,
+      incompleteKeys,
+      duplicateNumbers: duplicateNumbersSet,
+      duplicateKeys,
+      parsedPlayers,
+    }
   }, [rows])
+
+  const duplicateNumbers = validationResult.duplicateNumbers
+
+  // Benachrichtigung an Elternkomponente (z. B. TeamEditModal)
+  const onChangeRef = useRef(onChange)
+  useEffect(() => {
+    onChangeRef.current = onChange
+  }, [onChange])
+
+  useEffect(() => {
+    onChangeRef.current?.(validationResult.parsedPlayers, validationResult.isValid)
+  }, [validationResult])
 
   const handleChange = (
     rowIndex: number,
@@ -274,7 +332,9 @@ export function TeamRosterManager({
 
     try {
       setIsSubmitting(true)
-      await onSavePlayers(newPlayers)
+      if (onSavePlayers) {
+        await onSavePlayers(newPlayers)
+      }
       setErrorKeys(new Set())
       setSuccessMessage("Kader erfolgreich gespeichert!")
       prevPlayersRef.current = JSON.stringify(newPlayers)
@@ -291,48 +351,52 @@ export function TeamRosterManager({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Header Info & Speichern Button */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600 shrink-0">
-            <Users className="h-4.5 w-4.5" />
+      {!hideHeader && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600 shrink-0">
+              <Users className="h-4.5 w-4.5" />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-slate-900 leading-tight">
+                Spielerkader
+              </h4>
+              <p className="text-xs text-slate-500">
+                {filledRowCount === 0
+                  ? "Noch keine Spielerinnen/Spieler eingetragen."
+                  : `${filledRowCount} ${
+                      filledRowCount === 1 ? "Spieler/in" : "Spieler/innen"
+                    } erfasst`}
+              </p>
+            </div>
           </div>
-          <div>
-            <h4 className="text-sm font-bold text-slate-900 leading-tight">
-              Spielerkader
-            </h4>
-            <p className="text-xs text-slate-500">
-              {filledRowCount === 0
-                ? "Noch keine Spielerinnen/Spieler eingetragen."
-                : `${filledRowCount} ${
-                    filledRowCount === 1 ? "Spieler/in" : "Spieler/innen"
-                  } erfasst`}
-            </p>
-          </div>
-        </div>
 
-        <div className="flex items-center gap-2 self-end sm:self-center">
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={isSubmitting}
-            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-blue-500 active:scale-95 disabled:opacity-50 transition-all cursor-pointer"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                <span>Wird gespeichert...</span>
-              </>
-            ) : (
-              <>
-                <Save className="h-3.5 w-3.5" />
-                <span>Kader speichern</span>
-              </>
-            )}
-          </button>
+          {onSavePlayers && (
+            <div className="flex items-center gap-2 self-end sm:self-center">
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={isSubmitting}
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-blue-500 active:scale-95 disabled:opacity-50 transition-all cursor-pointer"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    <span>Wird gespeichert...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-3.5 w-3.5" />
+                    <span>Kader speichern</span>
+                  </>
+                )}
+              </button>
+            </div>
+          )}
         </div>
-      </div>
+      )}
 
       {/* Hinweistext für Excel-Style Tastaturnavigation */}
       <div className="flex items-center justify-between text-[11px] text-slate-500 px-1">
@@ -351,6 +415,16 @@ export function TeamRosterManager({
             Achtung: Trikotnummer{" "}
             <strong>#{Array.from(duplicateNumbers).join(", #")}</strong> ist
             mehrfach vorhanden. Bitte vor dem Speichern korrigieren.
+          </span>
+        </div>
+      )}
+
+      {/* Warnung bei unvollständigen Zeilen */}
+      {validationResult.incompleteKeys.size > 0 && (
+        <div className="flex items-center gap-2 text-xs text-rose-800 bg-rose-50 border border-rose-200 rounded-xl px-3 py-2">
+          <AlertCircle className="h-4 w-4 text-rose-600 shrink-0" />
+          <span>
+            Bitte markierte Zeilen vollständig ausfüllen (Trikotnummer 0–99 sowie Vor- und Nachname) oder leeren.
           </span>
         </div>
       )}
@@ -401,7 +475,10 @@ export function TeamRosterManager({
                   !isNaN(parsedNum) &&
                   row.numberStr.trim() !== "" &&
                   duplicateNumbers.has(parsedNum)
-                const isErrorRow = errorKeys.has(row.key)
+                const isErrorRow =
+                  errorKeys.has(row.key) ||
+                  validationResult.incompleteKeys.has(row.key) ||
+                  validationResult.duplicateKeys.has(row.key)
 
                 return (
                   <tr

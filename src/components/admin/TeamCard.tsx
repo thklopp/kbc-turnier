@@ -1,7 +1,7 @@
 import { useState } from "react"
 import type { Team } from "@/types/database"
 import { regenerateTeamJingleToken } from "@/services/teamService"
-import { Play, Square, Edit2, ShieldAlert, Link as LinkIcon, Check, CheckCircle2 } from "lucide-react"
+import { Play, Square, Edit2, ShieldAlert, Link as LinkIcon, Check } from "lucide-react"
 
 interface TeamCardProps {
   team: Team
@@ -58,15 +58,6 @@ export function TeamCard({
             <span className="rounded-md bg-slate-100 border border-slate-200 px-2 py-0.5 text-[11px] font-bold text-slate-700">
               Gruppe {team.group}
             </span>
-            {team.jingleUpdatedAt && (
-              <span
-                className="rounded-md bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 flex items-center gap-1"
-                title="Jingle wurde vom Team/Betreuer aktualisiert"
-              >
-                <CheckCircle2 className="h-3 w-3" />
-                Jingle aktiv
-              </span>
-            )}
           </div>
 
           <span className="font-mono text-xs font-bold text-slate-400">
@@ -75,7 +66,7 @@ export function TeamCard({
         </div>
 
         {/* Logo and Name */}
-        <div className="flex items-center gap-3.5 mb-4">
+        <div className="flex items-center gap-3.5">
           <div className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
             {team.logoUrl ? (
               <img
