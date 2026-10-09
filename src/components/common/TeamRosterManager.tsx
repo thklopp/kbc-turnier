@@ -7,7 +7,6 @@ import {
   Save,
   Loader2,
   CheckCircle2,
-  Plus,
   AlertTriangle,
 } from "lucide-react"
 
@@ -195,9 +194,6 @@ export function TeamRosterManager({
     })
   }
 
-  const handleAddRow = () => {
-    setRows((prev) => [...prev, createEmptyRow()])
-  }
 
   const handleSave = async () => {
     setFormError(null)
@@ -317,16 +313,6 @@ export function TeamRosterManager({
         </div>
 
         <div className="flex items-center gap-2 self-end sm:self-center">
-          <button
-            type="button"
-            onClick={handleAddRow}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 active:scale-95 transition-all cursor-pointer"
-            title="Leere Zeile am Ende anfügen"
-          >
-            <Plus className="h-3.5 w-3.5 text-slate-500" />
-            <span>Zeile +</span>
-          </button>
-
           <button
             type="button"
             onClick={handleSave}
