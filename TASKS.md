@@ -77,6 +77,7 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
   - [SPEC-006] Redesign Live-Desk: Full-Width 4-Zeilen Stack (Spielauswahl, Spieluhr, Spielstand, Soundboard), Entfernung Strafkarten, sanftes Jingle-Fade-Out & sichere Tor-Korrektur
   - [SPEC-014] Unique-Links für Teams zum eigenständigen Tor-Jingle Upload & Startzeit-Konfiguration ohne Login
   - [SPEC-016] Spieler- und Torschützen-Verwaltung: Kaderpflege (Betreuer & Admin), Live-Desk Sofort-Torerfassung mit Dropdown-Schützenzuordnung & 2-Spalten-Anzeige (Gast & Kiosk)
+  - [SPEC-019] Kader-Grid Schnelleingabe (Excel-Style Roster Input): Schnelle Erfassung mit 10 Startzeilen, Tab/Enter/Pfeiltasten-Navigation, automatischer Zeilenerweiterung, Live-Duplikatwarnung & Bereinigung leerer Zeilen
 - [x] Spiel beenden und automatischer Übergang zum nächsten Spiel.
 
 ---
