@@ -1,6 +1,6 @@
 # SPEC-018: Standard-Ansicht Live & Entfernung Footer-Info-Element in Gast-Ansicht
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature / UI-Bereinigung  
 > **Branch**: feat/SPEC-018-standardansicht-live-und-footer-cleanup  
 > **Autor**: Antigravity  
