@@ -7,10 +7,10 @@ export function GuestLayout() {
   const hash = location.hash
 
   const isHome = location.pathname === "/"
-  const isLive = isHome && hash === "#live"
+  const isSchedule = isHome && hash === "#schedule"
   const isStandings = isHome && hash === "#standings"
   const isFinals = isHome && hash === "#finals"
-  const isSchedule = isHome && !isLive && !isStandings && !isFinals
+  const isLive = isHome && !isSchedule && !isStandings && !isFinals
   const isInfo = location.pathname === "/info"
 
   return (

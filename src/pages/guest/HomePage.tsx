@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react"
 import { useLocation } from "react-router-dom"
-import type { Match, Team, TournamentConfig } from "@/types/database"
+import type { Match, Team } from "@/types/database"
 import { subscribeMatches } from "@/services/matchService"
 import { subscribeTeams } from "@/services/teamService"
-import { subscribeTournamentConfig, getDefaultConfig } from "@/services/configService"
 import { LiveHeroCard } from "@/components/guest/LiveHeroCard"
 import { GuestScheduleView } from "@/components/guest/GuestScheduleView"
 import { StandingsView } from "@/components/guest/StandingsView"
@@ -13,18 +12,17 @@ export function HomePage() {
   const location = useLocation()
   const [matches, setMatches] = useState<Match[]>([])
   const [teams, setTeams] = useState<Team[]>([])
-  const [config, setConfig] = useState<TournamentConfig>(getDefaultConfig())
   const [loading, setLoading] = useState(true)
 
   const hash = location.hash
   const activeTab: "live" | "schedule" | "standings" | "finals" =
-    hash === "#live"
-      ? "live"
+    hash === "#schedule"
+      ? "schedule"
       : hash === "#standings"
       ? "standings"
       : hash === "#finals"
       ? "finals"
-      : "schedule"
+      : "live"
 
   useEffect(() => {
     const unsubMatches = subscribeMatches(
@@ -40,15 +38,9 @@ export function HomePage() {
       (err) => console.error("Guest teams error:", err)
     )
 
-    const unsubConfig = subscribeTournamentConfig(
-      (c) => setConfig(c),
-      (err) => console.error("Guest config error:", err)
-    )
-
     return () => {
       unsubMatches()
       unsubTeams()
-      unsubConfig()
     }
   }, [])
 
@@ -89,16 +81,6 @@ export function HomePage() {
           <FinalsBracketView matches={matches} teams={teams} />
         </section>
       )}
-
-      {/* Footer Info Box */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2 shadow-xs">
-        <span>
-          Aktiver Turniertag: <strong>{config.activeDay === "saturday" ? "Samstag" : "Sonntag"}</strong> &bull; {teams.length} Teams
-        </span>
-        <span className="font-mono text-[11px] text-slate-400">
-          Live Sync via Firestore onSnapshot
-        </span>
-      </div>
     </div>
   )
 }

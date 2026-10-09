@@ -1,6 +1,6 @@
 # SPEC-018: Standard-Ansicht Live & Entfernung Footer-Info-Element in Gast-Ansicht
 
-> **Status**: In Review  
+> **Status**: In Abnahme  
 > **Typ**: Feature / UI-Bereinigung  
 > **Branch**: feat/SPEC-018-standardansicht-live-und-footer-cleanup  
 > **Autor**: Antigravity  
@@ -38,12 +38,12 @@
 ## 3. Fachliche Anforderungen & Scope
 
 ### 3.1 Im Scope (Must-Have)
-- [ ] **Standard-Tab auf Live setzen (`HomePage.tsx`)**:
+- [x] **Standard-Tab auf Live setzen (`HomePage.tsx`)**:
   - Wenn kein URL-Hash vorliegt oder der Hash weder `#schedule`, `#standings` noch `#finals` ist, ist der `activeTab` automatisch `"live"`.
-- [ ] **Tab-Aktivierung im Layout (`GuestLayout.tsx`)**:
+- [x] **Tab-Aktivierung im Layout (`GuestLayout.tsx`)**:
   - Der Tab "Live" wird als aktiv markiert, wenn die Startseite aufgerufen wird und kein anderer Tab explizit angewählt ist (`isLive = isHome && !isSchedule && !isStandings && !isFinals`).
   - Der Tab "Spielplan" wird aktiv markiert, wenn der Hash explizit `#schedule` lautet.
-- [ ] **Entfernung des Footer-Info-Elements (`HomePage.tsx`)**:
+- [x] **Entfernung des Footer-Info-Elements (`HomePage.tsx`)**:
   - Vollständiges Entfernen des Containers mit `Aktiver Turniertag:` und `Live Sync via Firestore onSnapshot`.
   - Bereinigung nicht mehr benötigter Imports und Subscriptions (`subscribeTournamentConfig`, `TournamentConfig`, `getDefaultConfig`).
 
@@ -58,31 +58,31 @@
 
 ### 4.1 Szenarien / Kriterien
 
-- [ ] **AC-1: Standardansicht beim Startseitenaufruf ist Live**
+- [x] **AC-1: Standardansicht beim Startseitenaufruf ist Live**
   - **Gegeben sei (Given)**: Ein Nutzer öffnet die Gast-Ansicht über die URL `/` ohne Hash.
   - **Wenn (When)**: Die Seite lädt.
   - **Dann (Then)**: Wird die Live-Ansicht (`LiveHeroCard`) gerendert und in der Header-Subnavigation ist der Tab **Live** aktiv (blau unterstrichen).
 
-- [ ] **AC-2: Klick auf Spielplan öffnet weiterhin den Spielplan**
+- [x] **AC-2: Klick auf Spielplan öffnet weiterhin den Spielplan**
   - **Gegeben sei**: Der Nutzer befindet sich auf `/` (Live-Ansicht).
   - **Wenn**: Der Nutzer in der Subnavigation auf „Spielplan“ klickt (URL wechselt zu `/#schedule`).
   - **Dann**: Wird der Spielplan (`GuestScheduleView`) gerendert und der Tab **Spielplan** ist aktiv.
 
-- [ ] **AC-3: Entfernung des Debug-/Sync-Infobox-Elements**
+- [x] **AC-3: Entfernung des Debug-/Sync-Infobox-Elements**
   - **Gegeben sei**: Der Nutzer betrachtet die Live-Ansicht (`/` oder `/#live`).
   - **Wenn**: Die Ansicht gerendert wird.
   - **Dann**: Ist unterhalb der Spielkarte (`LiveHeroCard`) kein Banner/Kasten mehr mit dem Text „Aktiver Turniertag: Samstag • ...“ und „Live Sync via Firestore onSnapshot“ sichtbar.
   - **Und**: Dies gilt gleichermaßen auch für die Tabs Spielplan, Tabellen und Finalphase.
 
-- [ ] **AC-4: Sauberer Listener-Lifecycle**
+- [x] **AC-4: Sauberer Listener-Lifecycle**
   - **Gegeben sei**: Die Gast-Startseite lädt.
   - **Wenn**: Die Seite gerendert wird.
   - **Dann**: Gibt es keinen ungenutzten Firestore-Listener für `tournamentConfig` in `HomePage.tsx`.
 
 ### 4.2 Allgemeine Qualitätskriterien
-- Keine TypeScript-Fehler und kein `any`.
-- Erfolgreicher Build via `npm run build` und sauberes Linting.
-- Keine optischen Regressionen auf Mobilgeräten oder Desktop.
+- [x] Keine TypeScript-Fehler und kein `any`.
+- [x] Erfolgreicher Build via `npm run build` und sauberes Linting.
+- [x] Keine optischen Regressionen auf Mobilgeräten oder Desktop.
 
 ---
 
@@ -130,14 +130,14 @@
 ## 8. Verifikations- & Testplan
 
 ### 8.1 Manuelle Tests
-1. [ ] Aufruf von `/` im Browser: Live-Tab aktiv, LiveHeroCard wird angezeigt.
-2. [ ] Prüfung: Kein Element "Aktiver Turniertag" / "Firebase Sync" sichtbar.
-3. [ ] Klick auf Tab "Spielplan": URL wird `/#schedule`, Spielplan-Liste wird angezeigt.
-4. [ ] Klick auf Tab "Tabellen" / "Finalphase": Navigation funktioniert einwandfrei.
-5. [ ] Klick auf Tab "Live": Kehrt zur Live-Ansicht zurück.
+1. [x] Aufruf von `/` im Browser: Live-Tab aktiv, LiveHeroCard wird angezeigt.
+2. [x] Prüfung: Kein Element "Aktiver Turniertag" / "Firebase Sync" sichtbar.
+3. [x] Klick auf Tab "Spielplan": URL wird `/#schedule`, Spielplan-Liste wird angezeigt.
+4. [x] Klick auf Tab "Tabellen" / "Finalphase": Navigation funktioniert einwandfrei.
+5. [x] Klick auf Tab "Live": Kehrt zur Live-Ansicht zurück.
 
 ### 8.2 Automatisierte Validierung
-- [ ] `npm run build` führt fehlerfrei aus.
+- [x] `npm run build` führt fehlerfrei aus.
 
 ---
 
