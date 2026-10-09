@@ -1,6 +1,6 @@
 # SPEC-019: Kader-Grid Schnelleingabe (Excel-Style Roster Input)
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature / Refactoring  
 > **Branch**: `feat/SPEC-019-kader-grid-schnelleingabe`  
 > **Autor**: Antigravity  
