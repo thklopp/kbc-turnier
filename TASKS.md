@@ -12,8 +12,8 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 - [x] **Meilenstein 3: Admin-Bereich – Zeitkonfiguration & Spielplan-Generierung**
 - [x] **Meilenstein 4: Admin-Bereich – Turnierleitung Live-Desk & Torjingle-Playback**
 - [x] **Meilenstein 5: Öffentliche Gast-Ansicht – Spielplan, Live-Ticker & Tabellen**
-- [ ] **Meilenstein 6: Hallen-Kiosk – TV-Display & automatisierte Rotation**
-- [ ] **Meilenstein 7: End-to-End Tests, Optimierung & Railway Deployment**
+- [x] **Meilenstein 6: Hallen-Kiosk – TV-Display & automatisierte Rotation**
+- [x] **Meilenstein 7: End-to-End Tests, Optimierung & Railway Deployment**
 
 ---
 
