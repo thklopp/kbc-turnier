@@ -1,6 +1,6 @@
 # SPEC-021: Einheitlicher Monospace-Font "Chivo Mono"
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature / UI-Optimierung  
 > **Branch**: `feat/SPEC-021-chivo-mono-font`  
 > **Autor**: Antigravity Agent  
