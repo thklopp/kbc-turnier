@@ -96,6 +96,7 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 - [x] Live-Scoreboard mit Teamlogos, aktuellem Spielstand und Spieluhr.
 - [x] Automatische Bildlauf- oder Ticker-Rotation (Live-Spiel -> Nächste Spiele -> Tabellenstand).
 - [x] Wiederverbindungssicherheit bei instabilem Hallen-WLAN (Offline-Hinweis, automatischer Reconnect).
+- [x] [SPEC-021] Einheitlicher Monospace-Font 'Chivo Mono' (offline/lokal gebündelt) für Spielstände, Timer und Tabellen auf allen Endgeräten; Kiosk-Score auf 'font-medium' (500) abgestimmt.
 
 ---
 

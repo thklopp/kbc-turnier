@@ -15,6 +15,20 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        mono: [
+          '"Chivo Mono Variable"',
+          '"Chivo Mono"',
+          'ui-monospace',
+          'SFMono-Regular',
+          'Menlo',
+          'Monaco',
+          'Consolas',
+          '"Liberation Mono"',
+          '"Courier New"',
+          'monospace',
+        ],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
