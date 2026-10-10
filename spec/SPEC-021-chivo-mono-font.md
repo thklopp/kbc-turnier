@@ -1,6 +1,6 @@
 # SPEC-021: Einheitlicher Monospace-Font "Chivo Mono"
 
-> **Status**: In Review  
+> **Status**: In Abnahme  
 > **Typ**: Feature / UI-Optimierung  
 > **Branch**: `feat/SPEC-021-chivo-mono-font`  
 > **Autor**: Antigravity Agent  
@@ -41,11 +41,11 @@ Dadurch unterscheidet sich das visuelle Erscheinungsbild, insbesondere bei groß
 ## 3. Fachliche Anforderungen & Scope
 
 ### 3.1 Im Scope (Must-Have)
-- [ ] **Dependency**: Hinzufügen von `@fontsource-variable/chivo-mono` zu `package.json`.
-- [ ] **Font-Import**: Einbindung der Variable-Font-Definitionen in `src/main.tsx` (oder zentralem Einstiegspunkt).
-- [ ] **Tailwind-Konfiguration**: Erweiterung von `tailwind.config.js` (`theme.extend.fontFamily.mono`), sodass `"Chivo Mono Variable"` bzw. `"Chivo Mono"` an erster Stelle vor den System-Fallbacks steht.
-- [ ] **Visuelle Validierung**: Sicherstellen, dass Spielstände (z. B. `text-7xl font-mono font-black`), Spielzeit-Timer, Tabellenspalten und Trikotnummern in allen Ansichten (`/`, `/admin`, `/kiosk`, `/team/:token`) fehlerfrei, ohne Zeilenumbrüche oder Überlappungen dargestellt werden.
-- [ ] **Build & Linter**: Erfolgreicher Durchlauf von `npm run build` und `npm run lint`.
+- [x] **Dependency**: Hinzufügen von `@fontsource-variable/chivo-mono` zu `package.json`.
+- [x] **Font-Import**: Einbindung der Variable-Font-Definitionen in `src/main.tsx` (oder zentralem Einstiegspunkt).
+- [x] **Tailwind-Konfiguration**: Erweiterung von `tailwind.config.js` (`theme.extend.fontFamily.mono`), sodass `"Chivo Mono Variable"` bzw. `"Chivo Mono"` an erster Stelle vor den System-Fallbacks steht.
+- [x] **Visuelle Validierung**: Sicherstellen, dass Spielstände (z. B. `text-7xl font-mono font-black`), Spielzeit-Timer, Tabellenspalten und Trikotnummern in allen Ansichten (`/`, `/admin`, `/kiosk`, `/team/:token`) fehlerfrei, ohne Zeilenumbrüche oder Überlappungen dargestellt werden.
+- [x] **Build & Linter**: Erfolgreicher Durchlauf von `npm run build` und `npm run lint`.
 
 ### 3.2 Explizit Out-of-Scope
 - Kein Austausch der Sans-Serif-Standardschriftart (Texte, Fließtext, Buttons bleiben in der bestehenden Standardschrift).
@@ -56,17 +56,17 @@ Dadurch unterscheidet sich das visuelle Erscheinungsbild, insbesondere bei groß
 ## 4. Akzeptanzkriterien
 
 ### 4.1 Szenarien / Kriterien
-- [ ] **AC-1: Globale Monospace-Schriftart Chivo Mono**
+- [x] **AC-1: Globale Monospace-Schriftart Chivo Mono**
   - **Gegeben sei**: Eine beliebige Ansicht mit `font-mono`-Elementen (z. B. LiveHeroCard, KioskScoreboardSlide, MatchTimerControl).
   - **Wenn**: Ein Element mit der Klasse `font-mono` im Browser gerendert wird.
   - **Dann**: Weist die CSS-Eigenschaft `font-family` als erste Schriftart `"Chivo Mono Variable", "Chivo Mono"` aus und der Font wird aus dem lokalen Bundle geladen.
 
-- [ ] **AC-2: Offline- und Datenschutz-Autonomie**
+- [x] **AC-2: Offline- und Datenschutz-Autonomie**
   - **Gegeben sei**: Die Anwendung wird geladen.
   - **Wenn**: Die Netzwerkanfragen analysiert werden.
   - **Dann**: Werden die Schriftdateien (`.woff2`) ausschließlich aus dem eigenen Build/Host geladen; es erfolgt kein Netzwerkaufruf an `fonts.googleapis.com` oder `fonts.gstatic.com`.
 
-- [ ] **AC-3: Schnitte und Varianten**
+- [x] **AC-3: Schnitte und Varianten**
   - **Gegeben sei**: Elemente mit unterschiedlichen Schriftgewichten (`font-medium`, `font-bold`, `font-black`).
   - **Wenn**: Diese mit `font-mono` kombiniert sind (z. B. Kiosk-Score mit `font-black font-mono`).
   - **Dann**: Rendert Chivo Mono mit dem entsprechenden Strichstärken-Gewicht sauber und ohne synthetisches "Faux-Bold".
@@ -156,8 +156,8 @@ export default {
 4. [ ] Offline-Modus im Browser simulieren: Überprüfen, dass die Schriftarten ohne Fehler aus dem lokalen Cache/Server geladen werden.
 
 ### 8.2 Automatisierte Validierung
-- [ ] `npm run lint` fehlerfrei.
-- [ ] `npm run build` fehlerfrei.
+- [x] `npm run lint` fehlerfrei.
+- [x] `npm run build` fehlerfrei.
 
 ---
 
