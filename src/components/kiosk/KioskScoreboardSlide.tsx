@@ -161,7 +161,7 @@ export function KioskScoreboardSlide({
           {/* Center Score & Live Clock (Cols 5-7) */}
           <div className="col-span-3 flex flex-col items-center justify-center text-center border-x border-slate-200 px-4">
             {/* Score */}
-            <div className="flex items-center justify-center gap-4 text-7xl md:text-8xl lg:text-9xl font-black font-mono tracking-tighter text-slate-900">
+            <div className="flex items-center justify-center gap-4 text-7xl md:text-8xl lg:text-9xl font-medium font-mono tracking-tighter text-slate-900">
               <span>{displayMatch.scoreHome}</span>
               <span className="text-slate-400 font-light pb-2">:</span>
               <span>{displayMatch.scoreAway}</span>

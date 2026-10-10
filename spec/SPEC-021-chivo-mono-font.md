@@ -44,7 +44,8 @@ Dadurch unterscheidet sich das visuelle Erscheinungsbild, insbesondere bei groß
 - [x] **Dependency**: Hinzufügen von `@fontsource-variable/chivo-mono` zu `package.json`.
 - [x] **Font-Import**: Einbindung der Variable-Font-Definitionen in `src/main.tsx` (oder zentralem Einstiegspunkt).
 - [x] **Tailwind-Konfiguration**: Erweiterung von `tailwind.config.js` (`theme.extend.fontFamily.mono`), sodass `"Chivo Mono Variable"` bzw. `"Chivo Mono"` an erster Stelle vor den System-Fallbacks steht.
-- [x] **Visuelle Validierung**: Sicherstellen, dass Spielstände (z. B. `text-7xl font-mono font-black`), Spielzeit-Timer, Tabellenspalten und Trikotnummern in allen Ansichten (`/`, `/admin`, `/kiosk`, `/team/:token`) fehlerfrei, ohne Zeilenumbrüche oder Überlappungen dargestellt werden.
+- [x] **Visuelle Validierung**: Sicherstellen, dass Spielstände, Spielzeit-Timer, Tabellenspalten und Trikotnummern in allen Ansichten (`/`, `/admin`, `/kiosk`, `/team/:token`) fehlerfrei, ohne Zeilenumbrüche oder Überlappungen dargestellt werden.
+- [x] **Kiosk Live-Scoreboard Font-Weight**: Anpassung der Ergebniszahlen im Live-Scoreboard des Kiosk-Modus von `font-black` (900) auf `font-medium` (500) für eine ausgewogene visuelle Gewichtung.
 - [x] **Build & Linter**: Erfolgreicher Durchlauf von `npm run build` und `npm run lint`.
 
 ### 3.2 Explizit Out-of-Scope
@@ -70,6 +71,11 @@ Dadurch unterscheidet sich das visuelle Erscheinungsbild, insbesondere bei groß
   - **Gegeben sei**: Elemente mit unterschiedlichen Schriftgewichten (`font-medium`, `font-bold`, `font-black`).
   - **Wenn**: Diese mit `font-mono` kombiniert sind (z. B. Kiosk-Score mit `font-black font-mono`).
   - **Dann**: Rendert Chivo Mono mit dem entsprechenden Strichstärken-Gewicht sauber und ohne synthetisches "Faux-Bold".
+
+- [x] **AC-4: Kiosk Live-Scoreboard Ergebniszahlen mit font-medium (500)**
+  - **Gegeben sei**: Die Kiosk-Ansicht (`/kiosk`) im Live-Scoreboard Slide (`KioskScoreboardSlide`).
+  - **Wenn**: Die Ergebnisanzeige dargestellt wird.
+  - **Dann**: Haben die Ergebniszahlen die Klasse `font-medium` (Font-Weight 500) statt `font-black` (900).
 
 ---
 
