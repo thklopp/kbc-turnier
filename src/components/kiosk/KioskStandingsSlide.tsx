@@ -127,7 +127,7 @@ export function KioskStandingsSlide({ teams, matches }: KioskStandingsSlideProps
                       </span>
                     </td>
                     <td className="py-3 pr-3 text-right">
-                      <span className="inline-flex items-center justify-center rounded-xl bg-blue-50 border border-blue-200 px-3.5 py-1 font-mono text-lg md:text-xl font-bold text-blue-700">
+                      <span className={`inline-flex items-center justify-center rounded-xl border px-3.5 py-1 font-mono text-lg md:text-xl font-bold ${genderBadge}`}>
                         {team.points}
                       </span>
                     </td>
