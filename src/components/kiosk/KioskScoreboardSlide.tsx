@@ -124,18 +124,6 @@ export function KioskScoreboardSlide({
         >
           {phaseLabel}
         </span>
-        {isLive && (
-          <span className="flex items-center gap-1.5 rounded-full bg-red-50 border border-red-200 px-3.5 py-1 text-xs font-medium tracking-wide uppercase text-red-600 animate-pulse">
-            <span className="h-2 w-2 rounded-full bg-red-500" />
-            Live im Spiel
-          </span>
-        )}
-        {isPaused && (
-          <span className="flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-300 px-3.5 py-1 text-xs font-medium tracking-wide uppercase text-amber-700">
-            <Pause className="h-3.5 w-3.5 fill-current" />
-            Pausiert
-          </span>
-        )}
       </div>
 
       {/* Main High-Contrast TV Scoreboard Card (+50px Höhe) */}
@@ -163,7 +151,20 @@ export function KioskScoreboardSlide({
           </div>
 
           {/* Center Score & Live Clock (Cols 6-7) */}
-          <div className="col-span-2 flex flex-col items-center justify-center text-center px-1 pt-6">
+          <div className="col-span-2 flex flex-col items-center justify-center text-center px-1 pt-2">
+            {isLive && (
+              <span className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-red-50 border border-red-200 px-3.5 py-1 text-xs md:text-sm font-semibold tracking-wide uppercase text-red-600 animate-pulse shadow-xs">
+                <span className="h-2 w-2 rounded-full bg-red-500" />
+                Live im Spiel
+              </span>
+            )}
+            {isPaused && (
+              <span className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-300 px-3.5 py-1 text-xs md:text-sm font-semibold tracking-wide uppercase text-amber-700 shadow-xs">
+                <Pause className="h-3.5 w-3.5 fill-current" />
+                Pausiert
+              </span>
+            )}
+
             {/* Score */}
             <div className="flex items-center justify-center gap-2 md:gap-4 text-7xl md:text-8xl lg:text-9xl font-medium font-mono tracking-tighter text-slate-900">
               <span>{displayMatch.scoreHome}</span>
