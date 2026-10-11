@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { CheckCircle2 } from "lucide-react"
 import type { Team, Match, GenderCategory, TournamentGroup } from "@/types/database"
 import { calculateGroupStandings } from "@/services/standingsService"
 
@@ -41,11 +40,6 @@ export function KioskStandingsSlide({ teams, matches }: KioskStandingsSlideProps
               Gruppe {group}
             </h3>
           </div>
-
-          <span className="text-sm md:text-base font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3.5 py-1 rounded-full flex items-center gap-1.5">
-            <CheckCircle2 className="h-4 w-4 md:h-5 md:w-5" />
-            Top 2: Halbfinale
-          </span>
         </div>
 
         {/* Larger TV Table */}
@@ -67,24 +61,15 @@ export function KioskStandingsSlide({ teams, matches }: KioskStandingsSlideProps
             <tbody className="divide-y divide-slate-100 font-medium">
               {standings.map((team, idx) => {
                 const rank = idx + 1
-                const isPlayoff = rank <= 2
 
                 return (
                   <tr
                     key={team.teamId}
-                    className={`transition-colors ${
-                      isPlayoff ? "bg-emerald-50/40" : "hover:bg-slate-50"
-                    }`}
+                    className="hover:bg-slate-50 transition-colors"
                   >
                     {/* Rank */}
                     <td className="py-3 pl-2 text-center">
-                      <span
-                        className={`inline-flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-xl text-sm md:text-base font-bold ${
-                          isPlayoff
-                            ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
-                            : "bg-slate-100 text-slate-600 border border-slate-200"
-                        }`}
-                      >
+                      <span className="inline-flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-xl text-sm md:text-base font-bold bg-slate-100 text-slate-700 border border-slate-200">
                         {rank}
                       </span>
                     </td>
