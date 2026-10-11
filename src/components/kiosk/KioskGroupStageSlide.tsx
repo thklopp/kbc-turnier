@@ -62,11 +62,11 @@ export function KioskGroupStageSlide({ matches, teams }: KioskGroupStageSlidePro
     return (
       <div
         key={match.id}
-        className={`grid grid-cols-12 items-center px-2.5 py-1.5 rounded-xl border transition-all text-sm md:text-base ${rowHighlightClass}`}
+        className={`grid grid-cols-12 items-center px-2.5 py-1.5 rounded-xl border transition-all text-base md:text-lg ${rowHighlightClass}`}
       >
         {/* Left Meta: Time, Match Number, Gender, Group (Cols 1-3) */}
         <div className="col-span-3 flex items-center gap-1.5 min-w-0">
-          <span className="font-mono font-bold text-slate-900 whitespace-nowrap text-sm md:text-base">
+          <span className="font-mono font-bold text-slate-900 whitespace-nowrap text-base md:text-lg">
             {match.scheduledTime}
           </span>
           <span className={`text-xs md:text-sm font-bold px-1.5 py-0.5 rounded border whitespace-nowrap ${genderBadge}`}>
@@ -76,19 +76,19 @@ export function KioskGroupStageSlide({ matches, teams }: KioskGroupStageSlidePro
             Gr. {match.group || "?"}
           </span>
           {isActive && (
-            <span className="hidden xl:inline-flex h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+            <span className="hidden xl:inline-flex h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse" />
           )}
         </div>
 
         {/* Home Team: Name right-aligned + Logo (Cols 4-7) */}
-        <div className="col-span-4 flex items-center justify-end gap-1.5 min-w-0 pr-1">
+        <div className="col-span-4 flex items-center justify-end gap-2 min-w-0 pr-1">
           <span
-            className="font-medium text-slate-900 truncate text-right text-sm md:text-base"
+            className="font-medium text-slate-900 truncate text-right text-base md:text-lg"
             title={home.name}
           >
             {home.name}
           </span>
-          <div className="flex h-6 w-6 md:h-7 md:w-7 flex-none items-center justify-center rounded bg-white p-0.5">
+          <div className="flex h-7 w-7 md:h-8 md:w-8 flex-none items-center justify-center rounded bg-white p-0.5">
             {home.logoUrl && !logoErrors[match.teamHomeId] ? (
               <img
                 src={home.logoUrl}
@@ -97,7 +97,7 @@ export function KioskGroupStageSlide({ matches, teams }: KioskGroupStageSlidePro
                 className="max-h-full max-w-full object-contain"
               />
             ) : (
-              <span className="text-xs">🏑</span>
+              <span className="text-sm">🏑</span>
             )}
           </div>
         </div>
@@ -105,7 +105,7 @@ export function KioskGroupStageSlide({ matches, teams }: KioskGroupStageSlidePro
         {/* Score in Center (Col 8, perfectly centered) */}
         <div className="col-span-1 flex items-center justify-center">
           <span
-            className={`font-mono font-bold px-2 py-0.5 rounded text-sm md:text-base border text-center whitespace-nowrap ${
+            className={`font-mono font-bold px-2 py-0.5 rounded text-base md:text-lg border text-center whitespace-nowrap ${
               isActive
                 ? "bg-red-100 text-red-700 border-red-300"
                 : isNext
@@ -118,8 +118,8 @@ export function KioskGroupStageSlide({ matches, teams }: KioskGroupStageSlidePro
         </div>
 
         {/* Away Team: Logo + Name left-aligned (Cols 9-12) */}
-        <div className="col-span-4 flex items-center justify-start gap-1.5 min-w-0 pl-1">
-          <div className="flex h-6 w-6 md:h-7 md:w-7 flex-none items-center justify-center rounded bg-white p-0.5">
+        <div className="col-span-4 flex items-center justify-start gap-2 min-w-0 pl-1">
+          <div className="flex h-7 w-7 md:h-8 md:w-8 flex-none items-center justify-center rounded bg-white p-0.5">
             {away.logoUrl && !logoErrors[match.teamAwayId] ? (
               <img
                 src={away.logoUrl}
@@ -128,11 +128,11 @@ export function KioskGroupStageSlide({ matches, teams }: KioskGroupStageSlidePro
                 className="max-h-full max-w-full object-contain"
               />
             ) : (
-              <span className="text-xs">🏑</span>
+              <span className="text-sm">🏑</span>
             )}
           </div>
           <span
-            className="font-medium text-slate-900 truncate text-left text-sm md:text-base"
+            className="font-medium text-slate-900 truncate text-left text-base md:text-lg"
             title={away.name}
           >
             {away.name}
