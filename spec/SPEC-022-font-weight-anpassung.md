@@ -1,6 +1,6 @@
 # SPEC-022: Globale Anpassung des Font-Weights von 900 auf 500 (font-black zu font-medium)
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Optimierung / UI-Design  
 > **Branch**: `feat/SPEC-022-font-weight-anpassung`  
 > **Autor**: Antigravity Agent  
@@ -109,13 +109,13 @@ Der Nutzer empfindet diesen Schriftschnitt als zu fett und visuell zu dominant b
 3. [ ] Admin Leitstand aufrufen: Match-Timer und Tor-Jingle Buttons prüfen.
 
 ### 7.2 Automatisierte Tests / Validierung
-- [ ] `grep -rn "font-black" src/` liefert 0 Treffer.
-- [ ] `npm run lint` fehlerfrei.
-- [ ] `npm run build` fehlerfrei.
+- [x] `grep -rn "font-black" src/` liefert 0 Treffer.
+- [x] `npm run lint` fehlerfrei.
+- [x] `npm run build` fehlerfrei.
 
 ---
 
 ## 8. Freigabe-Historie
 
 - [x] **1. Gate (Spec-Freigabe)**: Durch PO freigegeben (**`APPROVED`** am 2026-10-11)
-- [ ] **2. Gate (Merge-Freigabe)**: Ausstehend (Wartet auf PO-Signalwort **`MERGE`**)
+- [x] **2. Gate (Merge-Freigabe)**: Durch PO freigegeben (**`MERGE`** am 2026-10-11)

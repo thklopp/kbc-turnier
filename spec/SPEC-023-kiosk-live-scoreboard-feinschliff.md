@@ -1,6 +1,6 @@
 # SPEC-023: Kiosk Live-Scoreboard UI-Feinschliff & Tor-Chronik Bereinigung
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Optimierung / UI-Design  
 > **Branch**: `feat/SPEC-023-kiosk-live-scoreboard-feinschliff`  
 > **Autor**: Antigravity Agent  
@@ -112,4 +112,4 @@ Im Live-Scoreboard des Kiosk-Modus (`/kiosk`) wurden bei der visuellen Prüfung 
 ## 7. Freigabe-Historie
 
 - [x] **1. Gate (Spec-Freigabe)**: Durch PO freigegeben (**`APPROVED`** am 2026-10-11)
-- [ ] **2. Gate (Merge-Freigabe)**: Ausstehend (Wartet auf PO-Signalwort **`MERGE`**)
+- [x] **2. Gate (Merge-Freigabe)**: Durch PO freigegeben (**`MERGE`** am 2026-10-11)
