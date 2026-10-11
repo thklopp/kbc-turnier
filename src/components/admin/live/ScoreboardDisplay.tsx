@@ -92,7 +92,7 @@ export function ScoreboardDisplay({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-sm font-black uppercase tracking-wider text-slate-800">
+              <h3 className="text-sm font-medium uppercase tracking-wider text-slate-800">
                 Aktuelles Spiel
               </h3>
               <span
@@ -134,7 +134,7 @@ export function ScoreboardDisplay({
           <div className="flex items-center gap-1.5 pr-2 border-r border-slate-200">
             <Clock className="h-3.5 w-3.5 text-slate-400" />
             <span
-              className={`font-mono text-xl sm:text-2xl font-black tracking-tight select-none ${
+              className={`font-mono text-xl sm:text-2xl font-medium tracking-tight select-none ${
                 secondsRemaining === 0
                   ? "text-rose-600 animate-pulse"
                   : isLowTime
@@ -226,7 +226,7 @@ export function ScoreboardDisplay({
             )}
           </div>
 
-          <h3 className="text-base sm:text-lg font-black text-slate-900 line-clamp-1 max-w-[220px]" title={homeTeam?.name}>
+          <h3 className="text-base sm:text-lg font-medium text-slate-900 line-clamp-1 max-w-[220px]" title={homeTeam?.name}>
             {homeTeam?.name || homePlaceholder || "Team Heim"}
           </h3>
           <span className="text-xs font-mono font-bold text-slate-400">
@@ -238,7 +238,7 @@ export function ScoreboardDisplay({
             {isHomeJinglePlaying ? (
               <button
                 onClick={() => onFadeOutAudio?.(1000)}
-                className="w-full max-w-[220px] inline-flex items-center justify-center gap-2 rounded-xl bg-purple-600 px-4 py-3 text-sm font-black text-white shadow-md hover:bg-purple-500 active:scale-98 transition-all cursor-pointer animate-pulse"
+                className="w-full max-w-[220px] inline-flex items-center justify-center gap-2 rounded-xl bg-purple-600 px-4 py-3 text-sm font-medium text-white shadow-md hover:bg-purple-500 active:scale-98 transition-all cursor-pointer animate-pulse"
                 title="Torjingle innerhalb von 1 Sekunde sanft ausblenden"
               >
                 <Square className="h-5 w-5 fill-current" />
@@ -247,7 +247,7 @@ export function ScoreboardDisplay({
             ) : (
               <button
                 onClick={() => onRecordGoal(true)}
-                className="w-full max-w-[220px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-black text-white shadow-md hover:bg-emerald-500 active:scale-98 transition-all cursor-pointer"
+                className="w-full max-w-[220px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-medium text-white shadow-md hover:bg-emerald-500 active:scale-98 transition-all cursor-pointer"
                 title={homeTeam?.jingleUrl ? "Tor für Heimteam (spielt Torjingle ab)" : "Tor für Heimteam eintragen"}
               >
                 <Plus className="h-5 w-5" />
@@ -270,7 +270,7 @@ export function ScoreboardDisplay({
 
         {/* Center Live Score: Vollständig gegen Umbrüche gesichert */}
         <div className="shrink-0 flex flex-col items-center justify-center py-2 px-2">
-          <div className="whitespace-nowrap font-mono text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight text-slate-900 bg-white rounded-2xl border-2 border-slate-200 px-6 py-3 shadow-inner text-center min-w-[150px]">
+          <div className="whitespace-nowrap font-mono text-5xl sm:text-6xl lg:text-7xl font-medium tracking-tight text-slate-900 bg-white rounded-2xl border-2 border-slate-200 px-6 py-3 shadow-inner text-center min-w-[150px]">
             {scoreHome} : {scoreAway}
           </div>
           <span className="text-xs font-bold text-slate-400 mt-2 uppercase tracking-wider">
@@ -292,7 +292,7 @@ export function ScoreboardDisplay({
             )}
           </div>
 
-          <h3 className="text-base sm:text-lg font-black text-slate-900 line-clamp-1 max-w-[220px]" title={awayTeam?.name}>
+          <h3 className="text-base sm:text-lg font-medium text-slate-900 line-clamp-1 max-w-[220px]" title={awayTeam?.name}>
             {awayTeam?.name || awayPlaceholder || "Team Gast"}
           </h3>
           <span className="text-xs font-mono font-bold text-slate-400">
@@ -304,7 +304,7 @@ export function ScoreboardDisplay({
             {isAwayJinglePlaying ? (
               <button
                 onClick={() => onFadeOutAudio?.(1000)}
-                className="w-full max-w-[220px] inline-flex items-center justify-center gap-2 rounded-xl bg-purple-600 px-4 py-3 text-sm font-black text-white shadow-md hover:bg-purple-500 active:scale-98 transition-all cursor-pointer animate-pulse"
+                className="w-full max-w-[220px] inline-flex items-center justify-center gap-2 rounded-xl bg-purple-600 px-4 py-3 text-sm font-medium text-white shadow-md hover:bg-purple-500 active:scale-98 transition-all cursor-pointer animate-pulse"
                 title="Torjingle innerhalb von 1 Sekunde sanft ausblenden"
               >
                 <Square className="h-5 w-5 fill-current" />
@@ -313,7 +313,7 @@ export function ScoreboardDisplay({
             ) : (
               <button
                 onClick={() => onRecordGoal(false)}
-                className="w-full max-w-[220px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-black text-white shadow-md hover:bg-emerald-500 active:scale-98 transition-all cursor-pointer"
+                className="w-full max-w-[220px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-medium text-white shadow-md hover:bg-emerald-500 active:scale-98 transition-all cursor-pointer"
                 title={awayTeam?.jingleUrl ? "Tor für Gastteam (spielt Torjingle ab)" : "Tor für Gastteam eintragen"}
               >
                 <Plus className="h-5 w-5" />

@@ -56,7 +56,7 @@ export function KioskUpcomingSlide({
       {/* Slide Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-3xl font-black text-slate-900 flex items-center gap-3">
+          <h2 className="text-3xl font-medium text-slate-900 flex items-center gap-3">
             <span>Kommende Partien &bull; Spielplan</span>
           </h2>
           <p className="text-sm font-semibold text-slate-500 mt-1">
@@ -107,7 +107,7 @@ export function KioskUpcomingSlide({
               {/* Top Row: Time, Match Number & Gender */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-xl font-black text-slate-900 tracking-wide">
+                  <span className="font-mono text-xl font-medium text-slate-900 tracking-wide">
                     {match.scheduledTime} Uhr
                   </span>
                   <span className="rounded-lg bg-slate-50 px-2.5 py-0.5 text-xs font-bold text-slate-700 border border-slate-200">
@@ -123,17 +123,17 @@ export function KioskUpcomingSlide({
                     {phaseLabel}
                   </span>
                   {isLive && (
-                    <span className="rounded-full bg-red-50 border border-red-200 px-2.5 py-0.5 text-xs font-black text-red-600 animate-pulse">
+                    <span className="rounded-full bg-red-50 border border-red-200 px-2.5 py-0.5 text-xs font-medium text-red-600 animate-pulse">
                       LIVE
                     </span>
                   )}
                   {isPaused && (
-                    <span className="rounded-full bg-amber-50 border border-amber-300 px-2.5 py-0.5 text-xs font-black text-amber-700">
+                    <span className="rounded-full bg-amber-50 border border-amber-300 px-2.5 py-0.5 text-xs font-medium text-amber-700">
                       PAUSIERT
                     </span>
                   )}
                   {isNext && !isLive && !isPaused && (
-                    <span className="rounded-full bg-blue-50 border border-blue-200 px-2.5 py-0.5 text-xs font-black text-blue-700">
+                    <span className="rounded-full bg-blue-50 border border-blue-200 px-2.5 py-0.5 text-xs font-medium text-blue-700">
                       Als Nächstes
                     </span>
                   )}
@@ -159,7 +159,7 @@ export function KioskUpcomingSlide({
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className="font-black text-base md:text-lg text-slate-900 truncate">
+                    <p className="font-medium text-base md:text-lg text-slate-900 truncate">
                       {home.name}
                     </p>
                     <p className="text-xs text-slate-500 font-medium">Heim</p>
@@ -169,7 +169,7 @@ export function KioskUpcomingSlide({
                 {/* VS / Score */}
                 <div className="col-span-1 flex flex-col items-center justify-center">
                   {match.status === "finished" || match.status === "live" || match.status === "paused" ? (
-                    <span className="font-mono text-lg font-black text-slate-900">
+                    <span className="font-mono text-lg font-medium text-slate-900">
                       {match.scoreHome}:{match.scoreAway}
                     </span>
                   ) : (
@@ -182,7 +182,7 @@ export function KioskUpcomingSlide({
                 {/* Away */}
                 <div className="col-span-4 flex items-center justify-end gap-3 text-right">
                   <div className="min-w-0">
-                    <p className="font-black text-base md:text-lg text-slate-900 truncate">
+                    <p className="font-medium text-base md:text-lg text-slate-900 truncate">
                       {away.name}
                     </p>
                     <p className="text-xs text-slate-500 font-medium">Gast</p>

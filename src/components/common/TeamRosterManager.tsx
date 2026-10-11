@@ -518,7 +518,7 @@ export function TeamRosterManager({
                         }
                         className={`w-full h-8.5 px-2 text-center font-bold text-slate-900 bg-transparent focus:bg-blue-50/40 focus:outline-none focus:ring-1 focus:ring-inset focus:ring-blue-500 border-0 m-0 ${
                           isDuplicate
-                            ? "text-rose-700 font-black ring-1 ring-inset ring-rose-400"
+                            ? "text-rose-700 font-medium ring-1 ring-inset ring-rose-400"
                             : isErrorRow && !row.numberStr.trim()
                             ? "ring-1 ring-inset ring-rose-300"
                             : ""

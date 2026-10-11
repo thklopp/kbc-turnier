@@ -97,6 +97,8 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 - [x] Automatische Bildlauf- oder Ticker-Rotation (Live-Spiel -> Nächste Spiele -> Tabellenstand).
 - [x] Wiederverbindungssicherheit bei instabilem Hallen-WLAN (Offline-Hinweis, automatischer Reconnect).
 - [x] [SPEC-021] Einheitlicher Monospace-Font 'Chivo Mono' (offline/lokal gebündelt) für Spielstände, Timer und Tabellen auf allen Endgeräten; Kiosk-Score auf 'font-medium' (500) abgestimmt.
+- [x] [SPEC-022] Globale Harmonisierung des Font-Weights: Ersetzung aller 56 Vorkommen von 'font-black' (900) durch 'font-medium' (500) applikationsweit.
+- [x] [SPEC-023] Kiosk Live-Scoreboard UI-Feinschliff & Tor-Chronik Bereinigung: Genügend Zeilenabstand für Vereinsnamen gegen abgeschnittene Buchstaben, Angleichung Badge 'Spiel #X', Entfernung Tor-Chronik Header & Entfettung Torschützen, Bereinigung Kiosk-Footer.
 
 ---
 

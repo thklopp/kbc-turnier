@@ -51,7 +51,7 @@ export function KioskScoreboardSlide({
             alt="RRK Logo"
             className="mx-auto h-20 w-20 object-contain rounded-2xl mb-4"
           />
-          <h2 className="text-3xl font-black text-slate-900 mb-2">Turnierpause</h2>
+          <h2 className="text-3xl font-medium text-slate-900 mb-2">Turnierpause</h2>
           <p className="text-slate-600 text-lg">
             Aktuell sind keine weiteren Spiele angesetzt oder der Spielplan wird vorbereitet.
           </p>
@@ -106,23 +106,23 @@ export function KioskScoreboardSlide({
     <div className="flex h-full flex-col justify-center items-center py-2 px-4 max-w-7xl mx-auto w-full">
       {/* Top Match Meta Badge */}
       <div className="flex items-center gap-3 mb-6">
-        <span className="rounded-full bg-white border border-slate-200 px-4 py-1.5 text-sm font-bold text-slate-700 shadow-xs">
+        <span className="rounded-full bg-white border border-slate-200 px-4 py-1.5 text-sm font-semibold text-slate-700 shadow-xs">
           Spiel #{displayMatch.matchNumber}
         </span>
-        <span className={`rounded-full border px-4 py-1.5 text-sm font-black ${genderBadge}`}>
+        <span className={`rounded-full border px-4 py-1.5 text-sm font-medium ${genderBadge}`}>
           {displayMatch.gender}
         </span>
         <span className="rounded-full bg-white border border-slate-200 px-4 py-1.5 text-sm font-semibold text-slate-700 shadow-xs">
           {phaseLabel}
         </span>
         {isLive && (
-          <span className="flex items-center gap-1.5 rounded-full bg-red-50 border border-red-200 px-3.5 py-1 text-xs font-black tracking-wide uppercase text-red-600 animate-pulse">
+          <span className="flex items-center gap-1.5 rounded-full bg-red-50 border border-red-200 px-3.5 py-1 text-xs font-medium tracking-wide uppercase text-red-600 animate-pulse">
             <span className="h-2 w-2 rounded-full bg-red-500" />
             Live im Spiel
           </span>
         )}
         {isPaused && (
-          <span className="flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-300 px-3.5 py-1 text-xs font-black tracking-wide uppercase text-amber-700">
+          <span className="flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-300 px-3.5 py-1 text-xs font-medium tracking-wide uppercase text-amber-700">
             <Pause className="h-3.5 w-3.5 fill-current" />
             Pausiert
           </span>
@@ -148,7 +148,7 @@ export function KioskScoreboardSlide({
                 <span className="text-6xl md:text-7xl">🏑</span>
               )}
             </div>
-            <h3 className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 leading-tight line-clamp-2">
+            <h3 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-slate-900 leading-normal pb-2 line-clamp-2">
               {home.name}
             </h3>
             {home.group && (
@@ -173,7 +173,7 @@ export function KioskScoreboardSlide({
                 <div className="flex flex-col items-center gap-1.5">
                   <div className="flex items-center gap-2 rounded-2xl bg-emerald-50 border border-emerald-300 px-6 py-2 shadow-sm">
                     <Clock className="h-5 w-5 text-emerald-600 animate-spin" style={{ animationDuration: "3s" }} />
-                    <span className="font-mono text-3xl md:text-4xl font-black tracking-widest text-emerald-700">
+                    <span className="font-mono text-3xl md:text-4xl font-medium tracking-widest text-emerald-700">
                       {formatTimer(displayMatch.timerSecondsRemaining)}
                     </span>
                   </div>
@@ -185,7 +185,7 @@ export function KioskScoreboardSlide({
                 <div className="flex flex-col items-center gap-1.5">
                   <div className="flex items-center gap-2 rounded-2xl bg-amber-50 border border-amber-300 px-6 py-2 shadow-sm">
                     <Clock className="h-5 w-5 text-amber-600" />
-                    <span className="font-mono text-3xl md:text-4xl font-black tracking-widest text-amber-800">
+                    <span className="font-mono text-3xl md:text-4xl font-medium tracking-widest text-amber-800">
                       {formatTimer(displayMatch.timerSecondsRemaining)}
                     </span>
                   </div>
@@ -204,7 +204,7 @@ export function KioskScoreboardSlide({
                 <div className="flex flex-col items-center gap-1.5">
                   <div className="flex items-center gap-2 rounded-2xl bg-blue-50 border border-blue-200 px-5 py-2">
                     <Calendar className="h-5 w-5 text-blue-600" />
-                    <span className="font-mono text-2xl font-black text-blue-700">
+                    <span className="font-mono text-2xl font-medium text-blue-700">
                       {displayMatch.scheduledTime} Uhr
                     </span>
                   </div>
@@ -232,7 +232,7 @@ export function KioskScoreboardSlide({
                 <span className="text-6xl md:text-7xl">🏑</span>
               )}
             </div>
-            <h3 className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 leading-tight line-clamp-2">
+            <h3 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-slate-900 leading-normal pb-2 line-clamp-2">
               {away.name}
             </h3>
             {away.group && (
@@ -248,57 +248,45 @@ export function KioskScoreboardSlide({
           <div className="mt-8 border-t border-slate-200 pt-5">
             <div className="grid grid-cols-2 gap-8 text-sm">
               {/* Heim Tore */}
-              <div className="space-y-2">
-                <div className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                  <span>🥅 Tore {home.shortName || home.name}</span>
-                  <span className="font-mono text-slate-400 font-semibold">({homeGoals.length})</span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {homeGoals.map((g, idx) => {
-                    const label = g.playerName
-                      ? `#${g.playerNumber ?? ""} ${g.playerName}`.trim()
-                      : g.playerNumber
-                      ? `#${g.playerNumber}`
-                      : "Tor"
-                    return (
-                      <span
-                        key={g.id || idx}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-slate-50 border border-slate-200 px-3.5 py-1.5 text-xs font-bold text-slate-800 shadow-2xs"
-                      >
-                        <span className="font-mono text-blue-600 font-extrabold">{g.matchMinute}&apos;</span>
-                        <span>🥅</span>
-                        <span className="text-slate-900">{label}</span>
-                      </span>
-                    )
-                  })}
-                </div>
+              <div className="flex flex-wrap gap-2">
+                {homeGoals.map((g, idx) => {
+                  const label = g.playerName
+                    ? `#${g.playerNumber ?? ""} ${g.playerName}`.trim()
+                    : g.playerNumber
+                    ? `#${g.playerNumber}`
+                    : "Tor"
+                  return (
+                    <span
+                      key={g.id || idx}
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-slate-50 border border-slate-200 px-3 py-1.5 text-xs text-slate-800 shadow-2xs"
+                    >
+                      <span className="font-mono text-blue-600 font-medium">{g.matchMinute}&apos;</span>
+                      <span>🥅</span>
+                      <span className="text-slate-800 font-normal">{label}</span>
+                    </span>
+                  )
+                })}
               </div>
 
               {/* Gast Tore */}
-              <div className="space-y-2 text-right">
-                <div className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center justify-end gap-1.5">
-                  <span className="font-mono text-slate-400 font-semibold">({awayGoals.length})</span>
-                  <span>Tore {away.shortName || away.name} 🥅</span>
-                </div>
-                <div className="flex flex-wrap gap-2 justify-end">
-                  {awayGoals.map((g, idx) => {
-                    const label = g.playerName
-                      ? `#${g.playerNumber ?? ""} ${g.playerName}`.trim()
-                      : g.playerNumber
-                      ? `#${g.playerNumber}`
-                      : "Tor"
-                    return (
-                      <span
-                        key={g.id || idx}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-slate-50 border border-slate-200 px-3.5 py-1.5 text-xs font-bold text-slate-800 shadow-2xs"
-                      >
-                        <span className="text-slate-900">{label}</span>
-                        <span>🥅</span>
-                        <span className="font-mono text-blue-600 font-extrabold">{g.matchMinute}&apos;</span>
-                      </span>
-                    )
-                  })}
-                </div>
+              <div className="flex flex-wrap gap-2 justify-end">
+                {awayGoals.map((g, idx) => {
+                  const label = g.playerName
+                    ? `#${g.playerNumber ?? ""} ${g.playerName}`.trim()
+                    : g.playerNumber
+                    ? `#${g.playerNumber}`
+                    : "Tor"
+                  return (
+                    <span
+                      key={g.id || idx}
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-slate-50 border border-slate-200 px-3 py-1.5 text-xs text-slate-800 shadow-2xs"
+                    >
+                      <span className="text-slate-800 font-normal">{label}</span>
+                      <span>🥅</span>
+                      <span className="font-mono text-blue-600 font-medium">{g.matchMinute}&apos;</span>
+                    </span>
+                  )
+                })}
               </div>
             </div>
           </div>

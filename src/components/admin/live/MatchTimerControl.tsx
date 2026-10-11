@@ -60,7 +60,7 @@ export function MatchTimerControl({
       <div className="flex flex-col items-center justify-center py-2">
         {/* Big Digital Display */}
         <div
-          className={`font-mono text-6xl sm:text-7xl lg:text-8xl font-black tracking-tight select-none my-1 transition-colors ${
+          className={`font-mono text-6xl sm:text-7xl lg:text-8xl font-medium tracking-tight select-none my-1 transition-colors ${
             secondsRemaining === 0
               ? "text-rose-600 animate-pulse"
               : isLowTime

@@ -74,7 +74,7 @@ export function KioskHeader({
             className="h-11 w-11 object-contain rounded-xl shadow-sm"
           />
           <div>
-            <h1 className="text-xl font-black tracking-tight text-slate-900">
+            <h1 className="text-xl font-medium tracking-tight text-slate-900">
               {config?.tournamentName || "20. Kurt-Becker-Cup"}
             </h1>
             <p className="text-xs font-semibold text-slate-500">

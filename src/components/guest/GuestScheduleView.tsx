@@ -205,7 +205,7 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
                 {/* Header bar of the card */}
                 <div className="flex items-center justify-between gap-2 text-xs pb-2.5 mb-2.5 border-b border-slate-100">
                   <div className="flex items-center gap-2 min-w-0">
-                    <span className="font-mono font-black text-slate-900 text-sm shrink-0">
+                    <span className="font-mono font-medium text-slate-900 text-sm shrink-0">
                       {match.scheduledTime} Uhr
                     </span>
                     <span className="text-slate-300 shrink-0">&bull;</span>
@@ -261,17 +261,17 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
                   {/* Score & Status */}
                   <div className="flex flex-col items-center shrink-0 px-2 sm:px-3">
                     {isLive && (
-                      <span className="rounded-full bg-rose-500 text-white px-2 py-0.5 text-[9px] font-black uppercase tracking-wider animate-pulse mb-1 whitespace-nowrap">
+                      <span className="rounded-full bg-rose-500 text-white px-2 py-0.5 text-[9px] font-medium uppercase tracking-wider animate-pulse mb-1 whitespace-nowrap">
                         LIVE
                       </span>
                     )}
                     {isPaused && (
-                      <span className="rounded-full bg-amber-500 text-white px-2 py-0.5 text-[9px] font-black uppercase tracking-wider mb-1 whitespace-nowrap">
+                      <span className="rounded-full bg-amber-500 text-white px-2 py-0.5 text-[9px] font-medium uppercase tracking-wider mb-1 whitespace-nowrap">
                         PAUSIERT
                       </span>
                     )}
 
-                    <div className="font-mono text-base font-black tracking-tight text-slate-900 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 whitespace-nowrap">
+                    <div className="font-mono text-base font-medium tracking-tight text-slate-900 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 whitespace-nowrap">
                       {isLive || isPaused || isFinished ? (
                         `${match.scoreHome} : ${match.scoreAway}`
                       ) : (
