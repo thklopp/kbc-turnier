@@ -1,6 +1,6 @@
 # SPEC-024: Kiosk-Modus Seiten-Redesign & Struktur-Anpassung
 
-> **Status**: In Abnahme  
+> **Status**: Abgenommen  
 > **Typ**: Feature / Refactoring / UI-Optimierung  
 > **Branch**: `feat/SPEC-024-kiosk-seiten-redesign`  
 > **Autor**: Antigravity  
@@ -56,17 +56,17 @@ Zudem ist das Live-Scoreboard horizontal zu gedrängt für lange Vereinsnamen, e
 ## 3. Fachliche Anforderungen & Scope
 
 ### 3.1 Im Scope (Must-Have)
-- [ ] **Folie 1: Live**:
+- [x] **Folie 1: Live**:
   - Umbenennung des Slide-Titels im Header und Code auf `Live`.
-  - Hinzufügen eines Startzeit-Tags in der oberen Leiste (z. B. `Anpfiff: 10:00 Uhr`).
+  - Hinzufügen eines Startzeit-Tags in der oberen Leiste (z. B. `10:00 Uhr`).
   - Entfernung der vertikalen Begrenzungslinien (`border-x border-slate-200`) links und rechts des Spielstands.
   - Entfernung der Gruppen-/Heim-/Gast-Zusatztexte unter den Vereinsnamen.
-  - Verbreiterung des Containers (`max-w-[96rem]` / `w-full px-6`).
+  - Verbreiterung des Containers (`max-w-[calc(96rem+100px)]` / `w-full px-6`).
   - Logos und Spielstand auf identischer horizontaler Höhe.
   - Vereinsnamen unter den Logos zentriert auf identischer Ausgangshöhe.
   - Höhere vertikale Positionierung der Match-Karte zur Schaffung von zusätzlichem Raum für die Torschützen- und Ereignis-Chronik.
-- [ ] **Folie 2: Gruppenphase**:
-  - Umbenennung des Slide-Titels auf `Gruppenphase`.
+- [x] **Folie 2: Vorrunde**:
+  - Umbenennung des Slide-Titels auf `Vorrunde`.
   - Filterung aller Vorrundenspiele (`phase === "group"` bzw. `matchNumber <= 24`).
   - 2 Spalten: Spalte 1 = Spiele 1 bis 12, Spalte 2 = Spiele 13 bis 24.
   - Jede Zeile: `[Uhrzeit] [Geschlecht-Badge] [Gruppe-Badge] [Heim-Name + Logo] [Score Heim : Score Gast / - : -] [Logo + Gast-Name]`.
@@ -75,14 +75,14 @@ Zudem ist das Live-Scoreboard horizontal zu gedrängt für lange Vereinsnamen, e
     - Aktives Spiel (`status === "live" | "paused"`): `border-red-500 bg-red-50/60 ring-1 ring-red-400`.
     - Nächstes Spiel (`status === "scheduled"` als erstes Folgespiel): `border-blue-500 bg-blue-50/50 ring-1 ring-blue-400`.
   - Optimierung der Zeilenhöhe und Typografie, sodass alle 12 Zeilen ohne vertikales Scrollen auf 1080p passen.
-- [ ] **Folie 3: Finalphase**:
+- [x] **Folie 3: Finalrunde**:
   - Neue Komponente `KioskFinalsSlide`.
   - Filterung aller Finalspiele (`phase === "final"` bzw. `matchNumber > 24`, 16 Spiele).
   - 2 Spalten: je 8 Spiele pro Spalte.
-  - Identische Ausrichtung wie Gruppenphase, aber anstelle des Gruppe-Tags ein kompakter Spielnamen-Badge (z. B. `HF 1`, `HF 2`, `Platz 7`, `Platz 5`, `Platz 3`, `Finale`).
+  - Identische Ausrichtung wie Vorrunde, aber anstelle des Gruppe-Tags ein kompakter Spielnamen-Badge (z. B. `HF 1`, `HF 2`, `Platz 7`, `Platz 5`, `Platz 3`, `Finale` mit Trophy-Icon).
   - Status-Hervorhebung (Aktiv = Rot, Nächstes = Blau).
-- [ ] **Folie 4: Tabellen**:
-  - Neue Komponente `KioskAllStandingsSlide` (bzw. Refaktorisierung von `KioskStandingsSlide`).
+- [x] **Folie 4: Tabellen**:
+  - Neue Komponente bzw. Refaktorisierung von `KioskStandingsSlide`.
   - 2x2 Grid-Layout:
     - Links oben: wU14 Gruppe A
     - Links unten: wU14 Gruppe B
@@ -92,7 +92,7 @@ Zudem ist das Live-Scoreboard horizontal zu gedrängt für lange Vereinsnamen, e
   - Kompaktes Layout ohne vertikales Scrollen.
 - [x] **Footer-Bereich**:
   - Die Fußleiste wurde komplett entfernt, damit der Kiosk-Modus maximale vertikale Fläche für die Folieninhalte bietet.
-- [ ] **Header & Rotation**:
+- [x] **Header & Rotation**:
   - Folien-Namen im Header: `Live`, `Vorrunde`, `Finalrunde`, `Tabellen`.
   - Rotation schaltet alle 4 Folien nacheinander durch.
 
@@ -105,11 +105,11 @@ Zudem ist das Live-Scoreboard horizontal zu gedrängt für lange Vereinsnamen, e
 ## 4. Akzeptanzkriterien
 
 ### 4.1 Szenarien / Kriterien
-- [ ] **AC-1: Folien-Navigation & Bezeichnungen**
+- [x] **AC-1: Folien-Navigation & Bezeichnungen**
   - **Gegeben sei**: Die Kiosk-Ansicht `/kiosk` wird geöffnet.
   - **Wenn**: Der Header betrachtet wird.
   - **Dann**: Sind genau vier Folien-Buttons vorhanden: `Live`, `Vorrunde`, `Finalrunde`, `Tabellen`. Die Rotation durchläuft diese vier Folien.
-- [ ] **AC-2: Live-Scoreboard Layout & Startzeit**
+- [x] **AC-2: Live-Scoreboard Layout & Startzeit**
   - **Gegeben sei**: Ein Spiel ist live oder geplant.
   - **Wenn**: Die Folie `Live` angezeigt wird.
   - **Dann**: 
@@ -119,22 +119,22 @@ Zudem ist das Live-Scoreboard horizontal zu gedrängt für lange Vereinsnamen, e
     4. Sind beide Vereinslogos gleich groß und auf horizontaler Höhe mit dem Ergebnis platziert.
     5. Befinden sich die Vereinsnamen zentriert unter den Logos und beginnen auf derselben Höhe.
     6. Steht ausreichend vertikaler Raum für die Torschützen zur Verfügung.
-- [ ] **AC-3: Gruppenphase 24 Spiele scrollfrei**
+- [x] **AC-3: Gruppenphase 24 Spiele scrollfrei**
   - **Gegeben sei**: Es liegen 24 Vorrundenspiele vor.
-  - **Wenn**: Die Folie `Gruppenphase` angezeigt wird.
+  - **Wenn**: Die Folie `Vorrunde` angezeigt wird.
   - **Dann**:
     1. Werden links Spiele 1–12 und rechts Spiele 13–24 angezeigt.
     2. Stehen alle Ergebnisse (`X : Y` bzw. `- : -`) vertikal exakt untereinander.
     3. Ist das aktive Spiel rot und das nächste Spiel blau hinterlegt/gerahmt.
     4. Gibt es bei 1920x1080 Bildschirmhöhe keine Scrollbalken.
-- [ ] **AC-4: Finalphase 16 Spiele mit Spielnamen**
+- [x] **AC-4: Finalphase 16 Spiele mit Spielnamen**
   - **Gegeben sei**: Es liegen 16 Finalspiele vor.
-  - **Wenn**: Die Folie `Finalphase` angezeigt wird.
+  - **Wenn**: Die Folie `Finalrunde` angezeigt wird.
   - **Dann**:
     1. Werden je 8 Spiele pro Spalte dargestellt.
     2. Wird anstelle einer Gruppe der kompakte Spielname (`HF 1`, `HF 2`, `Platz 7`, `Platz 5`, `Platz 3`, `Finale`) dargestellt.
     3. Die Ergebnisse sind identisch sauber zentriert ausgerichtet.
-- [ ] **AC-5: Vier Tabellen auf einer Seite**
+- [x] **AC-5: Vier Tabellen auf einer Seite**
   - **Gegeben sei**: Die Folie `Tabellen` ist aktiv.
   - **Wenn**: Der Bildschirm betrachtet wird.
   - **Dann**:
@@ -142,18 +142,16 @@ Zudem ist das Live-Scoreboard horizontal zu gedrängt für lange Vereinsnamen, e
     2. Befinden sich rechts mU14 Gruppe A (oben) und mU14 Gruppe B (unten).
     3. Alle vier Tabellen enthalten die Spalten `#`, Logo, Team, `Sp`, `S`, `U`, `N`, `Tore`, `Diff`, `Pkt`.
     4. Die Folie passt ohne Scrollen auf einen 1080p TV.
-- [ ] **AC-6: Zentrierter Footer**
+- [x] **AC-6: Footer & Vollbild**
   - **Gegeben sei**: Der Kiosk läuft auf einer beliebigen Folie.
-  - **Wenn**: Der Footer betrachtet wird.
-  - **Dann**:
-    1. Ist die Spielanzeige mittig zentriert im Format `[Status] [Uhrzeit] • [Geschlecht] • [Phase] • [Heim] [Score] [Gast]`.
-    2. Der Text `Echtzeit-Synchronisierung aktiv` wird nicht angezeigt.
+  - **Wenn**: Der Bildschirm betrachtet wird.
+  - **Dann**: Bietet die Folie die volle vertikale Bildschirmhöhe ohne störende Fußleiste.
 
 ### 4.2 Allgemeine Qualitätskriterien
-- [ ] Keine fest kodierten Parameter gemäß `AGENTS.md`.
-- [ ] Vollständige TypeScript-Typisierung ohne `any`.
-- [ ] Fehlerfreier Build mit `npm run build`.
-- [ ] Firestore-Listener sauber aufgeräumt.
+- [x] Keine fest kodierten Parameter gemäß `AGENTS.md`.
+- [x] Vollständige TypeScript-Typisierung ohne `any`.
+- [x] Fehlerfreier Build mit `npm run build`.
+- [x] Firestore-Listener sauber aufgeräumt.
 
 ---
 
