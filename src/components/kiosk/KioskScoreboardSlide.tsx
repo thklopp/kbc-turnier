@@ -86,7 +86,7 @@ export function KioskScoreboardSlide({
 
   const phaseLabel =
     displayMatch.phase === "group"
-      ? `Vorrunde Gruppe ${displayMatch.group || ""}`
+      ? `Gruppe ${displayMatch.group || ""}`
       : displayMatch.finalType
       ? finalTypeLabels[displayMatch.finalType] || "Finalrunde"
       : "Finalrunde"
