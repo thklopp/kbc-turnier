@@ -30,10 +30,10 @@ export function KioskStandingsSlide({ teams, matches }: KioskStandingsSlideProps
         {/* Table Banner */}
         <div className="flex items-center justify-center border-b border-slate-200 bg-slate-50/90 px-6 py-3">
           <div className="flex items-center justify-center gap-3">
-            <span className={`rounded-xl border px-3.5 py-1 text-sm md:text-base font-medium ${genderBadge}`}>
+            <span className={`rounded-xl border px-3.5 py-1 text-sm md:text-base font-bold ${genderBadge}`}>
               {gender}
             </span>
-            <h3 className="text-lg md:text-xl font-medium text-slate-900">
+            <h3 className="text-lg md:text-xl font-bold text-slate-900">
               Gruppe {group}
             </h3>
           </div>
@@ -43,16 +43,16 @@ export function KioskStandingsSlide({ teams, matches }: KioskStandingsSlideProps
         <div className="p-4 flex-1">
           <table className="w-full text-left text-base md:text-lg">
             <thead>
-              <tr className="border-b-2 border-slate-200 text-sm md:text-base font-medium uppercase tracking-wider text-slate-500">
-                <th className="pb-3 pl-2 w-10 text-center font-medium">#</th>
-                <th className="pb-3 pl-3 font-medium">Team</th>
-                <th className="pb-3 text-center w-14 font-medium">Sp</th>
-                <th className="pb-3 text-center w-12 font-medium">S</th>
-                <th className="pb-3 text-center w-12 font-medium">U</th>
-                <th className="pb-3 text-center w-12 font-medium">N</th>
-                <th className="pb-3 text-center w-20 font-medium">Tore</th>
-                <th className="pb-3 text-center w-16 font-medium">Diff</th>
-                <th className="pb-3 pr-3 text-right w-16 font-medium">Pkt</th>
+              <tr className="border-b-2 border-slate-200 text-sm md:text-base font-bold uppercase tracking-wider text-slate-500">
+                <th className="pb-3 pl-2 w-10 text-center font-bold">#</th>
+                <th className="pb-3 pl-3 font-bold">Team</th>
+                <th className="pb-3 text-center w-14 font-bold">Sp</th>
+                <th className="pb-3 text-center w-12 font-bold">S</th>
+                <th className="pb-3 text-center w-12 font-bold">U</th>
+                <th className="pb-3 text-center w-12 font-bold">N</th>
+                <th className="pb-3 text-center w-20 font-bold">Tore</th>
+                <th className="pb-3 text-center w-16 font-bold">Diff</th>
+                <th className="pb-3 pr-3 text-right w-16 font-bold">Pkt</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium">
