@@ -180,32 +180,9 @@ export function KioskFinalsSlide({ matches, teams }: KioskFinalsSlideProps) {
   }
 
   return (
-    <div className="flex h-full flex-col justify-start py-2 px-6 max-w-[100rem] mx-auto w-full overflow-hidden select-none">
-      {/* Slide Header */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <h2 className="text-2xl lg:text-3xl font-medium text-slate-900 flex items-center gap-3">
-            <span>Finalphase &bull; Platzierungs- &amp; Finalspiele</span>
-          </h2>
-          <span className="rounded-full bg-slate-100 border border-slate-200 px-3 py-1 text-xs font-bold text-slate-700">
-            16 Spiele &bull; Sonntag
-          </span>
-        </div>
-
-        <div className="flex items-center gap-4 text-xs font-semibold">
-          <span className="flex items-center gap-1.5 text-red-600">
-            <span className="h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse" />
-            Aktives Spiel (rot)
-          </span>
-          <span className="flex items-center gap-1.5 text-blue-600">
-            <span className="h-2.5 w-2.5 rounded-full bg-blue-500" />
-            Nächstes Spiel (blau)
-          </span>
-        </div>
-      </div>
-
+    <div className="flex h-full flex-col justify-center py-2 px-6 max-w-[100rem] mx-auto w-full overflow-hidden select-none">
       {/* 2-Columns Grid of 16 Matches */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-2 flex-1">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-2 w-full">
         {/* Spalte 1: Spiele 1 - 8 der Finalphase */}
         <div className="flex flex-col gap-2 justify-between">
           {col1Matches.map(renderMatchRow)}
