@@ -104,7 +104,7 @@ export function KioskScoreboardSlide({
   const cardEvents = (displayMatch.events || []).filter((e) => e.type !== "goal")
 
   return (
-    <div className="flex h-full flex-col justify-start items-center pt-[72px] pb-4 px-6 max-w-[calc(96rem+50px)] mx-auto w-full">
+    <div className="flex h-full flex-col justify-start items-center pt-[72px] pb-4 px-6 max-w-[calc(96rem+100px)] mx-auto w-full">
       {/* Top Match Meta Badge */}
       <div className="flex items-center gap-3 mb-6">
         {displayMatch.scheduledTime && (
