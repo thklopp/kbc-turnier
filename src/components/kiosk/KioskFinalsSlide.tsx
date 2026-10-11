@@ -88,7 +88,10 @@ export function KioskFinalsSlide({ matches, teams }: KioskFinalsSlideProps) {
       match.status === "finished" || match.status === "live" || match.status === "paused"
 
     const stageBadgeText = getCompactFinalName(match)
-    const isFinalGame = stageBadgeText === "Finale"
+    const isFinalGame =
+      stageBadgeText === "Finale" ||
+      match.finalType === "final" ||
+      match.matchName?.toLowerCase().includes("finale")
 
     return (
       <div
@@ -106,11 +109,12 @@ export function KioskFinalsSlide({ matches, teams }: KioskFinalsSlideProps) {
           <span
             className={`text-xs md:text-sm font-bold px-2 py-0.5 rounded border whitespace-nowrap ${
               isFinalGame
-                ? "bg-amber-100 text-amber-800 border-amber-300 font-extrabold"
+                ? "bg-amber-100 text-amber-800 border-amber-300 font-extrabold text-sm md:text-base px-2.5"
                 : "bg-slate-50 text-slate-700 border-slate-200"
             }`}
+            title={isFinalGame ? "Finale" : undefined}
           >
-            {isFinalGame ? `🏆 ${stageBadgeText}` : stageBadgeText}
+            {isFinalGame ? "🏆" : stageBadgeText}
           </span>
           {isActive && (
             <span className="hidden xl:inline-flex h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse" />
@@ -125,18 +129,16 @@ export function KioskFinalsSlide({ matches, teams }: KioskFinalsSlideProps) {
           >
             {home.name}
           </span>
-          <div className="flex h-7 w-7 md:h-8 md:w-8 flex-none items-center justify-center rounded bg-white p-0.5">
-            {home.logoUrl && !logoErrors[match.teamHomeId] ? (
+          {home.logoUrl && !logoErrors[match.teamHomeId] && (
+            <div className="flex h-7 w-7 md:h-8 md:w-8 flex-none items-center justify-center rounded bg-white p-0.5">
               <img
                 src={home.logoUrl}
                 alt=""
                 onError={() => setLogoErrors((prev) => ({ ...prev, [match.teamHomeId]: true }))}
                 className="max-h-full max-w-full object-contain"
               />
-            ) : (
-              <span className="text-sm">🏑</span>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Score in Center (Col 8, perfectly centered) */}
@@ -156,18 +158,16 @@ export function KioskFinalsSlide({ matches, teams }: KioskFinalsSlideProps) {
 
         {/* Away Team: Logo + Name left-aligned (Cols 9-12) */}
         <div className="col-span-4 flex items-center justify-start gap-2 min-w-0 pl-1">
-          <div className="flex h-7 w-7 md:h-8 md:w-8 flex-none items-center justify-center rounded bg-white p-0.5">
-            {away.logoUrl && !logoErrors[match.teamAwayId] ? (
+          {away.logoUrl && !logoErrors[match.teamAwayId] && (
+            <div className="flex h-7 w-7 md:h-8 md:w-8 flex-none items-center justify-center rounded bg-white p-0.5">
               <img
                 src={away.logoUrl}
                 alt=""
                 onError={() => setLogoErrors((prev) => ({ ...prev, [match.teamAwayId]: true }))}
                 className="max-h-full max-w-full object-contain"
               />
-            ) : (
-              <span className="text-sm">🏑</span>
-            )}
-          </div>
+            </div>
+          )}
           <span
             className="font-medium text-slate-900 truncate text-left text-base md:text-lg"
             title={away.name}
