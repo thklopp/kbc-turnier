@@ -15,8 +15,8 @@ const PROGRESS_TICK_MS = 100
 
 const SLIDE_NAMES = [
   "Live",
-  "Gruppenphase",
-  "Finalphase",
+  "Vorrunde",
+  "Finalrunde",
   "Tabellen",
 ]
 

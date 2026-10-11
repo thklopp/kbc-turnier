@@ -23,14 +23,14 @@ Zudem ist das Live-Scoreboard horizontal zu gedrängt für lange Vereinsnamen, e
    - Entfernung der Subline unter den Vereinsnamen („Gruppe X • Heim/Gast“).
    - Maximal verbreiterter Container; Logos auf gleicher Höhe wie das Ergebnis; Vereinsnamen darunter zentriert auf identischer horizontaler Basislinie mit deutlich mehr Platz.
    - Vertikal leicht nach oben gerückt, um maximale Fläche für die Tor- und Ereignis-Chronik bereitzustellen.
-2. **Folie 2: „Gruppenphase“** (umbenannt von „Nächste Partien“):
+2. **Folie 2: „Vorrunde“** (umbenannt von „Gruppenphase“):
    - Kompakte 2-Spalten-Auflistung aller 24 Spiele der Vorrunde (linke Spalte Spiele 1–12, rechte Spalte Spiele 13–24).
    - Feste tabellarische Ausrichtung mit sauber untereinanderstehenden Ergebnissen: `[Uhrzeit] [Geschlecht] [Gruppe] [Heim-Name + Logo rechtsbündig] [Tore : Tore / - : -] [Logo + Gast-Name linksbündig]`.
    - Aktives Spiel rot hervorgehoben (softe Tönung `bg-red-50/border-red-500`), nächstes Spiel blau hervorgehoben (`bg-blue-50/border-blue-500`).
    - Garantiert scrollfrei auf Full-HD (1920x1080).
-3. **Folie 3: „Finalphase“** (neu):
+3. **Folie 3: „Finalrunde“** (umbenannt von „Finalphase“):
    - 2-Spalten-Auflistung aller 16 Finalspiele (je 8 Spiele pro Spalte).
-   - Identisches tabellarisches Zeilenraster wie in der Gruppenphase, jedoch anstelle des Gruppen-Tags ein kompakter Spielnamen-Badge (z. B. `[HF 1]`, `[HF 2]`, `[Platz 7]`, `[Platz 5]`, `[Platz 3]`, `[Finale]`).
+   - Identisches tabellarisches Zeilenraster wie in der Vorrunde, jedoch anstelle des Gruppen-Tags ein kompakter Spielnamen-Badge (z. B. `[HF 1]`, `[HF 2]`, `[Platz 7]`, `[Platz 5]`, `[Platz 3]`, `[Finale]`).
    - Gleiche Status-Hervorhebungen (Rot = Aktiv, Blau = Nächstes).
 4. **Folie 4: „Tabellen“** (zusammengefasst):
    - Alle 4 Gruppentabellen in einer 2x2-Matrix auf einer einzigen Folie:
@@ -40,7 +40,7 @@ Zudem ist das Live-Scoreboard horizontal zu gedrängt für lange Vereinsnamen, e
 5. **Footer-Leiste**:
    - Die Fußleiste wurde komplett entfernt, um den vollen vertikalen Bildschirmplatz den Folien zur Verfügung zu stellen.
 6. **Karussell-Steuerung**:
-   - Einheitliche 4-Folien-Rotation: `1. Live`, `2. Gruppenphase`, `3. Finalphase`, `4. Tabellen`.
+   - Einheitliche 4-Folien-Rotation: `1. Live`, `2. Vorrunde`, `3. Finalrunde`, `4. Tabellen`.
 
 ---
 
@@ -93,7 +93,7 @@ Zudem ist das Live-Scoreboard horizontal zu gedrängt für lange Vereinsnamen, e
 - [x] **Footer-Bereich**:
   - Die Fußleiste wurde komplett entfernt, damit der Kiosk-Modus maximale vertikale Fläche für die Folieninhalte bietet.
 - [ ] **Header & Rotation**:
-  - Folien-Namen im Header: `Live`, `Gruppenphase`, `Finalphase`, `Tabellen`.
+  - Folien-Namen im Header: `Live`, `Vorrunde`, `Finalrunde`, `Tabellen`.
   - Rotation schaltet alle 4 Folien nacheinander durch.
 
 ### 3.2 Explizit Out-of-Scope
@@ -108,7 +108,7 @@ Zudem ist das Live-Scoreboard horizontal zu gedrängt für lange Vereinsnamen, e
 - [ ] **AC-1: Folien-Navigation & Bezeichnungen**
   - **Gegeben sei**: Die Kiosk-Ansicht `/kiosk` wird geöffnet.
   - **Wenn**: Der Header betrachtet wird.
-  - **Dann**: Sind genau vier Folien-Buttons vorhanden: `Live`, `Gruppenphase`, `Finalphase`, `Tabellen`. Die Rotation durchläuft diese vier Folien.
+  - **Dann**: Sind genau vier Folien-Buttons vorhanden: `Live`, `Vorrunde`, `Finalrunde`, `Tabellen`. Die Rotation durchläuft diese vier Folien.
 - [ ] **AC-2: Live-Scoreboard Layout & Startzeit**
   - **Gegeben sei**: Ein Spiel ist live oder geplant.
   - **Wenn**: Die Folie `Live` angezeigt wird.
