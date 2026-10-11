@@ -33,9 +33,6 @@ export function KioskStandingsSlide({ teams, matches }: KioskStandingsSlideProps
             <span className={`rounded-xl border px-3.5 py-1 text-sm md:text-base font-bold ${genderBadge}`}>
               {gender}
             </span>
-            <span className="flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-xl bg-white border border-slate-200 text-sm md:text-base font-bold text-slate-800 shadow-2xs">
-              {group}
-            </span>
             <h3 className="text-lg md:text-xl font-semibold text-slate-900">
               Gruppe {group}
             </h3>
