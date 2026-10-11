@@ -77,7 +77,7 @@ export function KioskStandingsSlide({ teams, matches }: KioskStandingsSlideProps
                     {/* Team Name & Logo */}
                     <td className="py-3 pl-3">
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="flex h-8 w-8 md:h-9 md:w-9 flex-none items-center justify-center rounded-xl bg-slate-50 border border-slate-200 p-1 shadow-2xs">
+                        <div className="flex h-8 w-8 md:h-9 md:w-9 flex-none items-center justify-center rounded-xl bg-white p-0.5">
                           {team.teamLogoUrl && !logoErrors[team.teamId] ? (
                             <img
                               src={team.teamLogoUrl}

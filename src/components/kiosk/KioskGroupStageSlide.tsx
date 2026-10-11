@@ -88,7 +88,7 @@ export function KioskGroupStageSlide({ matches, teams }: KioskGroupStageSlidePro
           >
             {home.name}
           </span>
-          <div className="flex h-5 w-5 flex-none items-center justify-center rounded bg-slate-50 border border-slate-200 p-0.5 shadow-2xs">
+          <div className="flex h-5 w-5 flex-none items-center justify-center rounded bg-white p-0.5">
             {home.logoUrl && !logoErrors[match.teamHomeId] ? (
               <img
                 src={home.logoUrl}
@@ -119,7 +119,7 @@ export function KioskGroupStageSlide({ matches, teams }: KioskGroupStageSlidePro
 
         {/* Away Team: Logo + Name left-aligned (Cols 9-12) */}
         <div className="col-span-4 flex items-center justify-start gap-1.5 min-w-0 pl-1">
-          <div className="flex h-5 w-5 flex-none items-center justify-center rounded bg-slate-50 border border-slate-200 p-0.5 shadow-2xs">
+          <div className="flex h-5 w-5 flex-none items-center justify-center rounded bg-white p-0.5">
             {away.logoUrl && !logoErrors[match.teamAwayId] ? (
               <img
                 src={away.logoUrl}

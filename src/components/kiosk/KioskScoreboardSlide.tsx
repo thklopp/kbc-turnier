@@ -140,7 +140,7 @@ export function KioskScoreboardSlide({
         <div className="grid grid-cols-12 items-start">
           {/* Heim-Team (Cols 1-5) */}
           <div className="col-span-5 flex flex-col items-center text-center px-2">
-            <div className="relative mb-5 flex h-36 w-36 md:h-44 md:w-44 items-center justify-center rounded-3xl bg-slate-50 border-2 border-slate-200 p-4 shadow-sm">
+            <div className="relative mb-5 flex h-36 w-36 md:h-44 md:w-44 items-center justify-center rounded-3xl bg-white p-2">
               {home.logoUrl && !logoErrors[displayMatch.teamHomeId] ? (
                 <img
                   src={home.logoUrl}
@@ -219,7 +219,7 @@ export function KioskScoreboardSlide({
 
           {/* Gast-Team (Cols 8-12) */}
           <div className="col-span-5 flex flex-col items-center text-center px-2">
-            <div className="relative mb-5 flex h-36 w-36 md:h-44 md:w-44 items-center justify-center rounded-3xl bg-slate-50 border-2 border-slate-200 p-4 shadow-sm">
+            <div className="relative mb-5 flex h-36 w-36 md:h-44 md:w-44 items-center justify-center rounded-3xl bg-white p-2">
               {away.logoUrl && !logoErrors[displayMatch.teamAwayId] ? (
                 <img
                   src={away.logoUrl}
