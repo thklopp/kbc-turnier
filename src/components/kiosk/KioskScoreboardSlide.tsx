@@ -156,7 +156,7 @@ export function KioskScoreboardSlide({
             {isLive && (
               <span className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-red-50 border border-red-200 px-3.5 py-1 text-xs md:text-sm font-semibold tracking-wide uppercase text-red-600 animate-pulse shadow-xs">
                 <span className="h-2 w-2 rounded-full bg-red-500" />
-                Live im Spiel
+                LIVE
               </span>
             )}
             {isPaused && (
