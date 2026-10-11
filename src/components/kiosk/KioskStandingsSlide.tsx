@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Trophy, CheckCircle2 } from "lucide-react"
+import { CheckCircle2 } from "lucide-react"
 import type { Team, Match, GenderCategory, TournamentGroup } from "@/types/database"
 import { calculateGroupStandings } from "@/services/standingsService"
 
@@ -160,29 +160,9 @@ export function KioskStandingsSlide({ teams, matches }: KioskStandingsSlideProps
   }
 
   return (
-    <div className="flex h-full flex-col justify-start py-3 px-6 max-w-[102rem] mx-auto w-full overflow-hidden select-none">
-      {/* Slide Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 border border-amber-200 text-amber-600">
-            <Trophy className="h-5 w-5" />
-          </div>
-          <div>
-            <h2 className="text-3xl font-medium text-slate-900 flex items-center gap-3">
-              <span>Gruppentabellen &bull; Vorrunde</span>
-            </h2>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="rounded-full bg-slate-100 border border-slate-200 px-4 py-1.5 text-xs md:text-sm font-bold text-slate-700">
-            4 Gruppen &bull; 16 Teams (wU14 &amp; mU14)
-          </span>
-        </div>
-      </div>
-
+    <div className="flex h-full flex-col justify-center py-2 px-6 max-w-[102rem] mx-auto w-full overflow-hidden select-none">
       {/* 2x2 Grid for All 4 Groups */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 flex-1">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 w-full">
         {/* Left Column: wU14 (Gruppe A oben, Gruppe B unten) */}
         <div className="flex flex-col gap-4 justify-between">
           {renderGroupTable("wU14", "A", wU14A)}
