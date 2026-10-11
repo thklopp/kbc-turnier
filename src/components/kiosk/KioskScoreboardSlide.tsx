@@ -118,7 +118,13 @@ export function KioskScoreboardSlide({
         <span className={`rounded-full border px-4 py-1.5 text-sm font-medium ${genderBadge}`}>
           {displayMatch.gender}
         </span>
-        <span className="rounded-full bg-white border border-slate-200 px-4 py-1.5 text-sm font-semibold text-slate-700 shadow-xs">
+        <span
+          className={`rounded-full border px-4 py-1.5 text-sm font-semibold shadow-xs ${
+            displayMatch.phase === "group"
+              ? genderBadge
+              : "bg-white border-slate-200 text-slate-700"
+          }`}
+        >
           {phaseLabel}
         </span>
         {isLive && (

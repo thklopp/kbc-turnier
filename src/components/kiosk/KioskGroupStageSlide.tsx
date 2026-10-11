@@ -72,7 +72,7 @@ export function KioskGroupStageSlide({ matches, teams }: KioskGroupStageSlidePro
           <span className={`text-xs md:text-sm font-bold px-1.5 py-0.5 rounded border whitespace-nowrap ${genderBadge}`}>
             {match.gender}
           </span>
-          <span className="text-xs md:text-sm font-bold px-2 py-0.5 rounded border border-slate-200 bg-slate-50 text-slate-700 whitespace-nowrap">
+          <span className={`text-xs md:text-sm font-bold px-2 py-0.5 rounded border whitespace-nowrap ${genderBadge}`}>
             Gruppe {match.group || "?"}
           </span>
           {isActive && (
