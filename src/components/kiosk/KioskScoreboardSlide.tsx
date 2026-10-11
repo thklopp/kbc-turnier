@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Clock, Calendar, CheckCircle2, Pause } from "lucide-react"
 import type { Match, Team } from "@/types/database"
+import { HockeyGoalIcon } from "@/components/common/HockeyGoalIcon"
 import rrkLogo from "@/assets/images/RRK.webp"
 
 interface KioskScoreboardSlideProps {
@@ -86,7 +87,7 @@ export function KioskScoreboardSlide({
 
   const phaseLabel =
     displayMatch.phase === "group"
-      ? `Vorrunde Gruppe ${displayMatch.group || ""}`
+      ? `Gruppe ${displayMatch.group || ""}`
       : displayMatch.finalType
       ? finalTypeLabels[displayMatch.finalType] || "Finalrunde"
       : "Finalrunde"
@@ -103,38 +104,35 @@ export function KioskScoreboardSlide({
   const cardEvents = (displayMatch.events || []).filter((e) => e.type !== "goal")
 
   return (
-    <div className="flex h-full flex-col justify-center items-center py-2 px-4 max-w-7xl mx-auto w-full">
+    <div className="flex h-full flex-col justify-start items-center pt-[72px] pb-4 px-6 max-w-[calc(96rem+100px)] mx-auto w-full">
       {/* Top Match Meta Badge */}
       <div className="flex items-center gap-3 mb-6">
-        <span className="rounded-full bg-white border border-slate-200 px-4 py-1.5 text-sm font-semibold text-slate-700 shadow-xs">
-          Spiel #{displayMatch.matchNumber}
-        </span>
+        {displayMatch.scheduledTime && (
+          <span className={`flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-sm font-medium shadow-xs ${genderBadge}`}>
+            <Clock className="h-3.5 w-3.5" />
+            <span>{displayMatch.scheduledTime} Uhr</span>
+          </span>
+        )}
         <span className={`rounded-full border px-4 py-1.5 text-sm font-medium ${genderBadge}`}>
           {displayMatch.gender}
         </span>
-        <span className="rounded-full bg-white border border-slate-200 px-4 py-1.5 text-sm font-semibold text-slate-700 shadow-xs">
+        <span
+          className={`rounded-full border px-4 py-1.5 text-sm font-semibold shadow-xs ${
+            displayMatch.phase === "group"
+              ? genderBadge
+              : "bg-white border-slate-200 text-slate-700"
+          }`}
+        >
           {phaseLabel}
         </span>
-        {isLive && (
-          <span className="flex items-center gap-1.5 rounded-full bg-red-50 border border-red-200 px-3.5 py-1 text-xs font-medium tracking-wide uppercase text-red-600 animate-pulse">
-            <span className="h-2 w-2 rounded-full bg-red-500" />
-            Live im Spiel
-          </span>
-        )}
-        {isPaused && (
-          <span className="flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-300 px-3.5 py-1 text-xs font-medium tracking-wide uppercase text-amber-700">
-            <Pause className="h-3.5 w-3.5 fill-current" />
-            Pausiert
-          </span>
-        )}
       </div>
 
-      {/* Main High-Contrast TV Scoreboard Card */}
-      <div className="w-full rounded-3xl border-2 border-slate-200 bg-white p-8 lg:p-12 shadow-xl text-slate-900">
-        <div className="grid grid-cols-11 items-center">
-          {/* Heim-Team (Cols 1-4) */}
-          <div className="col-span-4 flex flex-col items-center text-center px-4">
-            <div className="relative mb-5 flex h-32 w-32 md:h-40 md:w-40 items-center justify-center rounded-3xl bg-slate-50 border-2 border-slate-200 p-4 shadow-sm">
+      {/* Main High-Contrast TV Scoreboard Card (+50px Höhe) */}
+      <div className="w-full rounded-3xl border-2 border-slate-200 bg-white py-14 lg:py-[73px] px-8 lg:px-12 shadow-xl text-slate-900">
+        <div className="grid grid-cols-12 items-start">
+          {/* Heim-Team (Cols 1-5) */}
+          <div className="col-span-5 flex flex-col items-center text-center px-2">
+            <div className="relative mb-5 flex h-36 w-36 md:h-44 md:w-44 items-center justify-center rounded-3xl bg-white p-2">
               {home.logoUrl && !logoErrors[displayMatch.teamHomeId] ? (
                 <img
                   src={home.logoUrl}
@@ -148,27 +146,35 @@ export function KioskScoreboardSlide({
                 <span className="text-6xl md:text-7xl">🏑</span>
               )}
             </div>
-            <h3 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-slate-900 leading-normal pb-2 line-clamp-2">
+            <h3 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-slate-900 leading-normal pb-3 md:pb-4">
               {home.name}
             </h3>
-            {home.group && (
-              <span className="mt-2 text-sm font-bold uppercase tracking-wider text-slate-500">
-                Gruppe {home.group} &bull; Heim
-              </span>
-            )}
           </div>
 
-          {/* Center Score & Live Clock (Cols 5-7) */}
-          <div className="col-span-3 flex flex-col items-center justify-center text-center border-x border-slate-200 px-4">
+          {/* Center Score & Live Clock (Cols 6-7) */}
+          <div className="col-span-2 flex flex-col items-center justify-center text-center px-1 pt-2">
+            {isLive && (
+              <span className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-red-50 border border-red-200 px-3.5 py-1 text-xs md:text-sm font-semibold tracking-wide uppercase text-red-600 animate-pulse shadow-xs">
+                <span className="h-2 w-2 rounded-full bg-red-500" />
+                LIVE
+              </span>
+            )}
+            {isPaused && (
+              <span className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-300 px-3.5 py-1 text-xs md:text-sm font-semibold tracking-wide uppercase text-amber-700 shadow-xs">
+                <Pause className="h-3.5 w-3.5 fill-current" />
+                Pausiert
+              </span>
+            )}
+
             {/* Score */}
-            <div className="flex items-center justify-center gap-4 text-7xl md:text-8xl lg:text-9xl font-medium font-mono tracking-tighter text-slate-900">
+            <div className="flex items-center justify-center gap-2 md:gap-4 text-7xl md:text-8xl lg:text-9xl font-medium font-mono tracking-tighter text-slate-900">
               <span>{displayMatch.scoreHome}</span>
               <span className="text-slate-400 font-light pb-2">:</span>
               <span>{displayMatch.scoreAway}</span>
             </div>
 
             {/* Timer Display */}
-            <div className="mt-4">
+            <div className="mt-5">
               {isLive ? (
                 <div className="flex flex-col items-center gap-1.5">
                   <div className="flex items-center gap-2 rounded-2xl bg-emerald-50 border border-emerald-300 px-6 py-2 shadow-sm">
@@ -216,9 +222,9 @@ export function KioskScoreboardSlide({
             </div>
           </div>
 
-          {/* Gast-Team (Cols 8-11) */}
-          <div className="col-span-4 flex flex-col items-center text-center px-4">
-            <div className="relative mb-5 flex h-32 w-32 md:h-40 md:w-40 items-center justify-center rounded-3xl bg-slate-50 border-2 border-slate-200 p-4 shadow-sm">
+          {/* Gast-Team (Cols 8-12) */}
+          <div className="col-span-5 flex flex-col items-center text-center px-2">
+            <div className="relative mb-5 flex h-36 w-36 md:h-44 md:w-44 items-center justify-center rounded-3xl bg-white p-2">
               {away.logoUrl && !logoErrors[displayMatch.teamAwayId] ? (
                 <img
                   src={away.logoUrl}
@@ -232,14 +238,9 @@ export function KioskScoreboardSlide({
                 <span className="text-6xl md:text-7xl">🏑</span>
               )}
             </div>
-            <h3 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-slate-900 leading-normal pb-2 line-clamp-2">
+            <h3 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-slate-900 leading-normal pb-3 md:pb-4">
               {away.name}
             </h3>
-            {away.group && (
-              <span className="mt-2 text-sm font-bold uppercase tracking-wider text-slate-500">
-                Gruppe {away.group} &bull; Gast
-              </span>
-            )}
           </div>
         </div>
 
@@ -261,7 +262,7 @@ export function KioskScoreboardSlide({
                       className="inline-flex items-center gap-1.5 rounded-xl bg-slate-50 border border-slate-200 px-3 py-1.5 text-xs text-slate-800 shadow-2xs"
                     >
                       <span className="font-mono text-blue-600 font-medium">{g.matchMinute}&apos;</span>
-                      <span>🥅</span>
+                      <HockeyGoalIcon className="h-4 w-4 text-emerald-600 flex-none" />
                       <span className="text-slate-800 font-normal">{label}</span>
                     </span>
                   )
@@ -282,7 +283,7 @@ export function KioskScoreboardSlide({
                       className="inline-flex items-center gap-1.5 rounded-xl bg-slate-50 border border-slate-200 px-3 py-1.5 text-xs text-slate-800 shadow-2xs"
                     >
                       <span className="text-slate-800 font-normal">{label}</span>
-                      <span>🥅</span>
+                      <HockeyGoalIcon className="h-4 w-4 text-emerald-600 flex-none" />
                       <span className="font-mono text-blue-600 font-medium">{g.matchMinute}&apos;</span>
                     </span>
                   )
@@ -322,17 +323,23 @@ export function KioskScoreboardSlide({
 
       {/* Up Next Preview sub-bar if currently live or paused */}
       {(isLive || isPaused) && nextMatch && (
-        <div className="mt-4 flex items-center gap-3 rounded-2xl bg-white border border-slate-200 px-6 py-2 text-sm text-slate-700 shadow-md">
-          <span className="font-bold text-blue-600 uppercase text-xs tracking-wider">
-            Als Nächstes:
+        <div className="mt-4 w-full flex items-center justify-center gap-3 md:gap-4 rounded-2xl border-2 border-slate-200 bg-white px-8 py-3.5 text-base md:text-lg font-medium text-slate-900 shadow-xl">
+          <span className="font-bold text-blue-700 uppercase text-xs md:text-sm tracking-wider bg-blue-50 border border-blue-200 px-3.5 py-1 rounded-full flex-none mr-1">
+            Als Nächstes
           </span>
-          <span className="font-semibold text-slate-900">
-            {nextMatch.scheduledTime} Uhr &bull; Spiel #{nextMatch.matchNumber} ({nextMatch.gender})
+          <span>{nextMatch.scheduledTime} Uhr</span>
+          <span className="text-slate-300">&bull;</span>
+          <span>{nextMatch.gender}</span>
+          <span className="text-slate-300">&bull;</span>
+          <span>
+            {nextMatch.phase === "group"
+              ? `Gruppe ${nextMatch.group}`
+              : nextMatch.matchName || "Finalspiel"}
           </span>
           <span className="text-slate-300">&bull;</span>
-          <span className="text-slate-600">
-            {getTeamDetails(nextMatch.teamHomeId, nextMatch.teamHomePlaceholder, teams).shortName} vs.{" "}
-            {getTeamDetails(nextMatch.teamAwayId, nextMatch.teamAwayPlaceholder, teams).shortName}
+          <span>
+            {getTeamDetails(nextMatch.teamHomeId, nextMatch.teamHomePlaceholder, teams).name} vs.{" "}
+            {getTeamDetails(nextMatch.teamAwayId, nextMatch.teamAwayPlaceholder, teams).name}
           </span>
         </div>
       )}

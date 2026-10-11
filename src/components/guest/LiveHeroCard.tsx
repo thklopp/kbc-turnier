@@ -1,6 +1,7 @@
 import type { Match, Team } from "@/types/database"
 import { getMatchDisplayName } from "@/services/matchService"
 import { ShieldAlert, Sparkles } from "lucide-react"
+import { HockeyGoalIcon } from "@/components/common/HockeyGoalIcon"
 
 interface LiveHeroCardProps {
   matches: Match[]
@@ -200,7 +201,7 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
                         <span className="font-mono text-blue-600 font-bold text-[11px]">
                           {g.matchMinute}&apos;
                         </span>
-                        <span>🥅</span>
+                        <HockeyGoalIcon className="h-3.5 w-3.5 text-emerald-600 flex-none" />
                         <span className="font-semibold text-slate-900">{label}</span>
                       </div>
                     )
@@ -213,7 +214,10 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
             <div className="space-y-1.5 text-right">
               <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1 flex items-center justify-end gap-1">
                 <span className="font-mono text-slate-400 font-semibold">({awayGoals.length})</span>
-                <span>Tore {awayTeam?.shortName || "Gast"} 🥅</span>
+                <span className="flex items-center gap-1">
+                  Tore {awayTeam?.shortName || "Gast"}
+                  <HockeyGoalIcon className="h-3.5 w-3.5 text-emerald-600 flex-none inline" />
+                </span>
               </div>
               {awayGoals.length === 0 ? (
                 <span className="text-slate-400 italic text-[11px]">- Keine Tore -</span>
@@ -231,7 +235,7 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
                         className="inline-flex items-center gap-1.5 text-slate-800"
                       >
                         <span className="font-semibold text-slate-900">{label}</span>
-                        <span>🥅</span>
+                        <HockeyGoalIcon className="h-3.5 w-3.5 text-emerald-600 flex-none" />
                         <span className="font-mono text-blue-600 font-bold text-[11px]">
                           {g.matchMinute}&apos;
                         </span>
