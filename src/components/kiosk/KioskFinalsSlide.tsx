@@ -94,6 +94,9 @@ export function KioskFinalsSlide({ matches, teams }: KioskFinalsSlideProps) {
       match.finalType === "final" ||
       match.matchName?.toLowerCase().includes("finale")
 
+    const hasHomeLogo = Boolean(home.logoUrl && !logoErrors[match.teamHomeId])
+    const hasAwayLogo = Boolean(away.logoUrl && !logoErrors[match.teamAwayId])
+
     return (
       <div
         key={match.id}
@@ -129,17 +132,21 @@ export function KioskFinalsSlide({ matches, teams }: KioskFinalsSlideProps) {
         </div>
 
         {/* Home Team: Name right-aligned + Logo (Cols 4-7) */}
-        <div className="col-span-4 flex items-center justify-end gap-2 min-w-0 pr-1">
+        <div
+          className={`col-span-4 flex items-center justify-end gap-2 min-w-0 ${
+            hasHomeLogo ? "pr-1" : "pr-5 md:pr-7"
+          }`}
+        >
           <span
             className="font-medium text-slate-900 truncate text-right text-base md:text-lg"
             title={home.name}
           >
             {home.name}
           </span>
-          {home.logoUrl && !logoErrors[match.teamHomeId] && (
+          {hasHomeLogo && (
             <div className="flex h-7 w-7 md:h-8 md:w-8 flex-none items-center justify-center rounded bg-white p-0.5">
               <img
-                src={home.logoUrl}
+                src={home.logoUrl!}
                 alt=""
                 onError={() => setLogoErrors((prev) => ({ ...prev, [match.teamHomeId]: true }))}
                 className="max-h-full max-w-full object-contain"
@@ -164,11 +171,15 @@ export function KioskFinalsSlide({ matches, teams }: KioskFinalsSlideProps) {
         </div>
 
         {/* Away Team: Logo + Name left-aligned (Cols 9-12) */}
-        <div className="col-span-4 flex items-center justify-start gap-2 min-w-0 pl-1">
-          {away.logoUrl && !logoErrors[match.teamAwayId] && (
+        <div
+          className={`col-span-4 flex items-center justify-start gap-2 min-w-0 ${
+            hasAwayLogo ? "pl-1" : "pl-5 md:pl-7"
+          }`}
+        >
+          {hasAwayLogo && (
             <div className="flex h-7 w-7 md:h-8 md:w-8 flex-none items-center justify-center rounded bg-white p-0.5">
               <img
-                src={away.logoUrl}
+                src={away.logoUrl!}
                 alt=""
                 onError={() => setLogoErrors((prev) => ({ ...prev, [match.teamAwayId]: true }))}
                 className="max-h-full max-w-full object-contain"
