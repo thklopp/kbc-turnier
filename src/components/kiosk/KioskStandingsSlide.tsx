@@ -29,38 +29,38 @@ export function KioskStandingsSlide({ teams, matches }: KioskStandingsSlideProps
     return (
       <div className="flex flex-col rounded-3xl border-2 border-slate-200 bg-white shadow-xl overflow-hidden">
         {/* Table Banner */}
-        <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50/90 px-5 py-3">
-          <div className="flex items-center gap-2.5">
-            <span className={`rounded-xl border px-3 py-1 text-xs md:text-sm font-bold ${genderBadge}`}>
+        <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50/90 px-6 py-3.5">
+          <div className="flex items-center gap-3">
+            <span className={`rounded-xl border px-3.5 py-1 text-sm md:text-base font-bold ${genderBadge}`}>
               {gender}
             </span>
-            <span className="flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-lg bg-white border border-slate-200 text-xs md:text-sm font-bold text-slate-800 shadow-2xs">
+            <span className="flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-xl bg-white border border-slate-200 text-sm md:text-base font-bold text-slate-800 shadow-2xs">
               {group}
             </span>
-            <h3 className="text-base md:text-lg font-semibold text-slate-900">
+            <h3 className="text-lg md:text-xl font-semibold text-slate-900">
               Gruppe {group}
             </h3>
           </div>
 
-          <span className="text-xs md:text-sm font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full flex items-center gap-1.5">
-            <CheckCircle2 className="h-4 w-4" />
+          <span className="text-sm md:text-base font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3.5 py-1 rounded-full flex items-center gap-1.5">
+            <CheckCircle2 className="h-4 w-4 md:h-5 md:w-5" />
             Top 2: Halbfinale
           </span>
         </div>
 
         {/* Larger TV Table */}
         <div className="p-4 flex-1">
-          <table className="w-full text-left text-sm md:text-base">
+          <table className="w-full text-left text-base md:text-lg">
             <thead>
-              <tr className="border-b-2 border-slate-200 text-xs md:text-sm font-bold uppercase tracking-wider text-slate-500">
+              <tr className="border-b-2 border-slate-200 text-sm md:text-base font-bold uppercase tracking-wider text-slate-500">
                 <th className="pb-3 pl-2 w-10 text-center">#</th>
                 <th className="pb-3 pl-3">Team</th>
-                <th className="pb-3 text-center w-12">Sp</th>
-                <th className="pb-3 text-center w-10">S</th>
-                <th className="pb-3 text-center w-10">U</th>
-                <th className="pb-3 text-center w-10">N</th>
-                <th className="pb-3 text-center w-16">Tore</th>
-                <th className="pb-3 text-center w-14">Diff</th>
+                <th className="pb-3 text-center w-14">Sp</th>
+                <th className="pb-3 text-center w-12">S</th>
+                <th className="pb-3 text-center w-12">U</th>
+                <th className="pb-3 text-center w-12">N</th>
+                <th className="pb-3 text-center w-20">Tore</th>
+                <th className="pb-3 text-center w-16">Diff</th>
                 <th className="pb-3 pr-3 text-right w-16">Pkt</th>
               </tr>
             </thead>
@@ -79,7 +79,7 @@ export function KioskStandingsSlide({ teams, matches }: KioskStandingsSlideProps
                     {/* Rank */}
                     <td className="py-3 pl-2 text-center">
                       <span
-                        className={`inline-flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-lg text-xs md:text-sm font-bold ${
+                        className={`inline-flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-xl text-sm md:text-base font-bold ${
                           isPlayoff
                             ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
                             : "bg-slate-100 text-slate-600 border border-slate-200"
@@ -92,7 +92,7 @@ export function KioskStandingsSlide({ teams, matches }: KioskStandingsSlideProps
                     {/* Team Name & Logo */}
                     <td className="py-3 pl-3">
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="flex h-7 w-7 md:h-8 md:w-8 flex-none items-center justify-center rounded-lg bg-slate-50 border border-slate-200 p-1 shadow-2xs">
+                        <div className="flex h-8 w-8 md:h-9 md:w-9 flex-none items-center justify-center rounded-xl bg-slate-50 border border-slate-200 p-1 shadow-2xs">
                           {team.teamLogoUrl && !logoErrors[team.teamId] ? (
                             <img
                               src={team.teamLogoUrl}
@@ -103,11 +103,11 @@ export function KioskStandingsSlide({ teams, matches }: KioskStandingsSlideProps
                               className="max-h-full max-w-full object-contain"
                             />
                           ) : (
-                            <span className="text-sm">🏑</span>
+                            <span className="text-base">🏑</span>
                           )}
                         </div>
                         <span
-                          className="font-medium text-slate-900 text-sm md:text-base lg:text-lg truncate block"
+                          className="font-medium text-slate-900 text-base md:text-lg lg:text-xl truncate block"
                           title={team.teamName}
                         >
                           {team.teamName}
@@ -116,22 +116,22 @@ export function KioskStandingsSlide({ teams, matches }: KioskStandingsSlideProps
                     </td>
 
                     {/* Stats */}
-                    <td className="py-3 text-center text-slate-800 font-mono text-sm md:text-base font-bold">
+                    <td className="py-3 text-center text-slate-800 font-mono text-base md:text-lg font-bold">
                       {team.played}
                     </td>
-                    <td className="py-3 text-center text-slate-700 font-mono text-sm md:text-base font-medium">
+                    <td className="py-3 text-center text-slate-700 font-mono text-base md:text-lg font-medium">
                       {team.won}
                     </td>
-                    <td className="py-3 text-center text-slate-500 font-mono text-sm md:text-base font-medium">
+                    <td className="py-3 text-center text-slate-500 font-mono text-base md:text-lg font-medium">
                       {team.drawn}
                     </td>
-                    <td className="py-3 text-center text-slate-500 font-mono text-sm md:text-base font-medium">
+                    <td className="py-3 text-center text-slate-500 font-mono text-base md:text-lg font-medium">
                       {team.lost}
                     </td>
-                    <td className="py-3 text-center text-slate-800 font-mono text-sm md:text-base">
+                    <td className="py-3 text-center text-slate-800 font-mono text-base md:text-lg">
                       {team.goalsFor}:{team.goalsAgainst}
                     </td>
-                    <td className="py-3 text-center font-mono text-sm md:text-base font-bold">
+                    <td className="py-3 text-center font-mono text-base md:text-lg font-bold">
                       <span
                         className={
                           team.goalDifference > 0
@@ -145,7 +145,7 @@ export function KioskStandingsSlide({ teams, matches }: KioskStandingsSlideProps
                       </span>
                     </td>
                     <td className="py-3 pr-3 text-right">
-                      <span className="inline-flex items-center justify-center rounded-xl bg-blue-50 border border-blue-200 px-3 py-1 font-mono text-base md:text-lg font-bold text-blue-700">
+                      <span className="inline-flex items-center justify-center rounded-xl bg-blue-50 border border-blue-200 px-3.5 py-1 font-mono text-lg md:text-xl font-bold text-blue-700">
                         {team.points}
                       </span>
                     </td>
