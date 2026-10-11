@@ -180,9 +180,9 @@ export function KioskFinalsSlide({ matches, teams }: KioskFinalsSlideProps) {
   }
 
   return (
-    <div className="flex h-full flex-col justify-center py-2 px-6 max-w-[100rem] mx-auto w-full overflow-hidden select-none">
+    <div className="flex h-full flex-col justify-center py-2 px-6 lg:px-8 max-w-[116rem] mx-auto w-full overflow-hidden select-none">
       {/* 2-Columns Grid of 16 Matches */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-2 w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-2 w-full">
         {/* Spalte 1: Spiele 1 - 8 der Finalphase */}
         <div className="flex flex-col gap-2 justify-between">
           {col1Matches.map(renderMatchRow)}

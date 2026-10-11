@@ -72,8 +72,8 @@ export function KioskGroupStageSlide({ matches, teams }: KioskGroupStageSlidePro
           <span className={`text-xs md:text-sm font-bold px-1.5 py-0.5 rounded border whitespace-nowrap ${genderBadge}`}>
             {match.gender}
           </span>
-          <span className="text-xs md:text-sm font-bold px-1.5 py-0.5 rounded border border-slate-200 bg-slate-50 text-slate-700 whitespace-nowrap">
-            Gr. {match.group || "?"}
+          <span className="text-xs md:text-sm font-bold px-2 py-0.5 rounded border border-slate-200 bg-slate-50 text-slate-700 whitespace-nowrap">
+            Gruppe {match.group || "?"}
           </span>
           {isActive && (
             <span className="hidden xl:inline-flex h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse" />
@@ -143,9 +143,9 @@ export function KioskGroupStageSlide({ matches, teams }: KioskGroupStageSlidePro
   }
 
   return (
-    <div className="flex h-full flex-col justify-center py-2 px-6 max-w-[100rem] mx-auto w-full overflow-hidden select-none">
+    <div className="flex h-full flex-col justify-center py-2 px-6 lg:px-8 max-w-[116rem] mx-auto w-full overflow-hidden select-none">
       {/* 2-Columns Grid of 24 Matches */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-1.5 w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-1.5 w-full">
         {/* Spalte 1: Spiele 1 - 12 */}
         <div className="flex flex-col gap-1.5 justify-between">
           {col1Matches.map(renderMatchRow)}
