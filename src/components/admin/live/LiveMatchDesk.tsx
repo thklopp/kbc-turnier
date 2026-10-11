@@ -212,7 +212,7 @@ export function LiveMatchDesk() {
                       <Clock className="h-3 w-3 text-slate-400" />
                       {ev.matchMinute}&apos;
                     </span>
-                    <span className="text-xs font-black text-slate-800">
+                    <span className="text-xs font-medium text-slate-800">
                       🥅 {teamName}
                     </span>
                   </div>

@@ -54,7 +54,7 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
             {currentMatch.scheduledTime} Uhr
           </span>
           <span className="text-slate-300">&bull;</span>
-          <span className="text-xs sm:text-sm font-black text-slate-900">
+          <span className="text-xs sm:text-sm font-medium text-slate-900">
             {getMatchDisplayName(currentMatch)}
           </span>
         </div>
@@ -97,7 +97,7 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
             )}
           </div>
 
-          <h3 className="text-sm sm:text-base font-black text-slate-900 line-clamp-1" title={homeTeam?.shortName || "HEIM"}>
+          <h3 className="text-sm sm:text-base font-medium text-slate-900 line-clamp-1" title={homeTeam?.shortName || "HEIM"}>
             {homeTeam?.shortName || "HEIM"}
           </h3>
           <span className="text-xs font-medium text-slate-500 line-clamp-1" title={homeTeam?.name}>
@@ -109,12 +109,12 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
         <div className="col-span-1 flex flex-col items-center justify-center">
           {/* Status small ABOVE the score */}
           {isLive && (
-            <span className="rounded-full bg-rose-500 text-white px-2 py-0.5 text-[10px] font-black uppercase tracking-wider animate-pulse mb-1.5 whitespace-nowrap">
+            <span className="rounded-full bg-rose-500 text-white px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider animate-pulse mb-1.5 whitespace-nowrap">
               LIVE
             </span>
           )}
           {isPaused && (
-            <span className="rounded-full bg-amber-500 text-white px-2 py-0.5 text-[10px] font-black uppercase tracking-wider mb-1.5 whitespace-nowrap">
+            <span className="rounded-full bg-amber-500 text-white px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider mb-1.5 whitespace-nowrap">
               PAUSIERT
             </span>
           )}
@@ -129,7 +129,7 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
             </span>
           )}
 
-          <div className="font-mono text-3xl sm:text-5xl font-black tracking-tight text-slate-900 whitespace-nowrap">
+          <div className="font-mono text-3xl sm:text-5xl font-medium tracking-tight text-slate-900 whitespace-nowrap">
             {isLive || isPaused || isFinished ? (
               `${currentMatch.scoreHome} : ${currentMatch.scoreAway}`
             ) : (
@@ -163,7 +163,7 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
             )}
           </div>
 
-          <h3 className="text-sm sm:text-base font-black text-slate-900 line-clamp-1" title={awayTeam?.shortName || "GAST"}>
+          <h3 className="text-sm sm:text-base font-medium text-slate-900 line-clamp-1" title={awayTeam?.shortName || "GAST"}>
             {awayTeam?.shortName || "GAST"}
           </h3>
           <span className="text-xs font-medium text-slate-500 line-clamp-1" title={awayTeam?.name}>

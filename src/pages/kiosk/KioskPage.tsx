@@ -230,12 +230,12 @@ export function KioskPage() {
           {/* Left: Ticker Status & Match details */}
           <div className="flex items-center gap-3">
             {tickerInfo.isLive ? (
-              <span className="flex items-center gap-2 rounded-xl bg-red-50 border border-red-200 px-3 py-1 text-xs font-black uppercase tracking-wider text-red-600 animate-pulse">
+              <span className="flex items-center gap-2 rounded-xl bg-red-50 border border-red-200 px-3 py-1 text-xs font-medium uppercase tracking-wider text-red-600 animate-pulse">
                 <Radio className="h-4 w-4" />
                 Live
               </span>
             ) : tickerInfo.isPaused ? (
-              <span className="flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-300 px-3 py-1 text-xs font-black uppercase tracking-wider text-amber-700">
+              <span className="flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-300 px-3 py-1 text-xs font-medium uppercase tracking-wider text-amber-700">
                 <Pause className="h-4 w-4 fill-current" />
                 Pausiert
               </span>

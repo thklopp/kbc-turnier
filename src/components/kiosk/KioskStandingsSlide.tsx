@@ -31,11 +31,11 @@ export function KioskStandingsSlide({
       {/* Table Header / Group Banner */}
       <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-6 py-4">
         <div className="flex items-center gap-3">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 border border-blue-200 font-black text-blue-700 text-lg">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 border border-blue-200 font-medium text-blue-700 text-lg">
             {group}
           </span>
           <div>
-            <h3 className="text-xl font-black text-slate-900">Gruppe {group}</h3>
+            <h3 className="text-xl font-medium text-slate-900">Gruppe {group}</h3>
             <p className="text-xs text-slate-500 font-medium">
               Rang 1 &amp; 2 qualifizieren sich fürs Halbfinale
             </p>
@@ -51,7 +51,7 @@ export function KioskStandingsSlide({
       <div className="p-4 flex-1 flex flex-col justify-center">
         <table className="w-full text-left">
           <thead>
-            <tr className="border-b border-slate-200 text-xs font-black uppercase tracking-wider text-slate-500">
+            <tr className="border-b border-slate-200 text-xs font-medium uppercase tracking-wider text-slate-500">
               <th className="pb-3 pl-3 w-10 text-center">#</th>
               <th className="pb-3 pl-2">Team</th>
               <th className="pb-3 text-center w-10">Sp</th>
@@ -80,7 +80,7 @@ export function KioskStandingsSlide({
                   {/* Rank */}
                   <td className="py-3 pl-3 text-center">
                     <span
-                      className={`inline-flex h-7 w-7 items-center justify-center rounded-lg text-sm font-black ${
+                      className={`inline-flex h-7 w-7 items-center justify-center rounded-lg text-sm font-medium ${
                         isPlayoff
                           ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
                           : "bg-slate-100 text-slate-600 border border-slate-200"
@@ -108,7 +108,7 @@ export function KioskStandingsSlide({
                         )}
                       </div>
                       <div className="min-w-0">
-                        <span className="font-black text-slate-900 text-base md:text-lg block truncate">
+                        <span className="font-medium text-slate-900 text-base md:text-lg block truncate">
                           {team.teamName}
                         </span>
                         {isPlayoff && (
@@ -151,7 +151,7 @@ export function KioskStandingsSlide({
                     </span>
                   </td>
                   <td className="py-3 pr-3 text-right">
-                    <span className="inline-flex items-center justify-center rounded-lg bg-blue-50 border border-blue-200 px-3 py-1 font-mono text-xl font-black text-blue-700">
+                    <span className="inline-flex items-center justify-center rounded-lg bg-blue-50 border border-blue-200 px-3 py-1 font-mono text-xl font-medium text-blue-700">
                       {team.points}
                     </span>
                   </td>
@@ -173,9 +173,9 @@ export function KioskStandingsSlide({
             <Trophy className="h-5 w-5" />
           </div>
           <div>
-            <h2 className="text-3xl font-black text-slate-900 flex items-center gap-3">
+            <h2 className="text-3xl font-medium text-slate-900 flex items-center gap-3">
               <span>Tabellenstand &bull; Vorrunde</span>
-              <span className={`rounded-full border px-3 py-0.5 text-xs font-black ${genderBadge}`}>
+              <span className={`rounded-full border px-3 py-0.5 text-xs font-medium ${genderBadge}`}>
                 {genderTitle}
               </span>
             </h2>

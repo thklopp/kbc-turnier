@@ -55,7 +55,7 @@ export function FinalsBracketView({ matches, teams }: FinalsBracketViewProps) {
             <span className="text-xs font-bold text-slate-800 truncate">
               {home?.name || m.teamHomePlaceholder || "TBD"}
             </span>
-            <span className="font-mono font-black text-sm text-slate-900">
+            <span className="font-mono font-medium text-sm text-slate-900">
               {isLive || isFinished ? m.scoreHome : "-"}
             </span>
           </div>
@@ -65,7 +65,7 @@ export function FinalsBracketView({ matches, teams }: FinalsBracketViewProps) {
             <span className="text-xs font-bold text-slate-800 truncate">
               {away?.name || m.teamAwayPlaceholder || "TBD"}
             </span>
-            <span className="font-mono font-black text-sm text-slate-900">
+            <span className="font-mono font-medium text-sm text-slate-900">
               {isLive || isFinished ? m.scoreAway : "-"}
             </span>
           </div>

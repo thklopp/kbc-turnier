@@ -31,7 +31,7 @@ function GroupTable({
               <th className="py-2.5 px-3 text-center w-8">#</th>
               <th className="py-2.5 px-3">Mannschaft</th>
               <th className="py-2.5 px-2 text-center w-12" title="Gespielte Partien">SP</th>
-              <th className="py-2.5 px-2 text-center w-14 font-black text-slate-900" title="Punkte">PKT</th>
+              <th className="py-2.5 px-2 text-center w-14 font-medium text-slate-900" title="Punkte">PKT</th>
               <th className="py-2.5 px-2 text-center w-14" title="Tore (Erzielt:Kassiert)">Tore</th>
             </tr>
           </thead>
@@ -49,7 +49,7 @@ function GroupTable({
                 >
                   <td className="py-3 px-3 text-center">
                     <span
-                      className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-black ${
+                      className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium ${
                         rank === 1
                           ? "bg-amber-100 text-amber-800"
                           : rank === 2
@@ -84,7 +84,7 @@ function GroupTable({
                     {teamStanding.played}
                   </td>
                   <td className="py-3 px-2 text-center">
-                    <span className="inline-flex min-w-[28px] items-center justify-center rounded-md bg-blue-50 border border-blue-200 px-2 py-0.5 font-mono text-xs font-black text-blue-700 shadow-2xs">
+                    <span className="inline-flex min-w-[28px] items-center justify-center rounded-md bg-blue-50 border border-blue-200 px-2 py-0.5 font-mono text-xs font-medium text-blue-700 shadow-2xs">
                       {teamStanding.points}
                     </span>
                   </td>
