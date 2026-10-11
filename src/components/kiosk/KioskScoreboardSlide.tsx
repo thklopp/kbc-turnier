@@ -107,14 +107,11 @@ export function KioskScoreboardSlide({
       {/* Top Match Meta Badge */}
       <div className="flex items-center gap-3 mb-6">
         {displayMatch.scheduledTime && (
-          <span className="flex items-center gap-1.5 rounded-full bg-white border border-slate-200 px-4 py-1.5 text-sm font-semibold text-slate-700 shadow-xs">
-            <Clock className="h-3.5 w-3.5 text-blue-600" />
+          <span className={`flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-sm font-medium shadow-xs ${genderBadge}`}>
+            <Clock className="h-3.5 w-3.5" />
             <span>{displayMatch.scheduledTime} Uhr</span>
           </span>
         )}
-        <span className="rounded-full bg-white border border-slate-200 px-4 py-1.5 text-sm font-semibold text-slate-700 shadow-xs">
-          Spiel #{displayMatch.matchNumber}
-        </span>
         <span className={`rounded-full border px-4 py-1.5 text-sm font-medium ${genderBadge}`}>
           {displayMatch.gender}
         </span>
