@@ -154,7 +154,7 @@ export function KioskScoreboardSlide({
                 <span className="text-6xl md:text-7xl">🏑</span>
               )}
             </div>
-            <h3 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-slate-900 leading-normal line-clamp-2">
+            <h3 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-slate-900 leading-normal pb-3 md:pb-4">
               {home.name}
             </h3>
           </div>
@@ -233,7 +233,7 @@ export function KioskScoreboardSlide({
                 <span className="text-6xl md:text-7xl">🏑</span>
               )}
             </div>
-            <h3 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-slate-900 leading-normal line-clamp-2">
+            <h3 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-slate-900 leading-normal pb-3 md:pb-4">
               {away.name}
             </h3>
           </div>
