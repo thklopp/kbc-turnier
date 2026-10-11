@@ -62,10 +62,10 @@ export function KioskGroupStageSlide({ matches, teams }: KioskGroupStageSlidePro
     return (
       <div
         key={match.id}
-        className={`grid grid-cols-12 items-center px-2.5 py-1.5 rounded-xl border transition-all text-base md:text-lg ${rowHighlightClass}`}
+        className={`grid grid-cols-12 items-center px-3 py-2.5 md:py-3 rounded-xl border transition-all text-base md:text-lg ${rowHighlightClass}`}
       >
         {/* Left Meta: Time, Match Number, Gender, Group (Cols 1-3) */}
-        <div className="col-span-3 flex items-center gap-1.5 min-w-0">
+        <div className="col-span-3 flex items-center gap-1.5 md:gap-2 min-w-0">
           <span className="font-mono font-bold text-slate-900 whitespace-nowrap text-base md:text-lg">
             {match.scheduledTime}
           </span>
@@ -105,7 +105,7 @@ export function KioskGroupStageSlide({ matches, teams }: KioskGroupStageSlidePro
         {/* Score in Center (Col 8, perfectly centered) */}
         <div className="col-span-1 flex items-center justify-center">
           <span
-            className={`font-mono font-bold px-2 py-0.5 rounded text-base md:text-lg border text-center whitespace-nowrap ${
+            className={`font-mono font-bold px-2.5 py-1 rounded text-base md:text-lg border text-center whitespace-nowrap ${
               isActive
                 ? "bg-red-100 text-red-700 border-red-300"
                 : isNext
