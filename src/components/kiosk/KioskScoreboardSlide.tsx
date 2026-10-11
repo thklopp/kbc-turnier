@@ -323,15 +323,21 @@ export function KioskScoreboardSlide({
 
       {/* Up Next Preview sub-bar if currently live or paused */}
       {(isLive || isPaused) && nextMatch && (
-        <div className="mt-4 w-full flex items-center justify-center gap-4 rounded-2xl border-2 border-slate-200 bg-white px-8 py-3.5 text-base md:text-lg text-slate-700 shadow-xl">
-          <span className="font-bold text-blue-700 uppercase text-xs md:text-sm tracking-wider bg-blue-50 border border-blue-200 px-3.5 py-1 rounded-full">
+        <div className="mt-4 w-full flex items-center justify-center gap-3 md:gap-4 rounded-2xl border-2 border-slate-200 bg-white px-8 py-3.5 text-base md:text-lg font-medium text-slate-900 shadow-xl">
+          <span className="font-bold text-blue-700 uppercase text-xs md:text-sm tracking-wider bg-blue-50 border border-blue-200 px-3.5 py-1 rounded-full flex-none mr-1">
             Als Nächstes
           </span>
-          <span className="font-semibold text-slate-900">
-            {nextMatch.scheduledTime} Uhr &bull; {nextMatch.gender} &bull; {nextMatch.phase === "group" ? `Gruppe ${nextMatch.group}` : (nextMatch.matchName || "Finalspiel")}
+          <span>{nextMatch.scheduledTime} Uhr</span>
+          <span className="text-slate-300">&bull;</span>
+          <span>{nextMatch.gender}</span>
+          <span className="text-slate-300">&bull;</span>
+          <span>
+            {nextMatch.phase === "group"
+              ? `Gruppe ${nextMatch.group}`
+              : nextMatch.matchName || "Finalspiel"}
           </span>
           <span className="text-slate-300">&bull;</span>
-          <span className="font-medium text-slate-800">
+          <span>
             {getTeamDetails(nextMatch.teamHomeId, nextMatch.teamHomePlaceholder, teams).name} vs.{" "}
             {getTeamDetails(nextMatch.teamAwayId, nextMatch.teamAwayPlaceholder, teams).name}
           </span>
