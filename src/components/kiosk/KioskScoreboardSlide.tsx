@@ -103,7 +103,7 @@ export function KioskScoreboardSlide({
   const cardEvents = (displayMatch.events || []).filter((e) => e.type !== "goal")
 
   return (
-    <div className="flex h-full flex-col justify-start items-center pt-8 pb-4 px-6 max-w-[96rem] mx-auto w-full">
+    <div className="flex h-full flex-col justify-start items-center pt-[72px] pb-4 px-6 max-w-[96rem] mx-auto w-full">
       {/* Top Match Meta Badge */}
       <div className="flex items-center gap-3 mb-6">
         {displayMatch.scheduledTime && (
@@ -135,8 +135,8 @@ export function KioskScoreboardSlide({
         )}
       </div>
 
-      {/* Main High-Contrast TV Scoreboard Card */}
-      <div className="w-full rounded-3xl border-2 border-slate-200 bg-white p-8 lg:p-12 shadow-xl text-slate-900">
+      {/* Main High-Contrast TV Scoreboard Card (+50px Höhe) */}
+      <div className="w-full rounded-3xl border-2 border-slate-200 bg-white py-14 lg:py-[73px] px-8 lg:px-12 shadow-xl text-slate-900">
         <div className="grid grid-cols-12 items-start">
           {/* Heim-Team (Cols 1-5) */}
           <div className="col-span-5 flex flex-col items-center text-center px-2">
