@@ -62,17 +62,17 @@ export function KioskGroupStageSlide({ matches, teams }: KioskGroupStageSlidePro
     return (
       <div
         key={match.id}
-        className={`grid grid-cols-12 items-center px-2.5 py-1.5 rounded-xl border transition-all text-xs ${rowHighlightClass}`}
+        className={`grid grid-cols-12 items-center px-2.5 py-1.5 rounded-xl border transition-all text-sm ${rowHighlightClass}`}
       >
         {/* Left Meta: Time, Match Number, Gender, Group (Cols 1-3) */}
         <div className="col-span-3 flex items-center gap-1.5 min-w-0">
-          <span className="font-mono font-bold text-slate-900 whitespace-nowrap text-[11px] md:text-xs">
+          <span className="font-mono font-bold text-slate-900 whitespace-nowrap text-xs md:text-sm">
             {match.scheduledTime}
           </span>
-          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border whitespace-nowrap ${genderBadge}`}>
+          <span className={`text-[11px] md:text-xs font-bold px-1.5 py-0.5 rounded border whitespace-nowrap ${genderBadge}`}>
             {match.gender}
           </span>
-          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded border border-slate-200 bg-slate-50 text-slate-700 whitespace-nowrap">
+          <span className="text-[11px] md:text-xs font-bold px-1.5 py-0.5 rounded border border-slate-200 bg-slate-50 text-slate-700 whitespace-nowrap">
             Gr. {match.group || "?"}
           </span>
           {isActive && (
@@ -83,12 +83,12 @@ export function KioskGroupStageSlide({ matches, teams }: KioskGroupStageSlidePro
         {/* Home Team: Name right-aligned + Logo (Cols 4-7) */}
         <div className="col-span-4 flex items-center justify-end gap-1.5 min-w-0 pr-1">
           <span
-            className="font-medium text-slate-900 truncate text-right text-[11px] md:text-xs"
+            className="font-medium text-slate-900 truncate text-right text-xs md:text-sm"
             title={home.name}
           >
             {home.name}
           </span>
-          <div className="flex h-5 w-5 flex-none items-center justify-center rounded bg-white p-0.5">
+          <div className="flex h-6 w-6 flex-none items-center justify-center rounded bg-white p-0.5">
             {home.logoUrl && !logoErrors[match.teamHomeId] ? (
               <img
                 src={home.logoUrl}
@@ -97,7 +97,7 @@ export function KioskGroupStageSlide({ matches, teams }: KioskGroupStageSlidePro
                 className="max-h-full max-w-full object-contain"
               />
             ) : (
-              <span className="text-[10px]">🏑</span>
+              <span className="text-xs">🏑</span>
             )}
           </div>
         </div>
@@ -105,7 +105,7 @@ export function KioskGroupStageSlide({ matches, teams }: KioskGroupStageSlidePro
         {/* Score in Center (Col 8, perfectly centered) */}
         <div className="col-span-1 flex items-center justify-center">
           <span
-            className={`font-mono font-bold px-1.5 py-0.5 rounded text-[11px] md:text-xs border text-center whitespace-nowrap ${
+            className={`font-mono font-bold px-2 py-0.5 rounded text-xs md:text-sm border text-center whitespace-nowrap ${
               isActive
                 ? "bg-red-100 text-red-700 border-red-300"
                 : isNext
@@ -119,7 +119,7 @@ export function KioskGroupStageSlide({ matches, teams }: KioskGroupStageSlidePro
 
         {/* Away Team: Logo + Name left-aligned (Cols 9-12) */}
         <div className="col-span-4 flex items-center justify-start gap-1.5 min-w-0 pl-1">
-          <div className="flex h-5 w-5 flex-none items-center justify-center rounded bg-white p-0.5">
+          <div className="flex h-6 w-6 flex-none items-center justify-center rounded bg-white p-0.5">
             {away.logoUrl && !logoErrors[match.teamAwayId] ? (
               <img
                 src={away.logoUrl}
@@ -128,11 +128,11 @@ export function KioskGroupStageSlide({ matches, teams }: KioskGroupStageSlidePro
                 className="max-h-full max-w-full object-contain"
               />
             ) : (
-              <span className="text-[10px]">🏑</span>
+              <span className="text-xs">🏑</span>
             )}
           </div>
           <span
-            className="font-medium text-slate-900 truncate text-left text-[11px] md:text-xs"
+            className="font-medium text-slate-900 truncate text-left text-xs md:text-sm"
             title={away.name}
           >
             {away.name}
