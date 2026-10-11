@@ -251,14 +251,11 @@ export function KioskPage() {
             </span>
           </div>
 
-          {/* Right: Rotation & Sync Info */}
+          {/* Right: Sync Info */}
           <div className="hidden sm:flex items-center gap-4 text-xs text-slate-600">
             <span className="flex items-center gap-1.5 font-medium">
               <span className="h-2 w-2 rounded-full bg-emerald-500" />
               Echtzeit-Synchronisierung aktiv
-            </span>
-            <span className="font-mono text-slate-400">
-              Ansicht wechselt alle 12s
             </span>
           </div>
         </div>

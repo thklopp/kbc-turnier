@@ -106,7 +106,7 @@ export function KioskScoreboardSlide({
     <div className="flex h-full flex-col justify-center items-center py-2 px-4 max-w-7xl mx-auto w-full">
       {/* Top Match Meta Badge */}
       <div className="flex items-center gap-3 mb-6">
-        <span className="rounded-full bg-white border border-slate-200 px-4 py-1.5 text-sm font-bold text-slate-700 shadow-xs">
+        <span className="rounded-full bg-white border border-slate-200 px-4 py-1.5 text-sm font-semibold text-slate-700 shadow-xs">
           Spiel #{displayMatch.matchNumber}
         </span>
         <span className={`rounded-full border px-4 py-1.5 text-sm font-medium ${genderBadge}`}>
@@ -148,7 +148,7 @@ export function KioskScoreboardSlide({
                 <span className="text-6xl md:text-7xl">🏑</span>
               )}
             </div>
-            <h3 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-slate-900 leading-tight line-clamp-2">
+            <h3 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-slate-900 leading-normal pb-2 line-clamp-2">
               {home.name}
             </h3>
             {home.group && (
@@ -232,7 +232,7 @@ export function KioskScoreboardSlide({
                 <span className="text-6xl md:text-7xl">🏑</span>
               )}
             </div>
-            <h3 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-slate-900 leading-tight line-clamp-2">
+            <h3 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-slate-900 leading-normal pb-2 line-clamp-2">
               {away.name}
             </h3>
             {away.group && (
@@ -248,57 +248,45 @@ export function KioskScoreboardSlide({
           <div className="mt-8 border-t border-slate-200 pt-5">
             <div className="grid grid-cols-2 gap-8 text-sm">
               {/* Heim Tore */}
-              <div className="space-y-2">
-                <div className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                  <span>🥅 Tore {home.shortName || home.name}</span>
-                  <span className="font-mono text-slate-400 font-semibold">({homeGoals.length})</span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {homeGoals.map((g, idx) => {
-                    const label = g.playerName
-                      ? `#${g.playerNumber ?? ""} ${g.playerName}`.trim()
-                      : g.playerNumber
-                      ? `#${g.playerNumber}`
-                      : "Tor"
-                    return (
-                      <span
-                        key={g.id || idx}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-slate-50 border border-slate-200 px-3.5 py-1.5 text-xs font-bold text-slate-800 shadow-2xs"
-                      >
-                        <span className="font-mono text-blue-600 font-extrabold">{g.matchMinute}&apos;</span>
-                        <span>🥅</span>
-                        <span className="text-slate-900">{label}</span>
-                      </span>
-                    )
-                  })}
-                </div>
+              <div className="flex flex-wrap gap-2">
+                {homeGoals.map((g, idx) => {
+                  const label = g.playerName
+                    ? `#${g.playerNumber ?? ""} ${g.playerName}`.trim()
+                    : g.playerNumber
+                    ? `#${g.playerNumber}`
+                    : "Tor"
+                  return (
+                    <span
+                      key={g.id || idx}
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-slate-50 border border-slate-200 px-3 py-1.5 text-xs text-slate-800 shadow-2xs"
+                    >
+                      <span className="font-mono text-blue-600 font-medium">{g.matchMinute}&apos;</span>
+                      <span>🥅</span>
+                      <span className="text-slate-800 font-normal">{label}</span>
+                    </span>
+                  )
+                })}
               </div>
 
               {/* Gast Tore */}
-              <div className="space-y-2 text-right">
-                <div className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center justify-end gap-1.5">
-                  <span className="font-mono text-slate-400 font-semibold">({awayGoals.length})</span>
-                  <span>Tore {away.shortName || away.name} 🥅</span>
-                </div>
-                <div className="flex flex-wrap gap-2 justify-end">
-                  {awayGoals.map((g, idx) => {
-                    const label = g.playerName
-                      ? `#${g.playerNumber ?? ""} ${g.playerName}`.trim()
-                      : g.playerNumber
-                      ? `#${g.playerNumber}`
-                      : "Tor"
-                    return (
-                      <span
-                        key={g.id || idx}
-                        className="inline-flex items-center gap-1.5 rounded-xl bg-slate-50 border border-slate-200 px-3.5 py-1.5 text-xs font-bold text-slate-800 shadow-2xs"
-                      >
-                        <span className="text-slate-900">{label}</span>
-                        <span>🥅</span>
-                        <span className="font-mono text-blue-600 font-extrabold">{g.matchMinute}&apos;</span>
-                      </span>
-                    )
-                  })}
-                </div>
+              <div className="flex flex-wrap gap-2 justify-end">
+                {awayGoals.map((g, idx) => {
+                  const label = g.playerName
+                    ? `#${g.playerNumber ?? ""} ${g.playerName}`.trim()
+                    : g.playerNumber
+                    ? `#${g.playerNumber}`
+                    : "Tor"
+                  return (
+                    <span
+                      key={g.id || idx}
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-slate-50 border border-slate-200 px-3 py-1.5 text-xs text-slate-800 shadow-2xs"
+                    >
+                      <span className="text-slate-800 font-normal">{label}</span>
+                      <span>🥅</span>
+                      <span className="font-mono text-blue-600 font-medium">{g.matchMinute}&apos;</span>
+                    </span>
+                  )
+                })}
               </div>
             </div>
           </div>
