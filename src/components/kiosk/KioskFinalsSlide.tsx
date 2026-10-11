@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { Trophy } from "lucide-react"
 import type { Match, Team } from "@/types/database"
 
 interface KioskFinalsSlideProps {
@@ -107,14 +108,20 @@ export function KioskFinalsSlide({ matches, teams }: KioskFinalsSlideProps) {
             {match.gender}
           </span>
           <span
-            className={`text-xs md:text-sm font-bold px-2 py-0.5 rounded border whitespace-nowrap ${
+            className={`text-xs md:text-sm font-bold px-2 py-0.5 rounded border whitespace-nowrap flex items-center gap-1 ${
               isFinalGame
-                ? "bg-amber-100 text-amber-800 border-amber-300 font-extrabold text-sm md:text-base px-2.5"
+                ? "bg-amber-100 text-amber-800 border-amber-300 font-extrabold"
                 : "bg-slate-50 text-slate-700 border-slate-200"
             }`}
-            title={isFinalGame ? "Finale" : undefined}
           >
-            {isFinalGame ? "🏆" : stageBadgeText}
+            {isFinalGame ? (
+              <>
+                <Trophy className="h-3.5 w-3.5 text-amber-600 flex-none" />
+                <span>Finale</span>
+              </>
+            ) : (
+              stageBadgeText
+            )}
           </span>
           {isActive && (
             <span className="hidden xl:inline-flex h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse" />
