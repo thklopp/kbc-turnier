@@ -38,8 +38,7 @@ Zudem ist das Live-Scoreboard horizontal zu gedrängt für lange Vereinsnamen, e
      - Rechts oben: mU14 Gruppe A, rechts unten: mU14 Gruppe B.
    - Vollständige Statistiken (`#`, Logo, Team, `Sp`, `S`, `U`, `N`, `Tore`, `Diff`, `Pkt`) bei kompakter Zeilenhöhe ohne Scrollen.
 5. **Footer-Leiste**:
-   - Vollständig zentrierte Anzeige des aktiven bzw. nächsten Spiels: `[Status-Badge] [Uhrzeit] • [Geschlecht] • [Gruppe / Spielname] • [Heim] [Score] [Gast]`.
-   - Entfernung des Textes „Echtzeit-Synchronisierung aktiv“.
+   - Die Fußleiste wurde komplett entfernt, um den vollen vertikalen Bildschirmplatz den Folien zur Verfügung zu stellen.
 6. **Karussell-Steuerung**:
    - Einheitliche 4-Folien-Rotation: `1. Live`, `2. Gruppenphase`, `3. Finalphase`, `4. Tabellen`.
 
@@ -91,10 +90,8 @@ Zudem ist das Live-Scoreboard horizontal zu gedrängt für lange Vereinsnamen, e
     - Rechts unten: mU14 Gruppe B
   - Anzeige aller Spalten (`#`, Logo, Team, `Sp`, `S`, `U`, `N`, `Tore`, `Diff`, `Pkt`).
   - Kompaktes Layout ohne vertikales Scrollen.
-- [ ] **Footer-Bereich**:
-  - Vollständige Zentrierung der Match-Information.
-  - Format: Status-Badge (`🔴 LIVE` oder `⏱ NÄCHSTES`), gefolgt von `[Uhrzeit] • [Geschlecht] • [Gruppe bzw. Spielname] • [Heim] [Score] [Gast]`.
-  - Entfernung der Angabe `Echtzeit-Synchronisierung aktiv`.
+- [x] **Footer-Bereich**:
+  - Die Fußleiste wurde komplett entfernt, damit der Kiosk-Modus maximale vertikale Fläche für die Folieninhalte bietet.
 - [ ] **Header & Rotation**:
   - Folien-Namen im Header: `Live`, `Gruppenphase`, `Finalphase`, `Tabellen`.
   - Rotation schaltet alle 4 Folien nacheinander durch.
