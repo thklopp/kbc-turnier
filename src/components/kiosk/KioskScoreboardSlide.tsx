@@ -103,9 +103,15 @@ export function KioskScoreboardSlide({
   const cardEvents = (displayMatch.events || []).filter((e) => e.type !== "goal")
 
   return (
-    <div className="flex h-full flex-col justify-center items-center py-2 px-4 max-w-7xl mx-auto w-full">
+    <div className="flex h-full flex-col justify-start items-center pt-2 pb-4 px-6 max-w-[96rem] mx-auto w-full">
       {/* Top Match Meta Badge */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-4">
+        {displayMatch.scheduledTime && (
+          <span className="flex items-center gap-1.5 rounded-full bg-white border border-slate-200 px-4 py-1.5 text-sm font-semibold text-slate-700 shadow-xs">
+            <Clock className="h-3.5 w-3.5 text-blue-600" />
+            <span>{displayMatch.scheduledTime} Uhr</span>
+          </span>
+        )}
         <span className="rounded-full bg-white border border-slate-200 px-4 py-1.5 text-sm font-semibold text-slate-700 shadow-xs">
           Spiel #{displayMatch.matchNumber}
         </span>
@@ -130,11 +136,11 @@ export function KioskScoreboardSlide({
       </div>
 
       {/* Main High-Contrast TV Scoreboard Card */}
-      <div className="w-full rounded-3xl border-2 border-slate-200 bg-white p-8 lg:p-12 shadow-xl text-slate-900">
-        <div className="grid grid-cols-11 items-center">
-          {/* Heim-Team (Cols 1-4) */}
-          <div className="col-span-4 flex flex-col items-center text-center px-4">
-            <div className="relative mb-5 flex h-32 w-32 md:h-40 md:w-40 items-center justify-center rounded-3xl bg-slate-50 border-2 border-slate-200 p-4 shadow-sm">
+      <div className="w-full rounded-3xl border-2 border-slate-200 bg-white p-6 lg:p-10 shadow-xl text-slate-900">
+        <div className="grid grid-cols-12 items-start">
+          {/* Heim-Team (Cols 1-5) */}
+          <div className="col-span-5 flex flex-col items-center text-center px-2">
+            <div className="relative mb-4 flex h-32 w-32 md:h-40 md:w-40 items-center justify-center rounded-3xl bg-slate-50 border-2 border-slate-200 p-4 shadow-sm">
               {home.logoUrl && !logoErrors[displayMatch.teamHomeId] ? (
                 <img
                   src={home.logoUrl}
@@ -148,20 +154,15 @@ export function KioskScoreboardSlide({
                 <span className="text-6xl md:text-7xl">🏑</span>
               )}
             </div>
-            <h3 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-slate-900 leading-normal pb-2 line-clamp-2">
+            <h3 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-slate-900 leading-normal line-clamp-2">
               {home.name}
             </h3>
-            {home.group && (
-              <span className="mt-2 text-sm font-bold uppercase tracking-wider text-slate-500">
-                Gruppe {home.group} &bull; Heim
-              </span>
-            )}
           </div>
 
-          {/* Center Score & Live Clock (Cols 5-7) */}
-          <div className="col-span-3 flex flex-col items-center justify-center text-center border-x border-slate-200 px-4">
+          {/* Center Score & Live Clock (Cols 6-7) */}
+          <div className="col-span-2 flex flex-col items-center justify-center text-center px-1 pt-4">
             {/* Score */}
-            <div className="flex items-center justify-center gap-4 text-7xl md:text-8xl lg:text-9xl font-medium font-mono tracking-tighter text-slate-900">
+            <div className="flex items-center justify-center gap-2 md:gap-4 text-7xl md:text-8xl lg:text-9xl font-medium font-mono tracking-tighter text-slate-900">
               <span>{displayMatch.scoreHome}</span>
               <span className="text-slate-400 font-light pb-2">:</span>
               <span>{displayMatch.scoreAway}</span>
@@ -216,9 +217,9 @@ export function KioskScoreboardSlide({
             </div>
           </div>
 
-          {/* Gast-Team (Cols 8-11) */}
-          <div className="col-span-4 flex flex-col items-center text-center px-4">
-            <div className="relative mb-5 flex h-32 w-32 md:h-40 md:w-40 items-center justify-center rounded-3xl bg-slate-50 border-2 border-slate-200 p-4 shadow-sm">
+          {/* Gast-Team (Cols 8-12) */}
+          <div className="col-span-5 flex flex-col items-center text-center px-2">
+            <div className="relative mb-4 flex h-32 w-32 md:h-40 md:w-40 items-center justify-center rounded-3xl bg-slate-50 border-2 border-slate-200 p-4 shadow-sm">
               {away.logoUrl && !logoErrors[displayMatch.teamAwayId] ? (
                 <img
                   src={away.logoUrl}
@@ -232,14 +233,9 @@ export function KioskScoreboardSlide({
                 <span className="text-6xl md:text-7xl">🏑</span>
               )}
             </div>
-            <h3 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-slate-900 leading-normal pb-2 line-clamp-2">
+            <h3 className="text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-slate-900 leading-normal line-clamp-2">
               {away.name}
             </h3>
-            {away.group && (
-              <span className="mt-2 text-sm font-bold uppercase tracking-wider text-slate-500">
-                Gruppe {away.group} &bull; Gast
-              </span>
-            )}
           </div>
         </div>
 

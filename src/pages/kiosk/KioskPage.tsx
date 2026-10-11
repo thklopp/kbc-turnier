@@ -1,22 +1,23 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react"
-import { Trophy, Radio, WifiOff, Pause } from "lucide-react"
+import { Trophy, Radio, WifiOff, Pause, Clock } from "lucide-react"
 import type { Match, Team, TournamentConfig } from "@/types/database"
 import { subscribeMatches } from "@/services/matchService"
 import { subscribeTeams } from "@/services/teamService"
 import { subscribeTournamentConfig } from "@/services/configService"
 import { KioskHeader } from "@/components/kiosk/KioskHeader"
 import { KioskScoreboardSlide } from "@/components/kiosk/KioskScoreboardSlide"
-import { KioskUpcomingSlide } from "@/components/kiosk/KioskUpcomingSlide"
+import { KioskGroupStageSlide } from "@/components/kiosk/KioskGroupStageSlide"
+import { KioskFinalsSlide } from "@/components/kiosk/KioskFinalsSlide"
 import { KioskStandingsSlide } from "@/components/kiosk/KioskStandingsSlide"
 
 const SLIDE_DURATION_MS = 12000 // 12 seconds per slide
 const PROGRESS_TICK_MS = 100
 
 const SLIDE_NAMES = [
-  "Live-Scoreboard",
-  "Nächste Partien",
-  "Tabelle wU14",
-  "Tabelle mU14",
+  "Live",
+  "Gruppenphase",
+  "Finalphase",
+  "Tabellen",
 ]
 
 export function KioskPage() {
@@ -120,43 +121,82 @@ export function KioskPage() {
     return matches.find((m) => m.status === "scheduled") || null
   }, [matches])
 
-  const currentMatchNumber = useMemo(() => {
-    if (liveMatch) return liveMatch.matchNumber
-    if (nextMatch) return nextMatch.matchNumber
-    return 1
-  }, [liveMatch, nextMatch])
 
   const progressPercent = (elapsedMs / SLIDE_DURATION_MS) * 100
 
-  // Format team names for bottom ticker
-  const getTickerMatchText = () => {
-    if (liveMatch) {
-      const home = teams.find((t) => t.id === liveMatch.teamHomeId)?.shortName || liveMatch.teamHomePlaceholder || "Heim"
-      const away = teams.find((t) => t.id === liveMatch.teamAwayId)?.shortName || liveMatch.teamAwayPlaceholder || "Gast"
-      const isPaused = liveMatch.status === "paused"
+  // Format match details for centered bottom footer
+  const getTickerMatchContent = () => {
+    const targetMatch = liveMatch || nextMatch
+    if (!targetMatch) {
       return {
-        isLive: !isPaused,
-        isPaused,
-        text: `Spiel #${liveMatch.matchNumber} (${liveMatch.gender}): ${home} ${liveMatch.scoreHome} : ${liveMatch.scoreAway} ${away}${isPaused ? " (Pausiert)" : ""}`,
+        badge: (
+          <span className="flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700 border border-slate-200">
+            <Trophy className="h-3.5 w-3.5 text-amber-500" />
+            Turnier
+          </span>
+        ),
+        time: "",
+        gender: "",
+        stage: "",
+        homeName: "",
+        awayName: "",
+        scoreText: "Turnierplan beendet oder in Vorbereitung.",
       }
     }
-    if (nextMatch) {
-      const home = teams.find((t) => t.id === nextMatch.teamHomeId)?.shortName || nextMatch.teamHomePlaceholder || "Heim"
-      const away = teams.find((t) => t.id === nextMatch.teamAwayId)?.shortName || nextMatch.teamAwayPlaceholder || "Gast"
-      return {
-        isLive: false,
-        isPaused: false,
-        text: `Nächstes Spiel #${nextMatch.matchNumber} (${nextMatch.gender}, ${nextMatch.scheduledTime} Uhr): ${home} vs. ${away}`,
-      }
-    }
+
+    const home =
+      teams.find((t) => t.id === targetMatch.teamHomeId)?.shortName ||
+      teams.find((t) => t.id === targetMatch.teamHomeId)?.name ||
+      targetMatch.teamHomePlaceholder ||
+      "Heim"
+    const away =
+      teams.find((t) => t.id === targetMatch.teamAwayId)?.shortName ||
+      teams.find((t) => t.id === targetMatch.teamAwayId)?.name ||
+      targetMatch.teamAwayPlaceholder ||
+      "Gast"
+
+    const isLive = targetMatch.status === "live"
+    const isPaused = targetMatch.status === "paused"
+    const isActive = isLive || isPaused
+
+    const stageLabel =
+      targetMatch.phase === "group"
+        ? `Gruppe ${targetMatch.group || ""}`
+        : targetMatch.matchName || (targetMatch.finalType ? targetMatch.finalType : "Finalrunde")
+
+    const badge = isLive ? (
+      <span className="flex items-center gap-1.5 rounded-full bg-red-50 border border-red-200 px-3 py-1 text-xs font-bold uppercase tracking-wider text-red-600 animate-pulse">
+        <Radio className="h-3.5 w-3.5" />
+        Live
+      </span>
+    ) : isPaused ? (
+      <span className="flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-300 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-700">
+        <Pause className="h-3.5 w-3.5 fill-current" />
+        Pausiert
+      </span>
+    ) : (
+      <span className="flex items-center gap-1.5 rounded-full bg-blue-50 border border-blue-200 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-700">
+        <Clock className="h-3.5 w-3.5" />
+        Nächstes
+      </span>
+    )
+
+    const scoreDisplay = isActive
+      ? `${targetMatch.scoreHome} : ${targetMatch.scoreAway}`
+      : "- : -"
+
     return {
-      isLive: false,
-      isPaused: false,
-      text: "Turnierplan beendet oder in Vorbereitung.",
+      badge,
+      time: `${targetMatch.scheduledTime} Uhr`,
+      gender: targetMatch.gender,
+      stage: stageLabel,
+      homeName: home,
+      awayName: away,
+      scoreText: scoreDisplay,
     }
   }
 
-  const tickerInfo = getTickerMatchText()
+  const ticker = getTickerMatchContent()
 
   return (
     <div className="flex h-full w-full flex-col justify-between overflow-hidden select-none">
@@ -202,62 +242,49 @@ export function KioskPage() {
           />
         )}
         {activeSlide === 1 && (
-          <KioskUpcomingSlide
+          <KioskGroupStageSlide
             matches={matches}
             teams={teams}
-            currentMatchNumber={currentMatchNumber}
           />
         )}
         {activeSlide === 2 && (
-          <KioskStandingsSlide
-            teams={teams}
+          <KioskFinalsSlide
             matches={matches}
-            gender="wU14"
+            teams={teams}
           />
         )}
         {activeSlide === 3 && (
           <KioskStandingsSlide
             teams={teams}
             matches={matches}
-            gender="mU14"
           />
         )}
       </div>
 
-      {/* Permanent Live Ticker Footer Bar */}
-      <footer className="flex-none rounded-2xl border border-slate-200 bg-white/95 px-6 py-3 shadow-lg backdrop-blur-md">
-        <div className="flex items-center justify-between">
-          {/* Left: Ticker Status & Match details */}
-          <div className="flex items-center gap-3">
-            {tickerInfo.isLive ? (
-              <span className="flex items-center gap-2 rounded-xl bg-red-50 border border-red-200 px-3 py-1 text-xs font-medium uppercase tracking-wider text-red-600 animate-pulse">
-                <Radio className="h-4 w-4" />
-                Live
+      {/* Permanent Live Ticker Footer Bar (Centered, no sync text) */}
+      <footer className="flex-none rounded-2xl border border-slate-200 bg-white/95 px-6 py-2.5 shadow-lg backdrop-blur-md">
+        <div className="flex items-center justify-center">
+          {ticker.time ? (
+            <div className="flex items-center gap-3 text-sm font-bold text-slate-900 tracking-wide flex-wrap justify-center">
+              {ticker.badge}
+              <span className="font-mono text-slate-700">{ticker.time}</span>
+              <span className="text-slate-300">&bull;</span>
+              <span className="text-slate-700">{ticker.gender}</span>
+              <span className="text-slate-300">&bull;</span>
+              <span className="text-slate-700">{ticker.stage}</span>
+              <span className="text-slate-300">&bull;</span>
+              <span className="text-slate-900">{ticker.homeName}</span>
+              <span className="font-mono bg-slate-100 border border-slate-200 px-2 py-0.5 rounded text-slate-800">
+                {ticker.scoreText}
               </span>
-            ) : tickerInfo.isPaused ? (
-              <span className="flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-300 px-3 py-1 text-xs font-medium uppercase tracking-wider text-amber-700">
-                <Pause className="h-4 w-4 fill-current" />
-                Pausiert
-              </span>
-            ) : (
-              <span className="flex items-center gap-2 rounded-xl bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700 border border-slate-200">
-                <Trophy className="h-3.5 w-3.5 text-amber-500" />
-                Turnier-Ticker
-              </span>
-            )}
-
-            <span className="text-sm font-bold text-slate-900 tracking-wide">
-              {tickerInfo.text}
-            </span>
-          </div>
-
-          {/* Right: Sync Info */}
-          <div className="hidden sm:flex items-center gap-4 text-xs text-slate-600">
-            <span className="flex items-center gap-1.5 font-medium">
-              <span className="h-2 w-2 rounded-full bg-emerald-500" />
-              Echtzeit-Synchronisierung aktiv
-            </span>
-          </div>
+              <span className="text-slate-900">{ticker.awayName}</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 text-sm font-bold text-slate-700">
+              {ticker.badge}
+              <span>{ticker.scoreText}</span>
+            </div>
+          )}
         </div>
       </footer>
     </div>

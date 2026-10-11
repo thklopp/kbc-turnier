@@ -99,6 +99,7 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 - [x] [SPEC-021] Einheitlicher Monospace-Font 'Chivo Mono' (offline/lokal gebündelt) für Spielstände, Timer und Tabellen auf allen Endgeräten; Kiosk-Score auf 'font-medium' (500) abgestimmt.
 - [x] [SPEC-022] Globale Harmonisierung des Font-Weights: Ersetzung aller 56 Vorkommen von 'font-black' (900) durch 'font-medium' (500) applikationsweit.
 - [x] [SPEC-023] Kiosk Live-Scoreboard UI-Feinschliff & Tor-Chronik Bereinigung: Genügend Zeilenabstand für Vereinsnamen gegen abgeschnittene Buchstaben, Angleichung Badge 'Spiel #X', Entfernung Tor-Chronik Header & Entfettung Torschützen, Bereinigung Kiosk-Footer.
+- [x] [SPEC-024] Kiosk-Modus Seiten-Redesign & 4-Folien-Struktur: Live-Seite mit Startzeit & zentrierten Logos/Namen ohne Trennlinien; 24-Spiele Gruppenphase & 16-Spiele Finalphase in 2 Spalten tabellarisch ausgerichtet mit Rot/Blau-Hervorhebung; 2x2 Tabellen-Matrix für alle 4 Gruppen; zentrierter Footer ohne Synchronisierungs-Text.
 
 ---
 
