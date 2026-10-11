@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Clock, Calendar, CheckCircle2, Pause } from "lucide-react"
 import type { Match, Team } from "@/types/database"
+import { HockeyGoalIcon } from "@/components/common/HockeyGoalIcon"
 import rrkLogo from "@/assets/images/RRK.webp"
 
 interface KioskScoreboardSlideProps {
@@ -261,7 +262,7 @@ export function KioskScoreboardSlide({
                       className="inline-flex items-center gap-1.5 rounded-xl bg-slate-50 border border-slate-200 px-3 py-1.5 text-xs text-slate-800 shadow-2xs"
                     >
                       <span className="font-mono text-blue-600 font-medium">{g.matchMinute}&apos;</span>
-                      <span>🥅</span>
+                      <HockeyGoalIcon className="h-4 w-4 text-emerald-600 flex-none" />
                       <span className="text-slate-800 font-normal">{label}</span>
                     </span>
                   )
@@ -282,7 +283,7 @@ export function KioskScoreboardSlide({
                       className="inline-flex items-center gap-1.5 rounded-xl bg-slate-50 border border-slate-200 px-3 py-1.5 text-xs text-slate-800 shadow-2xs"
                     >
                       <span className="text-slate-800 font-normal">{label}</span>
-                      <span>🥅</span>
+                      <HockeyGoalIcon className="h-4 w-4 text-emerald-600 flex-none" />
                       <span className="font-mono text-blue-600 font-medium">{g.matchMinute}&apos;</span>
                     </span>
                   )
