@@ -1,7 +1,6 @@
 import { useState } from "react"
-import type { Match, Team, GenderCategory, TournamentGroup } from "@/types/database"
+import type { Match, Team, GenderCategory } from "@/types/database"
 import { getMatchDisplayName } from "@/services/matchService"
-import { Filter, ChevronDown, ChevronUp, RotateCcw } from "lucide-react"
 
 interface GuestScheduleViewProps {
   matches: Match[]
@@ -9,177 +8,69 @@ interface GuestScheduleViewProps {
 }
 
 export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
-  const [dayFilter, setDayFilter] = useState<"all" | "saturday" | "sunday">("all")
-  const [genderFilter, setGenderFilter] = useState<"all" | GenderCategory>("all")
-  const [groupFilter, setGroupFilter] = useState<"all" | TournamentGroup>("all")
-  const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState<"all" | GenderCategory>("all")
 
   const teamMap = new Map<string, Team>()
   teams.forEach((t) => teamMap.set(t.id, t))
 
-  const hasActiveFilters = dayFilter !== "all" || genderFilter !== "all" || groupFilter !== "all"
-  const activeFilterCount =
-    (dayFilter !== "all" ? 1 : 0) +
-    (genderFilter !== "all" ? 1 : 0) +
-    (groupFilter !== "all" ? 1 : 0)
+  const vorrundeMatches = matches
+    .filter((m) => m.phase === "group" || m.matchNumber <= 24)
+    .sort((a, b) => a.matchNumber - b.matchNumber)
 
-  const handleResetFilters = () => {
-    setDayFilter("all")
-    setGenderFilter("all")
-    setGroupFilter("all")
-  }
-
-  const filteredMatches = matches.filter((m) => {
-    const matchDay = dayFilter === "all" || m.day === dayFilter
-    const matchGender = genderFilter === "all" || m.gender === genderFilter
-    const matchGroup = groupFilter === "all" || m.group === groupFilter
-    return matchDay && matchGender && matchGroup
-  })
+  const filteredMatches = vorrundeMatches.filter((m) =>
+    selectedCategory === "all" ? true : m.gender === selectedCategory
+  )
 
   return (
-    <div className="space-y-4">
-      {/* Collapsible Filter Bar */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-3 shadow-xs">
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-slate-800">
-              Spielplan
-            </span>
-            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-500">
-              {filteredMatches.length} {filteredMatches.length === 1 ? "Spiel" : "Spiele"}
-            </span>
-            {hasActiveFilters && (
-              <span className="rounded-full bg-blue-50 border border-blue-200 px-2 py-0.5 text-[10px] font-bold text-blue-700">
-                {activeFilterCount} {activeFilterCount === 1 ? "Filter aktiv" : "Filter aktiv"}
-              </span>
-            )}
-          </div>
+    <div className="space-y-6">
+      {/* Category Filter Switcher */}
+      <div className="flex w-full rounded-xl bg-slate-100 p-1 border border-slate-200">
+        <button
+          onClick={() => setSelectedCategory("all")}
+          className={`flex-1 rounded-lg py-2 text-center text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+            selectedCategory === "all"
+              ? "bg-slate-800 text-white shadow-sm"
+              : "text-slate-600 hover:text-slate-900"
+          }`}
+        >
+          Alle
+        </button>
+        <button
+          onClick={() => setSelectedCategory("wU14")}
+          className={`flex-1 rounded-lg py-2 text-center text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+            selectedCategory === "wU14"
+              ? "bg-purple-600 text-white shadow-sm"
+              : "text-slate-600 hover:text-slate-900"
+          }`}
+        >
+          wU14
+        </button>
+        <button
+          onClick={() => setSelectedCategory("mU14")}
+          className={`flex-1 rounded-lg py-2 text-center text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+            selectedCategory === "mU14"
+              ? "bg-blue-600 text-white shadow-sm"
+              : "text-slate-600 hover:text-slate-900"
+          }`}
+        >
+          mU14
+        </button>
+      </div>
 
-          <div className="flex items-center gap-1.5">
-            {hasActiveFilters && (
-              <button
-                onClick={handleResetFilters}
-                className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-semibold text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors cursor-pointer"
-                title="Filter zurücksetzen"
-              >
-                <RotateCcw className="h-3 w-3" />
-                <span className="hidden sm:inline">Zurücksetzen</span>
-              </button>
-            )}
-
-            <button
-              onClick={() => setIsFilterOpen((prev) => !prev)}
-              className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
-                isFilterOpen || hasActiveFilters
-                  ? "border-blue-300 bg-blue-50 text-blue-700 shadow-xs"
-                  : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
-              }`}
-            >
-              <Filter className="h-3.5 w-3.5" />
-              <span>{isFilterOpen ? "Filter ausblenden" : "Filter anzeigen"}</span>
-              {isFilterOpen ? (
-                <ChevronUp className="h-3.5 w-3.5 ml-0.5" />
-              ) : (
-                <ChevronDown className="h-3.5 w-3.5 ml-0.5" />
-              )}
-            </button>
-          </div>
-        </div>
-
-        {/* Filter Options (Collapsible) */}
-        {isFilterOpen && (
-          <div className="mt-3 pt-3 border-t border-slate-100 flex flex-wrap items-center gap-2 text-xs font-semibold">
-            {/* Day Filter */}
-            <div className="flex rounded-lg bg-slate-100 p-0.5 border border-slate-200">
-              <button
-                onClick={() => setDayFilter("all")}
-                className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-                  dayFilter === "all" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                Alle Tage
-              </button>
-              <button
-                onClick={() => setDayFilter("saturday")}
-                className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-                  dayFilter === "saturday" ? "bg-white text-blue-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                Samstag (Sa)
-              </button>
-              <button
-                onClick={() => setDayFilter("sunday")}
-                className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-                  dayFilter === "sunday" ? "bg-white text-purple-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                Sonntag (So)
-              </button>
-            </div>
-
-            {/* Gender Filter */}
-            <div className="flex rounded-lg bg-slate-100 p-0.5 border border-slate-200">
-              <button
-                onClick={() => setGenderFilter("all")}
-                className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-                  genderFilter === "all" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                Alle Teams
-              </button>
-              <button
-                onClick={() => setGenderFilter("wU14")}
-                className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-                  genderFilter === "wU14" ? "bg-white text-pink-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                wU14
-              </button>
-              <button
-                onClick={() => setGenderFilter("mU14")}
-                className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-                  genderFilter === "mU14" ? "bg-white text-blue-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                mU14
-              </button>
-            </div>
-
-            {/* Group Filter */}
-            <div className="flex rounded-lg bg-slate-100 p-0.5 border border-slate-200">
-              <button
-                onClick={() => setGroupFilter("all")}
-                className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-                  groupFilter === "all" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                Alle Gr.
-              </button>
-              <button
-                onClick={() => setGroupFilter("A")}
-                className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-                  groupFilter === "A" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                Gr. A
-              </button>
-              <button
-                onClick={() => setGroupFilter("B")}
-                className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-                  groupFilter === "B" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                Gr. B
-              </button>
-            </div>
-          </div>
-        )}
+      {/* Header Info */}
+      <div className="flex items-center justify-between px-1">
+        <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
+          Vorrundenspiele {selectedCategory !== "all" && `(${selectedCategory})`}
+        </span>
+        <span className="rounded-full bg-slate-100 border border-slate-200 px-2.5 py-0.5 text-[11px] font-bold text-slate-600">
+          {filteredMatches.length} {filteredMatches.length === 1 ? "Spiel" : "Spiele"}
+        </span>
       </div>
 
       {/* Match Cards List */}
       {filteredMatches.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-500 text-xs">
-          Keine Spiele für die gewählten Filterkriterien gefunden.
+          Keine Vorrundenspiele gefunden.
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
@@ -218,8 +109,8 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
                     <span
                       className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${
                         isFemale
-                          ? "bg-pink-100 text-pink-700 border border-pink-200"
-                          : "bg-blue-100 text-blue-700 border border-blue-200"
+                          ? "bg-purple-50 text-purple-700 border border-purple-200"
+                          : "bg-blue-50 text-blue-700 border border-blue-200"
                       }`}
                     >
                       {match.gender}

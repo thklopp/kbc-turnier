@@ -7,9 +7,9 @@ export function GuestLayout() {
   const hash = location.hash
 
   const isHome = location.pathname === "/"
-  const isSchedule = isHome && hash === "#schedule"
+  const isSchedule = isHome && (hash === "#vorrunde" || hash === "#schedule")
   const isStandings = isHome && hash === "#standings"
-  const isFinals = isHome && hash === "#finals"
+  const isFinals = isHome && (hash === "#finalrunde" || hash === "#finals")
   const isLive = isHome && !isSchedule && !isStandings && !isFinals
   const isInfo = location.pathname === "/info"
 
@@ -75,7 +75,7 @@ export function GuestLayout() {
               }`}
             >
               <Calendar className="h-4 w-4" />
-              <span>Spielplan</span>
+              <span>Vorrunde</span>
             </Link>
 
             <Link
@@ -87,7 +87,7 @@ export function GuestLayout() {
               }`}
             >
               <Medal className="h-4 w-4" />
-              <span>Finalphase</span>
+              <span>Finalrunde</span>
             </Link>
 
             <Link

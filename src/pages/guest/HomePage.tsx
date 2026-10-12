@@ -16,11 +16,11 @@ export function HomePage() {
 
   const hash = location.hash
   const activeTab: "live" | "schedule" | "standings" | "finals" =
-    hash === "#schedule"
+    hash === "#vorrunde" || hash === "#schedule"
       ? "schedule"
       : hash === "#standings"
       ? "standings"
-      : hash === "#finals"
+      : hash === "#finalrunde" || hash === "#finals"
       ? "finals"
       : "live"
 
