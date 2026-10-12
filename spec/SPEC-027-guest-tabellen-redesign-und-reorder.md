@@ -46,7 +46,7 @@ In der mobilen und Desktop-Gäste-Ansicht (`/`) soll die Navigation intuitiver a
 ### 3.1 Im Scope (Must-Have)
 - [x] **Reihenfolge der Tabs im Guest-Layout**: Live ➔ Spielplan ➔ Finalphase ➔ Tabellen.
 - [x] **Breite Altersklassen-Buttons (wU14 / mU14)**: Volle Breite mit Lila (wU14) und Blau (mU14).
-- [x] **Tags für Geschlecht & Gruppe in Tabellen-Kopfzeile**: Lila Akzent (wU14) und Blau Akzent (mU14).
+- [x] **Tags für Geschlecht & Gruppe in Tabellen-Kopfzeile**: Zentriert (`justify-center`) mit Lila Akzent (wU14) und Blau Akzent (mU14).
 - [x] **Grünes Tag aus Kopfzeile entfernen**: `Pl. 1 & 2 ➔ Halbfinale` entfernt.
 - [x] **Markierungen aus den Rängen entfernen**: Ränge 1 bis 4 neutral und einheitlich, grüne Zeilenmarkierung entfernt.
 - [x] **Spaltenreihenfolge Tore und Punkte tauschen**: SP ➔ Tore ➔ PKT.
@@ -72,10 +72,10 @@ In der mobilen und Desktop-Gäste-Ansicht (`/`) soll die Navigation intuitiver a
   - **Dann**: Spannen die beiden Buttons „wU14“ und „mU14“ über die gesamte Containerbreite.
   - **Und**: Bei Auswahl von „wU14“ ist der Button in Lila hinterlegt (`bg-purple-600 text-white`).
   - **Und**: Bei Auswahl von „mU14“ ist der Button in Blau hinterlegt (`bg-blue-600 text-white`).
-- [x] **AC-3: Tags für Geschlecht & Gruppe**
+- [x] **AC-3: Tags für Geschlecht & Gruppe (zentriert)**
   - **Gegeben sei**: Die Tabellenansicht für wU14 oder mU14 ist aktiv.
   - **Wenn**: Die Kopfzeile einer Gruppentabelle betrachtet wird.
-  - **Dann**: Werden zwei separate Badges angezeigt (z. B. `[wU14]` und `[Gruppe A]`).
+  - **Dann**: Werden zwei separate Badges horizontal zentriert angezeigt (z. B. `[wU14]` und `[Gruppe A]`).
   - **Und**: Bei wU14 sind beide Tags in Lila (`bg-purple-50 text-purple-700 border-purple-200`).
   - **Und**: Bei mU14 sind beide Tags in Blau (`bg-blue-50 text-blue-700 border-blue-200`).
   - **Und**: Es ist kein grünes Tag (`Pl. 1 & 2 ➔ Halbfinale`) mehr vorhanden.

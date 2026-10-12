@@ -23,7 +23,7 @@ function GroupTable({
 
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="flex items-center gap-2 border-b border-slate-200 bg-slate-50 px-4 py-3">
+      <div className="flex items-center justify-center gap-2 border-b border-slate-200 bg-slate-50 px-4 py-3">
         <span className={`rounded-md border px-2.5 py-0.5 text-xs font-bold ${tagClass}`}>
           {gender}
         </span>

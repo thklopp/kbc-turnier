@@ -40,10 +40,11 @@ describe("SPEC-027: Guest Tabellen Redesign & Nav Reorder", () => {
     assert.ok(standingsViewContent.includes("bg-blue-600 text-white"), "mU14 active button is blue")
   })
 
-  it("AC-3: Gender and group tags in table header are styled in purple (wU14) and blue (mU14)", () => {
+  it("AC-3: Gender and group tags in table header are styled in purple (wU14) and blue (mU14) and centered", () => {
     assert.ok(standingsViewContent.includes("bg-purple-50 text-purple-700"), "wU14 tags use purple")
     assert.ok(standingsViewContent.includes("bg-blue-50 text-blue-700"), "mU14 tags use blue")
     assert.ok(standingsViewContent.includes("Gruppe {group}"), "Group tag renders group name")
+    assert.ok(standingsViewContent.includes("justify-center"), "Tags in header are centered")
   })
 
   it("AC-4: Green tag (Pl. 1 & 2 -> Halbfinale) is removed from header", () => {
