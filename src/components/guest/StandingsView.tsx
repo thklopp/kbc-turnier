@@ -112,30 +112,15 @@ export function StandingsView({ teams, matches }: StandingsViewProps) {
   const mu14A = calculateGroupStandings(teams, matches, "mU14", "A")
   const mu14B = calculateGroupStandings(teams, matches, "mU14", "B")
 
-  const renderTablesForGender = (gender: GenderCategory, showHeader = false) => {
+  const renderTablesForGender = (gender: GenderCategory) => {
     const isWU14 = gender === "wU14"
     const standingsA = isWU14 ? wu14A : mu14A
     const standingsB = isWU14 ? wu14B : mu14B
 
     return (
-      <div key={gender} className="space-y-4">
-        {showHeader && (
-          <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
-            <span
-              className={`rounded-lg px-2.5 py-1 text-xs font-bold ${
-                isWU14
-                  ? "bg-purple-100 text-purple-800 border border-purple-200"
-                  : "bg-blue-100 text-blue-800 border border-blue-200"
-              }`}
-            >
-              {gender} Tabellen
-            </span>
-          </div>
-        )}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <GroupTable gender={gender} group="A" standings={standingsA} />
-          <GroupTable gender={gender} group="B" standings={standingsB} />
-        </div>
+      <div key={gender} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <GroupTable gender={gender} group="A" standings={standingsA} />
+        <GroupTable gender={gender} group="B" standings={standingsB} />
       </div>
     )
   }
@@ -178,9 +163,9 @@ export function StandingsView({ teams, matches }: StandingsViewProps) {
 
       {/* Tables for Group A and Group B */}
       {selectedCategory === "all" ? (
-        <div className="space-y-8">
-          {renderTablesForGender("wU14", true)}
-          {renderTablesForGender("mU14", true)}
+        <div className="space-y-6">
+          {renderTablesForGender("wU14")}
+          {renderTablesForGender("mU14")}
         </div>
       ) : (
         renderTablesForGender(selectedCategory)

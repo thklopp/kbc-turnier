@@ -84,7 +84,7 @@ In der mobilen und Desktop-Gäste-Ansicht (`/`) existieren derzeit folgende Inko
   - Ablösung von verbliebenen `pink-*`-Klassen durch `purple-*` für wU14 in den betroffenen Komponenten.
 - [x] **Filterbutton 'Alle' in Tabellen-Ansicht (`StandingsView`)**:
   - Erweiterung des Umschalters auf der Seite Tabellen um den Button „Alle“ (3-Segment-Buttons: `Alle`, `wU14`, `mU14`).
-  - Bei Auswahl von „Alle“ werden die Gruppentabellen beider Konkurrenzen (wU14 Gruppe A & B sowie mU14 Gruppe A & B) mit Abschnitts-Badges untereinander dargestellt.
+  - Bei Auswahl von „Alle“ werden die Gruppentabellen beider Konkurrenzen (wU14 Gruppe A & B sowie mU14 Gruppe A & B) direkt und aufgeräumt untereinander dargestellt (ohne redundante Zwischen-Tags „wU14 Tabellen“ / „mU14 Tabellen“, da jede Tabelle bereits ihre eigenen Header-Badges führt).
 
 ### 3.2 Explizit Out-of-Scope
 - Änderungen an der Kiosk- oder Admin-Ansicht.
@@ -133,7 +133,7 @@ In der mobilen und Desktop-Gäste-Ansicht (`/`) existieren derzeit folgende Inko
   - **Gegeben sei**: Der Nutzer befindet sich auf der Seite `Tabellen`.
   - **Wenn**: Die Seite geladen wird.
   - **Dann**: Enthält der Filterbalken oben drei Buttons: `Alle`, `wU14`, `mU14`.
-  - **Und**: Bei Auswahl von `Alle` werden die Tabellen beider Geschlechter (wU14 Gruppe A & B sowie mU14 Gruppe A & B) untereinander mit Kennzeichnung dargestellt.
+  - **Und**: Bei Auswahl von `Alle` werden die Tabellen beider Geschlechter (wU14 Gruppe A & B sowie mU14 Gruppe A & B) direkt und übersichtlich untereinander ohne überflüssige Header-Tags („wU14 Tabellen“ / „mU14 Tabellen“) dargestellt.
   - **Und**: Bei Klick auf `wU14` bzw. `mU14` werden nur die beiden Tabellen der gewählten Klasse angezeigt.
 
 ### 4.2 Allgemeine Qualitätskriterien
