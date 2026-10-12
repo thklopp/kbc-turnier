@@ -1,6 +1,6 @@
 # SPEC-025: Automatische Zuordnung der Finalrunden-Paarungen aus Tabellen & Vorrundenspielen
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature  
 > **Branch**: feat/SPEC-025-automatische-finalrunden-zuordnung  
 > **Autor**: Antigravity Agent  
