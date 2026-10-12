@@ -22,9 +22,21 @@ describe("SPEC-030: Finalrunde Sortierung nach Spielnummer & Entfernung der Übe
   })
 
   it("AC-2: Category switcher Alle, wU14, mU14 is present and filters matches", () => {
-    assert.ok(finalsBracketContent.includes('onClick={() => setSelectedCategory("all")}'), "Alle button exists")
-    assert.ok(finalsBracketContent.includes('onClick={() => setSelectedCategory("wU14")}'), "wU14 button exists")
-    assert.ok(finalsBracketContent.includes('onClick={() => setSelectedCategory("mU14")}'), "mU14 button exists")
+    assert.ok(
+      finalsBracketContent.includes('onClick={() => onSelectCategory("all")}') ||
+      finalsBracketContent.includes('onClick={() => setSelectedCategory("all")}'),
+      "Alle button exists"
+    )
+    assert.ok(
+      finalsBracketContent.includes('onClick={() => onSelectCategory("wU14")}') ||
+      finalsBracketContent.includes('onClick={() => setSelectedCategory("wU14")}'),
+      "wU14 button exists"
+    )
+    assert.ok(
+      finalsBracketContent.includes('onClick={() => onSelectCategory("mU14")}') ||
+      finalsBracketContent.includes('onClick={() => setSelectedCategory("mU14")}'),
+      "mU14 button exists"
+    )
     assert.ok(
       finalsBracketContent.includes('selectedCategory === "all" ? true : m.gender === selectedCategory'),
       "Filters matches by category"

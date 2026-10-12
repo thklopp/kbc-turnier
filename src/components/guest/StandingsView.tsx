@@ -1,10 +1,11 @@
-import { useState } from "react"
 import type { Team, Match, GenderCategory, TournamentGroup } from "@/types/database"
 import { calculateGroupStandings } from "@/services/standingsService"
 
 interface StandingsViewProps {
   teams: Team[]
   matches: Match[]
+  selectedCategory: "all" | GenderCategory
+  onSelectCategory: (category: "all" | GenderCategory) => void
 }
 
 function GroupTable({
@@ -104,9 +105,12 @@ function GroupTable({
   )
 }
 
-export function StandingsView({ teams, matches }: StandingsViewProps) {
-  const [selectedCategory, setSelectedCategory] = useState<"all" | GenderCategory>("all")
-
+export function StandingsView({
+  teams,
+  matches,
+  selectedCategory,
+  onSelectCategory,
+}: StandingsViewProps) {
   const wu14A = calculateGroupStandings(teams, matches, "wU14", "A")
   const wu14B = calculateGroupStandings(teams, matches, "wU14", "B")
   const mu14A = calculateGroupStandings(teams, matches, "mU14", "A")
@@ -130,7 +134,7 @@ export function StandingsView({ teams, matches }: StandingsViewProps) {
       {/* Category Switcher */}
       <div className="flex w-full rounded-xl bg-slate-100 p-1 border border-slate-200">
         <button
-          onClick={() => setSelectedCategory("all")}
+          onClick={() => onSelectCategory("all")}
           className={`flex-1 rounded-lg py-2 text-center text-xs sm:text-sm font-bold transition-all cursor-pointer ${
             selectedCategory === "all"
               ? "bg-slate-800 text-white shadow-sm"
@@ -140,7 +144,7 @@ export function StandingsView({ teams, matches }: StandingsViewProps) {
           Alle
         </button>
         <button
-          onClick={() => setSelectedCategory("wU14")}
+          onClick={() => onSelectCategory("wU14")}
           className={`flex-1 rounded-lg py-2 text-center text-xs sm:text-sm font-bold transition-all cursor-pointer ${
             selectedCategory === "wU14"
               ? "bg-purple-600 text-white shadow-sm"
@@ -150,7 +154,7 @@ export function StandingsView({ teams, matches }: StandingsViewProps) {
           wU14
         </button>
         <button
-          onClick={() => setSelectedCategory("mU14")}
+          onClick={() => onSelectCategory("mU14")}
           className={`flex-1 rounded-lg py-2 text-center text-xs sm:text-sm font-bold transition-all cursor-pointer ${
             selectedCategory === "mU14"
               ? "bg-blue-600 text-white shadow-sm"
