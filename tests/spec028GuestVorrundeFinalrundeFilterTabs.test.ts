@@ -90,4 +90,11 @@ describe("SPEC-028: Guest Vorrunde / Finalrunde & 3-Segment Filter Buttons", () 
     assert.ok(standingsViewContent.includes('renderTablesForGender("wU14")'), "Renders wU14 tables when Alle")
     assert.ok(standingsViewContent.includes('renderTablesForGender("mU14")'), "Renders mU14 tables when Alle")
   })
+
+  it("AC-7: Vorrunde cards remove match name and spell out Gruppe in colored tags", () => {
+    assert.ok(!scheduleViewContent.includes("getMatchDisplayName"), "No match display name in Vorrunde cards")
+    assert.ok(!scheduleViewContent.includes("Gr. {match.group}"), "Gr. abbreviation is removed")
+    assert.ok(scheduleViewContent.includes("Gruppe {match.group}"), "Gruppe is spelled out")
+    assert.ok(scheduleViewContent.includes("tagClass"), "tagClass used for both gender and group tags")
+  })
 })

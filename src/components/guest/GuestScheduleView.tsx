@@ -1,6 +1,5 @@
 import { useState } from "react"
 import type { Match, Team, GenderCategory } from "@/types/database"
-import { getMatchDisplayName } from "@/services/matchService"
 
 interface GuestScheduleViewProps {
   matches: Match[]
@@ -81,6 +80,9 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
             const isLive = match.status === "live"
             const isPaused = match.status === "paused"
             const isFinished = match.status === "finished"
+            const tagClass = isFemale
+              ? "bg-purple-50 text-purple-700 border-purple-200"
+              : "bg-blue-50 text-blue-700 border-blue-200"
 
             return (
               <div
@@ -95,30 +97,18 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
               >
                 {/* Header bar of the card */}
                 <div className="flex items-center justify-between gap-2 text-xs pb-2.5 mb-2.5 border-b border-slate-100">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="font-mono font-medium text-slate-900 text-sm shrink-0">
-                      {match.scheduledTime} Uhr
-                    </span>
-                    <span className="text-slate-300 shrink-0">&bull;</span>
-                    <span className="truncate text-xs font-semibold text-slate-700" title={getMatchDisplayName(match)}>
-                      {getMatchDisplayName(match)}
-                    </span>
-                  </div>
+                  <span className="font-mono font-medium text-slate-900 text-sm shrink-0">
+                    {match.scheduledTime} Uhr
+                  </span>
 
                   <div className="flex items-center gap-1.5 shrink-0">
-                    <span
-                      className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${
-                        isFemale
-                          ? "bg-purple-50 text-purple-700 border border-purple-200"
-                          : "bg-blue-50 text-blue-700 border border-blue-200"
-                      }`}
-                    >
+                    <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold border ${tagClass}`}>
                       {match.gender}
                     </span>
 
                     {match.phase === "group" && (
-                      <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-bold text-slate-700">
-                        Gr. {match.group}
+                      <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold border ${tagClass}`}>
+                        Gruppe {match.group}
                       </span>
                     )}
                   </div>

@@ -75,6 +75,7 @@ In der mobilen und Desktop-Gäste-Ansicht (`/`) existieren derzeit folgende Inko
   - Filter `"wU14"`: 12 Vorrundenspiele der wU14.
   - Filter `"mU14"`: 12 Vorrundenspiele der mU14.
   - Header/Zähler aktualisiert auf „Vorrunde“ (z. B. „Vorrunde • X Spiele“).
+  - Bereinigung der Spielkarten: Entfernung der Spielnamen („Gruppenspiel #1“ etc.), Ausschreiben der Gruppen („Gruppe A“ / „Gruppe B“) sowie einheitliche Einfärbung beider Badges (Geschlecht und Gruppe) in Lila (wU14) bzw. Blau (mU14).
 - [x] **Filterlogik & Darstellung in Finalrunde (`FinalsBracketView`)**:
   - Filter `"all"`: Anzeige beider Konkurrenzen (wU14 und mU14) mit klaren Bereichsüberschriften und Badges.
   - Filter `"wU14"`: Nur Finalspiele der wU14 (Halbfinals, Platzierungs- und Medaillenspiele).
@@ -135,6 +136,13 @@ In der mobilen und Desktop-Gäste-Ansicht (`/`) existieren derzeit folgende Inko
   - **Dann**: Enthält der Filterbalken oben drei Buttons: `Alle`, `wU14`, `mU14`.
   - **Und**: Bei Auswahl von `Alle` werden die Tabellen beider Geschlechter (wU14 Gruppe A & B sowie mU14 Gruppe A & B) direkt und übersichtlich untereinander ohne überflüssige Header-Tags („wU14 Tabellen“ / „mU14 Tabellen“) dargestellt.
   - **Und**: Bei Klick auf `wU14` bzw. `mU14` werden nur die beiden Tabellen der gewählten Klasse angezeigt.
+
+- [x] **AC-7: Vorrunden-Karten ohne Spielnamen & farbige Tags mit Gruppe**
+  - **Gegeben sei**: Eine Spielkarte auf der Seite `Vorrunde`.
+  - **Wenn**: Der Header der Karte betrachtet wird.
+  - **Dann**: Enthält er links lediglich die Anstoßzeit (`{scheduledTime} Uhr`) und keinen Spielnamen („Gruppenspiel #...“).
+  - **Und**: Die Tags rechts zeigen das Geschlecht (`wU14` oder `mU14`) und die Gruppe ausgeschrieben (`Gruppe A` oder `Gruppe B`).
+  - **Und**: Beide Tags sind bei wU14 in Lila (`bg-purple-50 text-purple-700 border-purple-200`) und bei mU14 in Blau (`bg-blue-50 text-blue-700 border-blue-200`) formatiert.
 
 ### 4.2 Allgemeine Qualitätskriterien
 - [x] TypeScript strikt ohne `any`.
