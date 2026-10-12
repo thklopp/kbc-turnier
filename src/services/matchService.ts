@@ -258,12 +258,12 @@ export async function generateTournamentSchedule(
   }
 
   const sundayBlocks: FinalDefinition[][] = [
-    // Block 1 (Spiele 25-28): Platzierungs-Qualifikation 5-8 (2x wU14, 2x mU14)
+    // Block 1 (Spiele 25-28): Platzierungsspiele (2x wU14, 2x mU14)
     [
-      { gender: "wU14", finalType: "placement_7_8", matchName: "Qualifikation 5-8", homePlaceholder: "3. Gruppe A", awayPlaceholder: "4. Gruppe B" },
-      { gender: "wU14", finalType: "placement_7_8", matchName: "Qualifikation 5-8", homePlaceholder: "3. Gruppe B", awayPlaceholder: "4. Gruppe A" },
-      { gender: "mU14", finalType: "placement_7_8", matchName: "Qualifikation 5-8", homePlaceholder: "3. Gruppe A", awayPlaceholder: "4. Gruppe B" },
-      { gender: "mU14", finalType: "placement_7_8", matchName: "Qualifikation 5-8", homePlaceholder: "3. Gruppe B", awayPlaceholder: "4. Gruppe A" },
+      { gender: "wU14", finalType: "placement_7_8", matchName: "Platzierungsspiel 1", homePlaceholder: "3. Gruppe A", awayPlaceholder: "4. Gruppe B" },
+      { gender: "wU14", finalType: "placement_7_8", matchName: "Platzierungsspiel 2", homePlaceholder: "3. Gruppe B", awayPlaceholder: "4. Gruppe A" },
+      { gender: "mU14", finalType: "placement_7_8", matchName: "Platzierungsspiel 1", homePlaceholder: "3. Gruppe A", awayPlaceholder: "4. Gruppe B" },
+      { gender: "mU14", finalType: "placement_7_8", matchName: "Platzierungsspiel 2", homePlaceholder: "3. Gruppe B", awayPlaceholder: "4. Gruppe A" },
     ],
     // Block 2 (Spiele 29-32): Halbfinals (2x wU14, 2x mU14)
     [
@@ -272,19 +272,19 @@ export async function generateTournamentSchedule(
       { gender: "mU14", finalType: "semi_final", matchName: "Halbfinale 1", homePlaceholder: "1. Gruppe A", awayPlaceholder: "2. Gruppe B" },
       { gender: "mU14", finalType: "semi_final", matchName: "Halbfinale 2", homePlaceholder: "1. Gruppe B", awayPlaceholder: "2. Gruppe A" },
     ],
-    // Block 3 (Spiele 33-36): Platzierungsspiele Platz 7/8 und Platz 5/6 (2x wU14, 2x mU14)
+    // Block 3 (Spiele 33-36): Platzierungsspiele Platz 7 und Platz 5 (2x wU14, 2x mU14)
     [
-      { gender: "wU14", finalType: "placement_7_8", matchName: "Spiel um Platz 7", homePlaceholder: "Verlierer Pl. 1 (w)", awayPlaceholder: "Verlierer Pl. 2 (w)" },
-      { gender: "wU14", finalType: "placement_5_6", matchName: "Spiel um Platz 5", homePlaceholder: "Gewinner Pl. 1 (w)", awayPlaceholder: "Gewinner Pl. 2 (w)" },
-      { gender: "mU14", finalType: "placement_7_8", matchName: "Spiel um Platz 7", homePlaceholder: "Verlierer Pl. 1 (m)", awayPlaceholder: "Verlierer Pl. 2 (m)" },
-      { gender: "mU14", finalType: "placement_5_6", matchName: "Spiel um Platz 5", homePlaceholder: "Gewinner Pl. 1 (m)", awayPlaceholder: "Gewinner Pl. 2 (m)" },
+      { gender: "wU14", finalType: "placement_7_8", matchName: "Spiel um Platz 7", homePlaceholder: "Verlierer Spiel 25", awayPlaceholder: "Verlierer Spiel 26" },
+      { gender: "wU14", finalType: "placement_5_6", matchName: "Spiel um Platz 5", homePlaceholder: "Sieger Spiel 25", awayPlaceholder: "Sieger Spiel 26" },
+      { gender: "mU14", finalType: "placement_7_8", matchName: "Spiel um Platz 7", homePlaceholder: "Verlierer Spiel 27", awayPlaceholder: "Verlierer Spiel 28" },
+      { gender: "mU14", finalType: "placement_5_6", matchName: "Spiel um Platz 5", homePlaceholder: "Sieger Spiel 27", awayPlaceholder: "Sieger Spiel 28" },
     ],
     // Block 4 (Spiele 37-40): Medaillenspiele: Kleines Finale & Großes Finale (2x wU14, 2x mU14)
     [
-      { gender: "wU14", finalType: "placement_3_4", matchName: "Spiel um Platz 3", homePlaceholder: "Verlierer HF 1 (w)", awayPlaceholder: "Verlierer HF 2 (w)" },
-      { gender: "wU14", finalType: "final", matchName: "Finale", homePlaceholder: "Sieger HF 1 (w)", awayPlaceholder: "Sieger HF 2 (w)" },
-      { gender: "mU14", finalType: "placement_3_4", matchName: "Spiel um Platz 3", homePlaceholder: "Verlierer HF 1 (m)", awayPlaceholder: "Verlierer HF 2 (m)" },
-      { gender: "mU14", finalType: "final", matchName: "Finale", homePlaceholder: "Sieger HF 1 (m)", awayPlaceholder: "Sieger HF 2 (m)" },
+      { gender: "wU14", finalType: "placement_3_4", matchName: "Spiel um Platz 3", homePlaceholder: "Verlierer HF 1", awayPlaceholder: "Verlierer HF 2" },
+      { gender: "wU14", finalType: "final", matchName: "Finale", homePlaceholder: "Sieger HF 1", awayPlaceholder: "Sieger HF 2" },
+      { gender: "mU14", finalType: "placement_3_4", matchName: "Spiel um Platz 3", homePlaceholder: "Verlierer HF 1", awayPlaceholder: "Verlierer HF 2" },
+      { gender: "mU14", finalType: "final", matchName: "Finale", homePlaceholder: "Sieger HF 1", awayPlaceholder: "Sieger HF 2" },
     ],
   ]
 

@@ -137,11 +137,11 @@ describe("SPEC-012: Spielplan-Kompaktierung, Spielnamen & Fallbacks", () => {
       assert.equal(match.matchName, `Gruppenspiel #${match.matchNumber}`)
     }
 
-    // Qualifikation 5-8 (Spiele 25-28)
-    assert.equal(matches[24].matchName, "Qualifikation 5-8")
-    assert.equal(matches[25].matchName, "Qualifikation 5-8")
-    assert.equal(matches[26].matchName, "Qualifikation 5-8")
-    assert.equal(matches[27].matchName, "Qualifikation 5-8")
+    // Platzierungsspiele (Spiele 25-28)
+    assert.equal(matches[24].matchName, "Platzierungsspiel 1")
+    assert.equal(matches[25].matchName, "Platzierungsspiel 2")
+    assert.equal(matches[26].matchName, "Platzierungsspiel 1")
+    assert.equal(matches[27].matchName, "Platzierungsspiel 2")
 
     // Halbfinals (Spiele 29-32)
     assert.equal(matches[28].matchName, "Halbfinale 1")

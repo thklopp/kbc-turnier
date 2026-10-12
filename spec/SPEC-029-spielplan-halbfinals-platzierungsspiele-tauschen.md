@@ -52,34 +52,34 @@ Die Halbfinalspiele und die ersten Platzierungsspiele (Qualifikation 5–8) werd
 ### 3.1 Im Scope (Must-Have)
 - [x] **Anpassung der Spielplan-Generierung (`generateTournamentSchedule` in `src/services/matchService.ts`)**:
   - **Block 1 (Spiele 25–28)** neu:
-    - Spiel 25: `gender: "wU14"`, `finalType: "placement_7_8"`, `matchName: "Qualifikation 5-8"`, `homePlaceholder: "3. Gruppe A"`, `awayPlaceholder: "4. Gruppe B"`
-    - Spiel 26: `gender: "wU14"`, `finalType: "placement_7_8"`, `matchName: "Qualifikation 5-8"`, `homePlaceholder: "3. Gruppe B"`, `awayPlaceholder: "4. Gruppe A"`
-    - Spiel 27: `gender: "mU14"`, `finalType: "placement_7_8"`, `matchName: "Qualifikation 5-8"`, `homePlaceholder: "3. Gruppe A"`, `awayPlaceholder: "4. Gruppe B"`
-    - Spiel 28: `gender: "mU14"`, `finalType: "placement_7_8"`, `matchName: "Qualifikation 5-8"`, `homePlaceholder: "3. Gruppe B"`, `awayPlaceholder: "4. Gruppe A"`
+    - Spiel 25: `gender: "wU14"`, `finalType: "placement_7_8"`, `matchName: "Platzierungsspiel 1"`, `homePlaceholder: "3. Gruppe A"`, `awayPlaceholder: "4. Gruppe B"`
+    - Spiel 26: `gender: "wU14"`, `finalType: "placement_7_8"`, `matchName: "Platzierungsspiel 2"`, `homePlaceholder: "3. Gruppe B"`, `awayPlaceholder: "4. Gruppe A"`
+    - Spiel 27: `gender: "mU14"`, `finalType: "placement_7_8"`, `matchName: "Platzierungsspiel 1"`, `homePlaceholder: "3. Gruppe A"`, `awayPlaceholder: "4. Gruppe B"`
+    - Spiel 28: `gender: "mU14"`, `finalType: "placement_7_8"`, `matchName: "Platzierungsspiel 2"`, `homePlaceholder: "3. Gruppe B"`, `awayPlaceholder: "4. Gruppe A"`
   - **Block 2 (Spiele 29–32)** neu:
     - Spiel 29: `gender: "wU14"`, `finalType: "semi_final"`, `matchName: "Halbfinale 1"`, `homePlaceholder: "1. Gruppe A"`, `awayPlaceholder: "2. Gruppe B"`
     - Spiel 30: `gender: "wU14"`, `finalType: "semi_final"`, `matchName: "Halbfinale 2"`, `homePlaceholder: "1. Gruppe B"`, `awayPlaceholder: "2. Gruppe A"`
     - Spiel 31: `gender: "mU14"`, `finalType: "semi_final"`, `matchName: "Halbfinale 1"`, `homePlaceholder: "1. Gruppe A"`, `awayPlaceholder: "2. Gruppe B"`
     - Spiel 32: `gender: "mU14"`, `finalType: "semi_final"`, `matchName: "Halbfinale 2"`, `homePlaceholder: "1. Gruppe B"`, `awayPlaceholder: "2. Gruppe A"`
   - **Block 3 (Spiele 33–36)**:
-    - Spiel 33: Spiel um Platz 7 (wU14) – Verlierer Spiel 25 vs. Verlierer Spiel 26
-    - Spiel 34: Spiel um Platz 5 (wU14) – Sieger Spiel 25 vs. Sieger Spiel 26
-    - Spiel 35: Spiel um Platz 7 (mU14) – Verlierer Spiel 27 vs. Verlierer Spiel 28
-    - Spiel 36: Spiel um Platz 5 (mU14) – Sieger Spiel 27 vs. Sieger Spiel 28
+    - Spiel 33: `matchName: "Spiel um Platz 7"` (wU14) – `homePlaceholder: "Verlierer Spiel 25"`, `awayPlaceholder: "Verlierer Spiel 26"`
+    - Spiel 34: `matchName: "Spiel um Platz 5"` (wU14) – `homePlaceholder: "Sieger Spiel 25"`, `awayPlaceholder: "Sieger Spiel 26"`
+    - Spiel 35: `matchName: "Spiel um Platz 7"` (mU14) – `homePlaceholder: "Verlierer Spiel 27"`, `awayPlaceholder: "Verlierer Spiel 28"`
+    - Spiel 36: `matchName: "Spiel um Platz 5"` (mU14) – `homePlaceholder: "Sieger Spiel 27"`, `awayPlaceholder: "Sieger Spiel 28"`
   - **Block 4 (Spiele 37–40)**:
-    - Spiel 37: Spiel um Platz 3 (wU14) – Verlierer Spiel 29 vs. Verlierer Spiel 30
-    - Spiel 38: Finale (wU14) – Sieger Spiel 29 vs. Sieger Spiel 30
-    - Spiel 39: Spiel um Platz 3 (mU14) – Verlierer Spiel 31 vs. Verlierer Spiel 32
-    - Spiel 40: Finale (mU14) – Sieger Spiel 31 vs. Sieger Spiel 32
+    - Spiel 37: `matchName: "Spiel um Platz 3"` (wU14) – `homePlaceholder: "Verlierer HF 1"`, `awayPlaceholder: "Verlierer HF 2"`
+    - Spiel 38: `matchName: "Finale"` (wU14) – `homePlaceholder: "Sieger HF 1"`, `awayPlaceholder: "Sieger HF 2"`
+    - Spiel 39: `matchName: "Spiel um Platz 3"` (mU14) – `homePlaceholder: "Verlierer HF 1"`, `awayPlaceholder: "Verlierer HF 2"`
+    - Spiel 40: `matchName: "Finale"` (mU14) – `homePlaceholder: "Sieger HF 1"`, `awayPlaceholder: "Sieger HF 2"`
 
 - [x] **Anpassung des Progressions-Services (`matchProgressionService.ts`)**:
   - Vorrunden-Tabellenabschluss Stufe 1:
     - 3. & 4. Plätze fließen in Spiele 25, 26 (wU14) bzw. 27, 28 (mU14)
     - 1. & 2. Plätze fließen in Spiele 29, 30 (wU14) bzw. 31, 32 (mU14)
   - K.o.-Abschluss Stufe 2:
-    - Sieger/Verlierer der Quali-Spiele 25 & 26 fließen in Spiel 34 (Platz 5) und Spiel 33 (Platz 7)
+    - Sieger/Verlierer der Platzierungsspiele 25 & 26 fließen in Spiel 34 (Platz 5) und Spiel 33 (Platz 7)
     - Sieger/Verlierer der Halbfinals 29 & 30 fließen in Spiel 38 (Finale) und Spiel 37 (Platz 3)
-    - Sieger/Verlierer der Quali-Spiele 27 & 28 fließen in Spiel 36 (Platz 5) und Spiel 35 (Platz 7)
+    - Sieger/Verlierer der Platzierungsspiele 27 & 28 fließen in Spiel 36 (Platz 5) und Spiel 35 (Platz 7)
     - Sieger/Verlierer der Halbfinals 31 & 32 fließen in Spiel 40 (Finale) und Spiel 39 (Platz 3)
 
 - [x] **Aktualisierung bestehender Tests (`tests/spec025FinalRoundProgression.test.ts`, `tests/spec012SpielplanAnpassungen.test.ts`)**:
@@ -97,9 +97,10 @@ Die Halbfinalspiele und die ersten Platzierungsspiele (Qualifikation 5–8) werd
 - [x] **AC-1: Geänderte Spielplan-Reihenfolge am Sonntag**
   - **Gegeben sei**: Ein neu generierter Spielplan.
   - **Dann**:
-    - Haben die Spiele 25 und 26 (wU14) sowie 27 und 28 (mU14) die Bezeichnung `"Qualifikation 5-8"` und den Typ `"placement_7_8"`.
+    - Haben die Spiele 25 und 26 (wU14) sowie 27 und 28 (mU14) die Bezeichnung `"Platzierungsspiel 1"` / `"Platzierungsspiel 2"` und den Typ `"placement_7_8"`.
     - Haben die Spiele 29 und 30 (wU14) sowie 31 und 32 (mU14) die Bezeichnung `"Halbfinale 1"` / `"Halbfinale 2"` und den Typ `"semi_final"`.
-    - Behalten Spiele 33–36 die Platzierungsspiele 7 & 5 und Spiele 37–40 Spiel um Platz 3 & Finale.
+    - Haben Spiele 33 und 35 die Bezeichnung `"Spiel um Platz 7"` und Spiele 34 und 36 `"Spiel um Platz 5"`.
+    - Haben Spiele 37 und 39 die Bezeichnung `"Spiel um Platz 3"` und Spiele 38 und 40 `"Finale"`.
 
 - [x] **AC-2: Korrekte Zuordnung der Vorrundengruppen-Platzierungen**
   - **Gegeben sei**: Alle Vorrundenspiele einer Altersklasse sind beendet.
