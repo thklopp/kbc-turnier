@@ -1,14 +1,18 @@
-import { useState } from "react"
 import type { Match, Team, GenderCategory } from "@/types/database"
 
 interface GuestScheduleViewProps {
   matches: Match[]
   teams: Team[]
+  selectedCategory: "all" | GenderCategory
+  onSelectCategory: (category: "all" | GenderCategory) => void
 }
 
-export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
-  const [selectedCategory, setSelectedCategory] = useState<"all" | GenderCategory>("all")
-
+export function GuestScheduleView({
+  matches,
+  teams,
+  selectedCategory,
+  onSelectCategory,
+}: GuestScheduleViewProps) {
   const teamMap = new Map<string, Team>()
   teams.forEach((t) => teamMap.set(t.id, t))
 
@@ -25,7 +29,7 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
       {/* Category Filter Switcher */}
       <div className="flex w-full rounded-xl bg-slate-100 p-1 border border-slate-200">
         <button
-          onClick={() => setSelectedCategory("all")}
+          onClick={() => onSelectCategory("all")}
           className={`flex-1 rounded-lg py-2 text-center text-xs sm:text-sm font-bold transition-all cursor-pointer ${
             selectedCategory === "all"
               ? "bg-slate-800 text-white shadow-sm"
@@ -35,7 +39,7 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
           Alle
         </button>
         <button
-          onClick={() => setSelectedCategory("wU14")}
+          onClick={() => onSelectCategory("wU14")}
           className={`flex-1 rounded-lg py-2 text-center text-xs sm:text-sm font-bold transition-all cursor-pointer ${
             selectedCategory === "wU14"
               ? "bg-purple-600 text-white shadow-sm"
@@ -45,7 +49,7 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
           wU14
         </button>
         <button
-          onClick={() => setSelectedCategory("mU14")}
+          onClick={() => onSelectCategory("mU14")}
           className={`flex-1 rounded-lg py-2 text-center text-xs sm:text-sm font-bold transition-all cursor-pointer ${
             selectedCategory === "mU14"
               ? "bg-blue-600 text-white shadow-sm"

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { useLocation } from "react-router-dom"
-import type { Match, Team } from "@/types/database"
+import type { Match, Team, GenderCategory } from "@/types/database"
 import { subscribeMatches } from "@/services/matchService"
 import { subscribeTeams } from "@/services/teamService"
 import { LiveHeroCard } from "@/components/guest/LiveHeroCard"
@@ -13,6 +13,25 @@ export function HomePage() {
   const [matches, setMatches] = useState<Match[]>([])
   const [teams, setTeams] = useState<Team[]>([])
   const [loading, setLoading] = useState(true)
+
+  const [selectedCategory, setSelectedCategory] = useState<"all" | GenderCategory>(() => {
+    try {
+      const saved = sessionStorage.getItem("kbc_guest_filter")
+      if (saved === "wU14" || saved === "mU14") return saved
+    } catch {
+      // fallback in private mode or SSR
+    }
+    return "all"
+  })
+
+  const handleCategoryChange = (category: "all" | GenderCategory) => {
+    setSelectedCategory(category)
+    try {
+      sessionStorage.setItem("kbc_guest_filter", category)
+    } catch {
+      // fallback
+    }
+  }
 
   const hash = location.hash
   const activeTab: "live" | "schedule" | "standings" | "finals" =
@@ -66,19 +85,34 @@ export function HomePage() {
 
       {activeTab === "schedule" && (
         <section>
-          <GuestScheduleView matches={matches} teams={teams} />
+          <GuestScheduleView
+            matches={matches}
+            teams={teams}
+            selectedCategory={selectedCategory}
+            onSelectCategory={handleCategoryChange}
+          />
         </section>
       )}
 
       {activeTab === "finals" && (
         <section>
-          <FinalsBracketView matches={matches} teams={teams} />
+          <FinalsBracketView
+            matches={matches}
+            teams={teams}
+            selectedCategory={selectedCategory}
+            onSelectCategory={handleCategoryChange}
+          />
         </section>
       )}
 
       {activeTab === "standings" && (
         <section>
-          <StandingsView teams={teams} matches={matches} />
+          <StandingsView
+            teams={teams}
+            matches={matches}
+            selectedCategory={selectedCategory}
+            onSelectCategory={handleCategoryChange}
+          />
         </section>
       )}
     </div>
