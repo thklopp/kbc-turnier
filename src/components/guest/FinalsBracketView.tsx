@@ -101,21 +101,6 @@ export function FinalsBracketView({ matches, teams }: FinalsBracketViewProps) {
 
     return (
       <div key={gender} className="space-y-6">
-        {/* Section Header if 'all' is selected */}
-        {selectedCategory === "all" && (
-          <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
-            <span
-              className={`rounded-lg px-2.5 py-1 text-xs font-bold ${
-                isFemale
-                  ? "bg-purple-100 text-purple-800 border border-purple-200"
-                  : "bg-blue-100 text-blue-800 border border-blue-200"
-              }`}
-            >
-              {gender} Finalrunde
-            </span>
-          </div>
-        )}
-
         {/* Halbfinals */}
         {semiFinals.length > 0 && (
           <div>

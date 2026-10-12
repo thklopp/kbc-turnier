@@ -72,11 +72,12 @@ describe("SPEC-028: Guest Vorrunde / Finalrunde & 3-Segment Filter Buttons", () 
     assert.ok(!scheduleViewContent.includes("bg-pink-100 text-pink-700"), "Pink badge removed")
   })
 
-  it("AC-5: Finalrunde view renders gender badges on cards and supports 'all'", () => {
+  it("AC-5: Finalrunde view renders gender badges on cards and supports 'all' without redundant section tags", () => {
     assert.ok(finalsViewContent.includes("bg-purple-50 text-purple-700"), "wU14 badge uses purple")
     assert.ok(finalsViewContent.includes("bg-blue-50 text-blue-700"), "mU14 badge uses blue")
     assert.ok(finalsViewContent.includes('renderGenderSection("wU14")'), "Renders wU14 section when all is selected")
     assert.ok(finalsViewContent.includes('renderGenderSection("mU14")'), "Renders mU14 section when all is selected")
+    assert.ok(!finalsViewContent.includes("Finalrunde</span>"), "No redundant Finalrunde section header tags")
   })
 
   it("AC-6: Standings view also has Alle button and renders both genders without redundant header tags", () => {
