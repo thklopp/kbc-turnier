@@ -1,4 +1,4 @@
-# SPEC-030: Finalrunde in Gästeansicht nach Spielnummer sortieren und Zwischenüberschriften entfernen
+# SPEC-030: Finalrunde nach Spielnummer sortieren sowie Überschriften und Spielanzahl in Vorrunde & Finalrunde entfernen
 
 > **Status**: In Abnahme  
 > **Typ**: Optimierung / UI-Redesign  
@@ -6,54 +6,42 @@
 > **Autor**: Antigravity Agent  
 > **Erstellt am**: 2026-10-12  
 > **Letzte Änderung**: 2026-10-12  
-> **Betroffene Bereiche**: Gast-Ansicht (/) – `FinalsBracketView.tsx`  
+> **Betroffene Bereiche**: Gast-Ansicht (/) – `FinalsBracketView.tsx`, `GuestScheduleView.tsx`  
 
 ---
 
 ## 1. Übersicht & Zielsetzung
 
 ### 1.1 Problemstellung / Kontext
-Auf der Seite **Finalrunde** der Gästeansicht (`/#finals` / `FinalsBracketView.tsx`) wurden die Finalspiele bisher nicht nach Spielnummer bzw. chronologischer Reihenfolge angezeigt, sondern:
-1. Nach Geschlecht gruppiert (erst alle 8 wU14-Spiele, danach alle 8 mU14-Spiele),
-2. Innerhalb jedes Geschlechts durch Zwischenüberschriften („Halbfinals“ und „Medaillenspiele & Endplatzierungen“) unterteilt.
-
-Dadurch traten folgende Probleme auf:
-- In der Gesamtansicht („Alle“) wurden wU14 und mU14 blockweise getrennt, obwohl die Spiele am Turniertag im 2er-Wechsel stattfinden.
-- Halbfinals wurden vor den Platzierungsspielen gerendert, obwohl die Platzierungsspiele (Spiele #25–#28) zeitlich und von der Spielnummer her vor den Halbfinals (#29–#32) ausgetragen werden.
-- Die Zwischenüberschriften erzeugten unnötigen visuellen Ballast auf Mobil- und Desktop-Geräten.
+Auf den Seiten **Vorrunde** (`/#schedule`) und **Finalrunde** (`/#finals`) der Gästeansicht existierten bisher unterhalb der Filter-Schaltflächen (Alle | wU14 | mU14) jeweils Zwischenzeilen mit Überschriften („Vorrundenspiele (wU14)“ bzw. „Finalspiele (wU14)“) und der Spielanzahl („12 Spiele“ / „16 Spiele“).
+Zudem waren auf der Seite Finalrunde die Spiele nicht nach Spielnummer sortiert und durch weitere Zwischenüberschriften unterteilt.
 
 ### 1.2 Zielzustand & Mehrwert
-- **Sortierung nach Spielnummer**: Alle Finalspiele werden streng aufsteigend nach `matchNumber` sortiert (Spiele #25 bis #40), sodass der reale chronologische Ablauf des Finaltags abgebildet wird.
-- **Entfernung der Zwischenüberschriften**: Die Abschnitte „Halbfinals“ und „Medaillenspiele & Endplatzierungen“ sowie die Geschlechter-Zwischenüberschriften werden vollständig entfernt.
-- **Einheitliches Layout**: Die Spiele werden in einem konsistenten 2-Spalten-Grid (`grid grid-cols-1 md:grid-cols-2 gap-3.5`) analog zur Vorrundenansicht (`GuestScheduleView.tsx`) dargestellt.
-- **Kategorie-Filter**: Die Umschalter „Alle“, „wU14“ und „mU14“ bleiben voll funktionsfähig und filtern die nach Spielnummer sortierten Finalspiele.
+- **Sortierung nach Spielnummer in der Finalrunde**: Alle Finalspiele werden streng aufsteigend nach `matchNumber` sortiert (Spiele #25 bis #40).
+- **Entfernung aller Zwischenüberschriften & Header-Infos**:
+  - Wegfall der Zwischenüberschriften „Halbfinals“ und „Medaillenspiele & Endplatzierungen“.
+  - Vollständiges Entfernen der oberen Info-Zeilen mit Überschrift („Vorrundenspiele...“ / „Finalspiele...“) und Anzahl der Spiele („X Spiele“) in sowohl der **Vorrunde** (`GuestScheduleView.tsx`) als auch der **Finalrunde** (`FinalsBracketView.tsx`).
+- **Direkter Übergang**: Unmittelbar nach den Filter-Buttons (Alle | wU14 | mU14) beginnt direkt die Liste der Spielkarten im responsiven Grid.
 
 ---
 
 ## 2. User Stories
 
-- **US-1 (Gast / Zuschauer)**: Als **Zuschauer auf dem Smartphone** möchte ich die Finalspiele in der tatsächlichen chronologischen Reihenfolge nach Spielnummer sortiert sehen, um sofort zu erfassen, welches Spiel als Nächstes stattfindet.
-- **US-2 (Gast / Zuschauer)**: Als **Gast** möchte ich eine aufgeräumte Ansicht ohne redundante Zwischenüberschriften, damit die Spielkarten kompakt und übersichtlich dargestellt werden.
-- **US-3 (Team / Fan)**: Als **Unterstützer eines wU14- oder mU14-Teams** möchte ich weiterhin nach Kategorie filtern können, wobei auch im gefilterten Zustand die Spielnummernsortierung strikt gewahrt bleibt.
+- **US-1 (Gast / Zuschauer)**: Als **Zuschauer auf dem Smartphone** möchte ich die Spielkarten auf Vorrunde und Finalrunde direkt unter den Filter-Buttons sehen, ohne Platzverschwendung durch redundante Überschriften und Spielanzahlen.
+- **US-2 (Gast / Zuschauer)**: Als **Zuschauer** möchte ich die Finalspiele chronologisch nach Spielnummer geordnet vorfinden.
 
 ---
 
 ## 3. Fachliche Anforderungen & Scope
 
 ### 3.1 Im Scope (Must-Have)
-- [x] **Sortierung nach Spielnummer**: Finalspiele (`m.phase === 'final' || m.matchNumber > 24`) werden strikt mit `(a, b) => a.matchNumber - b.matchNumber` sortiert.
-- [x] **Kategorie-Filter**: Filterung nach `selectedCategory` („all“, „wU14“, „mU14“) behält die `matchNumber`-Sortierung bei.
-- [x] **Entfernung aller Zwischenüberschriften**:
-  - Wegfall von `Halbfinals ({gender})` und zugehörigem `Sparkles`-Icon.
-  - Wegfall von `Medaillenspiele & Endplatzierungen ({gender})` und zugehörigem `Medal`-Icon.
-- [x] **Kompakte Kopfzeile / Counter**: Analog zu `GuestScheduleView.tsx` Anzeige von:
-  - Titel: `Finalspiele` bzw. `Finalspiele (wU14)` / `Finalspiele (mU14)`
-  - Badge mit Anzahl: `X Spiele` / `1 Spiel`
-- [x] **Grid-Layout**: Einheitliches responsives Grid (`grid grid-cols-1 md:grid-cols-2 gap-3.5`).
-- [x] **Spielbezeichnung & Tags**: Beibehaltung der detaillierten Match-Header (Uhrzeit, Geschlechter-Badge, Match-Badge wie „Finale“, „Halbfinale 1“, „Spiel um Platz 3“ etc.).
+- [x] **Entfernung von Überschrift & Spielanzahl in Vorrunde (`GuestScheduleView.tsx`)**: Die Infozeile mit „Vorrundenspiele“ und dem Badge `X Spiele` entfällt ersatzlos.
+- [x] **Entfernung von Überschrift & Spielanzahl in Finalrunde (`FinalsBracketView.tsx`)**: Die Infozeile mit „Finalspiele“ und dem Badge `X Spiele` entfällt ersatzlos.
+- [x] **Sortierung nach Spielnummer in Finalrunde**: Finalspiele werden strikt aufsteigend nach `matchNumber` sortiert.
+- [x] **Entfernung der Zwischenüberschriften in Finalrunde**: Keine Trennung mehr nach „Halbfinals“ und „Medaillenspiele“.
+- [x] **Grid-Layout & Filter**: Beibehaltung der 3-Segment-Buttons (Alle | wU14 | mU14) und des responsiven Grids (`grid grid-cols-1 md:grid-cols-2 gap-3.5`).
 
 ### 3.2 Explizit Out-of-Scope
-- Änderungen am Datenmodell oder an den Spielplan-Generierungs-Services (diese sind bereits in SPEC-029 umgesetzt).
 - Änderungen an Kiosk- oder Admin-Ansichten.
 
 ---
@@ -61,22 +49,22 @@ Dadurch traten folgende Probleme auf:
 ## 4. Akzeptanzkriterien
 
 ### 4.1 Szenarien / Kriterien
-- [x] **AC-1: Sortierung nach Spielnummer in der Ansicht „Alle“**
-  - **Gegeben sei**: Der Nutzer befindet sich auf der Seite `/#finals` mit ausgewähltem Tab „Alle“.
-  - **Wenn**: Die Seite geladen wird.
-  - **Dann**: Werden alle 16 Finalspiele fortlaufend von Spiel #25 bis Spiel #40 in aufsteigender Reihenfolge angezeigt.
-- [x] **AC-2: Sortierung nach Spielnummer bei aktivem Geschlechter-Filter**
-  - **Gegeben sei**: Der Nutzer wählt den Filter „wU14“ oder „mU14“.
-  - **Wenn**: Der Filter aktiv ist.
-  - **Dann**: Werden nur die Spiele der gewählten Kategorie angezeigt, weiterhin strikt aufsteigend nach `matchNumber` sortiert.
-- [x] **AC-3: Keine Zwischenüberschriften im Content-Bereich**
-  - **Gegeben sei**: Der Nutzer betrachtet die Finalrunden-Spiele.
-  - **Wenn**: Die Match-Karten dargestellt werden.
-  - **Dann**: Gibt es zwischen den Spielkarten keine trennenden Zwischenüberschriften mehr, sondern einen durchgängigen Grid-Fluss.
-- [x] **AC-4: Header-Information konsistent zu Vorrunde**
-  - **Gegeben sei**: Die Finalrunde wird angezeigt.
-  - **Wenn**: Spiele vorhanden sind.
-  - **Dann**: Zeigt die obere Infoleiste „Finalspiele“ (bzw. mit Geschlecht in Klammern) und die Spielanzahl im Badge an.
+- [x] **AC-1: Keine Überschrift und kein Spielanzahl-Badge in der Vorrunde**
+  - **Gegeben sei**: Der Nutzer befindet sich auf der Seite `/#schedule` (Vorrunde).
+  - **Wenn**: Die Seite angezeigt wird.
+  - **Dann**: Gibt es unterhalb des Kategorie-Filters keine Textzeile „Vorrundenspiele...“ und kein Badge mit der Spielanzahl mehr; die Spielkarten folgen direkt.
+- [x] **AC-2: Keine Überschrift und kein Spielanzahl-Badge in der Finalrunde**
+  - **Gegeben sei**: Der Nutzer befindet sich auf der Seite `/#finals` (Finalrunde).
+  - **Wenn**: Die Seite angezeigt wird.
+  - **Dann**: Gibt es unterhalb des Kategorie-Filters keine Textzeile „Finalspiele...“ und kein Badge mit der Spielanzahl mehr; die Spielkarten folgen direkt.
+- [x] **AC-3: Sortierung nach Spielnummer in der Finalrunde**
+  - **Gegeben sei**: Der Nutzer betrachtet die Finalrunde.
+  - **Wenn**: Matches gerendert werden.
+  - **Dann**: Sind diese fortlaufend nach `matchNumber` sortiert (Spiele 25–40).
+- [x] **AC-4: Keine Zwischenüberschriften mehr**
+  - **Gegeben sei**: Der Nutzer scrollt durch die Finalrunde.
+  - **Wenn**: Der Spielplan angezeigt wird.
+  - **Dann**: Werden keine Unterüberschriften wie „Halbfinals“ oder „Medaillenspiele“ gerendert.
 
 ### 4.2 Allgemeine Qualitätskriterien
 - [x] Vollständige TypeScript-Typisierung ohne `any`.
@@ -87,16 +75,16 @@ Dadurch traten folgende Probleme auf:
 
 ## 5. UI/UX & Interaktionskonzept
 
-### 5.1 Betroffene Komponente
+### 5.1 Betroffene Komponenten
 - `src/components/guest/FinalsBracketView.tsx`
+- `src/components/guest/GuestScheduleView.tsx`
 
 ### 5.2 Layout-Struktur
 1. **Kategorie-Switcher** (Alle | wU14 | mU14)
-2. **Kompakte Kopfzeile** mit Spielanzahl-Badge
-3. **Responsive Grid**:
+2. **Responsive Grid**:
    - Mobile: 1 Spalte (`grid-cols-1`)
    - Tablet / Desktop: 2 Spalten (`md:grid-cols-2`)
-4. **Empty State**: Anzeige bei noch keinen generierten Finalspielen („Noch keine Finalspiele generiert.“).
+3. **Empty State**: Anzeige bei noch keinen generierten Spielen.
 
 ---
 

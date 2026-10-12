@@ -7,9 +7,12 @@ import { fileURLToPath } from "node:url"
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-describe("SPEC-030: Finalrunde Sortierung nach Spielnummer & Clean Layout", () => {
+describe("SPEC-030: Finalrunde Sortierung nach Spielnummer & Entfernung der Überschriften/Spielanzahlen", () => {
   const finalsBracketPath = path.resolve(__dirname, "../src/components/guest/FinalsBracketView.tsx")
+  const schedulePath = path.resolve(__dirname, "../src/components/guest/GuestScheduleView.tsx")
+
   const finalsBracketContent = fs.readFileSync(finalsBracketPath, "utf-8")
+  const scheduleContent = fs.readFileSync(schedulePath, "utf-8")
 
   it("AC-1: Final matches are filtered and sorted ascending by matchNumber", () => {
     assert.ok(
@@ -34,15 +37,21 @@ describe("SPEC-030: Finalrunde Sortierung nach Spielnummer & Clean Layout", () =
     assert.ok(!finalsBracketContent.includes("renderGenderSection"), "renderGenderSection is removed")
   })
 
-  it("AC-4: Header info bar shows Finalspiele title and match count badge", () => {
-    assert.ok(finalsBracketContent.includes("Finalspiele"), "Finalspiele title is shown in header bar")
-    assert.ok(finalsBracketContent.includes("filteredMatches.length"), "Match counter is present")
+  it("AC-4: Header info bar and match counter are removed from both Vorrunde and Finalrunde", () => {
+    assert.ok(!scheduleContent.includes("Vorrundenspiele {"), "Vorrundenspiele heading removed")
+    assert.ok(!scheduleContent.includes("filteredMatches.length === 1 ? \"Spiel\" : \"Spiele\""), "Match counter removed from Vorrunde")
+    assert.ok(!finalsBracketContent.includes("Finalspiele {"), "Finalspiele heading removed")
+    assert.ok(!finalsBracketContent.includes("filteredMatches.length === 1 ? \"Spiel\" : \"Spiele\""), "Match counter removed from Finalrunde")
   })
 
   it("AC-5: Matches are rendered in a 2-column responsive grid", () => {
     assert.ok(
       finalsBracketContent.includes("grid grid-cols-1 md:grid-cols-2 gap-3.5"),
-      "Responsive 2-column grid matches GuestScheduleView"
+      "Responsive 2-column grid in Finalrunde"
+    )
+    assert.ok(
+      scheduleContent.includes("grid grid-cols-1 md:grid-cols-2 gap-3.5"),
+      "Responsive 2-column grid in Vorrunde"
     )
   })
 })

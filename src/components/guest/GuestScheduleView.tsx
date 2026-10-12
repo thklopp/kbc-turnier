@@ -56,16 +56,6 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
         </button>
       </div>
 
-      {/* Header Info */}
-      <div className="flex items-center justify-between px-1">
-        <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
-          Vorrundenspiele {selectedCategory !== "all" && `(${selectedCategory})`}
-        </span>
-        <span className="rounded-full bg-slate-100 border border-slate-200 px-2.5 py-0.5 text-[11px] font-bold text-slate-600">
-          {filteredMatches.length} {filteredMatches.length === 1 ? "Spiel" : "Spiele"}
-        </span>
-      </div>
-
       {/* Match Cards List */}
       {filteredMatches.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-500 text-xs">
