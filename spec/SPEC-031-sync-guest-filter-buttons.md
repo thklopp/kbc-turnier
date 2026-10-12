@@ -1,6 +1,6 @@
 # SPEC-031: Synchronisierung der Filterbuttons (Alle, wU14, mU14) in der Gäste-Ansicht
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Optimierung / UI/UX  
 > **Branch**: `feat/SPEC-031-sync-guest-filter-buttons`  
 > **Autor**: Antigravity  
