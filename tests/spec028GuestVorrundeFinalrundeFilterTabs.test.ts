@@ -98,10 +98,11 @@ describe("SPEC-028: Guest Vorrunde / Finalrunde & 3-Segment Filter Buttons", () 
     assert.ok(scheduleViewContent.includes("tagClass"), "tagClass used for both gender and group tags")
   })
 
-  it("AC-8: Vorrunde cards show '- : -' for scheduled matches and center short names around logos", () => {
+  it("AC-8: Vorrunde cards show '- : -' for scheduled matches and center short names around logos with team names in new line", () => {
     assert.ok(scheduleViewContent.includes('"- : -"'), "Shows - : - for upcoming games")
     assert.ok(!scheduleViewContent.includes('>vs<'), "Old 'vs' text is removed")
     assert.ok(scheduleViewContent.includes("mr-2 sm:mr-3"), "Home logo has spacing to the score")
     assert.ok(scheduleViewContent.includes("ml-2 sm:ml-3"), "Away logo has spacing to the score")
+    assert.ok(scheduleViewContent.includes("text-[10px] text-slate-500 font-medium text-center"), "Team name in smaller font on new line")
   })
 })

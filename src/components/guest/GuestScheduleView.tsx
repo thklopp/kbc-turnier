@@ -117,26 +117,34 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
                 {/* Match Teams Row */}
                 <div className="flex items-center justify-between">
                   {/* Home */}
-                  <div className="flex-1 min-w-0 flex items-center">
-                    <div className="flex-1 min-w-0 text-center px-1">
-                      <span
-                        className="block truncate text-xs sm:text-sm font-bold text-slate-900"
-                        title={home?.name || match.teamHomePlaceholder || "Team Heim"}
-                      >
-                        {home?.shortName || match.teamHomePlaceholder || "HEIM"}
-                      </span>
+                  <div className="flex-1 min-w-0 flex flex-col justify-center">
+                    <div className="flex items-center">
+                      <div className="flex-1 min-w-0 text-center px-1">
+                        <span
+                          className="block truncate text-xs sm:text-sm font-bold text-slate-900"
+                          title={home?.name || match.teamHomePlaceholder || "Team Heim"}
+                        >
+                          {home?.shortName || match.teamHomePlaceholder || "HEIM"}
+                        </span>
+                      </div>
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 overflow-hidden mr-2 sm:mr-3">
+                        {home?.logoUrl ? (
+                          <img
+                            src={home.logoUrl}
+                            alt=""
+                            className="h-full w-full object-contain p-0.5"
+                          />
+                        ) : (
+                          <span className="text-sm">🏑</span>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 overflow-hidden mr-2 sm:mr-3">
-                      {home?.logoUrl ? (
-                        <img
-                          src={home.logoUrl}
-                          alt=""
-                          className="h-full w-full object-contain p-0.5"
-                        />
-                      ) : (
-                        <span className="text-sm">🏑</span>
-                      )}
-                    </div>
+                    <span
+                      className="block truncate text-[10px] text-slate-500 font-medium text-center mt-1 px-1"
+                      title={home?.name || match.teamHomePlaceholder || "Team Heim"}
+                    >
+                      {home?.name || match.teamHomePlaceholder || "Team Heim"}
+                    </span>
                   </div>
 
                   {/* Score & Status */}
@@ -170,26 +178,34 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
                   </div>
 
                   {/* Away */}
-                  <div className="flex-1 min-w-0 flex items-center">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 overflow-hidden ml-2 sm:ml-3">
-                      {away?.logoUrl ? (
-                        <img
-                          src={away.logoUrl}
-                          alt=""
-                          className="h-full w-full object-contain p-0.5"
-                        />
-                      ) : (
-                        <span className="text-sm">🏑</span>
-                      )}
+                  <div className="flex-1 min-w-0 flex flex-col justify-center">
+                    <div className="flex items-center">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 overflow-hidden ml-2 sm:ml-3">
+                        {away?.logoUrl ? (
+                          <img
+                            src={away.logoUrl}
+                            alt=""
+                            className="h-full w-full object-contain p-0.5"
+                          />
+                        ) : (
+                          <span className="text-sm">🏑</span>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0 text-center px-1">
+                        <span
+                          className="block truncate text-xs sm:text-sm font-bold text-slate-900"
+                          title={away?.name || match.teamAwayPlaceholder || "Team Gast"}
+                        >
+                          {away?.shortName || match.teamAwayPlaceholder || "GAST"}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0 text-center px-1">
-                      <span
-                        className="block truncate text-xs sm:text-sm font-bold text-slate-900"
-                        title={away?.name || match.teamAwayPlaceholder || "Team Gast"}
-                      >
-                        {away?.shortName || match.teamAwayPlaceholder || "GAST"}
-                      </span>
-                    </div>
+                    <span
+                      className="block truncate text-[10px] text-slate-500 font-medium text-center mt-1 px-1"
+                      title={away?.name || match.teamAwayPlaceholder || "Team Gast"}
+                    >
+                      {away?.name || match.teamAwayPlaceholder || "Team Gast"}
+                    </span>
                   </div>
                 </div>
               </div>
