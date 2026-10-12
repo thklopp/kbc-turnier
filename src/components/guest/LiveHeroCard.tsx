@@ -111,22 +111,22 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
         <div className="col-span-1 flex flex-col items-center justify-center">
           {/* Status small ABOVE the score */}
           {isLive && (
-            <span className="rounded-full bg-rose-500 text-white px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider animate-pulse mb-1 whitespace-nowrap">
-              LIVE
+            <span className="rounded-full bg-rose-500 text-white px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider animate-pulse mb-1 whitespace-nowrap">
+              LIVE {currentMatch.currentPeriodMinute || 1}&apos;
             </span>
           )}
           {isPaused && (
-            <span className="rounded-full bg-amber-500 text-white px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider mb-1 whitespace-nowrap">
-              PAUSIERT
+            <span className="rounded-full bg-amber-500 text-white px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider mb-1 whitespace-nowrap">
+              PAUSIERT {currentMatch.currentPeriodMinute || 1}&apos;
             </span>
           )}
           {!isLive && !isPaused && isFinished && (
-            <span className="rounded-full bg-slate-200 text-slate-700 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider mb-1 whitespace-nowrap">
+            <span className="rounded-full bg-slate-200 text-slate-700 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider mb-1 whitespace-nowrap">
               BEENDET
             </span>
           )}
           {!isLive && !isPaused && !isFinished && (
-            <span className="rounded-full bg-blue-100 text-blue-700 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider mb-1 whitespace-nowrap">
+            <span className="rounded-full bg-blue-100 text-blue-700 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider mb-1 whitespace-nowrap">
               GEPLANT
             </span>
           )}
@@ -139,16 +139,8 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
             )}
           </div>
 
-          {/* Minute BELOW the score */}
-          {isLive || isPaused ? (
-            <span
-              className={`text-[11px] sm:text-xs font-bold tracking-wider mt-1 whitespace-nowrap ${
-                isLive ? "text-rose-600" : "text-amber-600"
-              }`}
-            >
-              {currentMatch.currentPeriodMinute || 1}&apos;
-            </span>
-          ) : (
+          {/* Subtext BELOW the score */}
+          {!isLive && !isPaused && (
             <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mt-1 whitespace-nowrap">
               Spiel #{currentMatch.matchNumber}
             </span>
