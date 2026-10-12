@@ -70,15 +70,15 @@ export function HomePage() {
         </section>
       )}
 
-      {activeTab === "standings" && (
-        <section>
-          <StandingsView teams={teams} matches={matches} />
-        </section>
-      )}
-
       {activeTab === "finals" && (
         <section>
           <FinalsBracketView matches={matches} teams={teams} />
+        </section>
+      )}
+
+      {activeTab === "standings" && (
+        <section>
+          <StandingsView teams={teams} matches={matches} />
         </section>
       )}
     </div>

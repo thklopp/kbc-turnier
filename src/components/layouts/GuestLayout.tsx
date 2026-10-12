@@ -79,18 +79,6 @@ export function GuestLayout() {
             </Link>
 
             <Link
-              to="/#standings"
-              className={`flex items-center gap-1.5 py-1 border-b-2 transition-colors shrink-0 ${
-                isStandings
-                  ? "border-blue-600 text-blue-600 font-bold"
-                  : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
-              }`}
-            >
-              <Trophy className="h-4 w-4" />
-              <span>Tabellen</span>
-            </Link>
-
-            <Link
               to="/#finals"
               className={`flex items-center gap-1.5 py-1 border-b-2 transition-colors shrink-0 ${
                 isFinals
@@ -100,6 +88,18 @@ export function GuestLayout() {
             >
               <Medal className="h-4 w-4" />
               <span>Finalphase</span>
+            </Link>
+
+            <Link
+              to="/#standings"
+              className={`flex items-center gap-1.5 py-1 border-b-2 transition-colors shrink-0 ${
+                isStandings
+                  ? "border-blue-600 text-blue-600 font-bold"
+                  : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
+              }`}
+            >
+              <Trophy className="h-4 w-4" />
+              <span>Tabellen</span>
             </Link>
           </div>
         </div>

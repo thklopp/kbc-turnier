@@ -1,7 +1,6 @@
 import { useState } from "react"
-import type { Team, Match, GenderCategory } from "@/types/database"
+import type { Team, Match, GenderCategory, TournamentGroup } from "@/types/database"
 import { calculateGroupStandings } from "@/services/standingsService"
-import { Award } from "lucide-react"
 
 interface StandingsViewProps {
   teams: Team[]
@@ -9,18 +8,27 @@ interface StandingsViewProps {
 }
 
 function GroupTable({
-  groupName,
+  gender,
+  group,
   standings,
 }: {
-  groupName: string
+  gender: GenderCategory
+  group: TournamentGroup
   standings: ReturnType<typeof calculateGroupStandings>
 }) {
+  const isWU14 = gender === "wU14"
+  const tagClass = isWU14
+    ? "bg-purple-50 text-purple-700 border-purple-200"
+    : "bg-blue-50 text-blue-700 border-blue-200"
+
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-3">
-        <h4 className="text-sm font-bold text-slate-900">{groupName}</h4>
-        <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
-          Pl. 1 & 2 ➔ Halbfinale
+      <div className="flex items-center gap-2 border-b border-slate-200 bg-slate-50 px-4 py-3">
+        <span className={`rounded-md border px-2.5 py-0.5 text-xs font-bold ${tagClass}`}>
+          {gender}
+        </span>
+        <span className={`rounded-md border px-2.5 py-0.5 text-xs font-bold ${tagClass}`}>
+          Gruppe {group}
         </span>
       </div>
 
@@ -31,32 +39,21 @@ function GroupTable({
               <th className="py-2.5 px-3 text-center w-8">#</th>
               <th className="py-2.5 px-3">Mannschaft</th>
               <th className="py-2.5 px-2 text-center w-12" title="Gespielte Partien">SP</th>
-              <th className="py-2.5 px-2 text-center w-14 font-medium text-slate-900" title="Punkte">PKT</th>
               <th className="py-2.5 px-2 text-center w-14" title="Tore (Erzielt:Kassiert)">Tore</th>
+              <th className="py-2.5 px-2 text-center w-14 font-medium text-slate-900" title="Punkte">PKT</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
             {standings.map((teamStanding, index) => {
               const rank = index + 1
-              const isPlayoffRank = rank <= 2
 
               return (
                 <tr
                   key={teamStanding.teamId}
-                  className={`hover:bg-slate-50/80 transition-colors ${
-                    isPlayoffRank ? "bg-emerald-50/20" : ""
-                  }`}
+                  className="hover:bg-slate-50/80 transition-colors"
                 >
                   <td className="py-3 px-3 text-center">
-                    <span
-                      className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium ${
-                        rank === 1
-                          ? "bg-amber-100 text-amber-800"
-                          : rank === 2
-                          ? "bg-slate-200 text-slate-800"
-                          : "text-slate-400"
-                      }`}
-                    >
+                    <span className="text-xs font-semibold text-slate-500 font-mono">
                       {rank}
                     </span>
                   </td>
@@ -83,13 +80,19 @@ function GroupTable({
                   <td className="py-3 px-2 text-center font-mono text-slate-600">
                     {teamStanding.played}
                   </td>
-                  <td className="py-3 px-2 text-center">
-                    <span className="inline-flex min-w-[28px] items-center justify-center rounded-md bg-blue-50 border border-blue-200 px-2 py-0.5 font-mono text-xs font-medium text-blue-700 shadow-2xs">
-                      {teamStanding.points}
-                    </span>
-                  </td>
                   <td className="py-3 px-2 text-center font-mono text-slate-600">
                     {teamStanding.goalsFor}:{teamStanding.goalsAgainst}
+                  </td>
+                  <td className="py-3 px-2 text-center">
+                    <span
+                      className={`inline-flex min-w-[28px] items-center justify-center rounded-md border px-2 py-0.5 font-mono text-xs font-bold shadow-2xs ${
+                        isWU14
+                          ? "bg-purple-50 border-purple-200 text-purple-700"
+                          : "bg-blue-50 border-blue-200 text-blue-700"
+                      }`}
+                    >
+                      {teamStanding.points}
+                    </span>
                   </td>
                 </tr>
               )
@@ -110,50 +113,41 @@ export function StandingsView({ teams, matches }: StandingsViewProps) {
   return (
     <div className="space-y-6">
       {/* Gender Switcher */}
-      <div className="flex items-center justify-end border-b border-slate-200 pb-3">
-        <div className="flex rounded-xl bg-slate-100 p-1 border border-slate-200">
-          <button
-            onClick={() => setSelectedGender("wU14")}
-            className={`rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all cursor-pointer ${
-              selectedGender === "wU14"
-                ? "bg-white text-pink-700 shadow-sm"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            wU14
-          </button>
-          <button
-            onClick={() => setSelectedGender("mU14")}
-            className={`rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all cursor-pointer ${
-              selectedGender === "mU14"
-                ? "bg-white text-blue-700 shadow-sm"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            mU14
-          </button>
-        </div>
+      <div className="flex w-full rounded-xl bg-slate-100 p-1 border border-slate-200">
+        <button
+          onClick={() => setSelectedGender("wU14")}
+          className={`flex-1 rounded-lg py-2 text-center text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+            selectedGender === "wU14"
+              ? "bg-purple-600 text-white shadow-sm"
+              : "text-slate-600 hover:text-slate-900"
+          }`}
+        >
+          wU14
+        </button>
+        <button
+          onClick={() => setSelectedGender("mU14")}
+          className={`flex-1 rounded-lg py-2 text-center text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+            selectedGender === "mU14"
+              ? "bg-blue-600 text-white shadow-sm"
+              : "text-slate-600 hover:text-slate-900"
+          }`}
+        >
+          mU14
+        </button>
       </div>
 
       {/* Tables for Group A and Group B */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <GroupTable
-          groupName={`${selectedGender} – Gruppe A`}
+          gender={selectedGender}
+          group="A"
           standings={groupAStandings}
         />
         <GroupTable
-          groupName={`${selectedGender} – Gruppe B`}
+          gender={selectedGender}
+          group="B"
           standings={groupBStandings}
         />
-      </div>
-
-      {/* Rules Footer */}
-      <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-500 flex items-start gap-2.5">
-        <Award className="h-4 w-4 text-slate-400 shrink-0 mt-0.5" />
-        <div>
-          <strong>Hallenhockey Wertung:</strong> 3 Punkte für Sieg, 1 Punkt für Unentschieden, 0 Punkte für Niederlage.
-          Bei Punktgleichheit entscheidet: 1. Tordifferenz, 2. Erzielte Tore, 3. Direkter Vergleich.
-        </div>
       </div>
     </div>
   )
