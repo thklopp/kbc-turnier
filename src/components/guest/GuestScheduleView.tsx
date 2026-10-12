@@ -186,12 +186,12 @@ export function GuestScheduleView({ matches, teams }: GuestScheduleViewProps) {
                   <div className="min-w-[64px] shrink-0 flex items-center justify-center">
                     {isLive && (
                       <span className="rounded-full bg-rose-500 text-white px-2 py-0.5 text-[9px] font-medium uppercase tracking-wider animate-pulse whitespace-nowrap">
-                        LIVE {match.currentPeriodMinute ? `• ${match.currentPeriodMinute}'` : ""}
+                        LIVE {match.currentPeriodMinute || 1}&apos;
                       </span>
                     )}
                     {isPaused && (
                       <span className="rounded-full bg-amber-500 text-white px-2 py-0.5 text-[9px] font-medium uppercase tracking-wider whitespace-nowrap">
-                        PAUSIERT {match.currentPeriodMinute ? `• ${match.currentPeriodMinute}'` : ""}
+                        PAUSIERT {match.currentPeriodMinute || 1}&apos;
                       </span>
                     )}
                   </div>

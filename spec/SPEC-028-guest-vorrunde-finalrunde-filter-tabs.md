@@ -144,12 +144,15 @@ In der mobilen und Desktop-Gäste-Ansicht (`/`) existieren derzeit folgende Inko
   - **Und**: Die Tags rechts zeigen das Geschlecht (`wU14` oder `mU14`) und die Gruppe ausgeschrieben (`Gruppe A` oder `Gruppe B`).
   - **Und**: Beide Tags sind bei wU14 in Lila (`bg-purple-50 text-purple-700 border-purple-200`) und bei mU14 in Blau (`bg-blue-50 text-blue-700 border-blue-200`) formatiert.
 
-- [x] **AC-8: Vorrunden-Ergebnis (- : -) und symmetrisches Team-Layout**
+- [x] **AC-8: Vorrunden-Ergebnis (- : -), symmetrisches Team-Layout & Live-Badge mit Minute**
   - **Gegeben sei**: Eine Spielkarte auf der Seite `Vorrunde`.
   - **Wenn**: Der Spielstandsbereich betrachtet wird.
   - **Dann**: Wird bei ausstehenden Spielen immer `- : -` angezeigt (und nicht `vs`).
-  - **Und**: Direkt links und rechts neben dem Ergebnis befinden sich die Logos der beiden Mannschaften mit dezentem Abstand.
-  - **Und**: Auf dem verbleibenden Platz ganz links und ganz rechts sind die Kurznamen der Teams mittig zentriert angeordnet.
+  - **Und**: In der oberen Zeile befinden sich Heim-Kurzname, Heim-Logo, Ergebnisbox, Gast-Logo und Gast-Kurzname exakt auf derselben horizontalen Höhe.
+  - **Und**: Direkt links und rechts neben dem Ergebnis befinden sich die Logos der beiden Mannschaften mit dezentem Abstand (`mr-2 sm:mr-3` bzw. `ml-2 sm:ml-3`).
+  - **Und**: Auf dem verbleibenden Platz links und rechts sind die Kurznamen der Teams mittig zentriert angeordnet.
+  - **Und**: In einer neuen Zeile darunter stehen auf jeder Seite die vollen Vereinsnamen in kleinerer Schrift (`text-[10px] text-slate-500 font-medium text-center`).
+  - **Und**: Bei einem aktiven Live-Spiel zeigt das Live-Badge die Spielminute an (z. B. `LIVE 1'`).
 
 ### 4.2 Allgemeine Qualitätskriterien
 - [x] TypeScript strikt ohne `any`.
