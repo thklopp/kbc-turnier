@@ -144,6 +144,13 @@ In der mobilen und Desktop-Gäste-Ansicht (`/`) existieren derzeit folgende Inko
   - **Und**: Die Tags rechts zeigen das Geschlecht (`wU14` oder `mU14`) und die Gruppe ausgeschrieben (`Gruppe A` oder `Gruppe B`).
   - **Und**: Beide Tags sind bei wU14 in Lila (`bg-purple-50 text-purple-700 border-purple-200`) und bei mU14 in Blau (`bg-blue-50 text-blue-700 border-blue-200`) formatiert.
 
+- [x] **AC-8: Vorrunden-Ergebnis (- : -) und symmetrisches Team-Layout**
+  - **Gegeben sei**: Eine Spielkarte auf der Seite `Vorrunde`.
+  - **Wenn**: Der Spielstandsbereich betrachtet wird.
+  - **Dann**: Wird bei ausstehenden Spielen immer `- : -` angezeigt (und nicht `vs`).
+  - **Und**: Direkt links und rechts neben dem Ergebnis befinden sich die Logos der beiden Mannschaften mit dezentem Abstand.
+  - **Und**: Auf dem verbleibenden Platz ganz links und ganz rechts sind die Kurznamen der Teams mittig zentriert angeordnet.
+
 ### 4.2 Allgemeine Qualitätskriterien
 - [x] TypeScript strikt ohne `any`.
 - [x] Build (`npm run build`) und Linter (`npm run lint`) laufen ohne Fehler durch.
