@@ -1,6 +1,5 @@
 import { useState } from "react"
 import type { Match, Team, GenderCategory } from "@/types/database"
-import { Medal, Sparkles } from "lucide-react"
 
 interface FinalsBracketViewProps {
   matches: Match[]
@@ -13,11 +12,15 @@ export function FinalsBracketView({ matches, teams }: FinalsBracketViewProps) {
   const teamMap = new Map<string, Team>()
   teams.forEach((t) => teamMap.set(t.id, t))
 
-  const allFinalMatches = matches.filter(
-    (m) => m.phase === "final" || m.matchNumber > 24
+  const allFinalMatches = matches
+    .filter((m) => m.phase === "final" || m.matchNumber > 24)
+    .sort((a, b) => a.matchNumber - b.matchNumber)
+
+  const filteredMatches = allFinalMatches.filter((m) =>
+    selectedCategory === "all" ? true : m.gender === selectedCategory
   )
 
-  const renderMatchCard = (m: Match, title?: string) => {
+  const renderMatchCard = (m: Match) => {
     const home = teamMap.get(m.teamHomeId)
     const away = teamMap.get(m.teamAwayId)
     const isFinished = m.status === "finished"
@@ -26,7 +29,9 @@ export function FinalsBracketView({ matches, teams }: FinalsBracketViewProps) {
     const isFemale = m.gender === "wU14"
     const isFinalMatch = m.finalType === "final"
 
-    const matchName = title || m.matchName || (isFinalMatch ? "Großes Finale" : m.finalType ? m.finalType : "Finalspiel")
+    const matchName =
+      m.matchName ||
+      (isFinalMatch ? "Großes Finale" : m.finalType ? m.finalType : "Finalspiel")
 
     const genderTagClass = isFemale
       ? "bg-purple-50 text-purple-700 border-purple-200"
@@ -160,61 +165,6 @@ export function FinalsBracketView({ matches, teams }: FinalsBracketViewProps) {
     )
   }
 
-  const renderGenderSection = (gender: GenderCategory) => {
-    const isFemale = gender === "wU14"
-    const genderMatches = allFinalMatches.filter((m) => m.gender === gender)
-    if (genderMatches.length === 0) return null
-
-    const semiFinals = genderMatches.filter((m) => m.finalType === "semi_final")
-    const placementMatches = genderMatches.filter(
-      (m) => m.finalType === "placement_7_8" || m.finalType === "placement_5_6"
-    )
-    const medalMatches = genderMatches.filter(
-      (m) => m.finalType === "placement_3_4" || m.finalType === "final"
-    )
-
-    return (
-      <div key={gender} className="space-y-6">
-        {/* Halbfinals */}
-        {semiFinals.length > 0 && (
-          <div>
-            <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-700 mb-3">
-              <Sparkles className="h-3.5 w-3.5 text-amber-500" />
-              <span>Halbfinals ({gender})</span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {semiFinals.map((m, i) => renderMatchCard(m, `Halbfinale ${i + 1}`))}
-            </div>
-          </div>
-        )}
-
-        {/* Medaillen & Platzierungsspiele */}
-        {(medalMatches.length > 0 || placementMatches.length > 0) && (
-          <div>
-            <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-700 mb-3">
-              <Medal className={`h-3.5 w-3.5 ${isFemale ? "text-purple-600" : "text-blue-600"}`} />
-              <span>Medaillenspiele & Endplatzierungen ({gender})</span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {medalMatches.map((m) =>
-                renderMatchCard(
-                  m,
-                  m.finalType === "final" ? "🏆 Großes Finale" : "🥉 Spiel um Platz 3"
-                )
-              )}
-              {placementMatches.slice(0, 2).map((m) =>
-                renderMatchCard(
-                  m,
-                  m.finalType === "placement_5_6" ? "Spiel um Platz 5/6" : "Spiel um Platz 7/8"
-                )
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-    )
-  }
-
   return (
     <div className="space-y-6">
       {/* Category Filter Switcher */}
@@ -251,20 +201,14 @@ export function FinalsBracketView({ matches, teams }: FinalsBracketViewProps) {
         </button>
       </div>
 
-      {allFinalMatches.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-xs text-slate-500">
+      {/* Match Cards List */}
+      {filteredMatches.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-slate-500 text-xs">
           Noch keine Finalspiele generiert.
         </div>
       ) : (
-        <div className="space-y-8">
-          {selectedCategory === "all" ? (
-            <>
-              {renderGenderSection("wU14")}
-              {renderGenderSection("mU14")}
-            </>
-          ) : (
-            renderGenderSection(selectedCategory)
-          )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          {filteredMatches.map((match) => renderMatchCard(match))}
         </div>
       )}
     </div>
