@@ -1,6 +1,6 @@
 # SPEC-028: Umbenennung zu Vorrunde/Finalrunde & Einheitliche Filterbuttons (Alle, wU14, mU14) in der Gäste-Ansicht
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Optimierung / UI/UX  
 > **Branch**: `feat/SPEC-028-guest-vorrunde-finalrunde-filter-tabs`  
 > **Autor**: Antigravity  
