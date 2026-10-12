@@ -1,6 +1,6 @@
 # SPEC-032: Korrektur der Stage-Badges für Halbfinals in Kiosk-Finalrunde
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Bugfix  
 > **Branch**: fix/SPEC-032-kiosk-finalrunde-halbfinale-tags  
 > **Autor**: Agent  
