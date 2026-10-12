@@ -90,6 +90,7 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 - [x] Team-Detailansichten mit Logo, Kader und bisherigen Spielergebnissen.
 - [x] [SPEC-012] Spielplan-Kompaktierung (Gr. A/B, No-Wrap Score, Teamnamen-Tausch), konfigurierbare Spielnamen & Statusanzeigen.
 - [x] [SPEC-026] Gästeansicht Live-Scoreboard UI-Anpassungen: Farbige Badges für Startzeit, Geschlecht und Gruppe/Spielname (Lila für wU14, Blau für mU14, Amber für Finale), Ergebnis vertikal mittig auf Logohöhe zentriert, Torchronik ohne Header, Minutenanzeige im Format '1''.
+- [x] [SPEC-027] Gästeansicht Tabellen-Redesign & Navigationsreihenfolge: Tabellen ans Ende der Navigation (Live ➔ Spielplan ➔ Finalphase ➔ Tabellen), vollflächige Umschalter mit Lila (wU14) & Blau (mU14), zentrierte Tags für Geschlecht & Gruppe, Entfernung grüner Header-Badges, neutrale Ränge, Spaltentausch Tore & Punkte (SP ➔ Tore ➔ PKT), farbliche Punkte-Hervorhebung & Entfernung Wertungs-Infotext.
 
 ---
 

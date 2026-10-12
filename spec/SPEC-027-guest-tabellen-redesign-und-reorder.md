@@ -1,6 +1,6 @@
 # SPEC-027: Redesign der Tabellen-Ansicht & Tab-Reihenfolge in der Gäste-Ansicht
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Optimierung / UI/UX  
 > **Branch**: `feat/SPEC-027-guest-tabellen-redesign-und-reorder`  
 > **Autor**: Antigravity  
