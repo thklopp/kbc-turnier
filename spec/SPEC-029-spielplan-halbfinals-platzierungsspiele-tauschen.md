@@ -1,6 +1,6 @@
 # SPEC-029: Tausch der Halbfinals mit den Platzierungsspielen (Qualifikation 5-8) im Sonntags-Spielplan
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Optimierung / Ablaufanpassung  
 > **Branch**: feat/SPEC-029-spielplan-halbfinals-platzierungsspiele-tauschen  
 > **Autor**: Antigravity Agent  
