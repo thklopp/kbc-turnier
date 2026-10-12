@@ -89,6 +89,7 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 - [x] Live-Tabellen: Automatische Berechnung von Punkten, Toren, Gegentoren und Tordifferenz.
 - [x] Team-Detailansichten mit Logo, Kader und bisherigen Spielergebnissen.
 - [x] [SPEC-012] Spielplan-Kompaktierung (Gr. A/B, No-Wrap Score, Teamnamen-Tausch), konfigurierbare Spielnamen & Statusanzeigen.
+- [x] [SPEC-026] Gästeansicht Live-Scoreboard UI-Anpassungen: Farbige Badges für Startzeit, Geschlecht und Gruppe/Spielname (Lila für wU14, Blau für mU14, Amber für Finale), Ergebnis vertikal mittig auf Logohöhe zentriert, Torchronik ohne Header, Minutenanzeige im Format '1''.
 
 ---
 
