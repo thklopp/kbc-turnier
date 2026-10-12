@@ -82,9 +82,11 @@ In der mobilen und Desktop-Gäste-Ansicht (`/`) existieren derzeit folgende Inko
   - Ergänzung von Geschlechter-Badges auf den Match-Karten in der Finalrunde (Lila für wU14, Blau für mU14).
 - [x] **Farb-Harmonisierung**:
   - Ablösung von verbliebenen `pink-*`-Klassen durch `purple-*` für wU14 in den betroffenen Komponenten.
+- [x] **Filterbutton 'Alle' in Tabellen-Ansicht (`StandingsView`)**:
+  - Erweiterung des Umschalters auf der Seite Tabellen um den Button „Alle“ (3-Segment-Buttons: `Alle`, `wU14`, `mU14`).
+  - Bei Auswahl von „Alle“ werden die Gruppentabellen beider Konkurrenzen (wU14 Gruppe A & B sowie mU14 Gruppe A & B) mit Abschnitts-Badges untereinander dargestellt.
 
 ### 3.2 Explizit Out-of-Scope
-- Änderungen an der Tabellen-Ansicht (`StandingsView`) – diese behält ihre 2 Umschalter `wU14` und `mU14` gemäß SPEC-027 (da Tabellen getrennt nach Geschlecht berechnet werden).
 - Änderungen an der Kiosk- oder Admin-Ansicht.
 - Änderungen an der Firestore-Datenstruktur.
 
@@ -126,6 +128,13 @@ In der mobilen und Desktop-Gäste-Ansicht (`/`) existieren derzeit folgende Inko
   - **Gegeben sei**: Beliebige Match-Karten auf den Seiten Vorrunde oder Finalrunde.
   - **Wenn**: Ein Spiel der wU14 gerendert wird.
   - **Dann**: Werden Badges oder Akzente in Lila (`purple-50`/`purple-700`) dargestellt, nicht in Pink/Rosa.
+
+- [x] **AC-6: Tabellen Filterbuttons mit Alle**
+  - **Gegeben sei**: Der Nutzer befindet sich auf der Seite `Tabellen`.
+  - **Wenn**: Die Seite geladen wird.
+  - **Dann**: Enthält der Filterbalken oben drei Buttons: `Alle`, `wU14`, `mU14`.
+  - **Und**: Bei Auswahl von `Alle` werden die Tabellen beider Geschlechter (wU14 Gruppe A & B sowie mU14 Gruppe A & B) untereinander mit Kennzeichnung dargestellt.
+  - **Und**: Bei Klick auf `wU14` bzw. `mU14` werden nur die beiden Tabellen der gewählten Klasse angezeigt.
 
 ### 4.2 Allgemeine Qualitätskriterien
 - [x] TypeScript strikt ohne `any`.

@@ -105,19 +105,59 @@ function GroupTable({
 }
 
 export function StandingsView({ teams, matches }: StandingsViewProps) {
-  const [selectedGender, setSelectedGender] = useState<GenderCategory>("wU14")
+  const [selectedCategory, setSelectedCategory] = useState<"all" | GenderCategory>("all")
 
-  const groupAStandings = calculateGroupStandings(teams, matches, selectedGender, "A")
-  const groupBStandings = calculateGroupStandings(teams, matches, selectedGender, "B")
+  const wu14A = calculateGroupStandings(teams, matches, "wU14", "A")
+  const wu14B = calculateGroupStandings(teams, matches, "wU14", "B")
+  const mu14A = calculateGroupStandings(teams, matches, "mU14", "A")
+  const mu14B = calculateGroupStandings(teams, matches, "mU14", "B")
+
+  const renderTablesForGender = (gender: GenderCategory, showHeader = false) => {
+    const isWU14 = gender === "wU14"
+    const standingsA = isWU14 ? wu14A : mu14A
+    const standingsB = isWU14 ? wu14B : mu14B
+
+    return (
+      <div key={gender} className="space-y-4">
+        {showHeader && (
+          <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
+            <span
+              className={`rounded-lg px-2.5 py-1 text-xs font-bold ${
+                isWU14
+                  ? "bg-purple-100 text-purple-800 border border-purple-200"
+                  : "bg-blue-100 text-blue-800 border border-blue-200"
+              }`}
+            >
+              {gender} Tabellen
+            </span>
+          </div>
+        )}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <GroupTable gender={gender} group="A" standings={standingsA} />
+          <GroupTable gender={gender} group="B" standings={standingsB} />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
-      {/* Gender Switcher */}
+      {/* Category Switcher */}
       <div className="flex w-full rounded-xl bg-slate-100 p-1 border border-slate-200">
         <button
-          onClick={() => setSelectedGender("wU14")}
+          onClick={() => setSelectedCategory("all")}
           className={`flex-1 rounded-lg py-2 text-center text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-            selectedGender === "wU14"
+            selectedCategory === "all"
+              ? "bg-slate-800 text-white shadow-sm"
+              : "text-slate-600 hover:text-slate-900"
+          }`}
+        >
+          Alle
+        </button>
+        <button
+          onClick={() => setSelectedCategory("wU14")}
+          className={`flex-1 rounded-lg py-2 text-center text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+            selectedCategory === "wU14"
               ? "bg-purple-600 text-white shadow-sm"
               : "text-slate-600 hover:text-slate-900"
           }`}
@@ -125,9 +165,9 @@ export function StandingsView({ teams, matches }: StandingsViewProps) {
           wU14
         </button>
         <button
-          onClick={() => setSelectedGender("mU14")}
+          onClick={() => setSelectedCategory("mU14")}
           className={`flex-1 rounded-lg py-2 text-center text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-            selectedGender === "mU14"
+            selectedCategory === "mU14"
               ? "bg-blue-600 text-white shadow-sm"
               : "text-slate-600 hover:text-slate-900"
           }`}
@@ -137,18 +177,14 @@ export function StandingsView({ teams, matches }: StandingsViewProps) {
       </div>
 
       {/* Tables for Group A and Group B */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <GroupTable
-          gender={selectedGender}
-          group="A"
-          standings={groupAStandings}
-        />
-        <GroupTable
-          gender={selectedGender}
-          group="B"
-          standings={groupBStandings}
-        />
-      </div>
+      {selectedCategory === "all" ? (
+        <div className="space-y-8">
+          {renderTablesForGender("wU14", true)}
+          {renderTablesForGender("mU14", true)}
+        </div>
+      ) : (
+        renderTablesForGender(selectedCategory)
+      )}
     </div>
   )
 }

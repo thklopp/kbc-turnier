@@ -78,4 +78,14 @@ describe("SPEC-028: Guest Vorrunde / Finalrunde & 3-Segment Filter Buttons", () 
     assert.ok(finalsViewContent.includes('renderGenderSection("wU14")'), "Renders wU14 section when all is selected")
     assert.ok(finalsViewContent.includes('renderGenderSection("mU14")'), "Renders mU14 section when all is selected")
   })
+
+  it("AC-6: Standings view also has Alle button and renders both genders when Alle is active", () => {
+    const standingsViewPath = path.resolve(__dirname, "../src/components/guest/StandingsView.tsx")
+    const standingsViewContent = fs.readFileSync(standingsViewPath, "utf-8")
+
+    assert.ok(standingsViewContent.includes("Alle"), "Alle button exists in StandingsView")
+    assert.ok(standingsViewContent.includes("bg-slate-800 text-white shadow-sm"), "Alle active button styling is dark slate")
+    assert.ok(standingsViewContent.includes('renderTablesForGender("wU14", true)'), "Renders wU14 tables with header when Alle")
+    assert.ok(standingsViewContent.includes('renderTablesForGender("mU14", true)'), "Renders mU14 tables with header when Alle")
+  })
 })
