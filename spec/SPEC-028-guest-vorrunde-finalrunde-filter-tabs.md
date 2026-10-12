@@ -125,10 +125,13 @@ In der mobilen und Desktop-Gäste-Ansicht (`/`) existieren derzeit folgende Inko
   - **Wenn**: Spiele angezeigt werden.
   - **Dann**: Werden ausschließlich Gruppenspiele (`phase === "group"`) aufgeführt (keine Finalspiele wie Platzierungsspiele oder Halbfinals).
 
-- [x] **AC-5: Einheitliche Geschlechter-Farben**
-  - **Gegeben sei**: Beliebige Match-Karten auf den Seiten Vorrunde oder Finalrunde.
+- [x] **AC-5: Einheitliche Geschlechter-Farben & Finalrunden-Kartenformatierung**
+  - **Gegeben sei**: Match-Karten auf den Seiten Vorrunde oder Finalrunde.
   - **Wenn**: Ein Spiel der wU14 gerendert wird.
-  - **Dann**: Werden Badges oder Akzente in Lila (`purple-50`/`purple-700`) dargestellt, nicht in Pink/Rosa.
+  - **Dann**: Werden Badges oder Akzente in Lila (`purple-50`/`purple-700`) dargestellt, bei mU14 in Blau (`blue-50`/`blue-700`).
+  - **Und**: Die Match-Karten der Finalrunde folgen exakt demselben 2-Zeilen-Layout wie in der Vorrunde (Heim-Kurzname, Heim-Logo, Ergebnis `- : -`, Gast-Logo, Gast-Kurzname auf gleicher Höhe, darunter die vollen Vereinsnamen).
+  - **Und**: Im Header der Finalrunden-Karten wird neben dem Geschlecht der Spielname als Tag dargestellt (z. B. `Halbfinale 1`, `Spiel um Platz 3`), formatiert in der jeweiligen Geschlechtsfarbe.
+  - **Und**: Für das Finale (`finalType === 'final'`) wird das Tag `🏆 Großes Finale` in Bernstein/Amber formatiert (`bg-amber-50 text-amber-700 border-amber-200`).
 
 - [x] **AC-6: Tabellen Filterbuttons mit Alle**
   - **Gegeben sei**: Der Nutzer befindet sich auf der Seite `Tabellen`.

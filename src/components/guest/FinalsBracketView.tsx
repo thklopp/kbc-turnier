@@ -22,66 +22,140 @@ export function FinalsBracketView({ matches, teams }: FinalsBracketViewProps) {
     const away = teamMap.get(m.teamAwayId)
     const isFinished = m.status === "finished"
     const isLive = m.status === "live"
+    const isPaused = m.status === "paused"
     const isFemale = m.gender === "wU14"
+    const isFinalMatch = m.finalType === "final"
+
+    const matchName = title || m.matchName || (isFinalMatch ? "Großes Finale" : m.finalType ? m.finalType : "Finalspiel")
+
+    const genderTagClass = isFemale
+      ? "bg-purple-50 text-purple-700 border-purple-200"
+      : "bg-blue-50 text-blue-700 border-blue-200"
+
+    const matchNameTagClass = isFinalMatch
+      ? "bg-amber-50 text-amber-700 border-amber-200"
+      : genderTagClass
 
     return (
       <div
         key={m.id}
-        className={`rounded-2xl border p-4 shadow-xs transition-all ${
+        className={`rounded-2xl border p-4 transition-all shadow-xs ${
           isLive
-            ? "border-rose-400 bg-rose-50/40 ring-1 ring-rose-400"
-            : isFinished
-            ? "border-slate-200 bg-white"
-            : "border-slate-200/80 bg-slate-50/60"
+            ? "border-rose-300 bg-rose-50/40 ring-1 ring-rose-400"
+            : isPaused
+            ? "border-amber-300 bg-amber-50/40 ring-1 ring-amber-400"
+            : "border-slate-200 bg-white hover:border-slate-300"
         }`}
       >
-        <div className="flex items-center justify-between text-xs pb-2 mb-2 border-b border-slate-100 font-semibold text-slate-500">
-          <div className="flex items-center gap-1.5 min-w-0">
-            <span
-              className={`rounded px-1.5 py-0.5 text-[10px] font-bold shrink-0 ${
-                isFemale
-                  ? "bg-purple-50 text-purple-700 border border-purple-200"
-                  : "bg-blue-50 text-blue-700 border border-blue-200"
-              }`}
-            >
+        {/* Header bar of the card */}
+        <div className="flex items-center justify-between gap-2 text-xs pb-2.5 mb-2.5 border-b border-slate-100">
+          <span className="font-mono font-medium text-slate-900 text-sm shrink-0">
+            {m.scheduledTime} Uhr
+          </span>
+
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold border ${genderTagClass}`}>
               {m.gender}
             </span>
-            <span className="truncate">{title || m.matchName || m.finalType || "Finalspiel"}</span>
-          </div>
-          <span className="font-mono text-slate-900 font-bold shrink-0">
-            {m.scheduledTime} Uhr (#{m.matchNumber})
-          </span>
-        </div>
 
-        <div className="space-y-2">
-          {/* Team Heim */}
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-800 truncate">
-              {home?.name || m.teamHomePlaceholder || "TBD"}
-            </span>
-            <span className="font-mono font-medium text-sm text-slate-900">
-              {isLive || isFinished ? m.scoreHome : "-"}
-            </span>
-          </div>
-
-          {/* Team Gast */}
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-800 truncate">
-              {away?.name || m.teamAwayPlaceholder || "TBD"}
-            </span>
-            <span className="font-mono font-medium text-sm text-slate-900">
-              {isLive || isFinished ? m.scoreAway : "-"}
+            <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold border ${matchNameTagClass}`}>
+              {matchName}
             </span>
           </div>
         </div>
 
-        {isLive && (
-          <div className="mt-2 text-center">
-            <span className="inline-flex items-center gap-1 rounded-full bg-rose-500 text-white px-2 py-0.5 text-[10px] font-bold animate-pulse">
-              LIVE &bull; {m.currentPeriodMinute || 1}&apos;
+        {/* Row 1: Short name, Logo, Score Box, Logo, Short name (All on exact same height) */}
+        <div className="flex items-center justify-between">
+          {/* Home: Short name centered in remaining space + Logo right */}
+          <div className="flex-1 min-w-0 flex items-center">
+            <div className="flex-1 min-w-0 text-center px-1">
+              <span
+                className="block truncate text-xs sm:text-sm font-bold text-slate-900"
+                title={home?.name || m.teamHomePlaceholder || "Team Heim"}
+              >
+                {home?.shortName || m.teamHomePlaceholder || "HEIM"}
+              </span>
+            </div>
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 overflow-hidden mr-2 sm:mr-3">
+              {home?.logoUrl ? (
+                <img
+                  src={home.logoUrl}
+                  alt=""
+                  className="h-full w-full object-contain p-0.5"
+                />
+              ) : (
+                <span className="text-sm">🏑</span>
+              )}
+            </div>
+          </div>
+
+          {/* Score */}
+          <div className="shrink-0 flex items-center justify-center font-mono text-base font-medium tracking-tight text-slate-900 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 min-w-[64px] text-center whitespace-nowrap">
+            {isLive || isPaused || isFinished
+              ? `${m.scoreHome} : ${m.scoreAway}`
+              : "- : -"}
+          </div>
+
+          {/* Away: Logo left + Short name centered in remaining space */}
+          <div className="flex-1 min-w-0 flex items-center">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 overflow-hidden ml-2 sm:ml-3">
+              {away?.logoUrl ? (
+                <img
+                  src={away.logoUrl}
+                  alt=""
+                  className="h-full w-full object-contain p-0.5"
+                />
+              ) : (
+                <span className="text-sm">🏑</span>
+              )}
+            </div>
+            <div className="flex-1 min-w-0 text-center px-1">
+              <span
+                className="block truncate text-xs sm:text-sm font-bold text-slate-900"
+                title={away?.name || m.teamAwayPlaceholder || "Team Gast"}
+              >
+                {away?.shortName || m.teamAwayPlaceholder || "GAST"}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Row 2: Team Full Names & Status (Live / Paused / Minute) */}
+        <div className="flex items-center justify-between mt-1.5">
+          {/* Home full name */}
+          <div className="flex-1 min-w-0 text-center px-1">
+            <span
+              className="block truncate text-[10px] text-slate-500 font-medium text-center"
+              title={home?.name || m.teamHomePlaceholder || "Team Heim"}
+            >
+              {home?.name || m.teamHomePlaceholder || "Team Heim"}
             </span>
           </div>
-        )}
+
+          {/* Status / Spacer matching score box width */}
+          <div className="min-w-[64px] shrink-0 flex items-center justify-center">
+            {isLive && (
+              <span className="rounded-full bg-rose-500 text-white px-2 py-0.5 text-[9px] font-medium uppercase tracking-wider animate-pulse whitespace-nowrap">
+                LIVE {m.currentPeriodMinute || 1}&apos;
+              </span>
+            )}
+            {isPaused && (
+              <span className="rounded-full bg-amber-500 text-white px-2 py-0.5 text-[9px] font-medium uppercase tracking-wider whitespace-nowrap">
+                PAUSIERT {m.currentPeriodMinute || 1}&apos;
+              </span>
+            )}
+          </div>
+
+          {/* Away full name */}
+          <div className="flex-1 min-w-0 text-center px-1">
+            <span
+              className="block truncate text-[10px] text-slate-500 font-medium text-center"
+              title={away?.name || m.teamAwayPlaceholder || "Team Gast"}
+            >
+              {away?.name || m.teamAwayPlaceholder || "Team Gast"}
+            </span>
+          </div>
+        </div>
       </div>
     )
   }

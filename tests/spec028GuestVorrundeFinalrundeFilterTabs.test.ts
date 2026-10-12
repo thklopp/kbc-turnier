@@ -78,6 +78,9 @@ describe("SPEC-028: Guest Vorrunde / Finalrunde & 3-Segment Filter Buttons", () 
     assert.ok(finalsViewContent.includes('renderGenderSection("wU14")'), "Renders wU14 section when all is selected")
     assert.ok(finalsViewContent.includes('renderGenderSection("mU14")'), "Renders mU14 section when all is selected")
     assert.ok(!finalsViewContent.includes("Finalrunde</span>"), "No redundant Finalrunde section header tags")
+    assert.ok(finalsViewContent.includes("bg-amber-50 text-amber-700 border-amber-200"), "Final tag formatted in amber")
+    assert.ok(finalsViewContent.includes("mr-2 sm:mr-3"), "Home logo has spacing in Finalrunde card")
+    assert.ok(finalsViewContent.includes("ml-2 sm:ml-3"), "Away logo has spacing in Finalrunde card")
   })
 
   it("AC-6: Standings view also has Alle button and renders both genders without redundant header tags", () => {
