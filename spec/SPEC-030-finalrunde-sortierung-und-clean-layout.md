@@ -1,6 +1,6 @@
 # SPEC-030: Finalrunde nach Spielnummer sortieren sowie Überschriften und Spielanzahl in Vorrunde & Finalrunde entfernen
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Optimierung / UI-Redesign  
 > **Branch**: feat/SPEC-030-finalrunde-sortierung-und-clean-layout  
 > **Autor**: Antigravity Agent  
