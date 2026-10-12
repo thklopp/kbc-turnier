@@ -66,6 +66,7 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 - [x] Zeit-Kaskadierung: Möglichkeit, den gesamten Spielplan bei Verzögerungen um X Minuten nach hinten zu verschieben.
 - [x] Manuelle Editiermöglichkeit einzelner Spiele (Verschieben, Paarungsänderung).
 - [x] [SPEC-025] Automatische Zuordnung der Finalrunden-Paarungen aus Tabellen (HF 1, HF 2, Quali 5-8) und K.o.-Ergebnissen (Finale, Platz 3, 5, 7) mit manuellem Synchronisations-Button & Schutz vor vorzeitiger Belegung.
+- [x] [SPEC-029] Tausch der Halbfinals mit den Platzierungsspielen am Sonntag (Spiele 25–28: Platzierungsspiele 1 & 2; Spiele 29–32: Halbfinale 1 & 2) für optimale Regenerationspausen (4er-Block Pause vor den Endspielen) inklusive präziser Spielnamen und Platzhaltertexte.
 
 ---
 
