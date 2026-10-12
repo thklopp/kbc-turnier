@@ -100,64 +100,64 @@ describe("SPEC-025: Automatische Zuordnung der Finalrunden-Paarungen", () => {
     const updates = calculateFinalRoundAssignments(matches, dummyTeams)
     const updateMap = new Map(updates.map((u) => [u.matchNumber, u]))
 
-    // HF 1 (Spiel 25): 1.A vs. 2.B -> wA1 vs. wB2
-    const hf1 = updateMap.get(25)
-    assert.ok(hf1, "Spiel 25 muss aktualisiert werden")
-    assert.equal(hf1.updates.teamHomeId, "wA1")
-    assert.equal(hf1.updates.teamAwayId, "wB2")
-
-    // HF 2 (Spiel 26): 1.B vs. 2.A -> wB1 vs. wA2
-    const hf2 = updateMap.get(26)
-    assert.ok(hf2, "Spiel 26 muss aktualisiert werden")
-    assert.equal(hf2.updates.teamHomeId, "wB1")
-    assert.equal(hf2.updates.teamAwayId, "wA2")
-
-    // Quali 5-8 #1 (Spiel 29): 3.A vs. 4.B -> wA3 vs. wB4
-    const q1 = updateMap.get(29)
-    assert.ok(q1, "Spiel 29 muss aktualisiert werden")
+    // Quali 5-8 #1 (Spiel 25): 3.A vs. 4.B -> wA3 vs. wB4
+    const q1 = updateMap.get(25)
+    assert.ok(q1, "Spiel 25 muss aktualisiert werden")
     assert.equal(q1.updates.teamHomeId, "wA3")
     assert.equal(q1.updates.teamAwayId, "wB4")
 
-    // Quali 5-8 #2 (Spiel 30): 3.B vs. 4.A -> wB3 vs. wA4
-    const q2 = updateMap.get(30)
-    assert.ok(q2, "Spiel 30 muss aktualisiert werden")
+    // Quali 5-8 #2 (Spiel 26): 3.B vs. 4.A -> wB3 vs. wA4
+    const q2 = updateMap.get(26)
+    assert.ok(q2, "Spiel 26 muss aktualisiert werden")
     assert.equal(q2.updates.teamHomeId, "wB3")
     assert.equal(q2.updates.teamAwayId, "wA4")
+
+    // HF 1 (Spiel 29): 1.A vs. 2.B -> wA1 vs. wB2
+    const hf1 = updateMap.get(29)
+    assert.ok(hf1, "Spiel 29 muss aktualisiert werden")
+    assert.equal(hf1.updates.teamHomeId, "wA1")
+    assert.equal(hf1.updates.teamAwayId, "wB2")
+
+    // HF 2 (Spiel 30): 1.B vs. 2.A -> wB1 vs. wA2
+    const hf2 = updateMap.get(30)
+    assert.ok(hf2, "Spiel 30 muss aktualisiert werden")
+    assert.equal(hf2.updates.teamHomeId, "wB1")
+    assert.equal(hf2.updates.teamAwayId, "wA2")
   })
 
   it("AC-2 & AC-3: Nach Halbfinals & Quali-Spielen rücken Sieger und Verlierer in Finale, Platz 3, 5 und 7 nach", async () => {
     const matches = await generateTournamentSchedule(dummyTeams, config)
 
-    // HF 1 (Spiel 25): wA1 vs wB2 -> wA1 gewinnt 3:1
+    // Quali 1 (Spiel 25): wA3 vs wB4 -> wA3 gewinnt 4:2
     const match25 = matches.find((m) => m.matchNumber === 25)!
-    match25.teamHomeId = "wA1"
-    match25.teamAwayId = "wB2"
-    match25.scoreHome = 3
-    match25.scoreAway = 1
+    match25.teamHomeId = "wA3"
+    match25.teamAwayId = "wB4"
+    match25.scoreHome = 4
+    match25.scoreAway = 2
     match25.status = "finished"
 
-    // HF 2 (Spiel 26): wB1 vs wA2 -> wB1 gewinnt 2:0
+    // Quali 2 (Spiel 26): wB3 vs wA4 -> wA4 gewinnt 1:2
     const match26 = matches.find((m) => m.matchNumber === 26)!
-    match26.teamHomeId = "wB1"
-    match26.teamAwayId = "wA2"
-    match26.scoreHome = 2
-    match26.scoreAway = 0
+    match26.teamHomeId = "wB3"
+    match26.teamAwayId = "wA4"
+    match26.scoreHome = 1
+    match26.scoreAway = 2
     match26.status = "finished"
 
-    // Quali 1 (Spiel 29): wA3 vs wB4 -> wA3 gewinnt 4:2
+    // HF 1 (Spiel 29): wA1 vs wB2 -> wA1 gewinnt 3:1
     const match29 = matches.find((m) => m.matchNumber === 29)!
-    match29.teamHomeId = "wA3"
-    match29.teamAwayId = "wB4"
-    match29.scoreHome = 4
-    match29.scoreAway = 2
+    match29.teamHomeId = "wA1"
+    match29.teamAwayId = "wB2"
+    match29.scoreHome = 3
+    match29.scoreAway = 1
     match29.status = "finished"
 
-    // Quali 2 (Spiel 30): wB3 vs wA4 -> wA4 gewinnt 1:2
+    // HF 2 (Spiel 30): wB1 vs wA2 -> wB1 gewinnt 2:0
     const match30 = matches.find((m) => m.matchNumber === 30)!
-    match30.teamHomeId = "wB3"
-    match30.teamAwayId = "wA4"
-    match30.scoreHome = 1
-    match30.scoreAway = 2
+    match30.teamHomeId = "wB1"
+    match30.teamAwayId = "wA2"
+    match30.scoreHome = 2
+    match30.scoreAway = 0
     match30.status = "finished"
 
     const updates = calculateFinalRoundAssignments(matches, dummyTeams)
@@ -191,21 +191,21 @@ describe("SPEC-025: Automatische Zuordnung der Finalrunden-Paarungen", () => {
   it("AC-4: mU14 Halbfinals & Endspiele werden identisch automatisch zugeordnet", async () => {
     const matches = await generateTournamentSchedule(dummyTeams, config)
 
-    // HF 1 (Spiel 27): mA1 vs mB2 -> mA1 gewinnt 5:1
-    const match27 = matches.find((m) => m.matchNumber === 27)!
-    match27.teamHomeId = "mA1"
-    match27.teamAwayId = "mB2"
-    match27.scoreHome = 5
-    match27.scoreAway = 1
-    match27.status = "finished"
+    // HF 1 (Spiel 31): mA1 vs mB2 -> mA1 gewinnt 5:1
+    const match31 = matches.find((m) => m.matchNumber === 31)!
+    match31.teamHomeId = "mA1"
+    match31.teamAwayId = "mB2"
+    match31.scoreHome = 5
+    match31.scoreAway = 1
+    match31.status = "finished"
 
-    // HF 2 (Spiel 28): mB1 vs mA2 -> mA2 gewinnt 1:2
-    const match28 = matches.find((m) => m.matchNumber === 28)!
-    match28.teamHomeId = "mB1"
-    match28.teamAwayId = "mA2"
-    match28.scoreHome = 1
-    match28.scoreAway = 2
-    match28.status = "finished"
+    // HF 2 (Spiel 32): mB1 vs mA2 -> mA2 gewinnt 1:2
+    const match32 = matches.find((m) => m.matchNumber === 32)!
+    match32.teamHomeId = "mB1"
+    match32.teamAwayId = "mA2"
+    match32.scoreHome = 1
+    match32.scoreAway = 2
+    match32.status = "finished"
 
     const updates = calculateFinalRoundAssignments(matches, dummyTeams)
     const updateMap = new Map(updates.map((u) => [u.matchNumber, u]))
@@ -226,13 +226,13 @@ describe("SPEC-025: Automatische Zuordnung der Finalrunden-Paarungen", () => {
   it("AC-6: Unentschieden im K.o.-Spiel (ohne Penalty-Entscheidung) führt zu keiner voreiligen Zuweisung", async () => {
     const matches = await generateTournamentSchedule(dummyTeams, config)
 
-    // HF 1 (Spiel 25) endet 2:2 unentschieden
-    const match25 = matches.find((m) => m.matchNumber === 25)!
-    match25.teamHomeId = "wA1"
-    match25.teamAwayId = "wB2"
-    match25.scoreHome = 2
-    match25.scoreAway = 2
-    match25.status = "finished"
+    // HF 1 (Spiel 29) endet 2:2 unentschieden
+    const match29 = matches.find((m) => m.matchNumber === 29)!
+    match29.teamHomeId = "wA1"
+    match29.teamAwayId = "wB2"
+    match29.scoreHome = 2
+    match29.scoreAway = 2
+    match29.status = "finished"
 
     const updates = calculateFinalRoundAssignments(matches, dummyTeams)
     const updateMap = new Map(updates.map((u) => [u.matchNumber, u]))
@@ -244,12 +244,12 @@ describe("SPEC-025: Automatische Zuordnung der Finalrunden-Paarungen", () => {
   it("syncFinalRoundMatches persistiert Änderungen und liefert aussagekräftige Summary", async () => {
     const matches = await generateTournamentSchedule(dummyTeams, config)
 
-    const match25 = matches.find((m) => m.matchNumber === 25)!
-    match25.teamHomeId = "wA1"
-    match25.teamAwayId = "wB2"
-    match25.scoreHome = 3
-    match25.scoreAway = 1
-    match25.status = "finished"
+    const match29 = matches.find((m) => m.matchNumber === 29)!
+    match29.teamHomeId = "wA1"
+    match29.teamAwayId = "wB2"
+    match29.scoreHome = 3
+    match29.scoreAway = 1
+    match29.status = "finished"
 
     const { updatedCount, summary } = await syncFinalRoundMatches(matches, dummyTeams)
     assert.equal(updatedCount >= 2, true)

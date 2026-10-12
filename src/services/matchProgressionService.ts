@@ -104,96 +104,96 @@ export function calculateFinalRoundAssignments(
       const pos4B = standingsB[3]?.teamId
 
       if (isFemale) {
-        // Spiel 25: HF 1 (w) -> 1.A vs. 2.B
-        if (pos1A) applySlotUpdate(25, "teamHomeId", pos1A, "1. Gruppe A (wU14)")
-        if (pos2B) applySlotUpdate(25, "teamAwayId", pos2B, "2. Gruppe B (wU14)")
+        // Spiel 25: Quali 5-8 #1 (w) -> 3.A vs. 4.B
+        if (pos3A) applySlotUpdate(25, "teamHomeId", pos3A, "3. Gruppe A (wU14)")
+        if (pos4B) applySlotUpdate(25, "teamAwayId", pos4B, "4. Gruppe B (wU14)")
 
-        // Spiel 26: HF 2 (w) -> 1.B vs. 2.A
-        if (pos1B) applySlotUpdate(26, "teamHomeId", pos1B, "1. Gruppe B (wU14)")
-        if (pos2A) applySlotUpdate(26, "teamAwayId", pos2A, "2. Gruppe A (wU14)")
+        // Spiel 26: Quali 5-8 #2 (w) -> 3.B vs. 4.A
+        if (pos3B) applySlotUpdate(26, "teamHomeId", pos3B, "3. Gruppe B (wU14)")
+        if (pos4A) applySlotUpdate(26, "teamAwayId", pos4A, "4. Gruppe A (wU14)")
 
-        // Spiel 29: Quali 5-8 #1 (w) -> 3.A vs. 4.B
-        if (pos3A) applySlotUpdate(29, "teamHomeId", pos3A, "3. Gruppe A (wU14)")
-        if (pos4B) applySlotUpdate(29, "teamAwayId", pos4B, "4. Gruppe B (wU14)")
+        // Spiel 29: HF 1 (w) -> 1.A vs. 2.B
+        if (pos1A) applySlotUpdate(29, "teamHomeId", pos1A, "1. Gruppe A (wU14)")
+        if (pos2B) applySlotUpdate(29, "teamAwayId", pos2B, "2. Gruppe B (wU14)")
 
-        // Spiel 30: Quali 5-8 #2 (w) -> 3.B vs. 4.A
-        if (pos3B) applySlotUpdate(30, "teamHomeId", pos3B, "3. Gruppe B (wU14)")
-        if (pos4A) applySlotUpdate(30, "teamAwayId", pos4A, "4. Gruppe A (wU14)")
+        // Spiel 30: HF 2 (w) -> 1.B vs. 2.A
+        if (pos1B) applySlotUpdate(30, "teamHomeId", pos1B, "1. Gruppe B (wU14)")
+        if (pos2A) applySlotUpdate(30, "teamAwayId", pos2A, "2. Gruppe A (wU14)")
       } else {
-        // Spiel 27: HF 1 (m) -> 1.A vs. 2.B
-        if (pos1A) applySlotUpdate(27, "teamHomeId", pos1A, "1. Gruppe A (mU14)")
-        if (pos2B) applySlotUpdate(27, "teamAwayId", pos2B, "2. Gruppe B (mU14)")
+        // Spiel 27: Quali 5-8 #1 (m) -> 3.A vs. 4.B
+        if (pos3A) applySlotUpdate(27, "teamHomeId", pos3A, "3. Gruppe A (mU14)")
+        if (pos4B) applySlotUpdate(27, "teamAwayId", pos4B, "4. Gruppe B (mU14)")
 
-        // Spiel 28: HF 2 (m) -> 1.B vs. 2.A
-        if (pos1B) applySlotUpdate(28, "teamHomeId", pos1B, "1. Gruppe B (mU14)")
-        if (pos2A) applySlotUpdate(28, "teamAwayId", pos2A, "2. Gruppe A (mU14)")
+        // Spiel 28: Quali 5-8 #2 (m) -> 3.B vs. 4.A
+        if (pos3B) applySlotUpdate(28, "teamHomeId", pos3B, "3. Gruppe B (mU14)")
+        if (pos4A) applySlotUpdate(28, "teamAwayId", pos4A, "4. Gruppe A (mU14)")
 
-        // Spiel 31: Quali 5-8 #1 (m) -> 3.A vs. 4.B
-        if (pos3A) applySlotUpdate(31, "teamHomeId", pos3A, "3. Gruppe A (mU14)")
-        if (pos4B) applySlotUpdate(31, "teamAwayId", pos4B, "4. Gruppe B (mU14)")
+        // Spiel 31: HF 1 (m) -> 1.A vs. 2.B
+        if (pos1A) applySlotUpdate(31, "teamHomeId", pos1A, "1. Gruppe A (mU14)")
+        if (pos2B) applySlotUpdate(31, "teamAwayId", pos2B, "2. Gruppe B (mU14)")
 
-        // Spiel 32: Quali 5-8 #2 (m) -> 3.B vs. 4.A
-        if (pos3B) applySlotUpdate(32, "teamHomeId", pos3B, "3. Gruppe B (mU14)")
-        if (pos4A) applySlotUpdate(32, "teamAwayId", pos4A, "4. Gruppe A (mU14)")
+        // Spiel 32: HF 2 (m) -> 1.B vs. 2.A
+        if (pos1B) applySlotUpdate(32, "teamHomeId", pos1B, "1. Gruppe B (mU14)")
+        if (pos2A) applySlotUpdate(32, "teamAwayId", pos2A, "2. Gruppe A (mU14)")
       }
     }
 
-    // 2. STUFE 2: Halbfinals & Quali -> Finale, Spiel um Platz 3, 5, 7
+    // 2. STUFE 2: Halbfinals & Platzierungsspiele -> Finale, Spiel um Platz 3, 5, 7
     if (isFemale) {
-      // HF 1 (Spiel 25)
+      // Platzierungsspiel 1 (Spiel 25)
       const res25 = getFeederWinnerAndLoser(matchMap.get(25))
       if (res25) {
-        applySlotUpdate(38, "teamHomeId", res25.winnerId, "Sieger HF 1 (wU14)")
-        applySlotUpdate(37, "teamHomeId", res25.loserId, "Verlierer HF 1 (wU14)")
+        applySlotUpdate(34, "teamHomeId", res25.winnerId, "Sieger Spiel 25")
+        applySlotUpdate(33, "teamHomeId", res25.loserId, "Verlierer Spiel 25")
       }
 
-      // HF 2 (Spiel 26)
+      // Platzierungsspiel 2 (Spiel 26)
       const res26 = getFeederWinnerAndLoser(matchMap.get(26))
       if (res26) {
-        applySlotUpdate(38, "teamAwayId", res26.winnerId, "Sieger HF 2 (wU14)")
-        applySlotUpdate(37, "teamAwayId", res26.loserId, "Verlierer HF 2 (wU14)")
+        applySlotUpdate(34, "teamAwayId", res26.winnerId, "Sieger Spiel 26")
+        applySlotUpdate(33, "teamAwayId", res26.loserId, "Verlierer Spiel 26")
       }
 
-      // Quali 5-8 #1 (Spiel 29)
+      // HF 1 (Spiel 29)
       const res29 = getFeederWinnerAndLoser(matchMap.get(29))
       if (res29) {
-        applySlotUpdate(34, "teamHomeId", res29.winnerId, "Sieger Quali 1 (wU14)")
-        applySlotUpdate(33, "teamHomeId", res29.loserId, "Verlierer Quali 1 (wU14)")
+        applySlotUpdate(38, "teamHomeId", res29.winnerId, "Sieger HF 1")
+        applySlotUpdate(37, "teamHomeId", res29.loserId, "Verlierer HF 1")
       }
 
-      // Quali 5-8 #2 (Spiel 30)
+      // HF 2 (Spiel 30)
       const res30 = getFeederWinnerAndLoser(matchMap.get(30))
       if (res30) {
-        applySlotUpdate(34, "teamAwayId", res30.winnerId, "Sieger Quali 2 (wU14)")
-        applySlotUpdate(33, "teamAwayId", res30.loserId, "Verlierer Quali 2 (wU14)")
+        applySlotUpdate(38, "teamAwayId", res30.winnerId, "Sieger HF 2")
+        applySlotUpdate(37, "teamAwayId", res30.loserId, "Verlierer HF 2")
       }
     } else {
-      // HF 1 (Spiel 27)
+      // Platzierungsspiel 1 (Spiel 27)
       const res27 = getFeederWinnerAndLoser(matchMap.get(27))
       if (res27) {
-        applySlotUpdate(40, "teamHomeId", res27.winnerId, "Sieger HF 1 (mU14)")
-        applySlotUpdate(39, "teamHomeId", res27.loserId, "Verlierer HF 1 (mU14)")
+        applySlotUpdate(36, "teamHomeId", res27.winnerId, "Sieger Spiel 27")
+        applySlotUpdate(35, "teamHomeId", res27.loserId, "Verlierer Spiel 27")
       }
 
-      // HF 2 (Spiel 28)
+      // Platzierungsspiel 2 (Spiel 28)
       const res28 = getFeederWinnerAndLoser(matchMap.get(28))
       if (res28) {
-        applySlotUpdate(40, "teamAwayId", res28.winnerId, "Sieger HF 2 (mU14)")
-        applySlotUpdate(39, "teamAwayId", res28.loserId, "Verlierer HF 2 (mU14)")
+        applySlotUpdate(36, "teamAwayId", res28.winnerId, "Sieger Spiel 28")
+        applySlotUpdate(35, "teamAwayId", res28.loserId, "Verlierer Spiel 28")
       }
 
-      // Quali 5-8 #1 (Spiel 31)
+      // HF 1 (Spiel 31)
       const res31 = getFeederWinnerAndLoser(matchMap.get(31))
       if (res31) {
-        applySlotUpdate(36, "teamHomeId", res31.winnerId, "Sieger Quali 1 (mU14)")
-        applySlotUpdate(35, "teamHomeId", res31.loserId, "Verlierer Quali 1 (mU14)")
+        applySlotUpdate(40, "teamHomeId", res31.winnerId, "Sieger HF 1")
+        applySlotUpdate(39, "teamHomeId", res31.loserId, "Verlierer HF 1")
       }
 
-      // Quali 5-8 #2 (Spiel 32)
+      // HF 2 (Spiel 32)
       const res32 = getFeederWinnerAndLoser(matchMap.get(32))
       if (res32) {
-        applySlotUpdate(36, "teamAwayId", res32.winnerId, "Sieger Quali 2 (mU14)")
-        applySlotUpdate(35, "teamAwayId", res32.loserId, "Verlierer Quali 2 (mU14)")
+        applySlotUpdate(40, "teamAwayId", res32.winnerId, "Sieger HF 2")
+        applySlotUpdate(39, "teamAwayId", res32.loserId, "Verlierer HF 2")
       }
     }
   }
