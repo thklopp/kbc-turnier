@@ -1,6 +1,6 @@
 # SPEC-026: Gästeansicht Live-Scoreboard UI-Anpassungen
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Optimierung / UI  
 > **Branch**: feat/SPEC-026-guest-live-ui-anpassungen  
 > **Autor**: Antigravity  
