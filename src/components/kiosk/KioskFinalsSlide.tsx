@@ -92,9 +92,9 @@ export function KioskFinalsSlide({ matches, teams }: KioskFinalsSlideProps) {
 
     const stageBadgeText = getCompactFinalName(match)
     const isFinalGame =
-      stageBadgeText === "Finale" ||
       match.finalType === "final" ||
-      match.matchName?.toLowerCase().includes("finale")
+      stageBadgeText === "Finale" ||
+      match.matchName?.trim().toLowerCase() === "finale"
 
     const hasHomeLogo = Boolean(home.logoUrl && !logoErrors[match.teamHomeId])
     const hasAwayLogo = Boolean(away.logoUrl && !logoErrors[match.teamAwayId])
@@ -119,14 +119,8 @@ export function KioskFinalsSlide({ matches, teams }: KioskFinalsSlideProps) {
                 : "bg-slate-50 text-slate-700 border-slate-200"
             }`}
           >
-            {isFinalGame ? (
-              <>
-                <Trophy className="h-3.5 w-3.5 text-amber-600 flex-none" />
-                <span>Finale</span>
-              </>
-            ) : (
-              stageBadgeText
-            )}
+            {isFinalGame && <Trophy className="h-3.5 w-3.5 text-amber-600 flex-none" />}
+            <span>{stageBadgeText}</span>
           </span>
           {isActive && (
             <span className="hidden xl:inline-flex h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse" />

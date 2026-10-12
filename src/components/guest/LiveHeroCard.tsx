@@ -45,8 +45,7 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
 
   const isFinalMatch =
     currentMatch.finalType === "final" ||
-    currentMatch.matchName?.toLowerCase() === "finale" ||
-    currentMatch.matchName?.toLowerCase().includes("finale") ||
+    currentMatch.matchName?.trim().toLowerCase() === "finale" ||
     currentMatch.matchNumber === 39 ||
     currentMatch.matchNumber === 40
 
