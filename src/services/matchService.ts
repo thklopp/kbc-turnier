@@ -402,6 +402,36 @@ export async function updateMatch(matchId: string, updates: Partial<Match>): Pro
 }
 
 /**
+ * Aktualisiert mehrere Spiele in einem einzigen Batch.
+ */
+export async function updateMatchesBatch(
+  updates: { matchId: string; updates: Partial<Match> }[]
+): Promise<void> {
+  if (updates.length === 0) return
+
+  if (!isFirebaseConfigured) {
+    updates.forEach(({ matchId, updates: patch }) => {
+      const idx = localMockMatches.findIndex((m) => m.id === matchId)
+      if (idx >= 0) {
+        localMockMatches[idx] = { ...localMockMatches[idx], ...patch }
+      }
+    })
+    notifyMatchListeners()
+    return
+  }
+
+  const batch = writeBatch(db)
+  updates.forEach(({ matchId, updates: patch }) => {
+    const matchRef = doc(db, MATCHES_COLLECTION, matchId)
+    batch.update(matchRef, {
+      ...patch,
+      updatedAt: serverTimestamp(),
+    })
+  })
+  await batch.commit()
+}
+
+/**
  * Aktualisiert den Torschützen eines konkreten Tor-Ereignisses in einem Match.
  */
 export async function updateMatchEventScorer(

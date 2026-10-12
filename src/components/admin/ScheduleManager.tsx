@@ -20,7 +20,9 @@ import {
   Filter,
   CheckCircle,
   AlertCircle,
+  RefreshCw,
 } from "lucide-react"
+import { syncFinalRoundMatches } from "@/services/matchProgressionService"
 
 export function ScheduleManager() {
   const [matches, setMatches] = useState<Match[]>([])
@@ -32,10 +34,44 @@ export function ScheduleManager() {
   const [dayFilter, setDayFilter] = useState<"all" | "saturday" | "sunday">("all")
   const [genderFilter, setGenderFilter] = useState<"all" | GenderCategory>("all")
 
-  // Modals
   const [isDelayModalOpen, setIsDelayModalOpen] = useState(false)
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null)
   const [generating, setGenerating] = useState(false)
+  const [syncingFinals, setSyncingFinals] = useState(false)
+  const [syncFeedback, setSyncFeedback] = useState<{
+    type: "success" | "info" | "error"
+    message: string
+    details?: string[]
+  } | null>(null)
+
+  const handleSyncFinals = async () => {
+    setSyncingFinals(true)
+    setSyncFeedback(null)
+    try {
+      const { updatedCount, summary } = await syncFinalRoundMatches(matches, teams)
+      if (updatedCount > 0) {
+        setSyncFeedback({
+          type: "success",
+          message: `${updatedCount} Finalspiel${updatedCount === 1 ? "" : "e"} erfolgreich mit den Tabellen & Ergebnissen synchronisiert.`,
+          details: summary,
+        })
+      } else {
+        setSyncFeedback({
+          type: "info",
+          message:
+            "Alle Finalpaarungen sind bereits aktuell (oder die Vorrunde für das jeweilige Geschlecht ist noch nicht vollständig beendet).",
+        })
+      }
+    } catch (err: unknown) {
+      console.error("Fehler beim Synchronisieren der Finalrunde:", err)
+      setSyncFeedback({
+        type: "error",
+        message: err instanceof Error ? err.message : "Fehler beim Synchronisieren der Finalspiele.",
+      })
+    } finally {
+      setSyncingFinals(false)
+    }
+  }
 
   useEffect(() => {
     const unsubMatches = subscribeMatches(
@@ -122,6 +158,16 @@ export function ScheduleManager() {
           {matches.length > 0 && (
             <>
               <button
+                onClick={handleSyncFinals}
+                disabled={syncingFinals}
+                className="inline-flex items-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 px-3.5 py-2 text-xs font-bold text-blue-700 hover:bg-blue-100 transition-colors shadow-sm cursor-pointer disabled:opacity-50"
+                title="Prüft Tabellen und Ergebnisse und weist Mannschaften automatisch den Finalspielen zu"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 text-blue-600 ${syncingFinals ? "animate-spin" : ""}`} />
+                <span>{syncingFinals ? "Synchronisiere..." : "Finalpaarungen aktualisieren"}</span>
+              </button>
+
+              <button
                 onClick={() => setIsDelayModalOpen(true)}
                 className="inline-flex items-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 px-3.5 py-2 text-xs font-bold text-amber-800 hover:bg-amber-100 transition-colors shadow-sm cursor-pointer"
                 title="Verschiebt Spiele bei Verspätung kaskadierend"
@@ -151,6 +197,45 @@ export function ScheduleManager() {
           </button>
         </div>
       </div>
+
+      {/* Sync Feedback Banner */}
+      {syncFeedback && (
+        <div
+          className={`rounded-2xl border p-4 shadow-sm flex items-start justify-between gap-3 text-xs ${
+            syncFeedback.type === "success"
+              ? "border-emerald-200 bg-emerald-50 text-emerald-900"
+              : syncFeedback.type === "error"
+              ? "border-rose-200 bg-rose-50 text-rose-900"
+              : "border-blue-200 bg-blue-50 text-blue-900"
+          }`}
+        >
+          <div className="flex items-start gap-2.5">
+            {syncFeedback.type === "success" ? (
+              <CheckCircle className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+            ) : syncFeedback.type === "error" ? (
+              <AlertCircle className="h-4 w-4 text-rose-600 shrink-0 mt-0.5" />
+            ) : (
+              <RefreshCw className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
+            )}
+            <div>
+              <p className="font-semibold">{syncFeedback.message}</p>
+              {syncFeedback.details && syncFeedback.details.length > 0 && (
+                <ul className="mt-1.5 space-y-0.5 font-mono text-[11px] text-emerald-800 list-disc list-inside">
+                  {syncFeedback.details.map((d, i) => (
+                    <li key={i}>{d}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+          <button
+            onClick={() => setSyncFeedback(null)}
+            className="text-slate-400 hover:text-slate-700 font-bold px-1.5 py-0.5 rounded cursor-pointer"
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* 3. Filter Bar */}
       <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:flex-row md:items-center md:justify-between">
@@ -400,6 +485,7 @@ export function ScheduleManager() {
       {/* Match Edit Modal */}
       <MatchEditModal
         match={selectedMatch}
+        matches={matches}
         teams={teams}
         isOpen={Boolean(selectedMatch)}
         onClose={() => setSelectedMatch(null)}

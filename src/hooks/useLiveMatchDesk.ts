@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import type { Match, Team, MatchEvent, Player } from "@/types/database"
 import { updateMatch, updateMatchEventScorer } from "@/services/matchService"
+import { syncFinalRoundMatches } from "@/services/matchProgressionService"
 import { useAudioPlayer } from "./useAudioPlayer"
 import { playBuzzerHorn } from "@/lib/soundboard"
 
@@ -109,6 +110,14 @@ export function useLiveMatchDesk(
           isTimerRunning: false,
           timerSecondsRemaining: 0,
         })
+        const updatedMatches = allMatches.map((m) =>
+          m.id === otherActiveMatch.id
+            ? { ...m, status: "finished" as const, isTimerRunning: false, timerSecondsRemaining: 0 }
+            : m
+        )
+        syncFinalRoundMatches(updatedMatches, teams).catch((err) =>
+          console.warn("Konnte Finalrunde nach vorherigem Match-Abschluss nicht synchronisieren:", err)
+        )
       } catch (err) {
         console.error("Fehler beim Beenden des bisherigen aktiven Spiels:", err)
       }
@@ -121,7 +130,7 @@ export function useLiveMatchDesk(
       timerSecondsRemaining: secondsRemaining,
       currentPeriodMinute: getCurrentMinute(),
     })
-  }, [match, secondsRemaining, allMatches, syncToFirestore, getCurrentMinute])
+  }, [match, secondsRemaining, allMatches, teams, syncToFirestore, getCurrentMinute])
 
   const pauseTimer = useCallback(() => {
     if (!match) return
@@ -276,7 +285,16 @@ export function useLiveMatchDesk(
       isTimerRunning: false,
       timerSecondsRemaining: 0,
     })
-  }, [match, stop])
+
+    const updatedMatches = allMatches.map((m) =>
+      m.id === match.id
+        ? { ...m, status: "finished" as const, isTimerRunning: false, timerSecondsRemaining: 0 }
+        : m
+    )
+    syncFinalRoundMatches(updatedMatches, teams).catch((err) =>
+      console.warn("Konnte Finalrunde nach Match-Abschluss nicht synchronisieren:", err)
+    )
+  }, [match, stop, allMatches, teams])
 
   return {
     secondsRemaining,

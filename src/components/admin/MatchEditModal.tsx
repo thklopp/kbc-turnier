@@ -1,10 +1,12 @@
 import { useState, type FormEvent } from "react"
 import type { Match, Team } from "@/types/database"
 import { updateMatch } from "@/services/matchService"
+import { syncFinalRoundMatches } from "@/services/matchProgressionService"
 import { X, Calendar, AlertCircle, CheckCircle } from "lucide-react"
 
 interface MatchEditModalProps {
   match: Match | null
+  matches?: Match[]
   teams: Team[]
   isOpen: boolean
   onClose: () => void
@@ -12,10 +14,12 @@ interface MatchEditModalProps {
 
 function MatchEditForm({
   match,
+  matches,
   teams,
   onClose,
 }: {
   match: Match
+  matches?: Match[]
   teams: Team[]
   onClose: () => void
 }) {
@@ -49,6 +53,28 @@ function MatchEditForm({
         teamAwayPlaceholder: teamAwayPlaceholder || undefined,
         status,
       })
+
+      // Automatische Zuordnung der Finalrunde aktualisieren
+      if (matches && matches.length > 0) {
+        const updatedMatches = matches.map((m) =>
+          m.id === match.id
+            ? {
+                ...m,
+                scheduledTime,
+                matchName: matchName.trim() || undefined,
+                teamHomeId,
+                teamAwayId,
+                teamHomePlaceholder: teamHomePlaceholder || undefined,
+                teamAwayPlaceholder: teamAwayPlaceholder || undefined,
+                status,
+              }
+            : m
+        )
+        await syncFinalRoundMatches(updatedMatches, teams).catch((err) =>
+          console.warn("Konnte Finalrunde nach Match-Update nicht synchronisieren:", err)
+        )
+      }
+
       setSuccess(true)
       setTimeout(() => {
         onClose()
@@ -227,12 +253,12 @@ function MatchEditForm({
   )
 }
 
-export function MatchEditModal({ match, teams, isOpen, onClose }: MatchEditModalProps) {
+export function MatchEditModal({ match, matches, teams, isOpen, onClose }: MatchEditModalProps) {
   if (!isOpen || !match) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/30 backdrop-blur-xs p-4 overflow-y-auto">
-      <MatchEditForm match={match} teams={teams} onClose={onClose} />
+      <MatchEditForm match={match} matches={matches} teams={teams} onClose={onClose} />
     </div>
   )
 }

@@ -65,6 +65,7 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
   - Sonntag: 16 Finalspiele (Platzierungsspiele & Halbfinals/Finals)
 - [x] Zeit-Kaskadierung: Möglichkeit, den gesamten Spielplan bei Verzögerungen um X Minuten nach hinten zu verschieben.
 - [x] Manuelle Editiermöglichkeit einzelner Spiele (Verschieben, Paarungsänderung).
+- [x] [SPEC-025] Automatische Zuordnung der Finalrunden-Paarungen aus Tabellen (HF 1, HF 2, Quali 5-8) und K.o.-Ergebnissen (Finale, Platz 3, 5, 7) mit manuellem Synchronisations-Button & Schutz vor vorzeitiger Belegung.
 
 ---
 
