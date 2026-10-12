@@ -74,9 +74,9 @@ describe("SPEC-028: Guest Vorrunde / Finalrunde & 3-Segment Filter Buttons", () 
 
   it("AC-5: Finalrunde view renders gender badges on cards and supports 'all' without redundant section tags", () => {
     assert.ok(finalsViewContent.includes("bg-purple-50 text-purple-700"), "wU14 badge uses purple")
-    assert.ok(finalsViewContent.includes("bg-blue-50 text-blue-700"), "mU14 badge uses blue")
-    assert.ok(finalsViewContent.includes('renderGenderSection("wU14")'), "Renders wU14 section when all is selected")
-    assert.ok(finalsViewContent.includes('renderGenderSection("mU14")'), "Renders mU14 section when all is selected")
+    // In SPEC-030 wurden separate Gender-Sections zugunsten der Spielnummern-Sortierung entfernt
+    assert.ok(finalsViewContent.includes("allFinalMatches"), "Processes all final matches")
+    assert.ok(finalsViewContent.includes(".sort((a, b) => a.matchNumber - b.matchNumber)"), "Sorted by matchNumber")
     assert.ok(!finalsViewContent.includes("Finalrunde</span>"), "No redundant Finalrunde section header tags")
     assert.ok(finalsViewContent.includes("bg-amber-50 text-amber-700 border-amber-200"), "Final tag formatted in amber")
     assert.ok(finalsViewContent.includes("mr-2 sm:mr-3"), "Home logo has spacing in Finalrunde card")
