@@ -57,6 +57,6 @@ describe("SPEC-034: Kiosk Fit-to-Screen Skalierung (Virtual 1080p Stage)", () =>
     assert.ok(content.includes("transformOrigin: \"center center\""), "Transform-Origin muss zentriert sein")
     assert.ok(content.includes("overflow-hidden"), "KioskLayout muss scrollfrei (overflow-hidden) sein")
     assert.ok(content.includes("<Outlet />"), "KioskLayout muss Outlet rendern")
-    assert.ok(content.includes("to=\"/\""), "Beenden-Button muss zu / verlinken")
+    assert.ok(!content.includes("Beenden"), "Beenden-Button muss entfernt sein")
   })
 })

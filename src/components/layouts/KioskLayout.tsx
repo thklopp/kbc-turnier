@@ -1,6 +1,5 @@
 import { useEffect } from "react"
-import { Outlet, Link } from "react-router-dom"
-import { ArrowLeft } from "lucide-react"
+import { Outlet } from "react-router-dom"
 import { useKioskScale } from "@/hooks/useKioskScale"
 
 export function KioskLayout() {
@@ -17,17 +16,6 @@ export function KioskLayout() {
 
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-slate-950 flex items-center justify-center select-none">
-      {/* Subtle top exit button for hall operators, anchored to viewport */}
-      <div className="absolute top-2 right-3 z-50 opacity-25 hover:opacity-100 transition-opacity">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300/80 bg-white/90 px-2.5 py-1 text-[11px] font-semibold text-slate-700 shadow-sm hover:bg-white hover:text-slate-900"
-        >
-          <ArrowLeft className="h-3 w-3" />
-          <span>Beenden</span>
-        </Link>
-      </div>
-
       {/* Virtual 1080p Stage (Proportionally scaled to viewport) */}
       <main
         style={{

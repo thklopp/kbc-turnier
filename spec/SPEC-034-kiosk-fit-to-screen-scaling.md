@@ -27,14 +27,15 @@ Vorrangiges Ziel bleibt die perfekte, unberührte Darstellung auf dem 65"-TV. Gl
   $$\text{Scale } S = \min\left(\frac{\text{Viewport-Breite}}{1920}, \frac{\text{Viewport-Höhe}}{1080}\right)$$
 - **0,00 % Auswirkung auf den TV**: Bei 1920x1080 (Vollbild auf Raspberry Pi / Full-HD-TV) ist der Skalierungsfaktor exakt $S = 1{,}00$. Die Darstellung auf dem TV bleibt zu 100 % pixel- und layoutidentisch.
 - **Perfektes Bild auf MacBook & iPad**: Auf kleineren oder abweichenden Bildschirmen wird der Kiosk ohne jegliche Verzerrung zentriert auf die Maximalgröße skaliert, sodass garantiert alle Inhalte, Badges, Tabellen und Torschützen vollständig sichtbar sind (Letterboxing mit dezentem, dunklem Hintergrund).
-- **Beenden-Button & Offline-Banner**: Bleiben jederzeit fest am oberen Bildschirmrand des realen Viewports verankert und bedienbar.
+- **Entfall des Beenden-Buttons**: Der Beenden-Button in der oberen Ecke wird vollständig entfernt, um störende Overlays auf den Letterbox-Rändern (z. B. am iPad) zu vermeiden; Verlassen erfolgt direkt über URL / Browser.
+- **Offline-Banner**: Bleibt bei Verbindungsausfall sichtbar.
 
 ---
 
 ## 2. User Stories
 
 - **US-1 (Turnierleiter am MacBook Pro)**: Als Turnierleiter möchte ich die Kiosk-Ansicht auf meinem MacBook im Browserfenster öffnen können, um genau das zu sehen, was die Zuschauer auf dem TV sehen – vollständig, ohne abgeschnittene Ränder oder fehlende Fußleisten.
-- **US-2 (Helfer / Zuschauer am iPad Air)**: Als Helfer in der Halle möchte ich den Kiosk auf einem iPad Air im Querformat als Informationsmonitor aufstellen können, wobei alle Spiele und Tabellen ohne Scrollen harmonisch und vollständig lesbar sind.
+- **US-2 (Helfer / Zuschauer am iPad Air)**: Als Helfer in der Halle möchte ich den Kiosk auf einem iPad Air im Querformat als Informationsmonitor aufstellen können, wobei alle Spiele und Tabellen ohne Scrollen harmonisch und vollständig lesbar sind und keine störenden UI-Buttons über dem Letterbox-Rand liegen.
 - **US-3 (Zuschauer vor dem TV)**: Als Zuschauer in der Halle erwarte ich auf dem 65"-TV am Raspberry Pi ein gestochen scharfes, unverändertes Full-HD-Bild ohne Layout-Brüche oder Artefakte.
 
 ---
@@ -51,8 +52,8 @@ Vorrangiges Ziel bleibt die perfekte, unberührte Darstellung auf dem 65"-TV. Gl
 - [x] **Letterbox & Hintergrund**:
   - Zentrierte Ausrichtung im Viewport.
   - Äußerer Container mit dezentem dunklem Hintergrund (`bg-slate-950` oder `bg-slate-900`), der sich wie ein hochwertiger TV-Rahmen anfühlt.
-- [x] **Overlay-Elemente**:
-  - Der „Beenden“-Button (`<Link to="/">`) und das Offline-Toast-Banner bleiben fest und gut erreichbar am Rand des physischen Viewports positioniert.
+- [x] **Entfernung Beenden-Button**:
+  - Der bisherige Overlay-Button „Beenden“ wird komplett entfernt, da das Verlassen über URL/Browser-Navigation erfolgt.
 - [x] **Interaktivität & Vollbild**:
   - Alle Bedienelemente im `KioskHeader` (Folien-Umschaltung, Pause/Play, Vollbild-Button) bleiben voll interaktiv (CSS-Scale erhält Pointer-Events nativ auf allen Plattformen).
 
