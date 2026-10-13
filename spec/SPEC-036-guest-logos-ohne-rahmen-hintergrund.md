@@ -1,6 +1,6 @@
 # SPEC-036: Entfernung von Rahmen und Hintergrund der Logos in der Gästeansicht
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Optimierung / UI  
 > **Branch**: `feat/SPEC-036-guest-logos-ohne-rahmen-hintergrund`  
 > **Autor**: Antigravity  
