@@ -1,6 +1,6 @@
 # SPEC-033: Kompakter Einzeilen-Header für Smartphones im Querformat (GuestLayout)
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Optimierung / UI/UX  
 > **Branch**: feat/SPEC-033-guest-landscape-compact-header  
 > **Autor**: Antigravity  
