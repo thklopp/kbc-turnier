@@ -46,11 +46,11 @@ Vorrangiges Ziel bleibt die perfekte, unberührte Darstellung auf dem 65"-TV. Gl
 - [x] **Kiosk Stage Scaler**:
   - Container-Komponente oder Wrapper in `KioskLayout.tsx`, der die Viewport-Maße (`window.innerWidth`, `window.innerHeight`) per Event-Listener (`resize`, `orientationchange`) überwacht.
   - Exakte innere Leinwand: `width: 1920px`, `height: 1080px`, `overflow: hidden`.
-  - Zentrierte CSS-Skalierung mit `transform: scale(S)` und `transform-origin: center center`.
+  - CSS-Skalierung mit `transform: scale(S)` und `transform-origin: top center` (oben bündig ausgerichtet, damit verbleibende Letterbox-Fläche unten liegt).
   - Wenn `width >= 1920 && height >= 1080` (TV im Vollbild): Skalierung ist genau `1.0` (keine optischen Veränderungen).
   - Wenn `width < 1920` oder `height < 1080`: Proportionale Skalierung `Math.min(w / 1920, h / 1080)`.
 - [x] **Letterbox & Hintergrund**:
-  - Zentrierte Ausrichtung im Viewport.
+  - Oben bündige Ausrichtung (`items-start`), horizontal zentriert (`justify-center`). Eventuelle Letterbox-Balken befinden sich am unteren Bildschirmrand.
   - Äußerer Container mit dezentem dunklem Hintergrund (`bg-slate-950` oder `bg-slate-900`), der sich wie ein hochwertiger TV-Rahmen anfühlt.
 - [x] **Entfernung Beenden-Button**:
   - Der bisherige Overlay-Button „Beenden“ wird komplett entfernt, da das Verlassen über URL/Browser-Navigation erfolgt.

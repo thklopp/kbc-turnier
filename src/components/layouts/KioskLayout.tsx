@@ -15,14 +15,14 @@ export function KioskLayout() {
   }, [])
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden bg-slate-950 flex items-center justify-center select-none">
-      {/* Virtual 1080p Stage (Proportionally scaled to viewport) */}
+    <div className="relative h-screen w-screen overflow-hidden bg-slate-950 flex items-start justify-center select-none">
+      {/* Virtual 1080p Stage (Proportionally scaled to viewport, aligned to top) */}
       <main
         style={{
           width: 1920,
           height: 1080,
           transform: `scale(${scale})`,
-          transformOrigin: "center center",
+          transformOrigin: "top center",
         }}
         className="flex-none w-[1920px] h-[1080px] flex flex-col p-6 overflow-hidden bg-slate-100 text-slate-900 shadow-2xl"
       >
