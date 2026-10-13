@@ -1,6 +1,6 @@
 # SPEC-035: Wischgesten-Navigation (Swipe) in der Gästeansicht
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature  
 > **Branch**: `feat/SPEC-035-guest-swipe-navigation`  
 > **Autor**: Antigravity  
