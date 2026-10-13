@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useLocation } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import type { Match, Team, GenderCategory } from "@/types/database"
 import { subscribeMatches } from "@/services/matchService"
 import { subscribeTeams } from "@/services/teamService"
@@ -7,9 +7,18 @@ import { LiveHeroCard } from "@/components/guest/LiveHeroCard"
 import { GuestScheduleView } from "@/components/guest/GuestScheduleView"
 import { StandingsView } from "@/components/guest/StandingsView"
 import { FinalsBracketView } from "@/components/guest/FinalsBracketView"
+import { useSwipeGesture } from "@/hooks/useSwipeGesture"
+
+const TABS = [
+  { id: "live", hash: "#live" },
+  { id: "schedule", hash: "#schedule" },
+  { id: "finals", hash: "#finals" },
+  { id: "standings", hash: "#standings" },
+] as const
 
 export function HomePage() {
   const location = useLocation()
+  const navigate = useNavigate()
   const [matches, setMatches] = useState<Match[]>([])
   const [teams, setTeams] = useState<Team[]>([])
   const [loading, setLoading] = useState(true)
@@ -43,6 +52,25 @@ export function HomePage() {
       ? "finals"
       : "live"
 
+  const currentTabIndex = TABS.findIndex((t) => t.id === activeTab)
+
+  const swipeHandlers = useSwipeGesture({
+    onSwipeLeft: () => {
+      if (currentTabIndex >= 0 && currentTabIndex < TABS.length - 1) {
+        navigate(`/${TABS[currentTabIndex + 1].hash}`)
+      }
+    },
+    onSwipeRight: () => {
+      if (currentTabIndex > 0) {
+        navigate(`/${TABS[currentTabIndex - 1].hash}`)
+      }
+    },
+  })
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [activeTab])
+
   useEffect(() => {
     const unsubMatches = subscribeMatches(
       (m) => {
@@ -75,7 +103,10 @@ export function HomePage() {
   }
 
   return (
-    <div className="space-y-6 pb-8">
+    <div
+      className="space-y-6 pb-8 min-h-[calc(100vh-12rem)]"
+      {...swipeHandlers}
+    >
       {/* Tab Contents */}
       {activeTab === "live" && (
         <section>
