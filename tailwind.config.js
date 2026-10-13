@@ -15,6 +15,9 @@ export default {
       },
     },
     extend: {
+      screens: {
+        'landscape-phone': { raw: '(orientation: landscape) and (max-height: 500px)' },
+      },
       fontFamily: {
         mono: [
           '"Chivo Mono Variable"',
