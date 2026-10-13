@@ -93,7 +93,7 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
       <div className="relative z-10 grid grid-cols-5 items-center gap-2 sm:gap-6 text-center my-2">
         {/* Home Team Logo */}
         <div className="col-span-2 flex justify-center">
-          <div className="relative flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center overflow-hidden rounded-2xl border-2 border-slate-100 bg-white shadow-sm">
+          <div className="relative flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center overflow-hidden">
             {homeTeam?.logoUrl ? (
               <img
                 src={homeTeam.logoUrl}
@@ -148,7 +148,7 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
 
         {/* Away Team Logo */}
         <div className="col-span-2 flex justify-center">
-          <div className="relative flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center overflow-hidden rounded-2xl border-2 border-slate-100 bg-white shadow-sm">
+          <div className="relative flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center overflow-hidden">
             {awayTeam?.logoUrl ? (
               <img
                 src={awayTeam.logoUrl}

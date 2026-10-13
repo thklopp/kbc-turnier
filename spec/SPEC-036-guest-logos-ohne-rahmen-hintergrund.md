@@ -1,6 +1,6 @@
 # SPEC-036: Entfernung von Rahmen und Hintergrund der Logos in der Gästeansicht
 
-> **Status**: In Review  
+> **Status**: In Abnahme  
 > **Typ**: Optimierung / UI  
 > **Branch**: `feat/SPEC-036-guest-logos-ohne-rahmen-hintergrund`  
 > **Autor**: Antigravity  
@@ -33,16 +33,16 @@ In allen Bereichen der Gästeansicht (`/`) werden die Rahmen und der Hintergrund
 ## 3. Fachliche Anforderungen & Scope
 
 ### 3.1 Im Scope (Must-Have)
-- [ ] **Live-Hero-Karte (`LiveHeroCard.tsx`)**:
+- [x] **Live-Hero-Karte (`LiveHeroCard.tsx`)**:
   - Entfernung von `border-2 border-slate-100`, `bg-white` und `shadow-sm` an den beiden Logo-Containern (Heim- und Gast-Team).
   - Beibehaltung der festen Abmessungen (`h-16 w-16 sm:h-20 sm:w-20`) und Zentrierung (`flex items-center justify-center`).
-- [ ] **Vorrunden-Spielplan (`GuestScheduleView.tsx`)**:
+- [x] **Vorrunden-Spielplan (`GuestScheduleView.tsx`)**:
   - Entfernung von `border border-slate-200` und `bg-slate-50` an den Logo-Containern (Heim- und Gast-Team).
   - Beibehaltung der Abmessungen (`h-9 w-9`) und Abstände (`mr-2 sm:mr-3` bzw. `ml-2 sm:ml-3`).
-- [ ] **Finalrunden-Ansicht (`FinalsBracketView.tsx`)**:
+- [x] **Finalrunden-Ansicht (`FinalsBracketView.tsx`)**:
   - Entfernung von `border border-slate-200` und `bg-slate-50` an den Logo-Containern (Heim- und Gast-Team).
   - Beibehaltung der Abmessungen (`h-9 w-9`) und Abstände (`mr-2 sm:mr-3` bzw. `ml-2 sm:ml-3`).
-- [ ] **Tabellen-Ansicht (`StandingsView.tsx`)**:
+- [x] **Tabellen-Ansicht (`StandingsView.tsx`)**:
   - Entfernung von `border border-slate-200` und `bg-slate-50` am Team-Logo-Container in jeder Tabellenzeile.
   - Beibehaltung der Abmessungen (`h-7 w-7`) und Ausrichtung in der Tabellenzelle.
 
@@ -55,35 +55,35 @@ In allen Bereichen der Gästeansicht (`/`) werden die Rahmen und der Hintergrund
 ## 4. Akzeptanzkriterien
 
 ### 4.1 Szenarien / Kriterien
-- [ ] **AC-1: Live-Hero Scoreboard Logo-Darstellung**
+- [x] **AC-1: Live-Hero Scoreboard Logo-Darstellung**
   - **Gegeben sei**: Ein Gast befindet sich auf der Startseite im Tab „Live“.
   - **Wenn**: Ein laufendes oder geplantes Spiel im Hero-Scoreboard angezeigt wird.
   - **Dann**: Haben die Logos von Heim- und Gastteam weder einen Rahmen (`border-slate-100`) noch einen weißen Kasten-Hintergrund (`bg-white`) noch `shadow-sm`. Die Logos sind freigestellt zentriert.
 
-- [ ] **AC-2: Vorrunden-Spielplan Logo-Darstellung**
+- [x] **AC-2: Vorrunden-Spielplan Logo-Darstellung**
   - **Gegeben sei**: Ein Gast befindet sich im Tab „Vorrunde“.
   - **Wenn**: Die Spiele der Vorrunde aufgelistet werden.
   - **Dann**: Besitzen die Logo-Container links und rechts neben dem Score-Kasten keinen Rahmen (`border-slate-200`) und keinen grauen Hintergrund (`bg-slate-50`).
 
-- [ ] **AC-3: Finalrunden-Spielplan Logo-Darstellung**
+- [x] **AC-3: Finalrunden-Spielplan Logo-Darstellung**
   - **Gegeben sei**: Ein Gast befindet sich im Tab „Finalrunde“.
   - **Wenn**: Die Spiele der Platzierungs- und Finalrunden aufgelistet werden.
   - **Dann**: Besitzen die Logo-Container neben den Scores keinen Rahmen und keinen Hintergrund.
 
-- [ ] **AC-4: Tabellen-Ansicht Logo-Darstellung**
+- [x] **AC-4: Tabellen-Ansicht Logo-Darstellung**
   - **Gegeben sei**: Ein Gast befindet sich im Tab „Tabellen“.
   - **Wenn**: Die Tabellenzeilen der Gruppen gerendert werden.
   - **Dann**: Werden die Team-Logos in der Spalte neben dem Teamnamen ohne Rahmen und ohne Hintergrund dargestellt.
 
-- [ ] **AC-5: Fallback-Verhalten bei Teams ohne Logo**
+- [x] **AC-5: Fallback-Verhalten bei Teams ohne Logo**
   - **Gegeben sei**: Ein Team besitzt keine `logoUrl`.
   - **Wenn**: Das Team in Live-Hero, Spielplan oder Tabelle dargestellt wird.
   - **Dann**: Wird das Fallback-Icon (`🏑`) weiterhin mittig und unverzerrt an derselben Position gerendert, ohne Rahmen/Hintergrund.
 
 ### 4.2 Allgemeine Qualitätskriterien
-- Keine fest kodierten Parameter.
-- Vollständige TypeScript-Typisierung ohne `any`.
-- Fehlerfreier Build (`npm run build`).
+- [x] Keine fest kodierten Parameter.
+- [x] Vollständige TypeScript-Typisierung ohne `any`.
+- [x] Fehlerfreier Build (`npm run build`).
 
 ---
 

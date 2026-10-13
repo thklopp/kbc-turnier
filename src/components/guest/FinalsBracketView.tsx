@@ -85,7 +85,7 @@ export function FinalsBracketView({
                 {home?.shortName || m.teamHomePlaceholder || "HEIM"}
               </span>
             </div>
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 overflow-hidden mr-2 sm:mr-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden mr-2 sm:mr-3">
               {home?.logoUrl ? (
                 <img
                   src={home.logoUrl}
@@ -107,7 +107,7 @@ export function FinalsBracketView({
 
           {/* Away: Logo left + Short name centered in remaining space */}
           <div className="flex-1 min-w-0 flex items-center">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 overflow-hidden ml-2 sm:ml-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden ml-2 sm:ml-3">
               {away?.logoUrl ? (
                 <img
                   src={away.logoUrl}

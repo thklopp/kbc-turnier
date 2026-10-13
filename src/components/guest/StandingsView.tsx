@@ -61,7 +61,7 @@ function GroupTable({
 
                   <td className="py-3 px-3">
                     <div className="flex items-center gap-2">
-                      <div className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-md border border-slate-200 bg-slate-50">
+                      <div className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden">
                         {teamStanding.teamLogoUrl ? (
                           <img
                             src={teamStanding.teamLogoUrl}
