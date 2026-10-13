@@ -1,6 +1,6 @@
 # SPEC-034: Kiosk Fit-to-Screen Skalierung (Virtual 1080p Stage)
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature / Optimierung  
 > **Branch**: `feat/SPEC-034-kiosk-fit-to-screen-scaling`  
 > **Autor**: Antigravity  
