@@ -69,6 +69,7 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 - [x] [SPEC-025] Automatische Zuordnung der Finalrunden-Paarungen aus Tabellen (HF 1, HF 2, Quali 5-8) und K.o.-Ergebnissen (Finale, Platz 3, 5, 7) mit manuellem Synchronisations-Button & Schutz vor vorzeitiger Belegung.
 - [x] [SPEC-029] Tausch der Halbfinals mit den Platzierungsspielen am Sonntag (Spiele 25–28: Platzierungsspiele 1 & 2; Spiele 29–32: Halbfinale 1 & 2) für optimale Regenerationspausen (4er-Block Pause vor den Endspielen) inklusive präziser Spielnamen und Platzhaltertexte.
 - [x] [SPEC-037] Admin Spielplan Action-Buttons & Filter Redesign: Eigene Zeile für Aktionsbuttons (Finalpaarungen aktualisieren, Zeiten verschieben, Spielplan zurücksetzen, Spielplan generieren) mit Beschreibungen und Sicherheitsabfragen, zerstörungsfreier Spielplan-Reset, Gruppenfilter (Alle Gruppen, Gruppe A, Gruppe B) & Entfernung des 40/40 Status-Tags.
+- [x] [SPEC-039] Vorrunden-Spielplan Reihenfolge (2er-Blöcke nach Gruppe & Geschlecht) & Button-Akzente: Generierung der 24 Vorrundenspiele in geschlossenen Gruppenblöcken (2x wU14 A, 2x mU14 A, 2x wU14 B, 2x mU14 B) mit je 6 Spielen Pause je Team und dezenten Button-Akzenten (Spielplan generieren in Blau, Finalpaarungen aktualisieren in Grün).
 
 ---
 

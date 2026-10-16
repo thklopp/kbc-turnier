@@ -181,9 +181,9 @@ export function ScheduleManager() {
             <button
               onClick={handleSyncFinals}
               disabled={syncingFinals || matches.length === 0}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-3 py-2.5 text-xs font-bold text-blue-700 hover:bg-blue-100 transition-colors shadow-xs cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-xs font-bold text-emerald-700 hover:bg-emerald-100 transition-colors shadow-xs cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              <RefreshCw className={`h-4 w-4 text-blue-600 shrink-0 ${syncingFinals ? "animate-spin" : ""}`} />
+              <RefreshCw className={`h-4 w-4 text-emerald-600 shrink-0 ${syncingFinals ? "animate-spin" : ""}`} />
               <span>{syncingFinals ? "Synchronisiere..." : "Finalpaarungen aktualisieren"}</span>
             </button>
             <p className="mt-2.5 text-xs text-slate-500 leading-relaxed">
@@ -232,9 +232,9 @@ export function ScheduleManager() {
             <button
               onClick={handleGenerate}
               disabled={generating}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-3 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-blue-500 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-3 py-2.5 text-xs font-bold text-blue-700 hover:bg-blue-100 transition-colors shadow-xs cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              <Sparkles className="h-4 w-4 shrink-0 text-blue-200" />
+              <Sparkles className="h-4 w-4 shrink-0 text-blue-600" />
               <span>{generating ? "Generiere 40 Partien..." : "Spielplan generieren"}</span>
             </button>
             <p className="mt-2.5 text-xs text-slate-500 leading-relaxed">

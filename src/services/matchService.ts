@@ -154,24 +154,22 @@ export async function generateTournamentSchedule(
   const mu14A = createGroupPairings(teams, "mU14", "A")
   const mu14B = createGroupPairings(teams, "mU14", "B")
 
-  // Wir bauen 6 Blöcke à 4 Spiele (2 wU14 gefolgt von 2 mU14):
+  // Wir bauen 3 Zyklen à 8 Spiele (2x wU14 A, 2x mU14 A, 2x wU14 B, 2x mU14 B = 24 Spiele):
   let matchNumber = 1
   let satTime = config.saturdayStartTime
 
-  for (let round = 0; round < 6; round++) {
-    // 2 Mädchenspiele (abwechselnd Gruppe A und Gruppe B)
-    const wMatch1 = wu14A[round]
-    const wMatch1Num = matchNumber++
+  const addGroupMatch = (pairing: { home: Team; away: Team; gender: GenderCategory; group: TournamentGroup }) => {
+    const num = matchNumber++
     matches.push({
-      id: `match-${String(wMatch1Num).padStart(2, "0")}`,
-      matchNumber: wMatch1Num,
-      matchName: `Gruppenspiel #${wMatch1Num}`,
+      id: `match-${String(num).padStart(2, "0")}`,
+      matchNumber: num,
+      matchName: `Gruppenspiel #${num}`,
       day: "saturday",
-      gender: "wU14",
+      gender: pairing.gender,
       phase: "group",
-      group: "A",
-      teamHomeId: wMatch1.home.id,
-      teamAwayId: wMatch1.away.id,
+      group: pairing.group,
+      teamHomeId: pairing.home.id,
+      teamAwayId: pairing.away.id,
       scheduledTime: satTime,
       court: 1,
       status: "scheduled",
@@ -180,70 +178,27 @@ export async function generateTournamentSchedule(
       events: [],
     })
     satTime = addMinutesToTimeString(satTime, slotMinutes)
+  }
 
-    const wMatch2 = wu14B[round]
-    const wMatch2Num = matchNumber++
-    matches.push({
-      id: `match-${String(wMatch2Num).padStart(2, "0")}`,
-      matchNumber: wMatch2Num,
-      matchName: `Gruppenspiel #${wMatch2Num}`,
-      day: "saturday",
-      gender: "wU14",
-      phase: "group",
-      group: "B",
-      teamHomeId: wMatch2.home.id,
-      teamAwayId: wMatch2.away.id,
-      scheduledTime: satTime,
-      court: 1,
-      status: "scheduled",
-      scoreHome: 0,
-      scoreAway: 0,
-      events: [],
-    })
-    satTime = addMinutesToTimeString(satTime, slotMinutes)
+  for (let cycle = 0; cycle < 3; cycle++) {
+    const idx1 = cycle * 2
+    const idx2 = cycle * 2 + 1
 
-    // 2 Jungsspiele (abwechselnd Gruppe A und Gruppe B)
-    const mMatch1 = mu14A[round]
-    const mMatch1Num = matchNumber++
-    matches.push({
-      id: `match-${String(mMatch1Num).padStart(2, "0")}`,
-      matchNumber: mMatch1Num,
-      matchName: `Gruppenspiel #${mMatch1Num}`,
-      day: "saturday",
-      gender: "mU14",
-      phase: "group",
-      group: "A",
-      teamHomeId: mMatch1.home.id,
-      teamAwayId: mMatch1.away.id,
-      scheduledTime: satTime,
-      court: 1,
-      status: "scheduled",
-      scoreHome: 0,
-      scoreAway: 0,
-      events: [],
-    })
-    satTime = addMinutesToTimeString(satTime, slotMinutes)
+    // 1. 2x Spiele wU14 Gruppe A
+    addGroupMatch(wu14A[idx1])
+    addGroupMatch(wu14A[idx2])
 
-    const mMatch2 = mu14B[round]
-    const mMatch2Num = matchNumber++
-    matches.push({
-      id: `match-${String(mMatch2Num).padStart(2, "0")}`,
-      matchNumber: mMatch2Num,
-      matchName: `Gruppenspiel #${mMatch2Num}`,
-      day: "saturday",
-      gender: "mU14",
-      phase: "group",
-      group: "B",
-      teamHomeId: mMatch2.home.id,
-      teamAwayId: mMatch2.away.id,
-      scheduledTime: satTime,
-      court: 1,
-      status: "scheduled",
-      scoreHome: 0,
-      scoreAway: 0,
-      events: [],
-    })
-    satTime = addMinutesToTimeString(satTime, slotMinutes)
+    // 2. 2x Spiele mU14 Gruppe A
+    addGroupMatch(mu14A[idx1])
+    addGroupMatch(mu14A[idx2])
+
+    // 3. 2x Spiele wU14 Gruppe B
+    addGroupMatch(wu14B[idx1])
+    addGroupMatch(wu14B[idx2])
+
+    // 4. 2x Spiele mU14 Gruppe B
+    addGroupMatch(mu14B[idx1])
+    addGroupMatch(mu14B[idx2])
   }
 
   // 2. SONNTAG: FINALPHASE (16 Spiele)
