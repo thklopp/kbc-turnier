@@ -1,6 +1,6 @@
 # SPEC-037: Spielplan Action-Buttons & Filter Redesign
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Optimierung / UI/UX  
 > **Branch**: feat/SPEC-037-spielplan-actions-und-filter-redesign  
 > **Autor**: Antigravity  
