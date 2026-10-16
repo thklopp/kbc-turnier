@@ -1,6 +1,6 @@
 # SPEC-038: Teams tauschen in der Admin-Teamverwaltung
 
-> **Status**: In Review  
+> **Status**: In Abnahme  
 > **Typ**: Feature  
 > **Branch**: `feat/SPEC-038-teams-tauschen-admin`  
 > **Autor**: Agent (Antigravity)  
@@ -39,17 +39,17 @@ Die Turnierleitung kann im Adminbereich über einen übersichtlichen Auswahldial
 ## 3. Fachliche Anforderungen & Scope
 
 ### 3.1 Im Scope (Must-Have)
-- [ ] **Tausch-Service (`swapTeams`)**:
+- [x] **Tausch-Service (`swapTeams`)**:
   - Atomare Vertauschung der Team-Identitäten (Name, Kurzname, Logo-URL, Jingle-URL, Jingle-Startzeit, Jingle-Token, Spieler-Array, Kontaktdaten) in Firestore via `writeBatch` (bzw. im Mock-Storage für Offline/Dev).
   - Tausch zwischen Teams verschiedener Gruppen: Doc A (Gruppe A) behält `group: "A"`, Doc B (Gruppe B) behält `group: "B"`. Team A wechselt dadurch nach Gruppe B, Team B nach Gruppe A.
   - Tausch innerhalb derselben Gruppe: Beide behalten ihre Gruppe, tauschen jedoch die Slot-Position/ID.
   - Das `jingleToken` wandert mit dem Team mit, sodass bereits verteilte Betreuer-Links für den Jingle-Upload für den jeweiligen Verein gültig bleiben.
-- [ ] **Validierungsregeln**:
+- [x] **Validierungsregeln**:
   - Teams müssen das gleiche Geschlecht (`gender`) haben.
   - Ein Team kann nicht mit sich selbst getauscht werden.
   - Beide Teams müssen existieren.
   - Sperre / Warnung, falls Spiele dieser Altersklasse bereits im Status `live` oder `finished` sind.
-- [ ] **UI-Komponenten**:
+- [x] **UI-Komponenten**:
   - Neuer Button `Teams tauschen` im Header der Teamverwaltung (`TeamList.tsx`).
   - Neuer Quick-Action Button (z. B. `ArrowLeftRight`) auf jeder `TeamCard.tsx`.
   - Neues Modal `TeamSwapModal.tsx` mit:
@@ -69,7 +69,7 @@ Die Turnierleitung kann im Adminbereich über einen übersichtlichen Auswahldial
 
 ### 4.1 Szenarien / Kriterien
 
-- [ ] **AC-1: Tausch zweier Teams zwischen den Gruppen (A ⇄ B)**
+- [x] **AC-1: Tausch zweier Teams zwischen den Gruppen (A ⇄ B)**
   - **Gegeben sei**: Team 1 ist "Kreuznacher HC (w)" (Gruppe A, ID `team-wu14-1`) und Team 2 ist "SC Frankfurt 1880 (w)" (Gruppe B, ID `team-wu14-6`).
   - **Wenn**: Die Turnierleitung im Tausch-Dialog Team 1 und Team 2 auswählt und auf "Teams jetzt tauschen" klickt.
   - **Dann**:
@@ -78,33 +78,33 @@ Die Turnierleitung kann im Adminbereich über einen übersichtlichen Auswahldial
     - Alle Kader (`players`), Jingle-Tokens und Logos der beiden Teams sind vollständig und korrekt mitgewandert.
     - Alle existierenden Vorrundenspiele, die zuvor `team-wu14-1` referenzierten, zeigen nun automatisch "SC Frankfurt 1880 (w)".
 
-- [ ] **AC-2: Tausch zweier Teams innerhalb derselben Gruppe (A ⇄ A)**
+- [x] **AC-2: Tausch zweier Teams innerhalb derselben Gruppe (A ⇄ A)**
   - **Gegeben sei**: Team 1 ist "Kreuznacher HC (w)" (Gruppe A, ID `team-wu14-1`) und Team 2 ist "Dürkheimer HC (w)" (Gruppe A, ID `team-wu14-2`).
   - **Wenn**: Beide Teams im Dialog ausgewählt und getauscht werden.
   - **Dann**:
     - Behalten beide Teams die Gruppe A.
     - Tauschen beide Teams ihre IDs und damit ihre Ansetzungen im Spielplan.
 
-- [ ] **AC-3: Strikte Trennung nach Geschlechtern**
+- [x] **AC-3: Strikte Trennung nach Geschlechtern**
   - **Gegeben sei**: Die Turnierleitung öffnet den Tausch-Dialog.
   - **Wenn**: Als Geschlecht "wU14" gewählt ist.
   - **Dann**: Werden in den Auswahllisten ausschließlich wU14-Teams angezeigt. Ein Auswählen eines mU14-Teams ist unmöglich.
 
-- [ ] **AC-4: Schnellaktion an der Team-Karte**
+- [x] **AC-4: Schnellaktion an der Team-Karte**
   - **Gegeben sei**: Die Turnierleitung betrachtet die Team-Karten in `/admin`.
   - **Wenn**: An einer Team-Karte auf das Tauschen-Icon geklickt wird.
   - **Dann**: Öffnet sich das `TeamSwapModal` mit diesem Team als vorausgewähltes "Team 1" und passend gesetzter Geschlechter-Kategorie.
 
-- [ ] **AC-5: Schutz vor Tausch bei laufendem Turnier**
+- [x] **AC-5: Schutz vor Tausch bei laufendem Turnier**
   - **Gegeben sei**: Für die Altersklasse wU14 ist bereits mindestens ein Spiel im Status `live` oder `finished`.
   - **Wenn**: Die Turnierleitung den Tausch-Dialog für wU14 öffnet.
   - **Dann**: Wird ein warnender Hinweis angezeigt, dass der Spielbetrieb bereits läuft und Teams nicht mehr getauscht werden können, und die Tausch-Schaltfläche ist deaktiviert.
 
 ### 4.2 Allgemeine Qualitätskriterien
-- Keine fest kodierten Parameter (`AGENTS.md`).
-- Vollständige TypeScript-Typisierung ohne `any`.
-- Firestore Batch-Operation für atomare Ausführung (`writeBatch`).
-- Build (`npm run build`) und Linter laufen fehlerfrei durch.
+- [x] Keine fest kodierten Parameter (`AGENTS.md`).
+- [x] Vollständige TypeScript-Typisierung ohne `any`.
+- [x] Firestore Batch-Operation für atomare Ausführung (`writeBatch`).
+- [x] Build (`npm run build`) und Linter laufen fehlerfrei durch.
 
 ---
 

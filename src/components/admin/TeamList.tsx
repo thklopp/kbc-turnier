@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react"
-import type { Team, GenderCategory, TournamentGroup } from "@/types/database"
+import type { Team, Match, GenderCategory, TournamentGroup } from "@/types/database"
 import { subscribeTeams, seedDefaultTeams, saveTeam } from "@/services/teamService"
+import { subscribeMatches } from "@/services/matchService"
 import { useAudioPlayer } from "@/hooks/useAudioPlayer"
 import { TeamCard } from "./TeamCard"
 import { TeamEditModal } from "./TeamEditModal"
 import { TeamJingleOverviewModal } from "./TeamJingleOverviewModal"
-import { Users, Plus, Sparkles, Filter, AlertCircle, Music } from "lucide-react"
+import { TeamSwapModal } from "./TeamSwapModal"
+import { Users, Plus, Sparkles, Filter, AlertCircle, Music, ArrowLeftRight } from "lucide-react"
 
 export function TeamList() {
   const [teams, setTeams] = useState<Team[]>([])
@@ -13,14 +15,17 @@ export function TeamList() {
   const [genderFilter, setGenderFilter] = useState<"all" | GenderCategory>("all")
   const [groupFilter, setGroupFilter] = useState<"all" | TournamentGroup>("all")
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null)
+  const [matches, setMatches] = useState<Match[]>([])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isJingleOverviewOpen, setIsJingleOverviewOpen] = useState(false)
+  const [isSwapModalOpen, setIsSwapModalOpen] = useState(false)
+  const [swapInitialTeam, setSwapInitialTeam] = useState<Team | null>(null)
   const [seeding, setSeeding] = useState(false)
 
   const { play, stop, isPlaying } = useAudioPlayer()
 
   useEffect(() => {
-    const unsubscribe = subscribeTeams(
+    const unsubTeams = subscribeTeams(
       (updatedTeams) => {
         setTeams(updatedTeams)
         setLoading(false)
@@ -31,7 +36,19 @@ export function TeamList() {
       }
     )
 
-    return () => unsubscribe()
+    const unsubMatches = subscribeMatches(
+      (updatedMatches) => {
+        setMatches(updatedMatches)
+      },
+      (error) => {
+        console.error("Matches Listener Fehler:", error)
+      }
+    )
+
+    return () => {
+      unsubTeams()
+      unsubMatches()
+    }
   }, [])
 
   const filteredTeams = teams.filter((t) => {
@@ -107,6 +124,19 @@ export function TeamList() {
               <span>{seeding ? "Initialisiere..." : "16 Standardteams anlegen"}</span>
             </button>
           )}
+
+          <button
+            onClick={() => {
+              setSwapInitialTeam(null)
+              setIsSwapModalOpen(true)
+            }}
+            disabled={teams.length < 2}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-sm hover:bg-slate-50 transition-colors cursor-pointer disabled:opacity-50"
+            title="Zwei Mannschaften innerhalb einer Altersklasse gegeneinander tauschen"
+          >
+            <ArrowLeftRight className="h-3.5 w-3.5 text-blue-600" />
+            <span>Teams tauschen</span>
+          </button>
 
           <button
             onClick={() => setIsJingleOverviewOpen(true)}
@@ -222,6 +252,10 @@ export function TeamList() {
               key={team.id}
               team={team}
               onEdit={handleEdit}
+              onSwap={(t) => {
+                setSwapInitialTeam(t)
+                setIsSwapModalOpen(true)
+              }}
               onPlayJingle={play}
               onStopJingle={stop}
               isPlayingJingle={isPlaying(team.jingleUrl || undefined)}
@@ -248,6 +282,18 @@ export function TeamList() {
         onPlayJingle={play}
         onStopJingle={stop}
         isPlayingJingle={isPlaying}
+      />
+
+      {/* Team Swap Modal */}
+      <TeamSwapModal
+        teams={teams}
+        matches={matches}
+        isOpen={isSwapModalOpen}
+        initialTeam={swapInitialTeam}
+        onClose={() => {
+          setIsSwapModalOpen(false)
+          setSwapInitialTeam(null)
+        }}
       />
     </div>
   )

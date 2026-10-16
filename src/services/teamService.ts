@@ -191,6 +191,103 @@ export async function deleteTeam(teamId: string): Promise<void> {
 }
 
 /**
+ * Tauscht zwei Teams (deren Vereins- und Inhaltsdaten) gegeneinander.
+ * Die Slot-IDs und die jeweiligen Slot-Gruppenzugehörigkeiten bleiben erhalten,
+ * sodass Teams sowohl innerhalb einer Gruppe (z.B. A1 ⇄ A2) als auch
+ * zwischen Gruppen (z.B. A1 ⇄ B2) getauscht werden können.
+ *
+ * Es dürfen nur Teams desselben Geschlechts (wU14 mit wU14, mU14 mit mU14) getauscht werden.
+ */
+export async function swapTeams(team1Id: string, team2Id: string): Promise<void> {
+  if (team1Id === team2Id) {
+    throw new Error("Ein Team kann nicht mit sich selbst getauscht werden.")
+  }
+
+  if (!isFirebaseConfigured) {
+    const idx1 = localMockTeams.findIndex((t) => t.id === team1Id)
+    const idx2 = localMockTeams.findIndex((t) => t.id === team2Id)
+
+    if (idx1 < 0 || idx2 < 0) {
+      throw new Error("Mindestens eines der ausgewählten Teams wurde nicht gefunden.")
+    }
+
+    const t1 = localMockTeams[idx1]
+    const t2 = localMockTeams[idx2]
+
+    if (t1.gender !== t2.gender) {
+      throw new Error("Teams können nur innerhalb derselben Altersklasse (wU14 oder mU14) getauscht werden.")
+    }
+
+    const newT1: Team = {
+      ...t2,
+      id: t1.id,
+      group: t1.group,
+      gender: t1.gender,
+      updatedAt: undefined,
+    }
+
+    const newT2: Team = {
+      ...t1,
+      id: t2.id,
+      group: t2.group,
+      gender: t2.gender,
+      updatedAt: undefined,
+    }
+
+    localMockTeams[idx1] = newT1
+    localMockTeams[idx2] = newT2
+    notifyMockListeners()
+    return
+  }
+
+  const ref1 = doc(db, TEAMS_COLLECTION, team1Id)
+  const ref2 = doc(db, TEAMS_COLLECTION, team2Id)
+
+  const [snap1, snap2] = await Promise.all([getDoc(ref1), getDoc(ref2)])
+
+  if (!snap1.exists() || !snap2.exists()) {
+    throw new Error("Mindestens eines der ausgewählten Teams existiert nicht in der Datenbank.")
+  }
+
+  const data1 = snap1.data() as Team
+  const data2 = snap2.data() as Team
+
+  if (data1.gender !== data2.gender) {
+    throw new Error("Teams können nur innerhalb derselben Altersklasse (wU14 oder mU14) getauscht werden.")
+  }
+
+  const batch = writeBatch(db)
+
+  batch.update(ref1, {
+    name: data2.name,
+    shortName: data2.shortName,
+    logoUrl: data2.logoUrl ?? null,
+    jingleUrl: data2.jingleUrl ?? null,
+    jingleStartTimeMs: data2.jingleStartTimeMs ?? 0,
+    jingleToken: data2.jingleToken || generateJingleToken(),
+    jingleUpdatedAt: data2.jingleUpdatedAt ?? null,
+    players: data2.players ?? [],
+    contactPerson: data2.contactPerson ?? null,
+    updatedAt: serverTimestamp(),
+  })
+
+  batch.update(ref2, {
+    name: data1.name,
+    shortName: data1.shortName,
+    logoUrl: data1.logoUrl ?? null,
+    jingleUrl: data1.jingleUrl ?? null,
+    jingleStartTimeMs: data1.jingleStartTimeMs ?? 0,
+    jingleToken: data1.jingleToken || generateJingleToken(),
+    jingleUpdatedAt: data1.jingleUpdatedAt ?? null,
+    players: data1.players ?? [],
+    contactPerson: data1.contactPerson ?? null,
+    updatedAt: serverTimestamp(),
+  })
+
+  await batch.commit()
+}
+
+/**
  * Lädt ein Logo für ein Team in Firebase Storage hoch (max. 2 MB).
  */
 export async function uploadTeamLogo(teamId: string, file: File): Promise<string> {
