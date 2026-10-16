@@ -32,7 +32,7 @@ function TeamSwapModalContent({
   const [gender, setGender] = useState<GenderCategory>(initialTeam?.gender || "wU14")
   const [team1Id, setTeam1Id] = useState<string>(() => {
     if (initialTeam) return initialTeam.id
-    const first = teams.find((t) => t.gender === (initialTeam?.gender || "wU14"))
+    const first = teams.find((t) => t.gender === "wU14")
     return first ? first.id : ""
   })
   const [team2Id, setTeam2Id] = useState<string>("")
