@@ -1,6 +1,6 @@
 # SPEC-038: Teams tauschen in der Admin-Teamverwaltung
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature  
 > **Branch**: `feat/SPEC-038-teams-tauschen-admin`  
 > **Autor**: Agent (Antigravity)  
