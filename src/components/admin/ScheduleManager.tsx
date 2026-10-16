@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import type { Match, Team, TournamentConfig, GenderCategory } from "@/types/database"
+import type { Match, Team, TournamentConfig, GenderCategory, TournamentGroup } from "@/types/database"
 import {
   subscribeMatches,
   generateTournamentSchedule,
@@ -15,7 +15,7 @@ import {
   Calendar,
   Sparkles,
   Clock,
-  Trash2,
+  RotateCcw,
   Edit2,
   Filter,
   CheckCircle,
@@ -33,6 +33,7 @@ export function ScheduleManager() {
   // Filters
   const [dayFilter, setDayFilter] = useState<"all" | "saturday" | "sunday">("all")
   const [genderFilter, setGenderFilter] = useState<"all" | GenderCategory>("all")
+  const [groupFilter, setGroupFilter] = useState<"all" | TournamentGroup>("all")
 
   const [isDelayModalOpen, setIsDelayModalOpen] = useState(false)
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null)
@@ -45,6 +46,13 @@ export function ScheduleManager() {
   } | null>(null)
 
   const handleSyncFinals = async () => {
+    if (
+      !confirm(
+        "Möchtest du die Finalpaarungen anhand der aktuellen Tabellenstände und Vorrundenergebnisse jetzt aktualisieren?"
+      )
+    ) {
+      return
+    }
     setSyncingFinals(true)
     setSyncFeedback(null)
     try {
@@ -107,6 +115,10 @@ export function ScheduleManager() {
       if (!confirm("Achtung: Dadurch werden alle bestehenden 40 Spiele neu generiert und überschrieben. Fortfahren?")) {
         return
       }
+    } else {
+      if (!confirm("Möchtest du jetzt den Spielplan mit allen 40 Partien automatisch generieren?")) {
+        return
+      }
     }
     setGenerating(true)
     try {
@@ -120,18 +132,26 @@ export function ScheduleManager() {
   }
 
   const handleReset = async () => {
-    if (!confirm("Soll der gesamte Spielplan wirklich gelöscht werden?")) return
+    if (
+      !confirm(
+        "Achtung: Möchtest du wirklich alle Ergebnisse, Live-Stände, Torschützen, Spielzeiten und Finalbelegungen auf den Ausgangszustand zurücksetzen? Die Partien selbst bleiben erhalten."
+      )
+    ) {
+      return
+    }
     try {
-      await resetSchedule()
+      await resetSchedule(config)
     } catch (err) {
       console.error("Fehler beim Zurücksetzen:", err)
+      alert("Fehler beim Zurücksetzen des Spielplans.")
     }
   }
 
   const filteredMatches = matches.filter((m) => {
     const matchDay = dayFilter === "all" || m.day === dayFilter
     const matchGender = genderFilter === "all" || m.gender === genderFilter
-    return matchDay && matchGender
+    const matchGroup = groupFilter === "all" || m.group === groupFilter
+    return matchDay && matchGender && matchGroup
   })
 
   const saturdayMatchesCount = matches.filter((m) => m.day === "saturday").length
@@ -142,59 +162,85 @@ export function ScheduleManager() {
       {/* 1. Global Time Configuration Form */}
       <ScheduleConfigForm />
 
-      {/* 2. Schedule Action Bar */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-blue-600" />
-            <h2 className="text-lg font-bold text-slate-900">Spielplan (40 Partien)</h2>
+      {/* 2. Schedule Title */}
+      <div>
+        <div className="flex items-center gap-2">
+          <Calendar className="h-5 w-5 text-blue-600" />
+          <h2 className="text-lg font-bold text-slate-900">Spielplan (40 Partien)</h2>
+        </div>
+        <p className="text-xs text-slate-500 mt-0.5">
+          24 Gruppenspiele am Samstag &bull; 16 Finalspiele am Sonntag &bull; Rhythmus: 2 wU14, 2 mU14
+        </p>
+      </div>
+
+      {/* 3. Action Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {/* 1. Finalpaarungen aktualisieren */}
+        <div className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
+          <div>
+            <button
+              onClick={handleSyncFinals}
+              disabled={syncingFinals || matches.length === 0}
+              className="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-3 py-2.5 text-xs font-bold text-blue-700 hover:bg-blue-100 transition-colors shadow-xs cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <RefreshCw className={`h-4 w-4 text-blue-600 shrink-0 ${syncingFinals ? "animate-spin" : ""}`} />
+              <span>{syncingFinals ? "Synchronisiere..." : "Finalpaarungen aktualisieren"}</span>
+            </button>
+            <p className="mt-2.5 text-xs text-slate-500 leading-relaxed">
+              Ermittelt anhand der Vorrundentabellen und Spielergebnisse automatisch alle Halbfinal-, Platzierungs- und Finalpaarungen.
+            </p>
           </div>
-          <p className="text-xs text-slate-500 mt-0.5">
-            24 Gruppenspiele am Samstag &bull; 16 Finalspiele am Sonntag &bull; Rhythmus: 2 wU14, 2 mU14
-          </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          {matches.length > 0 && (
-            <>
-              <button
-                onClick={handleSyncFinals}
-                disabled={syncingFinals}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 px-3.5 py-2 text-xs font-bold text-blue-700 hover:bg-blue-100 transition-colors shadow-sm cursor-pointer disabled:opacity-50"
-                title="Prüft Tabellen und Ergebnisse und weist Mannschaften automatisch den Finalspielen zu"
-              >
-                <RefreshCw className={`h-3.5 w-3.5 text-blue-600 ${syncingFinals ? "animate-spin" : ""}`} />
-                <span>{syncingFinals ? "Synchronisiere..." : "Finalpaarungen aktualisieren"}</span>
-              </button>
+        {/* 2. Zeiten verschieben (+X Min.) */}
+        <div className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
+          <div>
+            <button
+              onClick={() => setIsDelayModalOpen(true)}
+              disabled={matches.length === 0}
+              className="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2.5 text-xs font-bold text-amber-800 hover:bg-amber-100 transition-colors shadow-xs cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <Clock className="h-4 w-4 text-amber-600 shrink-0" />
+              <span>Zeiten verschieben (+X Min.)</span>
+            </button>
+            <p className="mt-2.5 text-xs text-slate-500 leading-relaxed">
+              Verschiebt nachfolgende Anstoßzeiten kaskadierend nach hinten oder vorne bei Zeitverzug in der Halle.
+            </p>
+          </div>
+        </div>
 
-              <button
-                onClick={() => setIsDelayModalOpen(true)}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-amber-300 bg-amber-50 px-3.5 py-2 text-xs font-bold text-amber-800 hover:bg-amber-100 transition-colors shadow-sm cursor-pointer"
-                title="Verschiebt Spiele bei Verspätung kaskadierend"
-              >
-                <Clock className="h-3.5 w-3.5 text-amber-600" />
-                <span>Zeiten verschieben (+X Min.)</span>
-              </button>
+        {/* 3. Spielplan zurücksetzen */}
+        <div className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
+          <div>
+            <button
+              onClick={handleReset}
+              disabled={matches.length === 0}
+              className="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-xs font-bold text-rose-700 hover:bg-rose-100 transition-colors shadow-xs cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <RotateCcw className="h-4 w-4 text-rose-600 shrink-0" />
+              <span>Spielplan zurücksetzen</span>
+            </button>
+            <p className="mt-2.5 text-xs text-slate-500 leading-relaxed">
+              Setzt alle Ergebnisse, Zeiten, Torschützen usw. zurück. Damit man wieder von vorne anfangen kann. Es werden keine Partien verändert oder gelöscht.
+            </p>
+          </div>
+        </div>
 
-              <button
-                onClick={handleReset}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-rose-200 bg-white px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                title="Spielplan komplett leeren"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Reset</span>
-              </button>
-            </>
-          )}
-
-          <button
-            onClick={handleGenerate}
-            disabled={generating}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white shadow hover:bg-blue-500 transition-colors cursor-pointer disabled:opacity-50"
-          >
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>{generating ? "Generiere 40 Partien..." : "Spielplan automatisch generieren"}</span>
-          </button>
+        {/* 4. Spielplan generieren */}
+        <div className="flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
+          <div>
+            <button
+              onClick={handleGenerate}
+              disabled={generating}
+              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-3 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-blue-500 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Sparkles className="h-4 w-4 shrink-0 text-blue-200" />
+              <span>{generating ? "Generiere 40 Partien..." : "Spielplan generieren"}</span>
+            </button>
+            <p className="mt-2.5 text-xs text-slate-500 leading-relaxed">
+              Erstellt alle 40 Partien für Samstag & Sonntag im 2w_2m-Rhythmus auf Basis der Teams & Zeitkonfiguration.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -237,80 +283,92 @@ export function ScheduleManager() {
         </div>
       )}
 
-      {/* 3. Filter Bar */}
-      <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm md:flex-row md:items-center md:justify-between">
-        <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
-          <span className="inline-flex items-center gap-1 text-slate-400 mr-1">
-            <Filter className="h-3.5 w-3.5" />
-            Filter:
-          </span>
+      {/* 4. Filter Bar */}
+      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <span className="inline-flex items-center gap-1 text-xs font-semibold text-slate-400 mr-1">
+          <Filter className="h-3.5 w-3.5" />
+          Filter:
+        </span>
 
-          <div className="flex rounded-lg bg-slate-100 p-0.5 border border-slate-200">
-            <button
-              onClick={() => setDayFilter("all")}
-              className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-                dayFilter === "all" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              Alle Tage ({matches.length})
-            </button>
-            <button
-              onClick={() => setDayFilter("saturday")}
-              className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-                dayFilter === "saturday" ? "bg-white text-blue-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              Samstag ({saturdayMatchesCount}/24)
-            </button>
-            <button
-              onClick={() => setDayFilter("sunday")}
-              className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-                dayFilter === "sunday" ? "bg-white text-purple-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              Sonntag ({sundayMatchesCount}/16)
-            </button>
-          </div>
-
-          <div className="flex rounded-lg bg-slate-100 p-0.5 border border-slate-200">
-            <button
-              onClick={() => setGenderFilter("all")}
-              className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-                genderFilter === "all" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              Alle Wettbewerbe
-            </button>
-            <button
-              onClick={() => setGenderFilter("wU14")}
-              className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-                genderFilter === "wU14" ? "bg-white text-pink-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              wU14
-            </button>
-            <button
-              onClick={() => setGenderFilter("mU14")}
-              className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-                genderFilter === "mU14" ? "bg-white text-blue-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              mU14
-            </button>
-          </div>
+        <div className="flex rounded-lg bg-slate-100 p-0.5 border border-slate-200 text-xs font-semibold">
+          <button
+            onClick={() => setDayFilter("all")}
+            className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
+              dayFilter === "all" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            Alle Tage ({matches.length})
+          </button>
+          <button
+            onClick={() => setDayFilter("saturday")}
+            className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
+              dayFilter === "saturday" ? "bg-white text-blue-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            Samstag ({saturdayMatchesCount}/24)
+          </button>
+          <button
+            onClick={() => setDayFilter("sunday")}
+            className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
+              dayFilter === "sunday" ? "bg-white text-purple-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            Sonntag ({sundayMatchesCount}/16)
+          </button>
         </div>
 
-        <div className="text-xs font-semibold text-slate-600 flex items-center gap-2">
-          {matches.length === 40 ? (
-            <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full">
-              <CheckCircle className="h-3.5 w-3.5 text-emerald-600" />
-              40 / 40 Spiele generiert
-            </span>
-          ) : (
-            <span className="text-amber-700 bg-amber-100 px-2.5 py-1 rounded-full">
-              {matches.length} / 40 Spiele im Plan
-            </span>
-          )}
+        <div className="flex rounded-lg bg-slate-100 p-0.5 border border-slate-200 text-xs font-semibold">
+          <button
+            onClick={() => setGenderFilter("all")}
+            className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
+              genderFilter === "all" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            Alle Wettbewerbe
+          </button>
+          <button
+            onClick={() => setGenderFilter("wU14")}
+            className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
+              genderFilter === "wU14" ? "bg-white text-pink-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            wU14
+          </button>
+          <button
+            onClick={() => setGenderFilter("mU14")}
+            className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
+              genderFilter === "mU14" ? "bg-white text-blue-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            mU14
+          </button>
+        </div>
+
+        <div className="flex rounded-lg bg-slate-100 p-0.5 border border-slate-200 text-xs font-semibold">
+          <button
+            onClick={() => setGroupFilter("all")}
+            className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
+              groupFilter === "all" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            Alle Gruppen
+          </button>
+          <button
+            onClick={() => setGroupFilter("A")}
+            className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
+              groupFilter === "A" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            Gruppe A
+          </button>
+          <button
+            onClick={() => setGroupFilter("B")}
+            className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
+              groupFilter === "B" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            Gruppe B
+          </button>
         </div>
       </div>
 

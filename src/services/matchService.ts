@@ -7,6 +7,7 @@ import {
   getDocs,
   getDoc,
   serverTimestamp,
+  deleteField,
   type Unsubscribe,
 } from "firebase/firestore"
 import { db, isFirebaseConfigured } from "@/lib/firebase"
@@ -496,11 +497,41 @@ export async function updateMatchEventScorer(
 
 
 /**
- * Löscht alle Spiele (Reset).
+ * Setzt alle Ergebnisse, Live-Status, Torschützen/Events und Zeiten zurück,
+ * ohne die Spiele selbst zu löschen.
  */
-export async function resetSchedule(): Promise<void> {
+export async function resetSchedule(config?: TournamentConfig): Promise<void> {
   if (!isFirebaseConfigured) {
-    localMockMatches = []
+    localMockMatches = localMockMatches.map((m) => {
+      let scheduledTime = m.scheduledTime
+      if (config) {
+        const slotMinutes = config.gameDurationMinutes + config.breakDurationMinutes
+        if (m.day === "saturday") {
+          const slotIndex = Math.max(0, m.matchNumber - 1)
+          scheduledTime = addMinutesToTimeString(config.saturdayStartTime, slotIndex * slotMinutes)
+        } else {
+          const slotIndex = Math.max(0, m.matchNumber - 25)
+          scheduledTime = addMinutesToTimeString(config.sundayStartTime, slotIndex * slotMinutes)
+        }
+      }
+      const isFinal = m.phase === "final"
+      const updated: Match = {
+        ...m,
+        scheduledTime,
+        status: "scheduled",
+        scoreHome: 0,
+        scoreAway: 0,
+        events: [],
+        actualStartTime: null,
+        actualEndTime: null,
+        isTimerRunning: false,
+        timerSecondsRemaining: undefined,
+        currentPeriodMinute: undefined,
+      }
+      if (isFinal && m.teamHomePlaceholder) updated.teamHomeId = ""
+      if (isFinal && m.teamAwayPlaceholder) updated.teamAwayId = ""
+      return updated
+    })
     notifyMatchListeners()
     return
   }
@@ -508,7 +539,40 @@ export async function resetSchedule(): Promise<void> {
   const snapshot = await getDocs(collection(db, MATCHES_COLLECTION))
   const batch = writeBatch(db)
   snapshot.forEach((docSnap) => {
-    batch.delete(docSnap.ref)
+    const data = docSnap.data() as Match
+    let scheduledTime = data.scheduledTime
+    if (config) {
+      const slotMinutes = config.gameDurationMinutes + config.breakDurationMinutes
+      if (data.day === "saturday") {
+        const slotIndex = Math.max(0, data.matchNumber - 1)
+        scheduledTime = addMinutesToTimeString(config.saturdayStartTime, slotIndex * slotMinutes)
+      } else {
+        const slotIndex = Math.max(0, data.matchNumber - 25)
+        scheduledTime = addMinutesToTimeString(config.sundayStartTime, slotIndex * slotMinutes)
+      }
+    }
+
+    const isFinal = data.phase === "final"
+    const patch: Record<string, unknown> = {
+      scheduledTime,
+      status: "scheduled",
+      scoreHome: 0,
+      scoreAway: 0,
+      events: [],
+      actualStartTime: deleteField(),
+      actualEndTime: deleteField(),
+      isTimerRunning: false,
+      timerSecondsRemaining: deleteField(),
+      currentPeriodMinute: deleteField(),
+      updatedAt: serverTimestamp(),
+    }
+    if (isFinal && data.teamHomePlaceholder) {
+      patch.teamHomeId = ""
+    }
+    if (isFinal && data.teamAwayPlaceholder) {
+      patch.teamAwayId = ""
+    }
+    batch.update(docSnap.ref, patch)
   })
   await batch.commit()
 }
