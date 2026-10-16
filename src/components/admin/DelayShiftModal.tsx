@@ -28,6 +28,15 @@ function DelayShiftForm({
       return
     }
 
+    const dayLabel = day === "saturday" ? "Samstag" : "Sonntag"
+    if (
+      !confirm(
+        `Möchtest du wirklich alle noch ausstehenden Spiele am ${dayLabel} kaskadierend um +${minutes} Minuten verschieben?`
+      )
+    ) {
+      return
+    }
+
     setSubmitting(true)
     setError(null)
 
