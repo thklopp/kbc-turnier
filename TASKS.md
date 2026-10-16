@@ -50,6 +50,7 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 - [x] Torjingle-Upload nach Firebase Storage (`/teams/{teamId}/jingle.mp3`).
 - [x] Integrierter Audio-Player zum Probehören des Torjingles direkt in der Team-Tabelle.
 - [x] Validierung: Max. Dateigrößen (Logo: 2MB, Jingle: 5MB MP3) und MIME-Types.
+- [x] Teams & Spielplan-Plätze tauschen (SPEC-038): Atomarer Tausch zweier Teams innerhalb einer Altersklasse (gruppenintern und gruppenübergreifend) mit automatischer Spielplan- und Tabellensynchronisation.
 
 ---
 
