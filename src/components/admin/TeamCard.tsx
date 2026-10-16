@@ -1,11 +1,12 @@
 import { useState } from "react"
 import type { Team } from "@/types/database"
 import { regenerateTeamJingleToken } from "@/services/teamService"
-import { Play, Square, Edit2, ShieldAlert, Link as LinkIcon, Check } from "lucide-react"
+import { Play, Square, Edit2, ShieldAlert, Link as LinkIcon, Check, ArrowLeftRight } from "lucide-react"
 
 interface TeamCardProps {
   team: Team
   onEdit: (team: Team) => void
+  onSwap?: (team: Team) => void
   onPlayJingle: (url: string, startTimeMs?: number) => void
   onStopJingle: () => void
   isPlayingJingle: boolean
@@ -14,6 +15,7 @@ interface TeamCardProps {
 export function TeamCard({
   team,
   onEdit,
+  onSwap,
   onPlayJingle,
   onStopJingle,
   isPlayingJingle,
@@ -147,6 +149,21 @@ export function TeamCard({
             {copied ? "Kopiert!" : "Link kopieren"}
           </span>
         </button>
+
+        {/* Tauschen */}
+        {onSwap && (
+          <button
+            type="button"
+            onClick={() => onSwap(team)}
+            className="group inline-flex items-center justify-center h-8 px-2.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 transition-all duration-200 cursor-pointer overflow-hidden"
+            title="Team / Spielplan-Platz tauschen"
+          >
+            <ArrowLeftRight className="h-3.5 w-3.5 text-slate-500 group-hover:text-blue-600 shrink-0" />
+            <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-all duration-200 group-hover:max-w-xs group-hover:opacity-100 group-hover:ml-1.5 text-[11px]">
+              Tauschen
+            </span>
+          </button>
+        )}
 
         {/* Rechts: Bearbeiten */}
         <button
