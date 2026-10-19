@@ -1,6 +1,7 @@
 import { useState } from "react"
-import { Trophy, Medal, Crown } from "lucide-react"
+import { Trophy, Medal } from "lucide-react"
 import type { Team, Match, GenderCategory, FinalRanking } from "@/types/database"
+
 import { calculateFinalRankings } from "@/services/standingsService"
 
 interface KioskFinalRankingsSlideProps {
@@ -106,20 +107,20 @@ function KioskRankingsCard({
               {/* Badges on right side */}
               <div className="shrink-0 flex items-center">
                 {isWinner && (
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 border border-amber-300 px-3 py-1 text-sm font-bold text-amber-900">
-                    <Crown className="h-4 w-4 text-amber-600" />
-                    <span>Turniersieger</span>
+                  <span className="inline-flex items-center gap-1.5 rounded-xl border border-amber-300 bg-amber-100 px-3 py-1 text-sm font-bold text-amber-900">
+                    <Trophy className="h-4 w-4 text-amber-600" />
+                    <span>1. Platz</span>
                   </span>
                 )}
                 {isSilver && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-slate-200 border border-slate-300 px-2.5 py-0.5 text-xs font-bold text-slate-700">
-                    <Medal className="h-3.5 w-3.5 text-slate-600" />
+                  <span className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-slate-100 px-3 py-1 text-sm font-bold text-slate-700">
+                    <Medal className="h-4 w-4 text-slate-600" />
                     <span>2. Platz</span>
                   </span>
                 )}
                 {isBronze && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-100/70 border border-amber-300 px-2.5 py-0.5 text-xs font-bold text-amber-800">
-                    <Medal className="h-3.5 w-3.5 text-amber-700" />
+                  <span className="inline-flex items-center gap-1.5 rounded-xl border border-amber-600/30 bg-amber-100/70 px-3 py-1 text-sm font-bold text-amber-900">
+                    <Medal className="h-4 w-4 text-amber-700" />
                     <span>3. Platz</span>
                   </span>
                 )}

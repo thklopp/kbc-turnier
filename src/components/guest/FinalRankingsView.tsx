@@ -114,20 +114,20 @@ function RankingTable({
               {/* Award / Medal Indicator */}
               <div className="shrink-0 flex items-center">
                 {isWinner && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 border border-amber-300 px-2.5 py-0.5 text-[11px] font-bold text-amber-900">
-                    <Trophy className="h-3 w-3 text-amber-600" />
-                    <span>Turniersieger</span>
+                  <span className="inline-flex items-center gap-1 rounded-md border border-amber-300 bg-amber-100 px-2.5 py-0.5 text-xs font-bold text-amber-900">
+                    <Trophy className="h-3.5 w-3.5 text-amber-600" />
+                    <span>1. Platz</span>
                   </span>
                 )}
                 {isSilver && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-slate-200 border border-slate-300 px-2 py-0.5 text-[11px] font-semibold text-slate-700">
-                    <Medal className="h-3 w-3 text-slate-500" />
+                  <span className="inline-flex items-center gap-1 rounded-md border border-slate-300 bg-slate-100 px-2.5 py-0.5 text-xs font-bold text-slate-700">
+                    <Medal className="h-3.5 w-3.5 text-slate-500" />
                     <span>2. Platz</span>
                   </span>
                 )}
                 {isBronze && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-100/70 border border-amber-300 px-2 py-0.5 text-[11px] font-semibold text-amber-800">
-                    <Medal className="h-3 w-3 text-amber-700" />
+                  <span className="inline-flex items-center gap-1 rounded-md border border-amber-600/30 bg-amber-100/70 px-2.5 py-0.5 text-xs font-bold text-amber-900">
+                    <Medal className="h-3.5 w-3.5 text-amber-700" />
                     <span>3. Platz</span>
                   </span>
                 )}

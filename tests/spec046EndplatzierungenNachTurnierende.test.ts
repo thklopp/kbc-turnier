@@ -157,7 +157,9 @@ describe("SPEC-046: Endplatzierungen nach Turnierende auf Live- und Kiosk-Seite"
     assert.ok(viewContent.includes("onSelectCategory(\"wU14\")"), "Filter-Button wU14 vorhanden")
     assert.ok(viewContent.includes("onSelectCategory(\"mU14\")"), "Filter-Button mU14 vorhanden")
     assert.ok(viewContent.includes("grid-cols-1 md:grid-cols-2"), "Responsives Grid vorhanden")
-    assert.ok(viewContent.includes("Turniersieger"), "Turniersieger Auszeichnung vorhanden")
+    assert.ok(viewContent.includes("1. Platz"), "1. Platz Rangpositions-Tag vorhanden")
+    assert.ok(viewContent.includes("2. Platz"), "2. Platz Rangpositions-Tag vorhanden")
+    assert.ok(viewContent.includes("3. Platz"), "3. Platz Rangpositions-Tag vorhanden")
 
     const homeContent = fs.readFileSync(homePagePath, "utf-8")
     assert.ok(homeContent.includes("isTournamentFinished(matches)"), "HomePage prüft Turnierende")
