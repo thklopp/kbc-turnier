@@ -168,7 +168,12 @@ export function KioskStandingsSlide({ teams, matches }: KioskStandingsSlideProps
   }
 
   return (
-    <div className="flex h-full flex-col justify-center py-2 px-6 max-w-[102rem] mx-auto w-full overflow-hidden select-none">
+    <div className="flex h-full flex-col justify-start pt-3 pb-2 px-6 max-w-[102rem] mx-auto w-full overflow-hidden select-none">
+      {/* Zentrierter Seitentitel */}
+      <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-800 text-center mb-3">
+        Tabellen
+      </h2>
+
       {/* 2x2 Grid for All 4 Groups */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 w-full">
         {/* Left Column: wU14 (Gruppe A oben, Gruppe B unten) */}

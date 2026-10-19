@@ -167,7 +167,12 @@ export function KioskFinalsSlide({ matches, teams }: KioskFinalsSlideProps) {
   }
 
   return (
-    <div className="flex h-full flex-col justify-center py-2 px-6 lg:px-8 max-w-[116rem] mx-auto w-full overflow-hidden select-none">
+    <div className="flex h-full flex-col justify-start pt-3 pb-2 px-6 lg:px-8 max-w-[116rem] mx-auto w-full overflow-hidden select-none">
+      {/* Zentrierter Seitentitel */}
+      <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-800 text-center mb-3">
+        Finalrunde
+      </h2>
+
       {/* 2-Columns Grid of 16 Matches */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-6 gap-y-2 w-full">
         {/* Spalte 1: Spiele 1 - 8 der Finalphase */}
