@@ -1,5 +1,6 @@
 import {
   doc,
+  getDoc,
   setDoc,
   onSnapshot,
   serverTimestamp,
@@ -26,6 +27,18 @@ let localMockConfig: TournamentConfig = { ...DEFAULT_CONFIG }
 const configListeners: Set<(config: TournamentConfig) => void> = new Set()
 
 export function getDefaultConfig(): TournamentConfig {
+  return { ...DEFAULT_CONFIG }
+}
+
+export async function getTournamentConfig(): Promise<TournamentConfig> {
+  if (!isFirebaseConfigured) {
+    return { ...localMockConfig }
+  }
+  const docRef = doc(db, CONFIG_DOC_PATH)
+  const snapshot = await getDoc(docRef)
+  if (snapshot.exists()) {
+    return { ...(snapshot.data() as TournamentConfig), id: "tournament" }
+  }
   return { ...DEFAULT_CONFIG }
 }
 

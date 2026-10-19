@@ -143,6 +143,21 @@ export function subscribeTeams(
 }
 
 /**
+ * Ruft alle Teams einmalig ab.
+ */
+export async function getTeams(): Promise<Team[]> {
+  if (!isFirebaseConfigured) {
+    return getStoredMockTeams()
+  }
+  const snapshot = await getDocs(collection(db, TEAMS_COLLECTION))
+  const teams: Team[] = []
+  snapshot.forEach((d) => {
+    teams.push({ ...(d.data() as Team), id: d.id })
+  })
+  return teams
+}
+
+/**
  * Aktualisiert oder erstellt ein Team.
  */
 export async function saveTeam(team: Partial<Team> & { id: string }): Promise<void> {

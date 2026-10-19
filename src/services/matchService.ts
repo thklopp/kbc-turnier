@@ -81,6 +81,21 @@ export function subscribeMatches(
 }
 
 /**
+ * Ruft alle Spiele einmalig ab.
+ */
+export async function getMatches(): Promise<Match[]> {
+  if (!isFirebaseConfigured) {
+    return [...localMockMatches].sort((a, b) => a.matchNumber - b.matchNumber)
+  }
+  const snapshot = await getDocs(collection(db, MATCHES_COLLECTION))
+  const matches: Match[] = []
+  snapshot.forEach((docSnap) => {
+    matches.push({ ...(docSnap.data() as Match), id: docSnap.id })
+  })
+  return matches.sort((a, b) => a.matchNumber - b.matchNumber)
+}
+
+/**
  * Hilfsfunktion: Round-Robin Paarungen für eine 4er-Gruppe (6 Spiele).
  */
 function createGroupPairings(
