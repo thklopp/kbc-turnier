@@ -1,6 +1,7 @@
 import { jsPDF } from "jspdf"
 import autoTable from "jspdf-autotable"
 import type { Match, Team, TournamentConfig } from "@/types/database"
+import { getMatchDisplayName } from "./matchService"
 
 interface DocWithAutoTable extends jsPDF {
   lastAutoTable?: {
@@ -106,27 +107,6 @@ function drawFooter(doc: jsPDF) {
 }
 
 /**
- * Übersetzt den Finaltyp in einen lesbaren Namen.
- */
-function formatFinalType(type?: string | null): string {
-  switch (type) {
-    case "quarter_final":
-      return "Viertelfinale"
-    case "semi_final":
-      return "Halbfinale"
-    case "placement_7_8":
-      return "Spiel um Platz 7"
-    case "placement_5_6":
-      return "Spiel um Platz 5"
-    case "placement_3_4":
-      return "Spiel um Platz 3"
-    case "final":
-      return "Großes Finale"
-    default:
-      return "Finalspiel"
-  }
-}
-
 /**
  * Generiert das 3-seitige DIN-A4-Hochkant-PDF für das Turnier.
  */
@@ -325,7 +305,7 @@ export async function generateSchedulePdf(
       String(m.matchNumber),
       m.scheduledTime,
       m.gender,
-      m.matchName || formatFinalType(m.finalType),
+      m.matchName || getMatchDisplayName(m),
       home,
       away,
       "     :     ",

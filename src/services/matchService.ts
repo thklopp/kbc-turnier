@@ -142,6 +142,9 @@ export function getMatchDisplayName(match: Match): string {
     case "placement_5_6":
       return "Spiel um Platz 5"
     case "placement_7_8":
+      if (match.matchNumber >= 25 && match.matchNumber <= 28) {
+        return "Platzierungsspiel"
+      }
       return "Spiel um Platz 7"
     case "quarter_final":
       return "Viertelfinale"
@@ -231,17 +234,17 @@ export async function generateTournamentSchedule(
   const sundayBlocks: FinalDefinition[][] = [
     // Block 1 (Spiele 25-28): Platzierungsspiele (2x wU14, 2x mU14)
     [
-      { gender: "wU14", finalType: "placement_7_8", matchName: "Platzierungsspiel 1", homePlaceholder: "3. Gruppe A", awayPlaceholder: "4. Gruppe B" },
-      { gender: "wU14", finalType: "placement_7_8", matchName: "Platzierungsspiel 2", homePlaceholder: "3. Gruppe B", awayPlaceholder: "4. Gruppe A" },
-      { gender: "mU14", finalType: "placement_7_8", matchName: "Platzierungsspiel 1", homePlaceholder: "3. Gruppe A", awayPlaceholder: "4. Gruppe B" },
-      { gender: "mU14", finalType: "placement_7_8", matchName: "Platzierungsspiel 2", homePlaceholder: "3. Gruppe B", awayPlaceholder: "4. Gruppe A" },
+      { gender: "wU14", finalType: "placement_7_8", matchName: "Platzierungsspiel", homePlaceholder: "3. Gruppe A", awayPlaceholder: "4. Gruppe B" },
+      { gender: "wU14", finalType: "placement_7_8", matchName: "Platzierungsspiel", homePlaceholder: "3. Gruppe B", awayPlaceholder: "4. Gruppe A" },
+      { gender: "mU14", finalType: "placement_7_8", matchName: "Platzierungsspiel", homePlaceholder: "3. Gruppe A", awayPlaceholder: "4. Gruppe B" },
+      { gender: "mU14", finalType: "placement_7_8", matchName: "Platzierungsspiel", homePlaceholder: "3. Gruppe B", awayPlaceholder: "4. Gruppe A" },
     ],
     // Block 2 (Spiele 29-32): Halbfinals (2x wU14, 2x mU14)
     [
-      { gender: "wU14", finalType: "semi_final", matchName: "Halbfinale 1", homePlaceholder: "1. Gruppe A", awayPlaceholder: "2. Gruppe B" },
-      { gender: "wU14", finalType: "semi_final", matchName: "Halbfinale 2", homePlaceholder: "1. Gruppe B", awayPlaceholder: "2. Gruppe A" },
-      { gender: "mU14", finalType: "semi_final", matchName: "Halbfinale 1", homePlaceholder: "1. Gruppe A", awayPlaceholder: "2. Gruppe B" },
-      { gender: "mU14", finalType: "semi_final", matchName: "Halbfinale 2", homePlaceholder: "1. Gruppe B", awayPlaceholder: "2. Gruppe A" },
+      { gender: "wU14", finalType: "semi_final", matchName: "Halbfinale", homePlaceholder: "1. Gruppe A", awayPlaceholder: "2. Gruppe B" },
+      { gender: "wU14", finalType: "semi_final", matchName: "Halbfinale", homePlaceholder: "1. Gruppe B", awayPlaceholder: "2. Gruppe A" },
+      { gender: "mU14", finalType: "semi_final", matchName: "Halbfinale", homePlaceholder: "1. Gruppe A", awayPlaceholder: "2. Gruppe B" },
+      { gender: "mU14", finalType: "semi_final", matchName: "Halbfinale", homePlaceholder: "1. Gruppe B", awayPlaceholder: "2. Gruppe A" },
     ],
     // Block 3 (Spiele 33-36): Platzierungsspiele Platz 7 und Platz 5 (2x wU14, 2x mU14)
     [

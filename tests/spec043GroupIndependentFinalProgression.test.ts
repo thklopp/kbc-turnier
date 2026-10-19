@@ -163,4 +163,27 @@ describe("SPEC-043: Gruppenunabhängige Zuordnung der Finalrunden-Paarungen", ()
     assert.ok(u29?.updates.teamHomeId && u29?.updates.teamAwayId, "Spiel 29 hat beide Teams")
     assert.ok(u30?.updates.teamHomeId && u30?.updates.teamAwayId, "Spiel 30 hat beide Teams")
   })
+
+  it("AC-4 & AC-5: Spiele 25-28 heißen 'Platzierungsspiel' und Spiele 29-32 heißen 'Halbfinale'", async () => {
+    const matches = await generateTournamentSchedule(dummyTeams, config)
+
+    // Spiele 25-28 müssen 'Platzierungsspiel' heißen
+    for (const matchNum of [25, 26, 27, 28]) {
+      const match = matches.find((m) => m.matchNumber === matchNum)!
+      assert.equal(match.matchName, "Platzierungsspiel", `Spiel #${matchNum} muss 'Platzierungsspiel' heißen`)
+      assert.notEqual(match.matchName, "Spiel um Platz 7", `Spiel #${matchNum} darf nicht 'Spiel um Platz 7' heißen`)
+    }
+
+    // Spiele 29-32 müssen 'Halbfinale' heißen
+    for (const matchNum of [29, 30, 31, 32]) {
+      const match = matches.find((m) => m.matchNumber === matchNum)!
+      assert.equal(match.matchName, "Halbfinale", `Spiel #${matchNum} muss 'Halbfinale' heißen`)
+    }
+
+    // Spiele 33 und 35 sind die echten Spiele um Platz 7
+    const m33 = matches.find((m) => m.matchNumber === 33)!
+    const m35 = matches.find((m) => m.matchNumber === 35)!
+    assert.equal(m33.matchName, "Spiel um Platz 7")
+    assert.equal(m35.matchName, "Spiel um Platz 7")
+  })
 })

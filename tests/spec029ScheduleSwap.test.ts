@@ -41,25 +41,25 @@ describe("SPEC-029: Tausch der Halbfinals mit den Platzierungsspielen am Sonntag
     const m28 = matches.find((m) => m.matchNumber === 28)!
 
     assert.equal(m25.finalType, "placement_7_8")
-    assert.equal(m25.matchName, "Platzierungsspiel 1")
+    assert.equal(m25.matchName, "Platzierungsspiel")
     assert.equal(m25.gender, "wU14")
     assert.equal(m25.teamHomePlaceholder, "3. Gruppe A")
     assert.equal(m25.teamAwayPlaceholder, "4. Gruppe B")
 
     assert.equal(m26.finalType, "placement_7_8")
-    assert.equal(m26.matchName, "Platzierungsspiel 2")
+    assert.equal(m26.matchName, "Platzierungsspiel")
     assert.equal(m26.gender, "wU14")
     assert.equal(m26.teamHomePlaceholder, "3. Gruppe B")
     assert.equal(m26.teamAwayPlaceholder, "4. Gruppe A")
 
     assert.equal(m27.finalType, "placement_7_8")
-    assert.equal(m27.matchName, "Platzierungsspiel 1")
+    assert.equal(m27.matchName, "Platzierungsspiel")
     assert.equal(m27.gender, "mU14")
     assert.equal(m27.teamHomePlaceholder, "3. Gruppe A")
     assert.equal(m27.teamAwayPlaceholder, "4. Gruppe B")
 
     assert.equal(m28.finalType, "placement_7_8")
-    assert.equal(m28.matchName, "Platzierungsspiel 2")
+    assert.equal(m28.matchName, "Platzierungsspiel")
     assert.equal(m28.gender, "mU14")
     assert.equal(m28.teamHomePlaceholder, "3. Gruppe B")
     assert.equal(m28.teamAwayPlaceholder, "4. Gruppe A")
@@ -71,25 +71,25 @@ describe("SPEC-029: Tausch der Halbfinals mit den Platzierungsspielen am Sonntag
     const m32 = matches.find((m) => m.matchNumber === 32)!
 
     assert.equal(m29.finalType, "semi_final")
-    assert.equal(m29.matchName, "Halbfinale 1")
+    assert.equal(m29.matchName, "Halbfinale")
     assert.equal(m29.gender, "wU14")
     assert.equal(m29.teamHomePlaceholder, "1. Gruppe A")
     assert.equal(m29.teamAwayPlaceholder, "2. Gruppe B")
 
     assert.equal(m30.finalType, "semi_final")
-    assert.equal(m30.matchName, "Halbfinale 2")
+    assert.equal(m30.matchName, "Halbfinale")
     assert.equal(m30.gender, "wU14")
     assert.equal(m30.teamHomePlaceholder, "1. Gruppe B")
     assert.equal(m30.teamAwayPlaceholder, "2. Gruppe A")
 
     assert.equal(m31.finalType, "semi_final")
-    assert.equal(m31.matchName, "Halbfinale 1")
+    assert.equal(m31.matchName, "Halbfinale")
     assert.equal(m31.gender, "mU14")
     assert.equal(m31.teamHomePlaceholder, "1. Gruppe A")
     assert.equal(m31.teamAwayPlaceholder, "2. Gruppe B")
 
     assert.equal(m32.finalType, "semi_final")
-    assert.equal(m32.matchName, "Halbfinale 2")
+    assert.equal(m32.matchName, "Halbfinale")
     assert.equal(m32.gender, "mU14")
     assert.equal(m32.teamHomePlaceholder, "1. Gruppe B")
     assert.equal(m32.teamAwayPlaceholder, "2. Gruppe A")

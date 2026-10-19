@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import type { Match, Team, TournamentConfig } from "@/types/database"
-import { subscribeMatches } from "@/services/matchService"
+import { subscribeMatches, getMatchDisplayName } from "@/services/matchService"
 import { subscribeTeams } from "@/services/teamService"
 import { subscribeTournamentConfig, getDefaultConfig } from "@/services/configService"
 import { useLiveMatchDesk } from "@/hooks/useLiveMatchDesk"
@@ -138,9 +138,11 @@ export function LiveMatchDesk() {
             const h = teams.find((t) => t.id === m.teamHomeId)?.shortName || m.teamHomePlaceholder || "TBD"
             const a = teams.find((t) => t.id === m.teamAwayId)?.shortName || m.teamAwayPlaceholder || "TBD"
             const statusSymbol = m.status === "finished" ? "✓" : m.status === "live" ? "🟢" : m.status === "paused" ? "⏸" : "⏳"
+            const phaseOrGroupName =
+              m.phase === "group" && m.group ? `Gr.${m.group}` : m.matchName || getMatchDisplayName(m)
             return (
               <option key={m.id} value={m.id}>
-                {statusSymbol} #{m.matchNumber} ({m.scheduledTime}) - {m.gender} {m.group ? `Gr.${m.group}` : ""}: {h} vs. {a}
+                {statusSymbol} #{m.matchNumber} ({m.scheduledTime}) - {m.gender} {phaseOrGroupName}: {h} vs. {a}
               </option>
             )
           })}

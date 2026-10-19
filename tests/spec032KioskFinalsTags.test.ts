@@ -55,8 +55,8 @@ describe("SPEC-032: Kiosk-Modus Finalrunden Stage-Badges", () => {
     assert.equal(semiFinals.length, 4)
     for (const sf of semiFinals) {
       assert.ok(
-        sf.matchName?.includes("Halbfinale 1") || sf.matchName?.includes("Halbfinale 2"),
-        `Halbfinale match #${sf.matchNumber} should have matchName Halbfinale 1 or 2, got: ${sf.matchName}`
+        sf.matchName === "Halbfinale",
+        `Halbfinale match #${sf.matchNumber} should have matchName Halbfinale, got: ${sf.matchName}`
       )
     }
 

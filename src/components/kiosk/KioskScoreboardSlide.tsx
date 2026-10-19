@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Clock, Calendar, CheckCircle2, Pause } from "lucide-react"
 import type { Match, Team } from "@/types/database"
 import { HockeyGoalIcon } from "@/components/common/HockeyGoalIcon"
+import { getMatchDisplayName } from "@/services/matchService"
 import rrkLogo from "@/assets/images/RRK.webp"
 
 interface KioskScoreboardSlideProps {
@@ -76,21 +77,12 @@ export function KioskScoreboardSlide({
       ? "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200"
       : "bg-blue-50 text-blue-700 border-blue-200"
 
-  const finalTypeLabels: Record<string, string> = {
-    quarter_final: "Viertelfinale",
-    semi_final: "Halbfinale",
-    placement_7_8: "Spiel um Platz 7",
-    placement_5_6: "Spiel um Platz 5",
-    placement_3_4: "Spiel um Platz 3",
-    final: "Großes Finale",
-  }
-
   const phaseLabel =
     displayMatch.phase === "group"
       ? `Gruppe ${displayMatch.group || ""}`
-      : displayMatch.finalType
-      ? finalTypeLabels[displayMatch.finalType] || "Finalrunde"
-      : "Finalrunde"
+      : displayMatch.matchName && displayMatch.matchName.trim().length > 0
+      ? displayMatch.matchName.trim()
+      : getMatchDisplayName(displayMatch)
 
   const homeGoals = (displayMatch.events || []).filter(
     (e) => e.type === "goal" && (e.teamId === displayMatch.teamHomeId || e.teamId === "home")

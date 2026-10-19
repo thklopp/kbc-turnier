@@ -27,11 +27,13 @@ function getCompactFinalName(match: Match): string {
   if (match.matchName) {
     if (match.matchName.includes("Halbfinale 1")) return "HF 1"
     if (match.matchName.includes("Halbfinale 2")) return "HF 2"
+    if (match.matchName.includes("Halbfinale")) return "HF"
     if (match.matchName.includes("Platz 7")) return "Platz 7"
     if (match.matchName.includes("Platz 5")) return "Platz 5"
     if (match.matchName.includes("Platz 3")) return "Platz 3"
     if (match.matchName.includes("Platzierungsspiel 1")) return "Pl. 1"
     if (match.matchName.includes("Platzierungsspiel 2")) return "Pl. 2"
+    if (match.matchName.includes("Platzierungsspiel")) return "Pl. Spiel"
     if (match.matchName.includes("Qualifikation")) return "Quali 5-8"
     if (match.matchName.toLowerCase() === "finale") return "Finale"
     return match.matchName
@@ -41,6 +43,9 @@ function getCompactFinalName(match: Match): string {
       case "semi_final":
         return "HF"
       case "placement_7_8":
+        if (match.matchNumber >= 25 && match.matchNumber <= 28) {
+          return "Pl. Spiel"
+        }
         return "Platz 7"
       case "placement_5_6":
         return "Platz 5"

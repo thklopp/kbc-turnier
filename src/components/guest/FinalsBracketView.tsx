@@ -1,4 +1,5 @@
 import type { Match, Team, GenderCategory } from "@/types/database"
+import { getMatchDisplayName } from "@/services/matchService"
 
 interface FinalsBracketViewProps {
   matches: Match[]
@@ -34,8 +35,9 @@ export function FinalsBracketView({
     const isFinalMatch = m.finalType === "final"
 
     const matchName =
-      m.matchName ||
-      (isFinalMatch ? "Großes Finale" : m.finalType ? m.finalType : "Finalspiel")
+      m.matchName && m.matchName.trim().length > 0
+        ? m.matchName.trim()
+        : getMatchDisplayName(m)
 
     const genderTagClass = isFemale
       ? "bg-purple-50 text-purple-700 border-purple-200"

@@ -1,10 +1,12 @@
 import type {
+  Match,
   Team,
   GenderCategory,
   TournamentGroup,
   MatchPhase,
   FinalMatchType,
 } from "@/types/database"
+import { getMatchDisplayName } from "@/services/matchService"
 import {
   Shield,
   Music,
@@ -34,6 +36,7 @@ interface ScoreboardDisplayProps {
   phase?: MatchPhase
   finalType?: FinalMatchType | null
   matchName?: string
+  matchNumber?: number
   // Timer integration
   secondsRemaining: number
   isRunning: boolean
@@ -65,6 +68,7 @@ export function ScoreboardDisplay({
   phase,
   finalType,
   matchName,
+  matchNumber,
   secondsRemaining,
   isRunning,
   timerStatus,
@@ -85,10 +89,13 @@ export function ScoreboardDisplay({
   const finalTypeLabels: Record<string, string> = {
     quarter_final: "Viertelfinale",
     semi_final: "Halbfinale",
-    placement_7_8: "Spiel um Platz 7",
+    placement_7_8:
+      matchNumber && matchNumber >= 25 && matchNumber <= 28
+        ? "Platzierungsspiel"
+        : "Spiel um Platz 7",
     placement_5_6: "Spiel um Platz 5",
     placement_3_4: "Spiel um Platz 3",
-    final: "Großes Finale",
+    final: "Finale",
   }
 
   const groupOrPhaseLabel =
@@ -98,9 +105,13 @@ export function ScoreboardDisplay({
       ? matchName.trim()
       : finalType && finalTypeLabels[finalType]
       ? finalTypeLabels[finalType]
-      : group
-      ? `Gruppe ${group}`
-      : "Finalspiel"
+      : getMatchDisplayName({
+          phase: phase || "final",
+          group,
+          finalType,
+          matchName,
+          matchNumber: matchNumber || 0,
+        } as Match)
   const isHomeJinglePlaying = Boolean(
     homeTeam?.jingleUrl && isPlayingAudio?.(homeTeam.jingleUrl)
   )

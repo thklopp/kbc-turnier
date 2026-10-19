@@ -100,9 +100,13 @@ export function GuestScheduleView({
                       {match.gender}
                     </span>
 
-                    {match.phase === "group" && (
+                    {match.phase === "group" && match.group ? (
                       <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold border ${tagClass}`}>
                         Gruppe {match.group}
+                      </span>
+                    ) : (
+                      <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold border ${tagClass}`}>
+                        {match.matchName || "Finalspiel"}
                       </span>
                     )}
                   </div>
