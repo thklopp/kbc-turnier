@@ -137,7 +137,7 @@ export function LiveMatchDesk() {
           {matches.map((m) => {
             const h = teams.find((t) => t.id === m.teamHomeId)?.shortName || m.teamHomePlaceholder || "TBD"
             const a = teams.find((t) => t.id === m.teamAwayId)?.shortName || m.teamAwayPlaceholder || "TBD"
-            const statusSymbol = m.status === "finished" ? "✓" : m.status === "live" ? "🔴" : m.status === "paused" ? "⏸" : "⏳"
+            const statusSymbol = m.status === "finished" ? "✓" : m.status === "live" ? "🟢" : m.status === "paused" ? "⏸" : "⏳"
             return (
               <option key={m.id} value={m.id}>
                 {statusSymbol} #{m.matchNumber} ({m.scheduledTime}) - {m.gender} {m.group ? `Gr.${m.group}` : ""}: {h} vs. {a}

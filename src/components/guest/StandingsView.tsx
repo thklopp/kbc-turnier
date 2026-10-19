@@ -12,10 +12,14 @@ function GroupTable({
   gender,
   group,
   standings,
+  liveTeamIds,
+  pausedTeamIds,
 }: {
   gender: GenderCategory
   group: TournamentGroup
   standings: ReturnType<typeof calculateGroupStandings>
+  liveTeamIds: Set<string>
+  pausedTeamIds: Set<string>
 }) {
   const isWU14 = gender === "wU14"
   const tagClass = isWU14
@@ -47,14 +51,30 @@ function GroupTable({
           <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
             {standings.map((teamStanding, index) => {
               const rank = index + 1
+              const isPlayingLive = liveTeamIds.has(teamStanding.teamId)
+              const isPlayingPaused = pausedTeamIds.has(teamStanding.teamId)
 
               return (
                 <tr
                   key={teamStanding.teamId}
-                  className="hover:bg-slate-50/80 transition-colors"
+                  className={`transition-colors ${
+                    isPlayingLive
+                      ? "bg-emerald-50/80 hover:bg-emerald-50 font-semibold"
+                      : isPlayingPaused
+                      ? "bg-amber-50/80 hover:bg-amber-50 font-semibold"
+                      : "hover:bg-slate-50/80"
+                  }`}
                 >
                   <td className="py-3 px-3 text-center">
-                    <span className="text-xs font-semibold text-slate-500 font-mono">
+                    <span
+                      className={`text-xs font-mono ${
+                        isPlayingLive
+                          ? "font-bold text-emerald-800"
+                          : isPlayingPaused
+                          ? "font-bold text-amber-800"
+                          : "font-semibold text-slate-500"
+                      }`}
+                    >
                       {rank}
                     </span>
                   </td>
@@ -72,9 +92,19 @@ function GroupTable({
                           <span className="text-xs">🏑</span>
                         )}
                       </div>
-                      <span className="font-bold text-slate-900 truncate max-w-[180px] sm:max-w-none">
+                      <span className="font-bold text-slate-900 truncate max-w-[170px] sm:max-w-none">
                         {teamStanding.teamName}
                       </span>
+                      {isPlayingLive && (
+                        <span className="inline-flex items-center rounded-full bg-emerald-600 text-white px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider animate-pulse shrink-0">
+                          Live
+                        </span>
+                      )}
+                      {isPlayingPaused && (
+                        <span className="inline-flex items-center rounded-full bg-amber-500 text-white px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider shrink-0">
+                          Pause
+                        </span>
+                      )}
                     </div>
                   </td>
 
@@ -111,6 +141,12 @@ export function StandingsView({
   selectedCategory,
   onSelectCategory,
 }: StandingsViewProps) {
+  const liveMatches = matches.filter((m) => m.status === "live")
+  const pausedMatches = matches.filter((m) => m.status === "paused")
+
+  const liveTeamIds = new Set(liveMatches.flatMap((m) => [m.teamHomeId, m.teamAwayId]))
+  const pausedTeamIds = new Set(pausedMatches.flatMap((m) => [m.teamHomeId, m.teamAwayId]))
+
   const wu14A = calculateGroupStandings(teams, matches, "wU14", "A")
   const wu14B = calculateGroupStandings(teams, matches, "wU14", "B")
   const mu14A = calculateGroupStandings(teams, matches, "mU14", "A")
@@ -123,8 +159,20 @@ export function StandingsView({
 
     return (
       <div key={gender} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <GroupTable gender={gender} group="A" standings={standingsA} />
-        <GroupTable gender={gender} group="B" standings={standingsB} />
+        <GroupTable
+          gender={gender}
+          group="A"
+          standings={standingsA}
+          liveTeamIds={liveTeamIds}
+          pausedTeamIds={pausedTeamIds}
+        />
+        <GroupTable
+          gender={gender}
+          group="B"
+          standings={standingsB}
+          liveTeamIds={liveTeamIds}
+          pausedTeamIds={pausedTeamIds}
+        />
       </div>
     )
   }

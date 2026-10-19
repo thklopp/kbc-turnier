@@ -10,6 +10,12 @@ interface KioskStandingsSlideProps {
 export function KioskStandingsSlide({ teams, matches }: KioskStandingsSlideProps) {
   const [logoErrors, setLogoErrors] = useState<Record<string, boolean>>({})
 
+  const liveMatches = matches.filter((m) => m.status === "live")
+  const pausedMatches = matches.filter((m) => m.status === "paused")
+
+  const liveTeamIds = new Set(liveMatches.flatMap((m) => [m.teamHomeId, m.teamAwayId]))
+  const pausedTeamIds = new Set(pausedMatches.flatMap((m) => [m.teamHomeId, m.teamAwayId]))
+
   const wU14A = calculateGroupStandings(teams, matches, "wU14", "A")
   const wU14B = calculateGroupStandings(teams, matches, "wU14", "B")
   const mU14A = calculateGroupStandings(teams, matches, "mU14", "A")
@@ -58,15 +64,31 @@ export function KioskStandingsSlide({ teams, matches }: KioskStandingsSlideProps
             <tbody className="divide-y divide-slate-100 font-medium">
               {standings.map((team, idx) => {
                 const rank = idx + 1
+                const isPlayingLive = liveTeamIds.has(team.teamId)
+                const isPlayingPaused = pausedTeamIds.has(team.teamId)
 
                 return (
                   <tr
                     key={team.teamId}
-                    className="hover:bg-slate-50 transition-colors"
+                    className={`transition-colors ${
+                      isPlayingLive
+                        ? "bg-emerald-50/90 hover:bg-emerald-100/70"
+                        : isPlayingPaused
+                        ? "bg-amber-50/90 hover:bg-amber-100/70"
+                        : "hover:bg-slate-50"
+                    }`}
                   >
                     {/* Rank */}
                     <td className="py-3 pl-2 text-center">
-                      <span className="inline-flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-xl text-sm md:text-base font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                      <span
+                        className={`inline-flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-xl text-sm md:text-base font-bold border ${
+                          isPlayingLive
+                            ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                            : isPlayingPaused
+                            ? "bg-amber-100 text-amber-800 border-amber-300"
+                            : "bg-slate-100 text-slate-700 border-slate-200"
+                        }`}
+                      >
                         {rank}
                       </span>
                     </td>
@@ -89,11 +111,25 @@ export function KioskStandingsSlide({ teams, matches }: KioskStandingsSlideProps
                           )}
                         </div>
                         <span
-                          className="font-medium text-slate-900 text-base md:text-lg lg:text-xl truncate block"
+                          className={`text-base md:text-lg lg:text-xl truncate block ${
+                            isPlayingLive || isPlayingPaused
+                              ? "font-bold text-slate-900"
+                              : "font-medium text-slate-900"
+                          }`}
                           title={team.teamName}
                         >
                           {team.teamName}
                         </span>
+                        {isPlayingLive && (
+                          <span className="inline-flex items-center rounded-lg bg-emerald-600 text-white px-2 py-0.5 text-xs font-bold uppercase tracking-wider animate-pulse shrink-0">
+                            Live
+                          </span>
+                        )}
+                        {isPlayingPaused && (
+                          <span className="inline-flex items-center rounded-lg bg-amber-500 text-white px-2 py-0.5 text-xs font-bold uppercase tracking-wider shrink-0">
+                            Pause
+                          </span>
+                        )}
                       </div>
                     </td>
 

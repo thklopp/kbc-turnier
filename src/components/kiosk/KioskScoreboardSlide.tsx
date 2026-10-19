@@ -154,8 +154,8 @@ export function KioskScoreboardSlide({
           {/* Center Score & Live Clock (Cols 6-7) */}
           <div className="col-span-2 flex flex-col items-center justify-center text-center px-1 pt-2">
             {isLive && (
-              <span className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-red-50 border border-red-200 px-3.5 py-1 text-xs md:text-sm font-semibold tracking-wide uppercase text-red-600 animate-pulse shadow-xs">
-                <span className="h-2 w-2 rounded-full bg-red-500" />
+              <span className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-3.5 py-1 text-xs md:text-sm font-semibold tracking-wide uppercase text-emerald-700 animate-pulse shadow-xs">
+                <span className="h-2 w-2 rounded-full bg-emerald-500" />
                 LIVE
               </span>
             )}

@@ -83,7 +83,7 @@ export function GuestScheduleView({
                 key={match.id}
                 className={`rounded-2xl border p-4 transition-all shadow-xs ${
                   isLive
-                    ? "border-rose-300 bg-rose-50/40 ring-1 ring-rose-400"
+                    ? "border-emerald-300 bg-emerald-50/40 ring-1 ring-emerald-400"
                     : isPaused
                     ? "border-amber-300 bg-amber-50/40 ring-1 ring-amber-400"
                     : "border-slate-200 bg-white hover:border-slate-300"
@@ -179,7 +179,7 @@ export function GuestScheduleView({
                   {/* Status / Spacer matching score box width */}
                   <div className="min-w-[64px] shrink-0 flex items-center justify-center">
                     {isLive && (
-                      <span className="rounded-full bg-rose-500 text-white px-2 py-0.5 text-[9px] font-medium uppercase tracking-wider animate-pulse whitespace-nowrap">
+                      <span className="rounded-full bg-emerald-600 text-white px-2 py-0.5 text-[9px] font-medium uppercase tracking-wider animate-pulse whitespace-nowrap">
                         LIVE {match.currentPeriodMinute || 1}&apos;
                       </span>
                     )}

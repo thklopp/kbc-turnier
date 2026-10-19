@@ -62,8 +62,6 @@ export function KioskFinalsSlide({ matches, teams }: KioskFinalsSlideProps) {
     .sort((a, b) => a.matchNumber - b.matchNumber)
 
   // Identify next upcoming match
-  const nextMatch = matches.find((m) => m.status === "scheduled")
-
   const col1Matches = finalsMatches.slice(0, 8)
   const col2Matches = finalsMatches.slice(8, 16)
 
@@ -73,18 +71,16 @@ export function KioskFinalsSlide({ matches, teams }: KioskFinalsSlideProps) {
 
     const isLive = match.status === "live"
     const isPaused = match.status === "paused"
-    const isActive = isLive || isPaused
-    const isNext = match.id === nextMatch?.id
 
     const genderBadge =
       match.gender === "wU14"
         ? "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200"
         : "bg-blue-50 text-blue-700 border-blue-200"
 
-    const rowHighlightClass = isActive
-      ? "bg-red-50/80 border-red-500 shadow-sm ring-1 ring-red-400"
-      : isNext
-      ? "bg-blue-50/80 border-blue-500 shadow-sm ring-1 ring-blue-400"
+    const rowHighlightClass = isLive
+      ? "bg-emerald-50/80 border-emerald-500 shadow-sm ring-1 ring-emerald-400"
+      : isPaused
+      ? "bg-amber-50/80 border-amber-500 shadow-sm ring-1 ring-amber-400"
       : "bg-white border-slate-200 hover:bg-slate-50"
 
     const hasScore =
@@ -122,8 +118,11 @@ export function KioskFinalsSlide({ matches, teams }: KioskFinalsSlideProps) {
             {isFinalGame && <Trophy className="h-3.5 w-3.5 text-amber-600 flex-none" />}
             <span>{stageBadgeText}</span>
           </span>
-          {isActive && (
-            <span className="hidden xl:inline-flex h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse" />
+          {isLive && (
+            <span className="hidden xl:inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
+          )}
+          {isPaused && (
+            <span className="hidden xl:inline-flex h-2.5 w-2.5 rounded-full bg-amber-500" />
           )}
         </div>
 
@@ -155,10 +154,10 @@ export function KioskFinalsSlide({ matches, teams }: KioskFinalsSlideProps) {
         <div className="col-span-1 flex items-center justify-center">
           <span
             className={`font-mono font-bold px-2.5 py-1 rounded text-base md:text-lg border text-center whitespace-nowrap ${
-              isActive
-                ? "bg-red-100 text-red-700 border-red-300"
-                : isNext
-                ? "bg-blue-100 text-blue-700 border-blue-300"
+              isLive
+                ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                : isPaused
+                ? "bg-amber-100 text-amber-800 border-amber-300"
                 : "bg-slate-100 text-slate-800 border-slate-200"
             }`}
           >
