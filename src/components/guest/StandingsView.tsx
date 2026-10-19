@@ -92,19 +92,9 @@ function GroupTable({
                           <span className="text-xs">🏑</span>
                         )}
                       </div>
-                      <span className="font-bold text-slate-900 truncate max-w-[170px] sm:max-w-none">
+                      <span className="font-bold text-slate-900 truncate max-w-[180px] sm:max-w-none">
                         {teamStanding.teamName}
                       </span>
-                      {isPlayingLive && (
-                        <span className="inline-flex items-center rounded-full bg-emerald-600 text-white px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider animate-pulse shrink-0">
-                          Live
-                        </span>
-                      )}
-                      {isPlayingPaused && (
-                        <span className="inline-flex items-center rounded-full bg-amber-500 text-white px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider shrink-0">
-                          Pause
-                        </span>
-                      )}
                     </div>
                   </td>
 

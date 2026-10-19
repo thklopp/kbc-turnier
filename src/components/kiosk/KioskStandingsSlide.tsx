@@ -120,16 +120,6 @@ export function KioskStandingsSlide({ teams, matches }: KioskStandingsSlideProps
                         >
                           {team.teamName}
                         </span>
-                        {isPlayingLive && (
-                          <span className="inline-flex items-center rounded-lg bg-emerald-600 text-white px-2 py-0.5 text-xs font-bold uppercase tracking-wider animate-pulse shrink-0">
-                            Live
-                          </span>
-                        )}
-                        {isPlayingPaused && (
-                          <span className="inline-flex items-center rounded-lg bg-amber-500 text-white px-2 py-0.5 text-xs font-bold uppercase tracking-wider shrink-0">
-                            Pause
-                          </span>
-                        )}
                       </div>
                     </td>
 

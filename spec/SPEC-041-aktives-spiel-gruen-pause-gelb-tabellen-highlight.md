@@ -54,8 +54,8 @@
 - [ ] **FR-5: Tabellen-Hervorhebung für aktuell spielende Teams**:
   - `StandingsView.tsx` (Gast) & `KioskStandingsSlide.tsx` (Kiosk):
   - Ermittlung aller Teams, die sich in einem aktiven Match befinden (`status === "live"` oder `status === "paused"`).
-  - Teams im aktiven Live-Match: Zeilenhintergrund dezent in Grün (`bg-emerald-50/80`), `font-semibold` und kleines dezentes `LIVE`-Badge / Indikator.
-  - Teams im pausierten Match: Zeilenhintergrund dezent in Gelb-Orange (`bg-amber-50/80`), `font-semibold` und kleines `PAUSE`-Badge / Indikator.
+  - Teams im aktiven Live-Match: Zeilenhintergrund dezent in Grün (`bg-emerald-50/80`), `font-semibold` und hervorgehobener Rang (ohne zusätzliches Text-Badge).
+  - Teams im pausierten Match: Zeilenhintergrund dezent in Gelb-Orange (`bg-amber-50/80`), `font-semibold` und hervorgehobener Rang.
 
 ### 3.2 Explizit Out-of-Scope
 - Keine Änderungen an der Tabellen-Berechnungslogik (`calculateGroupStandings`).
@@ -84,7 +84,7 @@
 - [ ] **AC-5: Teams in Tabellen hervorgehoben**:
   - **Gegeben sei**: Team X und Team Y spielen gerade gegeneinander (Match ist live).
   - **Wenn**: Ein Nutzer die Tabellen auf dem Smartphone (`/#standings`) oder am Kiosk (Standings-Slide) öffnet.
-  - **Dann**: Sind die Zeilen von Team X und Team Y in ihren jeweiligen Gruppen hervorgehoben (grüner Ton, Badge/Indikator) und stechen klar hervor.
+  - **Dann**: Sind die Zeilen von Team X und Team Y in ihren jeweiligen Gruppen farblich hervorgehoben (grüner Ton für Live, gelb-orange für Pause, ohne Text-Badge).
   - **Und**: Wird das Spiel pausiert, wechselt die Hervorhebung der beiden Zeilen auf Gelb-Orange.
   - **Und**: Ist kein Spiel aktiv oder wird das Spiel beendet, wird die Zeile wieder ganz normal dargestellt.
 - [ ] **AC-6: Code-Qualität**:
