@@ -2,6 +2,7 @@ import test from "node:test"
 import assert from "node:assert/strict"
 import fs from "node:fs"
 import path from "node:path"
+import { calculateGroupStandings } from "../src/services/standingsService"
 
 test("SPEC-041: Aktives Spiel & Live-Tag in Grün, Pause in Gelb-Orange, Kiosk-Next Cleanup & Tabellen-Team-Highlight", async (t) => {
   const kioskGroupStagePath = path.resolve(process.cwd(), "src/components/kiosk/KioskGroupStageSlide.tsx")
@@ -92,5 +93,38 @@ test("SPEC-041: Aktives Spiel & Live-Tag in Grün, Pause in Gelb-Orange, Kiosk-N
     assert.ok(kioskStandingsContent.includes("bg-emerald-50/90"), "KioskStandingsSlide highlights live teams with emerald")
     assert.ok(kioskStandingsContent.includes("bg-amber-50/90"), "KioskStandingsSlide highlights paused teams with amber")
     assert.ok(!kioskStandingsContent.includes("bg-emerald-600 text-white px-2 py-0.5 text-xs font-bold"), "KioskStandingsSlide does not render text Live badge")
+  })
+
+  await t.test("AC-6: calculateGroupStandings berücksichtigt pausierte Spiele (status === 'paused')", () => {
+    const mockTeams = [
+      { id: "team-1", name: "Team 1", gender: "wU14", group: "A", logoUrl: null },
+      { id: "team-2", name: "Team 2", gender: "wU14", group: "A", logoUrl: null },
+    ]
+    const mockMatches = [
+      {
+        id: "m1",
+        matchNumber: 1,
+        gender: "wU14",
+        phase: "group",
+        group: "A",
+        teamHomeId: "team-1",
+        teamAwayId: "team-2",
+        scoreHome: 3,
+        scoreAway: 1,
+        status: "paused",
+      },
+    ]
+
+    const standings = calculateGroupStandings(mockTeams, mockMatches, "wU14", "A")
+    const t1 = standings.find((s: any) => s.teamId === "team-1")
+    const t2 = standings.find((s: any) => s.teamId === "team-2")
+
+    assert.strictEqual(t1.played, 1, "Pausiertes Spiel muss als gespielt gezählt werden")
+    assert.strictEqual(t1.points, 3, "Team 1 muss 3 Punkte haben")
+    assert.strictEqual(t1.goalsFor, 3, "Team 1 muss 3 Tore haben")
+    assert.strictEqual(t1.goalsAgainst, 1, "Team 1 muss 1 Gegentor haben")
+
+    assert.strictEqual(t2.played, 1, "Team 2 muss 1 Spiel absolviert haben")
+    assert.strictEqual(t2.points, 0, "Team 2 muss 0 Punkte haben")
   })
 })

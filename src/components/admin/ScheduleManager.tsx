@@ -475,7 +475,7 @@ export function ScheduleManager() {
                       </td>
 
                       <td className="py-3 px-2 text-center font-mono font-bold text-slate-900">
-                        {match.status === "finished" || match.status === "live" ? (
+                        {match.status === "finished" || match.status === "live" || match.status === "paused" ? (
                           `${match.scoreHome} : ${match.scoreAway}`
                         ) : (
                           <span className="text-slate-300">- : -</span>

@@ -60,7 +60,7 @@ function TeamSwapModalContent({
 
   // Sicherheitsprüfung: Wurden bereits Spiele dieser Altersklasse angepfiffen oder beendet?
   const hasStartedMatches = matches.some(
-    (m) => m.gender === gender && (m.status === "live" || m.status === "finished")
+    (m) => m.gender === gender && (m.status === "live" || m.status === "paused" || m.status === "finished")
   )
 
   const handleSwap = async () => {
