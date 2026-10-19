@@ -67,7 +67,7 @@ export function ScheduleManager() {
         setSyncFeedback({
           type: "info",
           message:
-            "Alle Finalpaarungen sind bereits aktuell (oder die Vorrunde für das jeweilige Geschlecht ist noch nicht vollständig beendet).",
+            "Alle Finalpaarungen sind bereits aktuell (oder es wurden noch keine Spiele einer Gruppe bzw. Halbfinals beendet).",
         })
       }
     } catch (err: unknown) {

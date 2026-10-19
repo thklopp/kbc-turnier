@@ -85,56 +85,63 @@ export function calculateFinalRoundAssignments(
   for (const gender of genders) {
     const isFemale = gender === "wU14"
 
-    // 1. STUFE 1: Vorrunden-Tabellen -> Halbfinals & Qualifikation 5-8
+    // 1. STUFE 1: Vorrunden-Tabellen -> Halbfinals & Qualifikation 5-8 (gruppenunabhängig)
     const groupAComplete = isGroupComplete(matches, gender, "A")
     const groupBComplete = isGroupComplete(matches, gender, "B")
 
-    if (groupAComplete && groupBComplete) {
+    if (groupAComplete) {
       const standingsA = calculateGroupStandings(teams, matches, gender, "A")
-      const standingsB = calculateGroupStandings(teams, matches, gender, "B")
-
       const pos1A = standingsA[0]?.teamId
       const pos2A = standingsA[1]?.teamId
       const pos3A = standingsA[2]?.teamId
       const pos4A = standingsA[3]?.teamId
 
+      if (isFemale) {
+        // Spiel 25: Quali 5-8 #1 (w) -> 3.A (Heim) vs. 4.B
+        if (pos3A) applySlotUpdate(25, "teamHomeId", pos3A, "3. Gruppe A (wU14)")
+        // Spiel 26: Quali 5-8 #2 (w) -> 3.B vs. 4.A (Gast)
+        if (pos4A) applySlotUpdate(26, "teamAwayId", pos4A, "4. Gruppe A (wU14)")
+        // Spiel 29: HF 1 (w) -> 1.A (Heim) vs. 2.B
+        if (pos1A) applySlotUpdate(29, "teamHomeId", pos1A, "1. Gruppe A (wU14)")
+        // Spiel 30: HF 2 (w) -> 1.B vs. 2.A (Gast)
+        if (pos2A) applySlotUpdate(30, "teamAwayId", pos2A, "2. Gruppe A (wU14)")
+      } else {
+        // Spiel 27: Quali 5-8 #1 (m) -> 3.A (Heim) vs. 4.B
+        if (pos3A) applySlotUpdate(27, "teamHomeId", pos3A, "3. Gruppe A (mU14)")
+        // Spiel 28: Quali 5-8 #2 (m) -> 3.B vs. 4.A (Gast)
+        if (pos4A) applySlotUpdate(28, "teamAwayId", pos4A, "4. Gruppe A (mU14)")
+        // Spiel 31: HF 1 (m) -> 1.A (Heim) vs. 2.B
+        if (pos1A) applySlotUpdate(31, "teamHomeId", pos1A, "1. Gruppe A (mU14)")
+        // Spiel 32: HF 2 (m) -> 1.B vs. 2.A (Gast)
+        if (pos2A) applySlotUpdate(32, "teamAwayId", pos2A, "2. Gruppe A (mU14)")
+      }
+    }
+
+    if (groupBComplete) {
+      const standingsB = calculateGroupStandings(teams, matches, gender, "B")
       const pos1B = standingsB[0]?.teamId
       const pos2B = standingsB[1]?.teamId
       const pos3B = standingsB[2]?.teamId
       const pos4B = standingsB[3]?.teamId
 
       if (isFemale) {
-        // Spiel 25: Quali 5-8 #1 (w) -> 3.A vs. 4.B
-        if (pos3A) applySlotUpdate(25, "teamHomeId", pos3A, "3. Gruppe A (wU14)")
+        // Spiel 25: Quali 5-8 #1 (w) -> 3.A vs. 4.B (Gast)
         if (pos4B) applySlotUpdate(25, "teamAwayId", pos4B, "4. Gruppe B (wU14)")
-
-        // Spiel 26: Quali 5-8 #2 (w) -> 3.B vs. 4.A
+        // Spiel 26: Quali 5-8 #2 (w) -> 3.B (Heim) vs. 4.A
         if (pos3B) applySlotUpdate(26, "teamHomeId", pos3B, "3. Gruppe B (wU14)")
-        if (pos4A) applySlotUpdate(26, "teamAwayId", pos4A, "4. Gruppe A (wU14)")
-
-        // Spiel 29: HF 1 (w) -> 1.A vs. 2.B
-        if (pos1A) applySlotUpdate(29, "teamHomeId", pos1A, "1. Gruppe A (wU14)")
+        // Spiel 29: HF 1 (w) -> 1.A vs. 2.B (Gast)
         if (pos2B) applySlotUpdate(29, "teamAwayId", pos2B, "2. Gruppe B (wU14)")
-
-        // Spiel 30: HF 2 (w) -> 1.B vs. 2.A
+        // Spiel 30: HF 2 (w) -> 1.B (Heim) vs. 2.A
         if (pos1B) applySlotUpdate(30, "teamHomeId", pos1B, "1. Gruppe B (wU14)")
-        if (pos2A) applySlotUpdate(30, "teamAwayId", pos2A, "2. Gruppe A (wU14)")
       } else {
-        // Spiel 27: Quali 5-8 #1 (m) -> 3.A vs. 4.B
-        if (pos3A) applySlotUpdate(27, "teamHomeId", pos3A, "3. Gruppe A (mU14)")
+        // Spiel 27: Quali 5-8 #1 (m) -> 3.A vs. 4.B (Gast)
         if (pos4B) applySlotUpdate(27, "teamAwayId", pos4B, "4. Gruppe B (mU14)")
-
-        // Spiel 28: Quali 5-8 #2 (m) -> 3.B vs. 4.A
+        // Spiel 28: Quali 5-8 #2 (m) -> 3.B (Heim) vs. 4.A
         if (pos3B) applySlotUpdate(28, "teamHomeId", pos3B, "3. Gruppe B (mU14)")
-        if (pos4A) applySlotUpdate(28, "teamAwayId", pos4A, "4. Gruppe A (mU14)")
-
-        // Spiel 31: HF 1 (m) -> 1.A vs. 2.B
-        if (pos1A) applySlotUpdate(31, "teamHomeId", pos1A, "1. Gruppe A (mU14)")
+        // Spiel 31: HF 1 (m) -> 1.A vs. 2.B (Gast)
         if (pos2B) applySlotUpdate(31, "teamAwayId", pos2B, "2. Gruppe B (mU14)")
-
-        // Spiel 32: HF 2 (m) -> 1.B vs. 2.A
+        // Spiel 32: HF 2 (m) -> 1.B (Heim) vs. 2.A
         if (pos1B) applySlotUpdate(32, "teamHomeId", pos1B, "1. Gruppe B (mU14)")
-        if (pos2A) applySlotUpdate(32, "teamAwayId", pos2A, "2. Gruppe A (mU14)")
       }
     }
 
