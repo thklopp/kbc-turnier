@@ -1,6 +1,6 @@
 # SPEC-040: Gast-Footer Cleanup & PDF-Spielplan Download
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature  
 > **Branch**: feat/SPEC-040-guest-footer-cleanup-und-pdf-spielplan  
 > **Autor**: Agent  
