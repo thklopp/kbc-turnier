@@ -125,3 +125,13 @@ export interface TeamStanding {
   goalDifference: number
   points: number
 }
+
+export interface FinalRanking {
+  rank: number
+  teamId: string
+  teamName: string
+  teamShortName?: string
+  teamLogoUrl: string | null
+  gender: GenderCategory
+}
+

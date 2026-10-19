@@ -9,16 +9,19 @@ import { KioskScoreboardSlide } from "@/components/kiosk/KioskScoreboardSlide"
 import { KioskGroupStageSlide } from "@/components/kiosk/KioskGroupStageSlide"
 import { KioskFinalsSlide } from "@/components/kiosk/KioskFinalsSlide"
 import { KioskStandingsSlide } from "@/components/kiosk/KioskStandingsSlide"
+import { KioskFinalRankingsSlide } from "@/components/kiosk/KioskFinalRankingsSlide"
+import { isTournamentFinished } from "@/services/standingsService"
 
 const SLIDE_DURATION_MS = 12000 // 12 seconds per slide
 const PROGRESS_TICK_MS = 100
 
-const SLIDE_NAMES = [
+const BASE_SLIDE_NAMES = [
   "Live",
   "Vorrunde",
   "Finalrunde",
   "Tabellen",
 ]
+
 
 export function KioskPage() {
   const [matches, setMatches] = useState<Match[]>([])
@@ -78,9 +81,18 @@ export function KioskPage() {
     }
   }, [])
 
+  const tournamentFinished = useMemo(() => isTournamentFinished(matches), [matches])
+
+  const slideNames = useMemo(() => [
+    tournamentFinished ? "Platzierungen" : "Live",
+    "Vorrunde",
+    "Finalrunde",
+    "Tabellen",
+  ], [tournamentFinished])
+
   // Carousel progression tick
   const nextSlide = useCallback(() => {
-    setActiveSlide((prev) => (prev + 1) % SLIDE_NAMES.length)
+    setActiveSlide((prev) => (prev + 1) % BASE_SLIDE_NAMES.length)
     setElapsedMs(0)
   }, [])
 
@@ -149,8 +161,8 @@ export function KioskPage() {
       <KioskHeader
         config={config}
         activeSlide={activeSlide}
-        totalSlides={SLIDE_NAMES.length}
-        slideNames={SLIDE_NAMES}
+        totalSlides={slideNames.length}
+        slideNames={slideNames}
         isPaused={isPaused}
         onTogglePause={handleTogglePause}
         onSelectSlide={handleSelectSlide}
@@ -161,12 +173,20 @@ export function KioskPage() {
       {/* Main Dynamic Slide Area (Fills center height without scroll) */}
       <div className="flex-1 flex flex-col justify-center items-center overflow-hidden my-auto w-full">
         {activeSlide === 0 && (
-          <KioskScoreboardSlide
-            currentMatch={liveMatch}
-            nextMatch={nextMatch}
-            teams={teams}
-          />
+          tournamentFinished ? (
+            <KioskFinalRankingsSlide
+              matches={matches}
+              teams={teams}
+            />
+          ) : (
+            <KioskScoreboardSlide
+              currentMatch={liveMatch}
+              nextMatch={nextMatch}
+              teams={teams}
+            />
+          )
         )}
+
         {activeSlide === 1 && (
           <KioskGroupStageSlide
             matches={matches}

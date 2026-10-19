@@ -1,16 +1,28 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Outlet, Link, useLocation } from "react-router-dom"
 import { Radio, Calendar, Trophy, Medal, Info, FileDown, Loader2 } from "lucide-react"
 import rrkLogo from "@/assets/images/RRK.webp"
 import { getTournamentConfig } from "@/services/configService"
 import { getTeams } from "@/services/teamService"
-import { getMatches } from "@/services/matchService"
+import { getMatches, subscribeMatches } from "@/services/matchService"
 import { downloadSchedulePdf } from "@/services/pdfScheduleService"
+import { isTournamentFinished } from "@/services/standingsService"
 
 export function GuestLayout() {
   const location = useLocation()
   const hash = location.hash
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false)
+  const [tournamentFinished, setTournamentFinished] = useState(false)
+
+  useEffect(() => {
+    const unsub = subscribeMatches(
+      (matches) => {
+        setTournamentFinished(isTournamentFinished(matches))
+      },
+      (err) => console.error("GuestLayout matches error:", err)
+    )
+    return () => unsub()
+  }, [])
 
   const handleDownloadPdf = async () => {
     if (isDownloadingPdf) return
@@ -36,6 +48,7 @@ export function GuestLayout() {
   const isFinals = isHome && (hash === "#finalrunde" || hash === "#finals")
   const isLive = isHome && !isSchedule && !isStandings && !isFinals
   const isInfo = location.pathname === "/info"
+
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 text-slate-900">
@@ -68,8 +81,17 @@ export function GuestLayout() {
                   : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
               }`}
             >
-              <Radio className="h-3.5 w-3.5" />
-              <span>Live</span>
+              {tournamentFinished ? (
+                <>
+                  <Trophy className="h-3.5 w-3.5 text-amber-500" />
+                  <span>Platzierungen</span>
+                </>
+              ) : (
+                <>
+                  <Radio className="h-3.5 w-3.5" />
+                  <span>Live</span>
+                </>
+              )}
             </Link>
 
             <Link
@@ -137,9 +159,20 @@ export function GuestLayout() {
                   : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
               }`}
             >
-              <Radio className="h-4 w-4" />
-              <span>Live</span>
+              {tournamentFinished ? (
+                <>
+                  <Trophy className="h-4 w-4 text-amber-500" />
+                  <span>Platzierungen</span>
+                </>
+              ) : (
+                <>
+                  <Radio className="h-4 w-4" />
+                  <span>Live</span>
+                </>
+              )}
             </Link>
+
+
 
             <Link
               to="/#schedule"

@@ -4,10 +4,12 @@ import type { Match, Team, GenderCategory } from "@/types/database"
 import { subscribeMatches } from "@/services/matchService"
 import { subscribeTeams } from "@/services/teamService"
 import { LiveHeroCard } from "@/components/guest/LiveHeroCard"
+import { FinalRankingsView } from "@/components/guest/FinalRankingsView"
 import { GuestScheduleView } from "@/components/guest/GuestScheduleView"
 import { StandingsView } from "@/components/guest/StandingsView"
 import { FinalsBracketView } from "@/components/guest/FinalsBracketView"
 import { useSwipeGesture } from "@/hooks/useSwipeGesture"
+import { isTournamentFinished } from "@/services/standingsService"
 
 const TABS = [
   { id: "live", hash: "#live" },
@@ -51,6 +53,8 @@ export function HomePage() {
       : hash === "#finalrunde" || hash === "#finals"
       ? "finals"
       : "live"
+
+  const tournamentFinished = isTournamentFinished(matches)
 
   const currentTabIndex = TABS.findIndex((t) => t.id === activeTab)
 
@@ -110,9 +114,19 @@ export function HomePage() {
       {/* Tab Contents */}
       {activeTab === "live" && (
         <section>
-          <LiveHeroCard matches={matches} teams={teams} />
+          {tournamentFinished ? (
+            <FinalRankingsView
+              matches={matches}
+              teams={teams}
+              selectedCategory={selectedCategory}
+              onSelectCategory={handleCategoryChange}
+            />
+          ) : (
+            <LiveHeroCard matches={matches} teams={teams} />
+          )}
         </section>
       )}
+
 
       {activeTab === "schedule" && (
         <section>
