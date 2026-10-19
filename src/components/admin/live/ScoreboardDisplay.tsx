@@ -31,6 +31,7 @@ interface ScoreboardDisplayProps {
   onRecordGoal: (isHome: boolean) => void
   onDecrementScore: (isHome: boolean) => void
   // Match meta integration
+  scheduledTime?: string
   gender?: GenderCategory
   group?: TournamentGroup | null
   phase?: MatchPhase
@@ -63,6 +64,7 @@ export function ScoreboardDisplay({
   currentMinute,
   onRecordGoal,
   onDecrementScore,
+  scheduledTime,
   gender,
   group,
   phase,
@@ -360,15 +362,25 @@ export function ScoreboardDisplay({
 
         {/* Center Live Score: Vollständig gegen Umbrüche gesichert */}
         <div className="shrink-0 flex flex-col items-center justify-center py-2 px-2">
-          {/* Geschlecht & Gruppe / Phase Tags */}
-          {gender && (
+          {/* Tags: Reihenfolge Uhrzeit, Geschlecht, Spielname */}
+          {(scheduledTime || gender || groupOrPhaseLabel) && (
             <div className="flex items-center gap-2 mb-6 sm:mb-8">
-              <span className={`rounded-md px-2.5 py-0.5 text-xs font-bold border shadow-2xs ${tagClass}`}>
-                {gender}
-              </span>
-              <span className={`rounded-md px-2.5 py-0.5 text-xs font-bold border shadow-2xs ${tagClass}`}>
-                {groupOrPhaseLabel}
-              </span>
+              {scheduledTime && (
+                <span className={`inline-flex items-center gap-1 rounded-md px-2.5 py-0.5 text-xs font-bold border shadow-2xs ${tagClass}`}>
+                  <Clock className="h-3 w-3" />
+                  <span>{scheduledTime.includes("Uhr") ? scheduledTime : `${scheduledTime} Uhr`}</span>
+                </span>
+              )}
+              {gender && (
+                <span className={`rounded-md px-2.5 py-0.5 text-xs font-bold border shadow-2xs ${tagClass}`}>
+                  {gender}
+                </span>
+              )}
+              {groupOrPhaseLabel && (
+                <span className={`rounded-md px-2.5 py-0.5 text-xs font-bold border shadow-2xs ${tagClass}`}>
+                  {groupOrPhaseLabel}
+                </span>
+              )}
             </div>
           )}
 

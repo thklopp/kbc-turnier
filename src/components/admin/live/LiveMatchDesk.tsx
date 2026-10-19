@@ -180,6 +180,7 @@ export function LiveMatchDesk() {
         onFadeOutAudio={fadeOutAudio}
         isPlayingAudio={isPlayingAudio}
         isFadingAudio={isFadingAudio}
+        scheduledTime={currentMatch?.scheduledTime}
         gender={currentMatch?.gender}
         group={currentMatch?.group}
         phase={currentMatch?.phase}
