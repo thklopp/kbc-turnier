@@ -1,6 +1,6 @@
 # SPEC-044: Kiosk-Modus: Zentrierte Seitentitel (Vorrunde, Finalrunde, Tabellen) & Ausrichtung der Finalrunde auf Vorrunden-Höhe
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: UI-Optimierung / Layout-Harmonisierung  
 > **Branch**: `feat/SPEC-044-kiosk-seitentitel-und-finalrunden-ausrichtung`  
 > **Autor**: Antigravity  
