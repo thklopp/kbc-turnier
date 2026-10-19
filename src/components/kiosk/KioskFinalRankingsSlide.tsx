@@ -140,7 +140,7 @@ export function KioskFinalRankingsSlide({ teams, matches }: KioskFinalRankingsSl
   return (
     <div className="flex h-full w-full flex-col justify-center items-center py-4 px-8 overflow-hidden select-none max-w-7xl mx-auto">
       {/* 2-Columns Side by Side */}
-      <div className="grid grid-cols-2 gap-8 w-full flex-1 max-h-[82vh]">
+      <div className="grid grid-cols-2 gap-12 w-full flex-1 max-h-[82vh]">
         <KioskRankingsCard gender="wU14" rankings={rankingsWU14} />
         <KioskRankingsCard gender="mU14" rankings={rankingsMU14} />
       </div>

@@ -187,7 +187,7 @@ export function FinalRankingsView({
 
       {/* Grid: Auf Mobile untereinander, ab md-Breakpoint nebeneinander */}
       {selectedCategory === "all" ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12">
           <RankingTable gender="wU14" rankings={rankingsWU14} />
           <RankingTable gender="mU14" rankings={rankingsMU14} />
         </div>
