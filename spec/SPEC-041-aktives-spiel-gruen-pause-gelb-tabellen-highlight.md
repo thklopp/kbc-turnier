@@ -1,6 +1,6 @@
 # SPEC-041: Aktives Spiel & Live-Tag in Grün, Pause in Gelb-Orange, Kiosk-Next Cleanup & Tabellen-Team-Highlight
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Optimierung / UI/UX  
 > **Branch**: feat/SPEC-041-aktives-spiel-gruen-pause-gelb-tabellen-highlight  
 > **Autor**: Antigravity  
