@@ -1,6 +1,6 @@
 # SPEC-049: PDF-Spielplan mit Live-/Endergebnissen und aktuellem Tabellenstand
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature / Optimierung  
 > **Branch**: feat/SPEC-049-pdf-spielplan-ergebnisse-und-tabellenstand  
 > **Autor**: Agent  
