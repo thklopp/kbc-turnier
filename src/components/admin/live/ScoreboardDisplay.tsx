@@ -1,4 +1,10 @@
-import type { Team } from "@/types/database"
+import type {
+  Team,
+  GenderCategory,
+  TournamentGroup,
+  MatchPhase,
+  FinalMatchType,
+} from "@/types/database"
 import {
   Shield,
   Music,
@@ -22,6 +28,12 @@ interface ScoreboardDisplayProps {
   currentMinute: number
   onRecordGoal: (isHome: boolean) => void
   onDecrementScore: (isHome: boolean) => void
+  // Match meta integration
+  gender?: GenderCategory
+  group?: TournamentGroup | null
+  phase?: MatchPhase
+  finalType?: FinalMatchType | null
+  matchName?: string
   // Timer integration
   secondsRemaining: number
   isRunning: boolean
@@ -48,6 +60,11 @@ export function ScoreboardDisplay({
   currentMinute,
   onRecordGoal,
   onDecrementScore,
+  gender,
+  group,
+  phase,
+  finalType,
+  matchName,
   secondsRemaining,
   isRunning,
   timerStatus,
@@ -60,6 +77,30 @@ export function ScoreboardDisplay({
   isPlayingAudio,
   isFadingAudio,
 }: ScoreboardDisplayProps) {
+  const isFemale = gender === "wU14"
+  const tagClass = isFemale
+    ? "bg-purple-50 text-purple-700 border-purple-200"
+    : "bg-blue-50 text-blue-700 border-blue-200"
+
+  const finalTypeLabels: Record<string, string> = {
+    quarter_final: "Viertelfinale",
+    semi_final: "Halbfinale",
+    placement_7_8: "Spiel um Platz 7",
+    placement_5_6: "Spiel um Platz 5",
+    placement_3_4: "Spiel um Platz 3",
+    final: "Großes Finale",
+  }
+
+  const groupOrPhaseLabel =
+    phase === "group" && group
+      ? `Gruppe ${group}`
+      : matchName && matchName.trim().length > 0
+      ? matchName.trim()
+      : finalType && finalTypeLabels[finalType]
+      ? finalTypeLabels[finalType]
+      : group
+      ? `Gruppe ${group}`
+      : "Finalspiel"
   const isHomeJinglePlaying = Boolean(
     homeTeam?.jingleUrl && isPlayingAudio?.(homeTeam.jingleUrl)
   )
@@ -308,6 +349,18 @@ export function ScoreboardDisplay({
 
         {/* Center Live Score: Vollständig gegen Umbrüche gesichert */}
         <div className="shrink-0 flex flex-col items-center justify-center py-2 px-2">
+          {/* Geschlecht & Gruppe / Phase Tags */}
+          {gender && (
+            <div className="flex items-center gap-1.5 mb-2.5">
+              <span className={`rounded-md px-2.5 py-0.5 text-xs font-bold border shadow-2xs ${tagClass}`}>
+                {gender}
+              </span>
+              <span className={`rounded-md px-2.5 py-0.5 text-xs font-bold border shadow-2xs ${tagClass}`}>
+                {groupOrPhaseLabel}
+              </span>
+            </div>
+          )}
+
           <div className="whitespace-nowrap font-mono text-5xl sm:text-6xl lg:text-7xl font-medium tracking-tight text-slate-900 bg-white rounded-2xl border-2 border-slate-200 px-6 py-3 shadow-inner text-center min-w-[150px]">
             {scoreHome} : {scoreAway}
           </div>

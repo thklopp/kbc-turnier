@@ -1,6 +1,6 @@
 # SPEC-042: Live-Desk Geschlechts- und Gruppen-Tags über dem Ergebnis
 
-> **Status**: In Review  
+> **Status**: In Abnahme  
 > **Typ**: Feature / UI-Erweiterung  
 > **Branch**: feat/SPEC-042-live-desk-gender-group-tags  
 > **Autor**: Antigravity  
@@ -37,19 +37,19 @@ Bislang fehlen dort jedoch direkte, auffällige Badges/Tags für die Altersklass
 ## 3. Fachliche Anforderungen & Scope
 
 ### 3.1 Im Scope (Must-Have)
-- [ ] **FR-1: Tag-Anzeige im Center-Bereich von `ScoreboardDisplay.tsx`**:
+- [x] **FR-1: Tag-Anzeige im Center-Bereich von `ScoreboardDisplay.tsx`**:
   - Platzierung direkt über der großen Ergebniskachel (`{scoreHome} : {scoreAway}`).
   - Darstellung als horizontale Badge-Reihe (`flex items-center gap-2 mb-2`).
-- [ ] **FR-2: Farbcodierung nach Geschlecht (Lila & Blau)**:
+- [x] **FR-2: Farbcodierung nach Geschlecht (Lila & Blau)**:
   - Wenn `gender === "wU14"`:
     - `bg-purple-50 text-purple-700 border-purple-200`
   - Wenn `gender === "mU14"`:
     - `bg-blue-50 text-blue-700 border-blue-200`
   - Beide Tags (Geschlecht und Gruppe/Phase) nutzen das jeweils aktive Schema für konsistente Gruppierung.
-- [ ] **FR-3: Dynamische Gruppen- und Phasenbezeichnung**:
+- [x] **FR-3: Dynamische Gruppen- und Phasenbezeichnung**:
   - Bei Vorrundenspielen (`phase === "group"` oder wenn eine Gruppe hinterlegt ist): Anzeige von `Gruppe {group}` (z. B. „Gruppe A“, „Gruppe B“).
   - Bei Finalspielen (`phase === "final"` ohne Gruppe): Anzeige des hinterlegten Spielnamens `matchName` bzw. Fallback auf den formatierten Finaltyp (z. B. „Halbfinale“, „Finale“, „Finalrunde“).
-- [ ] **FR-4: Prop-Erweiterung in `ScoreboardDisplay.tsx` und Übergabe in `LiveMatchDesk.tsx`**:
+- [x] **FR-4: Prop-Erweiterung in `ScoreboardDisplay.tsx` und Übergabe in `LiveMatchDesk.tsx`**:
   - `ScoreboardDisplayProps` erhält optionale Felder:
     - `gender?: GenderCategory`
     - `group?: TournamentGroup | null`
@@ -68,27 +68,27 @@ Bislang fehlen dort jedoch direkte, auffällige Badges/Tags für die Altersklass
 ## 4. Akzeptanzkriterien
 
 ### 4.1 Szenarien / Kriterien
-- [ ] **AC-1: wU14 Gruppenspiel Anzeige**
+- [x] **AC-1: wU14 Gruppenspiel Anzeige**
   - **Gegeben sei**: Das ausgewählte Spiel im Live-Desk ist Spiel #1 (wU14, Gruppe A).
   - **Wenn**: Der Live-Desk geöffnet oder dieses Spiel angewählt wird.
   - **Dann**: Erscheinen über dem Spielstand zwei Badges in Lila (`bg-purple-50 text-purple-700 border-purple-200`): `wU14` und `Gruppe A`.
-- [ ] **AC-2: mU14 Gruppenspiel Anzeige**
+- [x] **AC-2: mU14 Gruppenspiel Anzeige**
   - **Gegeben sei**: Das ausgewählte Spiel im Live-Desk ist ein mU14 Gruppenspiel (z. B. Gruppe B).
   - **Wenn**: Das Spiel angewählt wird.
   - **Dann**: Erscheinen über dem Spielstand zwei Badges in Blau (`bg-blue-50 text-blue-700 border-blue-200`): `mU14` und `Gruppe B`.
-- [ ] **AC-3: Finalspiel Anzeige**
+- [x] **AC-3: Finalspiel Anzeige**
   - **Gegeben sei**: Das ausgewählte Spiel ist Spiel #39 (mU14 Finale) mit Spielname „Finale“.
   - **Wenn**: Das Spiel angewählt wird.
   - **Dann**: Erscheinen über dem Spielstand zwei Badges in Blau: `mU14` und `Finale`.
-- [ ] **AC-4: Responsive Darstellung & Ausrichtung**
+- [x] **AC-4: Responsive Darstellung & Ausrichtung**
   - **Gegeben sei**: Der Live-Desk wird auf verschiedenen Bildschirmbreiten (Smartphone, Tablet, Desktop) betrachtet.
   - **Wenn**: Das Scoreboard skaliert.
   - **Dann**: Bleiben die Tags zentriert über der Score-Kachel angeordnet und verursachen keine Layoutverschiebungen oder unerwünschten Zeilenumbrüche.
 
 ### 4.2 Allgemeine Qualitätskriterien
-- [ ] Keine fest kodierten Parameter (`gender`, `group`, `matchName` kommen dynamisch aus `currentMatch`).
-- [ ] Vollständige TypeScript-Typisierung ohne `any`.
-- [ ] Fehlerfreier Build (`npm run build`) und sauberes Linting.
+- [x] Keine fest kodierten Parameter (`gender`, `group`, `matchName` kommen dynamisch aus `currentMatch`).
+- [x] Vollständige TypeScript-Typisierung ohne `any`.
+- [x] Fehlerfreier Build (`npm run build`) und sauberes Linting.
 
 ---
 

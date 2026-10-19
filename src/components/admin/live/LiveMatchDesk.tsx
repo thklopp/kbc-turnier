@@ -178,6 +178,11 @@ export function LiveMatchDesk() {
         onFadeOutAudio={fadeOutAudio}
         isPlayingAudio={isPlayingAudio}
         isFadingAudio={isFadingAudio}
+        gender={currentMatch?.gender}
+        group={currentMatch?.group}
+        phase={currentMatch?.phase}
+        finalType={currentMatch?.finalType}
+        matchName={currentMatch?.matchName}
       />
 
       {/* Tor-Ereignis-Protokoll mit Schützenzuordnung (falls Tore gefallen sind) */}
