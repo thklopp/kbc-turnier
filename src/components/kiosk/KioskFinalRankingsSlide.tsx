@@ -107,19 +107,19 @@ function KioskRankingsCard({
               {/* Badges on right side */}
               <div className="shrink-0 flex items-center">
                 {isWinner && (
-                  <span className="inline-flex items-center gap-1.5 rounded-xl border border-amber-300 bg-amber-100 px-3 py-1 text-sm font-bold text-amber-900">
-                    <Trophy className="h-4 w-4 text-amber-600" />
+                  <span className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-100 px-3 py-1 text-sm font-bold text-slate-700">
+                    <Trophy className="h-4 w-4 text-amber-500" />
                     <span>1. Platz</span>
                   </span>
                 )}
                 {isSilver && (
-                  <span className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-slate-100 px-3 py-1 text-sm font-bold text-slate-700">
-                    <Medal className="h-4 w-4 text-slate-600" />
+                  <span className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-100 px-3 py-1 text-sm font-bold text-slate-700">
+                    <Medal className="h-4 w-4 text-slate-400" />
                     <span>2. Platz</span>
                   </span>
                 )}
                 {isBronze && (
-                  <span className="inline-flex items-center gap-1.5 rounded-xl border border-amber-600/30 bg-amber-100/70 px-3 py-1 text-sm font-bold text-amber-900">
+                  <span className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-100 px-3 py-1 text-sm font-bold text-slate-700">
                     <Medal className="h-4 w-4 text-amber-700" />
                     <span>3. Platz</span>
                   </span>

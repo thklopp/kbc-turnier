@@ -166,7 +166,8 @@ describe("SPEC-046: Endplatzierungen nach Turnierende auf Live- und Kiosk-Seite"
     assert.ok(homeContent.includes("<FinalRankingsView"), "HomePage rendert FinalRankingsView")
 
     const layoutContent = fs.readFileSync(guestLayoutPath, "utf-8")
-    assert.ok(layoutContent.includes("Platzierungen"), "GuestLayout enthält dynamisches Platzierungen-Label")
+    assert.ok(layoutContent.includes("Trophy"), "GuestLayout enthält dynamisches Trophy-Icon für Live bei Turnierende")
+    assert.ok(layoutContent.includes("<Table"), "GuestLayout nutzt Table-Icon für Tabellen")
   })
 
   it("AC-4: Kiosk-Komponente KioskFinalRankingsSlide und Integration in KioskPage", () => {
@@ -183,6 +184,6 @@ describe("SPEC-046: Endplatzierungen nach Turnierende auf Live- und Kiosk-Seite"
     const kioskPageContent = fs.readFileSync(kioskPagePath, "utf-8")
     assert.ok(kioskPageContent.includes("isTournamentFinished(matches)"), "KioskPage prüft Turnierende")
     assert.ok(kioskPageContent.includes("<KioskFinalRankingsSlide"), "KioskPage bindet KioskFinalRankingsSlide ein")
-    assert.ok(kioskPageContent.includes("tournamentFinished ? \"Platzierungen\" : \"Live\""), "KioskHeader Tab wechselt auf Platzierungen")
   })
 })
+

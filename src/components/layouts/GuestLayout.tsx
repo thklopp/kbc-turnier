@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { Outlet, Link, useLocation } from "react-router-dom"
-import { Radio, Calendar, Trophy, Medal, Info, FileDown, Loader2 } from "lucide-react"
+import { Radio, Calendar, Trophy, Medal, Info, FileDown, Loader2, Table } from "lucide-react"
 import rrkLogo from "@/assets/images/RRK.webp"
 import { getTournamentConfig } from "@/services/configService"
 import { getTeams } from "@/services/teamService"
@@ -82,16 +82,11 @@ export function GuestLayout() {
               }`}
             >
               {tournamentFinished ? (
-                <>
-                  <Trophy className="h-3.5 w-3.5 text-amber-500" />
-                  <span>Platzierungen</span>
-                </>
+                <Trophy className="h-3.5 w-3.5 text-amber-500" />
               ) : (
-                <>
-                  <Radio className="h-3.5 w-3.5" />
-                  <span>Live</span>
-                </>
+                <Radio className="h-3.5 w-3.5" />
               )}
+              <span>Live</span>
             </Link>
 
             <Link
@@ -126,10 +121,11 @@ export function GuestLayout() {
                   : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
               }`}
             >
-              <Trophy className="h-3.5 w-3.5" />
+              <Table className="h-3.5 w-3.5" />
               <span>Tabellen</span>
             </Link>
           </nav>
+
 
           <nav className="flex items-center gap-2 shrink-0">
             <Link
@@ -160,19 +156,12 @@ export function GuestLayout() {
               }`}
             >
               {tournamentFinished ? (
-                <>
-                  <Trophy className="h-4 w-4 text-amber-500" />
-                  <span>Platzierungen</span>
-                </>
+                <Trophy className="h-4 w-4 text-amber-500" />
               ) : (
-                <>
-                  <Radio className="h-4 w-4" />
-                  <span>Live</span>
-                </>
+                <Radio className="h-4 w-4" />
               )}
+              <span>Live</span>
             </Link>
-
-
 
             <Link
               to="/#schedule"
@@ -206,7 +195,7 @@ export function GuestLayout() {
                   : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
               }`}
             >
-              <Trophy className="h-4 w-4" />
+              <Table className="h-4 w-4" />
               <span>Tabellen</span>
             </Link>
           </div>

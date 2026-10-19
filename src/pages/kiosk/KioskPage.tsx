@@ -83,12 +83,8 @@ export function KioskPage() {
 
   const tournamentFinished = useMemo(() => isTournamentFinished(matches), [matches])
 
-  const slideNames = useMemo(() => [
-    tournamentFinished ? "Platzierungen" : "Live",
-    "Vorrunde",
-    "Finalrunde",
-    "Tabellen",
-  ], [tournamentFinished])
+  const slideNames = BASE_SLIDE_NAMES
+
 
   // Carousel progression tick
   const nextSlide = useCallback(() => {
