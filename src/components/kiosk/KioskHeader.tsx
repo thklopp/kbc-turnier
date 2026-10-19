@@ -61,7 +61,7 @@ export function KioskHeader({
     }
   }
 
-  const dayLabel = config?.activeDay === "sunday" ? "Sonntag (Finaltag)" : "Samstag (Vorrunde)"
+  const dayLabel = config?.activeDay === "sunday" ? "Sonntag (Finaltag)" : null
 
   return (
     <header className="relative flex-none rounded-2xl border border-slate-200 bg-white/95 px-6 py-3.5 shadow-md backdrop-blur-md">
@@ -78,7 +78,7 @@ export function KioskHeader({
               {config?.tournamentName || "20. Kurt-Becker-Cup"}
             </h1>
             <p className="text-xs font-semibold text-slate-500">
-              {dayLabel} &bull; 16 Teams (wU14 &amp; mU14)
+              {dayLabel && <>{dayLabel} &bull; </>}16 Teams (wU14 &amp; mU14)
             </p>
           </div>
         </div>
