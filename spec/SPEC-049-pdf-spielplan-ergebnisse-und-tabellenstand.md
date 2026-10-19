@@ -1,6 +1,6 @@
 # SPEC-049: PDF-Spielplan mit Live-/Endergebnissen und aktuellem Tabellenstand
 
-> **Status**: Entwurf  
+> **Status**: In Abnahme  
 > **Typ**: Feature / Optimierung  
 > **Branch**: feat/SPEC-049-pdf-spielplan-ergebnisse-und-tabellenstand  
 > **Autor**: Agent  
@@ -44,7 +44,7 @@ Sobald das Turnier im Gange ist oder Partien abgeschlossen sind, möchten Turnie
 ## 3. Fachliche Anforderungen & Scope
 
 ### 3.1 Im Scope (Must-Have)
-- [ ] **Seite 1: Gruppenübersicht & Tabellenstand**:
+- [x] **Seite 1: Gruppenübersicht & Tabellenstand**:
   - Nutzung des bestehenden `calculateGroupStandings(teams, matches, gender, group)` aus `src/services/standingsService.ts`.
   - Wenn in einer Gruppe mindestens ein Spiel beendet oder aktiv ist (`finished`, `live`, `paused`):
     - Teams nach Rang sortiert anzeigen (Plätze 1 bis max. 4).
@@ -53,17 +53,17 @@ Sobald das Turnier im Gange ist oder Partien abgeschlossen sind, möchten Turnie
     - `Punkte`: Punktzahl als Zahl (z. B. `9`).
   - Wenn in einer Gruppe noch kein Spiel ausgetragen/gestartet wurde:
     - Ausgabe der Teams mit leeren Feldern für *Spiele*, *Tore (Diff.)* (`     :     `) und *Punkte* als handschriftliche Vorlage.
-- [ ] **Seite 2: Vorrundenspiele (Matches 1..24)**:
+- [x] **Seite 2: Vorrundenspiele (Matches 1..24)**:
   - Bei Spielen mit Status `finished`, `live` oder `paused`:
     - Ausgabe von `${scoreHome} : ${scoreAway}` in der Ergebnisspalte.
   - Bei Spielen mit Status `scheduled`:
     - Ausgabe von `"     :     "` für handschriftliche Notizen.
-- [ ] **Seite 3: Finalrunde (Matches 25..36)**:
+- [x] **Seite 3: Finalrunde (Matches 25..36)**:
   - Teamnamen: Reale Namen anzeigen, wenn `teamHomeId` / `teamAwayId` zugewiesen sind (`teamMap.get(m.teamHomeId)?.name || m.teamHomePlaceholder || "Heim"`).
   - Ergebnisspalte:
     - Bei Spielen mit Status `finished`, `live` oder `paused`: `${scoreHome} : ${scoreAway}`.
     - Bei `scheduled`: `"     :     "`.
-- [ ] **Design & Layout**:
+- [x] **Design & Layout**:
   - Beibehaltung des 3-seitigen A4-Hochkant-Formats mit konsistenter Kopf- und Fußzeile, Rändern und Zeilenhöhen.
   - Keine Umbrüche oder Layoutverschiebungen bei ein- oder zweistelligen Toren / Punkten.
 
@@ -77,33 +77,33 @@ Sobald das Turnier im Gange ist oder Partien abgeschlossen sind, möchten Turnie
 ## 4. Akzeptanzkriterien
 
 ### 4.1 Szenarien / Kriterien
-- [ ] **AC-1: Ergebnisse beendeter Spiele im PDF**
+- [x] **AC-1: Ergebnisse beendeter Spiele im PDF**
   - **Gegeben sei**: Mehrere Spiele der Vorrunde (z. B. Spiel 1 und 2) sind beendet mit Ergebnissen `3:1` und `0:2`.
   - **Wenn**: Der Benutzer im Gast-Footer auf „PDF-Spielplan“ klickt und das PDF öffnet.
   - **Dann**: Steht auf Seite 2 bei Spiel 1 `3 : 1` und bei Spiel 2 `0 : 2`.
   - **Und**: Ungespielte Partien weisen weiterhin das leere Ergebnisfeld `"     :     "` auf.
 
-- [ ] **AC-2: Aktueller Tabellenstand auf Seite 1**
+- [x] **AC-2: Aktueller Tabellenstand auf Seite 1**
   - **Gegeben sei**: In wU14 Gruppe A wurden bereits Spiele gespielt.
   - **Wenn**: Das PDF generiert wird.
   - **Dann**: Entspricht die Reihenfolge der Teams auf Seite 1 in der Tabelle „wU14 – Gruppe A“ exakt der berechneten Tabelle aus `calculateGroupStandings`.
   - **Und**: Die Spalten *Spiele*, *Tore (Diff.)* und *Punkte* zeigen die echten Statistiken der Teams.
 
-- [ ] **AC-3: Fallback für ungespielte Gruppen (Blanko-Modus)**
+- [x] **AC-3: Fallback für ungespielte Gruppen (Blanko-Modus)**
   - **Gegeben sei**: In einer Gruppe (z. B. vor Turnierbeginn) wurde noch kein einziges Spiel gestartet oder beendet.
   - **Wenn**: Das PDF generiert wird.
   - **Dann**: Werden die Teams der Gruppe aufgelistet, die Spalten für *Spiele*, *Tore* und *Punkte* sind jedoch leer (`""` bzw. `"     :     "`), um handschriftliche Eintragungen zu ermöglichen.
 
-- [ ] **AC-4: Finalspiele mit ermittelten Teams und Ergebnissen**
+- [x] **AC-4: Finalspiele mit ermittelten Teams und Ergebnissen**
   - **Gegeben sei**: Die Vorrunde ist beendet und die Halbfinal-Teams stehen fest (z. B. Spiel 29). Ein Halbfinale wurde bereits mit `2:1` beendet.
   - **Wenn**: Das PDF generiert wird.
   - **Dann**: Werden auf Seite 3 die echten Teamnamen statt reiner Platzhalter gedruckt.
   - **Und**: Das Ergebnis `2 : 1` wird im Ergebnisfeld des Spiels ausgewiesen.
 
 ### 4.2 Allgemeine Qualitätskriterien
-- [ ] TypeScript strikt ohne `any`.
-- [ ] `npm run build` und `npm run lint` laufen ohne Fehler durch.
-- [ ] Keine fest kodierten Parameter.
+- [x] TypeScript strikt ohne `any`.
+- [x] `npm run build` und `npm run lint` laufen ohne Fehler durch.
+- [x] Keine fest kodierten Parameter.
 
 ---
 

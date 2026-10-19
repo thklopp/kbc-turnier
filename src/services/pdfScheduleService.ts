@@ -2,6 +2,7 @@ import { jsPDF } from "jspdf"
 import autoTable from "jspdf-autotable"
 import type { Match, Team, TournamentConfig } from "@/types/database"
 import { getMatchDisplayName } from "./matchService"
+import { calculateGroupStandings } from "./standingsService"
 
 interface DocWithAutoTable extends jsPDF {
   lastAutoTable?: {
@@ -150,21 +151,50 @@ export async function generateSchedulePdf(
   let currentY = 31
 
   for (const grp of groupConfigs) {
-    const groupTeams = teams.filter((t) => t.gender === grp.gender && t.group === grp.group)
+    const standings = calculateGroupStandings(teams, matches, grp.gender, grp.group)
+    const hasAnyResults = matches.some(
+      (m) =>
+        m.gender === grp.gender &&
+        m.phase === "group" &&
+        m.group === grp.group &&
+        (m.status === "finished" || m.status === "live" || m.status === "paused")
+    )
 
     // Falls weniger als 4 Teams hinterlegt sind, bis 4 Zeilen auffüllen
-    const rowsCount = Math.max(groupTeams.length, 4)
+    const rowsCount = Math.max(standings.length, 4)
     const tableRows: string[][] = []
 
     for (let i = 0; i < rowsCount; i++) {
-      const team = groupTeams[i]
-      tableRows.push([
-        String(i + 1),
-        team?.name || "",
-        "",
-        "     :     ",
-        "",
-      ])
+      const standing = standings[i]
+      if (standing) {
+        if (hasAnyResults) {
+          const diffSign = standing.goalDifference > 0 ? "+" : ""
+          const diffStr = `${standing.goalsFor}:${standing.goalsAgainst} (${diffSign}${standing.goalDifference})`
+          tableRows.push([
+            String(i + 1),
+            standing.teamName,
+            String(standing.played),
+            diffStr,
+            String(standing.points),
+          ])
+        } else {
+          tableRows.push([
+            String(i + 1),
+            standing.teamName,
+            "",
+            "     :     ",
+            "",
+          ])
+        }
+      } else {
+        tableRows.push([
+          String(i + 1),
+          "",
+          "",
+          "     :     ",
+          "",
+        ])
+      }
     }
 
     doc.setFont("helvetica", "bold")
@@ -196,7 +226,7 @@ export async function generateSchedulePdf(
         1: { halign: "left", cellWidth: 80 },
         2: { halign: "center", cellWidth: 25 },
         3: { halign: "center", cellWidth: 35 },
-        4: { halign: "center", cellWidth: 30 },
+        4: { halign: "center", cellWidth: 30, fontStyle: "bold" },
       },
     })
 
@@ -217,6 +247,8 @@ export async function generateSchedulePdf(
   const vorrundeRows = vorrundeMatches.map((m) => {
     const home = teamMap.get(m.teamHomeId)
     const away = teamMap.get(m.teamAwayId)
+    const hasScore = m.status === "finished" || m.status === "live" || m.status === "paused"
+    const scoreText = hasScore ? `${m.scoreHome} : ${m.scoreAway}` : "     :     "
     return [
       String(m.matchNumber),
       m.scheduledTime,
@@ -224,7 +256,7 @@ export async function generateSchedulePdf(
       m.group ? `Gr. ${m.group}` : "-",
       home?.name || m.teamHomePlaceholder || "Heim",
       away?.name || m.teamAwayPlaceholder || "Gast",
-      "     :     ",
+      scoreText,
     ]
   })
 
@@ -272,6 +304,12 @@ export async function generateSchedulePdf(
             data.cell.styles.fontStyle = "bold"
           }
         }
+        if (data.column.index === 6) {
+          const score = rowData[6]
+          if (score && score.trim() !== ":" && score.trim() !== "") {
+            data.cell.styles.fontStyle = "bold"
+          }
+        }
       }
     },
     didDrawCell: (data) => {
@@ -297,10 +335,11 @@ export async function generateSchedulePdf(
     .filter((m) => m.phase === "final" || m.matchNumber > 24)
     .sort((a, b) => a.matchNumber - b.matchNumber)
 
-  // Per Nutzerwunsch: Immer die Vorlagen-Bezeichnungen (z. B. "1. Gruppe A", "Sieger HF 1")
   const finalRows = finalMatches.map((m) => {
-    const home = m.teamHomePlaceholder || teamMap.get(m.teamHomeId)?.name || "Heim"
-    const away = m.teamAwayPlaceholder || teamMap.get(m.teamAwayId)?.name || "Gast"
+    const home = teamMap.get(m.teamHomeId)?.name || m.teamHomePlaceholder || "Heim"
+    const away = teamMap.get(m.teamAwayId)?.name || m.teamAwayPlaceholder || "Gast"
+    const hasScore = m.status === "finished" || m.status === "live" || m.status === "paused"
+    const scoreText = hasScore ? `${m.scoreHome} : ${m.scoreAway}` : "     :     "
     return [
       String(m.matchNumber),
       m.scheduledTime,
@@ -308,7 +347,7 @@ export async function generateSchedulePdf(
       m.matchName || getMatchDisplayName(m),
       home,
       away,
-      "     :     ",
+      scoreText,
     ]
   })
 
@@ -353,6 +392,12 @@ export async function generateSchedulePdf(
             data.cell.styles.fontStyle = "bold"
           } else if (gender === "mU14") {
             data.cell.styles.textColor = [29, 78, 216] // dezent blau (mU14)
+            data.cell.styles.fontStyle = "bold"
+          }
+        }
+        if (data.column.index === 6) {
+          const score = rowData[6]
+          if (score && score.trim() !== ":" && score.trim() !== "") {
             data.cell.styles.fontStyle = "bold"
           }
         }
