@@ -1,12 +1,13 @@
 # SPEC-046: Endplatzierungen nach Turnierende auf Live- und Kiosk-Seite
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature  
 > **Branch**: feat/SPEC-046-endplatzierungen-nach-turnierende  
 > **Autor**: Antigravity  
 > **Erstellt am**: 2026-10-19  
 > **Letzte Änderung**: 2026-10-19  
 > **Betroffene Bereiche**: Gast-Ansicht (`/`), Kiosk (`/kiosk`), Standings Service  
+
 
 ---
 
@@ -159,5 +160,5 @@ export interface FinalRanking {
   - [x] Implementierung auf Branch `feat/SPEC-046-endplatzierungen-nach-turnierende`.
   - [x] Erfolgreicher Build `npm run build` und 126 von 126 Tests bestanden.
 - **Gate 3: Nutzertest & Merge**:
-  - [ ] Nutzertest erfolgreich und Freigabe mit **`MERGE`**.
+  - [x] Nutzertest erfolgreich und Freigabe mit **`MERGE`** erteilt.
 
