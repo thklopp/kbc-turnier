@@ -56,6 +56,11 @@
   - Ermittlung aller Teams, die sich in einem aktiven Match befinden (`status === "live"` oder `status === "paused"`).
   - Teams im aktiven Live-Match: Zeilenhintergrund dezent in Grün (`bg-emerald-50/80`), `font-semibold` und hervorgehobener Rang (ohne zusätzliches Text-Badge).
   - Teams im pausierten Match: Zeilenhintergrund dezent in Gelb-Orange (`bg-amber-50/80`), `font-semibold` und hervorgehobener Rang.
+- [ ] **FR-6: Dynamische Button-Zustände im Live-Desk (`ScoreboardDisplay.tsx`)**:
+  - **Zustand Geplant / Beendet**: Start/Pause-Button hat Text "Start" und ist blau (`bg-blue-600`); Tor-Buttons sind blau (`bg-blue-600`).
+  - **Zustand Spiel läuft (`isRunning` / `live`)**: Button oben hat Text "Pause" und ist grün (`bg-emerald-600`); Tor-Buttons sind grün (`bg-emerald-600`).
+  - **Zustand Pausiert (`status === "paused"`)**: Button oben hat Text "Weiter" und ist gelb/orange (`bg-amber-500`); Tor-Buttons sind gelb/orange (`bg-amber-500`).
+  - **Zustand Zeit abgelaufen (`secondsRemaining === 0`)**: Button oben hat Text "Stop" und ist rot (`bg-rose-600`); Tor-Buttons sind rot (`bg-rose-600`). Button "Spiel beenden & weiter" schließt das Spiel ab und wechselt zur nächsten Partie.
 
 ### 3.2 Explizit Out-of-Scope
 - Keine Änderungen an der Tabellen-Berechnungslogik (`calculateGroupStandings`).
@@ -87,8 +92,12 @@
   - **Dann**: Sind die Zeilen von Team X und Team Y in ihren jeweiligen Gruppen farblich hervorgehoben (grüner Ton für Live, gelb-orange für Pause, ohne Text-Badge).
   - **Und**: Wird das Spiel pausiert, wechselt die Hervorhebung der beiden Zeilen auf Gelb-Orange.
   - **Und**: Ist kein Spiel aktiv oder wird das Spiel beendet, wird die Zeile wieder ganz normal dargestellt.
-- [ ] **AC-6: Code-Qualität**:
-  - TypeScript ohne `any`, `npm run build` und `npm run lint` laufen fehlerfrei durch.
+- [ ] **AC-7: Live-Desk Button-Zustände (Start/Pause/Weiter/Stop und Tor-Buttons)**:
+  - **Gegeben sei**: Die Turnierleitung befindet sich im Live-Desk (`ScoreboardDisplay.tsx`).
+  - **Wenn (geplant oder beendet)**: Der Timer-Button ist blau (`bg-blue-600`) mit Text "Start", die Tor-Buttons sind blau (`bg-blue-600`).
+  - **Wenn (Spiel läuft)**: Der Timer-Button ist grün (`bg-emerald-600`) mit Text "Pause", die Tor-Buttons sind grün (`bg-emerald-600`).
+  - **Wenn (Spiel pausiert)**: Der Timer-Button ist gelb/orange (`bg-amber-500`) mit Text "Weiter", die Tor-Buttons sind gelb/orange (`bg-amber-500`).
+  - **Wenn (Zeit abgelaufen)**: Der Timer-Button ist rot (`bg-rose-600`) mit Text "Stop", die Tor-Buttons sind rot (`bg-rose-600`), der Button "Spiel beenden & weiter" beendet das Spiel und springt zum Folgespiel.
 
 ---
 

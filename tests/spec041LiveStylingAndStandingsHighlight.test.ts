@@ -127,4 +127,29 @@ test("SPEC-041: Aktives Spiel & Live-Tag in Grün, Pause in Gelb-Orange, Kiosk-N
     assert.strictEqual(t2.played, 1, "Team 2 muss 1 Spiel absolviert haben")
     assert.strictEqual(t2.points, 0, "Team 2 muss 0 Punkte haben")
   })
+
+  await t.test("AC-7: Live-Desk Button-Zustände (Start/Pause/Weiter/Stop und Tor-Buttons)", () => {
+    const scoreboardPath = path.resolve(process.cwd(), "src/components/admin/live/ScoreboardDisplay.tsx")
+    const scoreboardContent = fs.readFileSync(scoreboardPath, "utf-8")
+
+    // Default / Scheduled / Finished: blau, Text "Start"
+    assert.ok(scoreboardContent.includes('timerBtnColor = "bg-blue-600 hover:bg-blue-500 text-white"'), "Default timer button is blue")
+    assert.ok(scoreboardContent.includes('timerBtnText = "Start"'), "Default timer button text is Start")
+    assert.ok(scoreboardContent.includes('goalBtnColor = "bg-blue-600 hover:bg-blue-500 text-white"'), "Default goal button is blue")
+
+    // Live / Running: grün, Text "Pause"
+    assert.ok(scoreboardContent.includes('timerBtnColor = "bg-emerald-600 hover:bg-emerald-500 text-white"'), "Running timer button is emerald")
+    assert.ok(scoreboardContent.includes('timerBtnText = "Pause"'), "Running timer button text is Pause")
+    assert.ok(scoreboardContent.includes('goalBtnColor = "bg-emerald-600 hover:bg-emerald-500 text-white"'), "Running goal button is emerald")
+
+    // Paused: gelb, Text "Weiter"
+    assert.ok(scoreboardContent.includes('timerBtnColor = "bg-amber-500 hover:bg-amber-400 text-white"'), "Paused timer button is amber")
+    assert.ok(scoreboardContent.includes('timerBtnText = "Weiter"'), "Paused timer button text is Weiter")
+    assert.ok(scoreboardContent.includes('goalBtnColor = "bg-amber-500 hover:bg-amber-400 text-white"'), "Paused goal button is amber")
+
+    // Time Up: rot, Text "Stop"
+    assert.ok(scoreboardContent.includes('timerBtnColor = "bg-rose-600 hover:bg-rose-500 text-white animate-pulse"'), "Time up timer button is red/rose")
+    assert.ok(scoreboardContent.includes('timerBtnText = "Stop"'), "Time up timer button text is Stop")
+    assert.ok(scoreboardContent.includes('goalBtnColor = "bg-rose-600 hover:bg-rose-500 text-white"'), "Time up goal button is red/rose")
+  })
 })
