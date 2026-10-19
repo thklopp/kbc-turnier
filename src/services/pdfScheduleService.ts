@@ -260,8 +260,8 @@ export async function generateSchedulePdf(
       fontStyle: "bold",
       fontSize: 8,
     },
-    alternateRowStyles: {
-      fillColor: [248, 250, 252],
+    bodyStyles: {
+      fillColor: [255, 255, 255],
     },
     styles: {
       lineColor: [226, 232, 240],
@@ -278,6 +278,31 @@ export async function generateSchedulePdf(
       4: { halign: "right", cellWidth: 50 },
       5: { halign: "left", cellWidth: 50 },
       6: { halign: "center", cellWidth: 22 },
+    },
+    didParseCell: (data) => {
+      if (data.section === "body") {
+        const rowData = data.row.raw as string[]
+        const gender = rowData[2]
+        if (data.column.index === 2) {
+          if (gender === "wU14") {
+            data.cell.styles.textColor = [126, 34, 206] // dezent lila (wU14)
+            data.cell.styles.fontStyle = "bold"
+          } else if (gender === "mU14") {
+            data.cell.styles.textColor = [29, 78, 216] // dezent blau (mU14)
+            data.cell.styles.fontStyle = "bold"
+          }
+        }
+      }
+    },
+    didDrawCell: (data) => {
+      // Dezente Farblinie (1.2mm) am linken Zeilenrand zur optischen Orientierung
+      if (data.section === "body" && data.column.index === 0) {
+        const rowData = data.row.raw as string[]
+        const gender = rowData[2]
+        const color = gender === "wU14" ? [147, 51, 234] : [37, 99, 235]
+        doc.setFillColor(color[0], color[1], color[2])
+        doc.rect(data.cell.x, data.cell.y, 1.2, data.cell.height, "F")
+      }
     },
   })
 
@@ -319,8 +344,8 @@ export async function generateSchedulePdf(
       fontStyle: "bold",
       fontSize: 8,
     },
-    alternateRowStyles: {
-      fillColor: [248, 250, 252],
+    bodyStyles: {
+      fillColor: [255, 255, 255],
     },
     styles: {
       lineColor: [226, 232, 240],
@@ -337,6 +362,31 @@ export async function generateSchedulePdf(
       4: { halign: "right", cellWidth: 41 },
       5: { halign: "left", cellWidth: 41 },
       6: { halign: "center", cellWidth: 22 },
+    },
+    didParseCell: (data) => {
+      if (data.section === "body") {
+        const rowData = data.row.raw as string[]
+        const gender = rowData[2]
+        if (data.column.index === 2) {
+          if (gender === "wU14") {
+            data.cell.styles.textColor = [126, 34, 206] // dezent lila (wU14)
+            data.cell.styles.fontStyle = "bold"
+          } else if (gender === "mU14") {
+            data.cell.styles.textColor = [29, 78, 216] // dezent blau (mU14)
+            data.cell.styles.fontStyle = "bold"
+          }
+        }
+      }
+    },
+    didDrawCell: (data) => {
+      // Dezente Farblinie (1.2mm) am linken Zeilenrand zur optischen Orientierung
+      if (data.section === "body" && data.column.index === 0) {
+        const rowData = data.row.raw as string[]
+        const gender = rowData[2]
+        const color = gender === "wU14" ? [147, 51, 234] : [37, 99, 235]
+        doc.setFillColor(color[0], color[1], color[2])
+        doc.rect(data.cell.x, data.cell.y, 1.2, data.cell.height, "F")
+      }
     },
   })
 
