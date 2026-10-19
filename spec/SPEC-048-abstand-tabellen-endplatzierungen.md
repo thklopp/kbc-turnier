@@ -1,6 +1,6 @@
 # SPEC-048: Vergrößerung des Abstands zwischen den Tabellen der Endplatzierungen
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Optimierung  
 > **Branch**: fix/SPEC-048-abstand-tabellen-endplatzierungen  
 > **Autor**: Antigravity  
