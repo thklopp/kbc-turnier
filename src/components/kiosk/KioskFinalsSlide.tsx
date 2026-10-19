@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Trophy } from "lucide-react"
 import type { Match, Team } from "@/types/database"
+import { getMatchDisplayName } from "@/services/matchService"
 
 interface KioskFinalsSlideProps {
   matches: Match[]
@@ -23,39 +24,11 @@ function getTeam(teamId: string, placeholder?: string, teams: Team[] = []) {
   }
 }
 
-function getCompactFinalName(match: Match): string {
-  if (match.matchName) {
-    if (match.matchName.includes("Halbfinale 1")) return "HF 1"
-    if (match.matchName.includes("Halbfinale 2")) return "HF 2"
-    if (match.matchName.includes("Halbfinale")) return "HF"
-    if (match.matchName.includes("Platz 7")) return "Platz 7"
-    if (match.matchName.includes("Platz 5")) return "Platz 5"
-    if (match.matchName.includes("Platz 3")) return "Platz 3"
-    if (match.matchName.includes("Platzierungsspiel 1")) return "Pl. 1"
-    if (match.matchName.includes("Platzierungsspiel 2")) return "Pl. 2"
-    if (match.matchName.includes("Platzierungsspiel")) return "Pl. Spiel"
-    if (match.matchName.includes("Qualifikation")) return "Quali 5-8"
-    if (match.matchName.toLowerCase() === "finale") return "Finale"
-    return match.matchName
+function getFinalStageName(match: Match): string {
+  if (match.matchName && match.matchName.trim().length > 0) {
+    return match.matchName.trim()
   }
-  if (match.finalType) {
-    switch (match.finalType) {
-      case "semi_final":
-        return "HF"
-      case "placement_7_8":
-        if (match.matchNumber >= 25 && match.matchNumber <= 28) {
-          return "Pl. Spiel"
-        }
-        return "Platz 7"
-      case "placement_5_6":
-        return "Platz 5"
-      case "placement_3_4":
-        return "Platz 3"
-      case "final":
-        return "Finale"
-    }
-  }
-  return "Finalspiel"
+  return getMatchDisplayName(match)
 }
 
 export function KioskFinalsSlide({ matches, teams }: KioskFinalsSlideProps) {
@@ -91,7 +64,7 @@ export function KioskFinalsSlide({ matches, teams }: KioskFinalsSlideProps) {
     const hasScore =
       match.status === "finished" || match.status === "live" || match.status === "paused"
 
-    const stageBadgeText = getCompactFinalName(match)
+    const stageBadgeText = getFinalStageName(match)
     const isFinalGame =
       match.finalType === "final" ||
       stageBadgeText === "Finale" ||
@@ -114,13 +87,9 @@ export function KioskFinalsSlide({ matches, teams }: KioskFinalsSlideProps) {
             {match.gender}
           </span>
           <span
-            className={`text-xs md:text-sm font-bold px-2 py-0.5 rounded border whitespace-nowrap flex items-center gap-1 ${
-              isFinalGame
-                ? "bg-amber-100 text-amber-800 border-amber-300 font-extrabold"
-                : "bg-slate-50 text-slate-700 border-slate-200"
-            }`}
+            className={`text-xs md:text-sm font-bold px-2 py-0.5 rounded border whitespace-nowrap flex items-center gap-1 ${genderBadge}`}
           >
-            {isFinalGame && <Trophy className="h-3.5 w-3.5 text-amber-600 flex-none" />}
+            {isFinalGame && <Trophy className="h-3.5 w-3.5 flex-none" />}
             <span>{stageBadgeText}</span>
           </span>
           {isLive && (
