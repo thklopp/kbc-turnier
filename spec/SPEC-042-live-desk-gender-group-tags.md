@@ -1,6 +1,6 @@
 # SPEC-042: Live-Desk Geschlechts- und Gruppen-Tags über dem Ergebnis
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature / UI-Erweiterung  
 > **Branch**: feat/SPEC-042-live-desk-gender-group-tags  
 > **Autor**: Antigravity  
