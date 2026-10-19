@@ -71,15 +71,49 @@ export function ScoreboardDisplay({
   const seconds = secondsRemaining % 60
   const formattedTime = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
   const isLowTime = secondsRemaining <= 60 && secondsRemaining > 0
+  const isTimeUp = secondsRemaining === 0
 
   const statusLabel =
-    timerStatus === "live"
+    isTimeUp
+      ? "STOP"
+      : timerStatus === "live"
       ? "LIVE"
       : timerStatus === "paused"
       ? "PAUSIERT"
       : timerStatus === "finished"
       ? "BEENDET"
       : "GEPLANT"
+
+  // 4 Button-Zustände laut Vorgabe:
+  // 1. Zeit abgelaufen (secondsRemaining === 0): Stop rot, Torbuttons rot
+  // 2. Spiel läuft (isRunning): Pause grün, Torbuttons grün
+  // 3. Spiel pausiert (timerStatus === "paused"): Weiter gelb, Torbuttons gelb
+  // 4. Geplant / Beendet: Start blau, Torbuttons blau
+  let timerBtnColor = "bg-blue-600 hover:bg-blue-500 text-white"
+  let timerBtnText = "Start"
+  let TimerBtnIcon = Play
+  let timerBtnAction = onStartTimer
+  let goalBtnColor = "bg-blue-600 hover:bg-blue-500 text-white"
+
+  if (isTimeUp) {
+    timerBtnColor = "bg-rose-600 hover:bg-rose-500 text-white animate-pulse"
+    timerBtnText = "Stop"
+    TimerBtnIcon = Square
+    timerBtnAction = isRunning ? onPauseTimer : onFinishMatch
+    goalBtnColor = "bg-rose-600 hover:bg-rose-500 text-white"
+  } else if (isRunning) {
+    timerBtnColor = "bg-emerald-600 hover:bg-emerald-500 text-white"
+    timerBtnText = "Pause"
+    TimerBtnIcon = Pause
+    timerBtnAction = onPauseTimer
+    goalBtnColor = "bg-emerald-600 hover:bg-emerald-500 text-white"
+  } else if (timerStatus === "paused") {
+    timerBtnColor = "bg-amber-500 hover:bg-amber-400 text-white"
+    timerBtnText = "Weiter"
+    TimerBtnIcon = Play
+    timerBtnAction = onStartTimer
+    goalBtnColor = "bg-amber-500 hover:bg-amber-400 text-white"
+  }
 
   return (
     <div className="w-full rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 lg:p-6 shadow-sm">
@@ -97,7 +131,9 @@ export function ScoreboardDisplay({
               </h3>
               <span
                 className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                  timerStatus === "live"
+                  isTimeUp
+                    ? "bg-rose-50 text-rose-700 border border-rose-200"
+                    : timerStatus === "live"
                     ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                     : timerStatus === "paused"
                     ? "bg-amber-50 text-amber-700 border border-amber-200"
@@ -108,7 +144,9 @@ export function ScoreboardDisplay({
               >
                 <span
                   className={`h-1.5 w-1.5 rounded-full ${
-                    isRunning
+                    isTimeUp
+                      ? "bg-rose-500 animate-pulse"
+                      : isRunning
                       ? "bg-emerald-500 animate-pulse"
                       : timerStatus === "live"
                       ? "bg-emerald-500"
@@ -146,27 +184,23 @@ export function ScoreboardDisplay({
             </span>
           </div>
 
-          {/* Start / Pause Button */}
-          {isRunning ? (
-            <button
-              onClick={onPauseTimer}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-amber-400 active:scale-95 transition-all cursor-pointer"
-              title="Spieluhr pausieren"
-            >
-              <Pause className="h-3.5 w-3.5 fill-current" />
-              <span>Pause</span>
-            </button>
-          ) : (
-            <button
-              onClick={onStartTimer}
-              disabled={secondsRemaining === 0}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-emerald-500 active:scale-95 transition-all cursor-pointer disabled:opacity-40"
-              title="Spieluhr starten"
-            >
-              <Play className="h-3.5 w-3.5 fill-current" />
-              <span>Start</span>
-            </button>
-          )}
+          {/* Dynamischer Start / Pause / Weiter / Stop Button */}
+          <button
+            onClick={timerBtnAction}
+            className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold shadow-xs active:scale-95 transition-all cursor-pointer ${timerBtnColor}`}
+            title={
+              isTimeUp
+                ? "Spielzeit abgelaufen (Stop)"
+                : isRunning
+                ? "Spieluhr pausieren"
+                : timerStatus === "paused"
+                ? "Spiel fortsetzen"
+                : "Spieluhr starten"
+            }
+          >
+            <TimerBtnIcon className="h-3.5 w-3.5 fill-current" />
+            <span>{timerBtnText}</span>
+          </button>
 
           {/* Reset Button */}
           <button
@@ -201,7 +235,11 @@ export function ScoreboardDisplay({
         <div className="flex items-center justify-end">
           <button
             onClick={onFinishMatch}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-blue-500 active:scale-95 transition-all cursor-pointer"
+            className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold text-white shadow-xs active:scale-95 transition-all cursor-pointer ${
+              isTimeUp
+                ? "bg-rose-600 hover:bg-rose-500 animate-pulse ring-2 ring-rose-300 shadow-md"
+                : "bg-blue-600 hover:bg-blue-500"
+            }`}
             title="Spiel beenden und Ergebnis fixieren"
           >
             <CheckCircle className="h-4 w-4 text-white" />
@@ -247,12 +285,12 @@ export function ScoreboardDisplay({
             ) : (
               <button
                 onClick={() => onRecordGoal(true)}
-                className="w-full max-w-[220px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-medium text-white shadow-md hover:bg-emerald-500 active:scale-98 transition-all cursor-pointer"
+                className={`w-full max-w-[220px] inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium shadow-md active:scale-98 transition-all cursor-pointer ${goalBtnColor}`}
                 title={homeTeam?.jingleUrl ? "Tor für Heimteam (spielt Torjingle ab)" : "Tor für Heimteam eintragen"}
               >
                 <Plus className="h-5 w-5" />
                 <span>Tor Heim (+1)</span>
-                {homeTeam?.jingleUrl && <Music className="h-4 w-4 text-emerald-200 ml-0.5" />}
+                {homeTeam?.jingleUrl && <Music className="h-4 w-4 text-white/80 ml-0.5" />}
               </button>
             )}
 
@@ -313,12 +351,12 @@ export function ScoreboardDisplay({
             ) : (
               <button
                 onClick={() => onRecordGoal(false)}
-                className="w-full max-w-[220px] inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-medium text-white shadow-md hover:bg-emerald-500 active:scale-98 transition-all cursor-pointer"
+                className={`w-full max-w-[220px] inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium shadow-md active:scale-98 transition-all cursor-pointer ${goalBtnColor}`}
                 title={awayTeam?.jingleUrl ? "Tor für Gastteam (spielt Torjingle ab)" : "Tor für Gastteam eintragen"}
               >
                 <Plus className="h-5 w-5" />
                 <span>Tor Gast (+1)</span>
-                {awayTeam?.jingleUrl && <Music className="h-4 w-4 text-emerald-200 ml-0.5" />}
+                {awayTeam?.jingleUrl && <Music className="h-4 w-4 text-white/80 ml-0.5" />}
               </button>
             )}
 

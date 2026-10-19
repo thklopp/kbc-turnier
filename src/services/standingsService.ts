@@ -36,13 +36,13 @@ export function calculateGroupStandings(
     })
   })
 
-  // Berücksichtige alle beendeten oder laufenden Gruppenspiele dieser Gruppe
+  // Berücksichtige alle beendeten oder laufenden Gruppenspiele dieser Gruppe (live oder pausiert)
   const groupMatches = matches.filter(
     (m) =>
       m.gender === gender &&
       m.phase === "group" &&
       m.group === group &&
-      (m.status === "finished" || m.status === "live")
+      (m.status === "finished" || m.status === "live" || m.status === "paused")
   )
 
   groupMatches.forEach((match) => {

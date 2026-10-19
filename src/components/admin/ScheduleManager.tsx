@@ -475,7 +475,7 @@ export function ScheduleManager() {
                       </td>
 
                       <td className="py-3 px-2 text-center font-mono font-bold text-slate-900">
-                        {match.status === "finished" || match.status === "live" ? (
+                        {match.status === "finished" || match.status === "live" || match.status === "paused" ? (
                           `${match.scoreHome} : ${match.scoreAway}`
                         ) : (
                           <span className="text-slate-300">- : -</span>
@@ -506,6 +506,8 @@ export function ScheduleManager() {
                           className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
                             match.status === "live"
                               ? "bg-emerald-100 text-emerald-800 animate-pulse"
+                              : match.status === "paused"
+                              ? "bg-amber-100 text-amber-800"
                               : match.status === "finished"
                               ? "bg-slate-200 text-slate-700"
                               : "bg-slate-100 text-slate-500"

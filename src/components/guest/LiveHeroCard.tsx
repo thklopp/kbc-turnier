@@ -110,7 +110,7 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
         <div className="col-span-1 flex flex-col items-center justify-center">
           {/* Status small ABOVE the score */}
           {isLive && (
-            <span className="rounded-full bg-rose-500 text-white px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider animate-pulse mb-1 whitespace-nowrap">
+            <span className="rounded-full bg-emerald-600 text-white px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider animate-pulse mb-1 whitespace-nowrap">
               LIVE {currentMatch.currentPeriodMinute || 1}&apos;
             </span>
           )}
