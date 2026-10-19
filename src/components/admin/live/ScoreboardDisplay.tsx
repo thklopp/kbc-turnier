@@ -351,7 +351,7 @@ export function ScoreboardDisplay({
         <div className="shrink-0 flex flex-col items-center justify-center py-2 px-2">
           {/* Geschlecht & Gruppe / Phase Tags */}
           {gender && (
-            <div className="flex items-center gap-1.5 mb-2.5">
+            <div className="flex items-center gap-2 mb-6 sm:mb-8">
               <span className={`rounded-md px-2.5 py-0.5 text-xs font-bold border shadow-2xs ${tagClass}`}>
                 {gender}
               </span>
