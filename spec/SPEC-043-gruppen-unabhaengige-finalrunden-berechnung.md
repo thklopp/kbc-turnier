@@ -1,6 +1,6 @@
 # SPEC-043: Gruppenunabhängige Zuordnung der Finalrunden-Paarungen & Einheitliche matchName-Anzeige
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Optimierung  
 > **Branch**: feat/SPEC-043-gruppen-unabhaengige-finalrunden-berechnung  
 > **Autor**: Antigravity Agent  
