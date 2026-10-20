@@ -11,10 +11,12 @@ import { LoginPage } from "@/pages/admin/LoginPage"
 import { KioskPage } from "@/pages/kiosk/KioskPage"
 import { TeamJinglePage } from "@/pages/jingle/TeamJinglePage"
 import { NotFoundPage } from "@/pages/NotFoundPage"
+import { UmamiTracker } from "@/components/common/UmamiTracker"
 
 export function AppRouter() {
   return (
     <BrowserRouter>
+      <UmamiTracker />
       <Routes>
         {/* Gast- und Zuschauer-Bereich (Mobil-optimiert) */}
         <Route element={<GuestLayout />}>

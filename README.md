@@ -110,7 +110,7 @@ npm run preview
 
 Das Projekt enthält ein für Railway optimiertes Multi-Stage `Dockerfile`:
 1. **GitHub Repository verbinden**: Erstelle ein neues Projekt auf [Railway](https://railway.app) und verbinde dieses GitHub-Repository.
-2. **Umgebungsvariablen**: Hinterlege in den Railway Project Settings die `VITE_FIREBASE_*` Umgebungsvariablen, damit sie beim Docker-Build zur Verfügung stehen.
+2. **Umgebungsvariablen**: Hinterlege in den Railway Project Settings die `VITE_FIREBASE_*` Umgebungsvariablen sowie optional `VITE_UMAMI_WEBSITE_ID` (für Web-Analytics), damit sie beim Docker-Build zur Verfügung stehen.
 3. **Automatischer Build**: Railway baut das Dockerfile (Node-Build) und hostet das Ergebnis über einen schlanken Nginx-Container auf Port `80` (bzw. `$PORT`).
 
 ---
