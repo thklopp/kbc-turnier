@@ -331,24 +331,26 @@ export function ScoreboardDisplay({
       <div className="flex flex-col md:flex-row items-start justify-between gap-4 lg:gap-6">
         {/* Team Heim */}
         <div className="flex-1 w-full md:w-auto flex flex-col items-center text-center p-3 sm:p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs">
-          <div className="relative flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-sm mb-2">
-            {homeTeam?.logoUrl ? (
-              <img
-                src={homeTeam.logoUrl}
-                alt={homeTeam.name}
-                className="h-full w-full object-contain p-1.5"
-              />
-            ) : (
-              <span className="text-3xl sm:text-4xl">🏑</span>
-            )}
-          </div>
+          <div className="flex flex-col items-center sm:h-[148px]">
+            <div className="relative flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-sm mb-2">
+              {homeTeam?.logoUrl ? (
+                <img
+                  src={homeTeam.logoUrl}
+                  alt={homeTeam.name}
+                  className="h-full w-full object-contain p-1.5"
+                />
+              ) : (
+                <span className="text-3xl sm:text-4xl">🏑</span>
+              )}
+            </div>
 
-          <h3 className="text-base sm:text-lg font-medium text-slate-900 line-clamp-1 max-w-[220px]" title={homeTeam?.name}>
-            {homeTeam?.name || homePlaceholder || "Team Heim"}
-          </h3>
-          <span className="text-xs font-mono font-bold text-slate-400">
-            {homeTeam?.shortName || "HEIM"}
-          </span>
+            <h3 className="text-base sm:text-lg font-medium text-slate-900 line-clamp-1 max-w-[220px]" title={homeTeam?.name}>
+              {homeTeam?.name || homePlaceholder || "Team Heim"}
+            </h3>
+            <span className="text-xs font-mono font-bold text-slate-400">
+              {homeTeam?.shortName || "HEIM"}
+            </span>
+          </div>
 
           {/* Goal Action Buttons Heim */}
           <div className="w-full flex flex-col items-center gap-1.5 mt-4">
@@ -432,36 +434,39 @@ export function ScoreboardDisplay({
         </div>
 
         {/* Center Live Score: Vollständig gegen Umbrüche gesichert */}
-        <div className="shrink-0 flex flex-col items-center justify-start pt-3 sm:pt-4 px-2">
-          {/* Ergebnisanzeige exakt auf Höhe der Logos */}
-          <div className="whitespace-nowrap font-mono text-5xl sm:text-6xl lg:text-7xl font-medium tracking-tight text-slate-900 bg-white rounded-2xl border-2 border-slate-200 px-6 py-3 shadow-inner text-center min-w-[150px]">
-            {scoreHome} : {scoreAway}
+        <div className="shrink-0 flex flex-col items-center justify-start p-3 sm:p-4 px-2">
+          {/* Top Block: Score & Tags bündig zu den Team-Köpfen */}
+          <div className="flex flex-col items-center justify-between sm:h-[148px]">
+            {/* Ergebnisanzeige exakt auf Höhe der Logos */}
+            <div className="whitespace-nowrap font-mono text-5xl sm:text-6xl lg:text-7xl font-medium tracking-tight text-slate-900 bg-white rounded-2xl border-2 border-slate-200 px-6 py-2 sm:py-2.5 shadow-inner text-center min-w-[150px]">
+              {scoreHome} : {scoreAway}
+            </div>
+
+            {/* Tags unter der Ergebnisanzeige: Reihenfolge Uhrzeit, Geschlecht, Spielname */}
+            {(scheduledTime || gender || groupOrPhaseLabel) && (
+              <div className="flex items-center gap-1.5 mt-2">
+                {scheduledTime && (
+                  <span className={`inline-flex items-center gap-1 rounded-md px-2.5 py-0.5 text-xs font-bold border shadow-2xs ${tagClass}`}>
+                    <Clock className="h-3 w-3" />
+                    <span>{scheduledTime.includes("Uhr") ? scheduledTime : `${scheduledTime} Uhr`}</span>
+                  </span>
+                )}
+                {gender && (
+                  <span className={`rounded-md px-2.5 py-0.5 text-xs font-bold border shadow-2xs ${tagClass}`}>
+                    {gender}
+                  </span>
+                )}
+                {groupOrPhaseLabel && (
+                  <span className={`rounded-md px-2.5 py-0.5 text-xs font-bold border shadow-2xs ${tagClass}`}>
+                    {groupOrPhaseLabel}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
 
-          {/* Tags unter der Ergebnisanzeige: Reihenfolge Uhrzeit, Geschlecht, Spielname */}
-          {(scheduledTime || gender || groupOrPhaseLabel) && (
-            <div className="flex items-center gap-1.5 mt-2.5 sm:mt-3">
-              {scheduledTime && (
-                <span className={`inline-flex items-center gap-1 rounded-md px-2.5 py-0.5 text-xs font-bold border shadow-2xs ${tagClass}`}>
-                  <Clock className="h-3 w-3" />
-                  <span>{scheduledTime.includes("Uhr") ? scheduledTime : `${scheduledTime} Uhr`}</span>
-                </span>
-              )}
-              {gender && (
-                <span className={`rounded-md px-2.5 py-0.5 text-xs font-bold border shadow-2xs ${tagClass}`}>
-                  {gender}
-                </span>
-              )}
-              {groupOrPhaseLabel && (
-                <span className={`rounded-md px-2.5 py-0.5 text-xs font-bold border shadow-2xs ${tagClass}`}>
-                  {groupOrPhaseLabel}
-                </span>
-              )}
-            </div>
-          )}
-
-          {/* Ecken-Jingle Button (Platzhalter) in der Mitte unter der Ergebnisanzeige */}
-          <div className="mt-4 sm:mt-5 w-full flex justify-center">
+          {/* Ecken-Jingle Button (Platzhalter) in der Mitte exakt auf Höhe der Tor-Buttons */}
+          <div className="w-full flex flex-col items-center mt-4">
             <button
               type="button"
               className="w-full max-w-[200px] inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-slate-50 hover:bg-slate-100 px-4 py-3 text-sm font-medium text-slate-700 shadow-xs active:scale-98 transition-all cursor-pointer"
@@ -475,24 +480,26 @@ export function ScoreboardDisplay({
 
         {/* Team Gast */}
         <div className="flex-1 w-full md:w-auto flex flex-col items-center text-center p-3 sm:p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs">
-          <div className="relative flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-sm mb-2">
-            {awayTeam?.logoUrl ? (
-              <img
-                src={awayTeam.logoUrl}
-                alt={awayTeam.name}
-                className="h-full w-full object-contain p-1.5"
-              />
-            ) : (
-              <span className="text-3xl sm:text-4xl">🏑</span>
-            )}
-          </div>
+          <div className="flex flex-col items-center sm:h-[148px]">
+            <div className="relative flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-sm mb-2">
+              {awayTeam?.logoUrl ? (
+                <img
+                  src={awayTeam.logoUrl}
+                  alt={awayTeam.name}
+                  className="h-full w-full object-contain p-1.5"
+                />
+              ) : (
+                <span className="text-3xl sm:text-4xl">🏑</span>
+              )}
+            </div>
 
-          <h3 className="text-base sm:text-lg font-medium text-slate-900 line-clamp-1 max-w-[220px]" title={awayTeam?.name}>
-            {awayTeam?.name || awayPlaceholder || "Team Gast"}
-          </h3>
-          <span className="text-xs font-mono font-bold text-slate-400">
-            {awayTeam?.shortName || "GAST"}
-          </span>
+            <h3 className="text-base sm:text-lg font-medium text-slate-900 line-clamp-1 max-w-[220px]" title={awayTeam?.name}>
+              {awayTeam?.name || awayPlaceholder || "Team Gast"}
+            </h3>
+            <span className="text-xs font-mono font-bold text-slate-400">
+              {awayTeam?.shortName || "GAST"}
+            </span>
+          </div>
 
           {/* Goal Action Buttons Gast */}
           <div className="w-full flex flex-col items-center gap-1.5 mt-4">

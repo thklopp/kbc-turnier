@@ -46,10 +46,10 @@ Im Live-Desk der Turnierleitung (`/admin`) wirkt der zentrale Spielbereich aktue
   - Horizontale Ausrichtung der großen Spielstandsziffern (`0 : 0`) an oberster Stelle des Mittelbereichs auf exakter Höhe der Teamlogos.
   - Verschiebung der Meta-Tags (Uhrzeit, Geschlecht, Gruppe/Phase) unter die Ergebnisanzeige.
   - Entfernung der Beschriftung „Live-Ergebnis“.
-- [ ] **Ecken-Jingle Button (Platzhalter)**:
-  - Platzierung unterhalb der Meta-Tags in der Mitte zwischen dem Heim-Torbutton und dem Gast-Torbutton.
-  - Beschriftung z. B. „Ecken-Jingle“ mit passendem Icon (z. B. Flagge / Horn / Sound / Sparkles).
-  - Vorerst als Platzhalter ohne Audioauslösung (z. B. dezenter Toast-Hinweis oder neutraler Button-State).
+- [ ] **Ecken-Jingle Button (Platzhalter) auf Höhe der Tor-Buttons**:
+  - Platzierung unterhalb der Meta-Tags exakt auf gleicher vertikaler Höhe wie die beiden Tor-Buttons („Tor Heim (+1)“ und „Tor Gast (+1)“) über einheitlich dimensionierte Top-Bereiche (`sm:h-[148px]`).
+  - Beschriftung „Ecken-Jingle“ mit Music-Icon.
+  - Vorerst als Platzhalter ohne Audioauslösung (styling-konform vorbereitet).
 - [ ] **Torschützen direkt unter den jeweiligen Mannschaften**:
   - Aufteilung der gefallenen Tore (`goalEvents`) nach `teamHomeId` und `teamAwayId`.
   - Direkte Anzeige der Torschützenliste mit Minute und Spieler-Dropdown unterhalb der jeweiligen Mannschaftsbox.
