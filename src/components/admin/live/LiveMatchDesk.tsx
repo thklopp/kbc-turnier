@@ -5,7 +5,6 @@ import { subscribeTeams } from "@/services/teamService"
 import { subscribeTournamentConfig, getDefaultConfig } from "@/services/configService"
 import { useLiveMatchDesk } from "@/hooks/useLiveMatchDesk"
 import { ScoreboardDisplay } from "./ScoreboardDisplay"
-import { SoundboardPanel } from "./SoundboardPanel"
 import {
   ChevronLeft,
   ChevronRight,
@@ -61,8 +60,6 @@ export function LiveMatchDesk() {
     decrementScore,
     updateGoalScorer,
     finishMatch,
-    playJingle,
-    stopAudio,
     fadeOutAudio,
     isPlayingAudio,
     isFadingAudio,
@@ -187,17 +184,6 @@ export function LiveMatchDesk() {
         matchName={currentMatch?.matchName}
         events={currentMatch?.events}
         onUpdateGoalScorer={updateGoalScorer}
-      />
-
-      {/* Soundboard (Volle Zeilenbreite) */}
-      <SoundboardPanel
-        homeTeam={homeTeam}
-        awayTeam={awayTeam}
-        onPlayJingle={playJingle}
-        onStopAudio={stopAudio}
-        onFadeOutAudio={fadeOutAudio}
-        isPlayingAudio={isPlayingAudio}
-        isFadingAudio={isFadingAudio}
       />
     </div>
   )
