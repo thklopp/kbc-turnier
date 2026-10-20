@@ -94,7 +94,7 @@ export interface Team {
   gender: GenderCategory;            // "mU14" oder "wU14"
   group: TournamentGroup;            // Gruppe "A" oder "B" für die Samstags-Gruppenphase
   logoUrl: string | null;            // Firebase Storage Download-URL (PNG/SVG/WebP)
-  jingleUrl: string | null;          // Firebase Storage Download-URL (MP3)
+  jingleUrl: string | null;          // Firebase Storage Download-URL (MP3, M4A, AAC, WAV, OGG)
   jingleStartTimeMs?: number;        // Startzeitpunkt in Millisekunden (Standard: 0)
   jingleToken?: string;              // Strukturierter Secret-Token (<KURZNAME>-<MU14/WU14>-<HEX32>) für den Betreuer-Bereich (/team/...) ohne Login
   jingleUpdatedAt?: FirebaseFirestore.Timestamp | null; // Zeitpunkt der letzten Jingle-Aktualisierung
@@ -215,7 +215,7 @@ storage/
 └── teams/
     └── {teamId}/
         ├── logo.{png|jpg|webp|svg}   # Maximale Upload-Größe: 2 MB
-        └── jingle.mp3                 # Maximale Upload-Größe: 5 MB (Bitrate 128-192 kbps)
+        └── jingle.{mp3|m4a|aac|wav|ogg} # Maximale Upload-Größe: 5 MB
 ```
 
 ---

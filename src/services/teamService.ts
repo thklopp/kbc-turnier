@@ -76,6 +76,91 @@ export function generateJingleToken(shortName = "TEAM", gender = "U14"): string 
   return formatTeamJingleToken(shortName, gender)
 }
 
+/**
+ * Unterstützte Audioformate für Torjingles.
+ */
+export const SUPPORTED_AUDIO_EXTENSIONS = ["mp3", "m4a", "aac", "acc", "wav", "ogg"] as const
+
+export const SUPPORTED_AUDIO_MIME_TYPES = [
+  "audio/mpeg",
+  "audio/mp3",
+  "audio/mp4",
+  "audio/x-m4a",
+  "audio/m4a",
+  "audio/aac",
+  "audio/x-aac",
+  "audio/wav",
+  "audio/x-wav",
+  "audio/wave",
+  "audio/ogg",
+  "audio/x-ogg",
+  "application/ogg",
+] as const
+
+export const AUDIO_ACCEPT_ATTRIBUTE =
+  "audio/mp3,audio/mpeg,audio/mp4,audio/x-m4a,audio/aac,audio/wav,audio/ogg,.mp3,.m4a,.aac,.acc,.wav,.ogg"
+
+/**
+ * Ermittelt die normalisierte Dateiendung einer Audiodatei (Standard: "mp3").
+ */
+export function getAudioExtension(filename: string): string {
+  const ext = filename.split(".").pop()?.toLowerCase() || ""
+  if (ext === "acc") return "aac"
+  if (SUPPORTED_AUDIO_EXTENSIONS.includes(ext as (typeof SUPPORTED_AUDIO_EXTENSIONS)[number])) {
+    return ext
+  }
+  return "mp3"
+}
+
+/**
+ * Ermittelt den passenden Audio-MIME-Type für den Storage-Upload.
+ */
+export function getAudioMimeType(filename: string, fileType?: string): string {
+  if (
+    fileType &&
+    (SUPPORTED_AUDIO_MIME_TYPES.includes(fileType as (typeof SUPPORTED_AUDIO_MIME_TYPES)[number]) ||
+      fileType.startsWith("audio/"))
+  ) {
+    return fileType
+  }
+  const ext = getAudioExtension(filename)
+  switch (ext) {
+    case "m4a":
+      return "audio/mp4"
+    case "aac":
+      return "audio/aac"
+    case "wav":
+      return "audio/wav"
+    case "ogg":
+      return "audio/ogg"
+    case "mp3":
+    default:
+      return "audio/mpeg"
+  }
+}
+
+/**
+ * Prüft, ob eine Datei eines der unterstützten Audio-Formate (.mp3, .m4a, .aac, .acc, .wav, .ogg) besitzt.
+ */
+export function isSupportedAudioFile(file: File): boolean {
+  if (!file) return false
+
+  // 1. Prüfung über die Dateiendung
+  const filename = file.name ? file.name.toLowerCase() : ""
+  const hasSupportedExt = SUPPORTED_AUDIO_EXTENSIONS.some((ext) =>
+    filename.endsWith(`.${ext}`)
+  )
+  if (hasSupportedExt) return true
+
+  // 2. Prüfung über den expliziten MIME-Type
+  if (file.type) {
+    const typeLower = file.type.toLowerCase()
+    if (SUPPORTED_AUDIO_MIME_TYPES.some((m) => typeLower === m)) return true
+  }
+
+  return false
+}
+
 function getStoredMockTeams(): Team[] {
   if (typeof window === "undefined" || !window.localStorage) {
     return localMockTeams
@@ -391,7 +476,8 @@ export async function uploadTeamLogo(teamId: string, file: File): Promise<string
 }
 
 /**
- * Lädt einen MP3-Torjingle für ein Team in Firebase Storage hoch (max. 5 MB).
+ * Lädt einen Torjingle für ein Team in Firebase Storage hoch (max. 5 MB).
+ * Unterstützte Formate: MP3, M4A, AAC, WAV, OGG.
  */
 export async function uploadTeamJingle(teamId: string, file: File): Promise<string> {
   const MAX_SIZE = 5 * 1024 * 1024 // 5 MB
@@ -399,9 +485,10 @@ export async function uploadTeamJingle(teamId: string, file: File): Promise<stri
     throw new Error("Der Torjingle darf maximal 5 MB groß sein.")
   }
 
-  const isMp3 = file.type.includes("audio") || file.name.toLowerCase().endsWith(".mp3")
-  if (!isMp3) {
-    throw new Error("Bitte lade eine MP3-Audiodatei hoch.")
+  if (!isSupportedAudioFile(file)) {
+    throw new Error(
+      "Bitte lade eine gültige Audiodatei (MP3, M4A, AAC, WAV oder OGG) hoch."
+    )
   }
 
   if (!isFirebaseConfigured) {
@@ -412,8 +499,10 @@ export async function uploadTeamJingle(teamId: string, file: File): Promise<stri
     })
   }
 
-  const storageRef = ref(storage, `teams/${teamId}/jingle_${Date.now()}.mp3`)
-  const snapshot = await uploadBytes(storageRef, file)
+  const ext = getAudioExtension(file.name)
+  const mimeType = getAudioMimeType(file.name, file.type)
+  const storageRef = ref(storage, `teams/${teamId}/jingle_${Date.now()}.${ext}`)
+  const snapshot = await uploadBytes(storageRef, file, { contentType: mimeType })
   const downloadUrl = await getDownloadURL(snapshot.ref)
 
   await updateDoc(doc(db, TEAMS_COLLECTION, teamId), {
@@ -580,9 +669,10 @@ export async function saveTeamJingleByToken(
       throw new Error("Der Torjingle darf maximal 5 MB groß sein.")
     }
 
-    const isMp3 = options.file.type.includes("audio") || options.file.name.toLowerCase().endsWith(".mp3")
-    if (!isMp3) {
-      throw new Error("Bitte lade eine MP3-Audiodatei hoch.")
+    if (!isSupportedAudioFile(options.file)) {
+      throw new Error(
+        "Bitte lade eine gültige Audiodatei (MP3, M4A, AAC, WAV oder OGG) hoch."
+      )
     }
 
     if (!isFirebaseConfigured) {
@@ -592,8 +682,13 @@ export async function saveTeamJingleByToken(
         reader.readAsDataURL(options.file as File)
       })
     } else {
-      const storageRef = ref(storage, `teams/${currentTeam.id}/jingle_${Date.now()}.mp3`)
-      const snapshot = await uploadBytes(storageRef, options.file)
+      const ext = getAudioExtension(options.file.name)
+      const mimeType = getAudioMimeType(options.file.name, options.file.type)
+      const storageRef = ref(
+        storage,
+        `teams/${currentTeam.id}/jingle_${Date.now()}.${ext}`
+      )
+      const snapshot = await uploadBytes(storageRef, options.file, { contentType: mimeType })
       finalJingleUrl = await getDownloadURL(snapshot.ref)
     }
   }

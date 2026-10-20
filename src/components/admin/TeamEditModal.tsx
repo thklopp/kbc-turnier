@@ -8,6 +8,8 @@ import {
   deleteTeam,
   regenerateTeamJingleToken,
   formatTeamJingleToken,
+  isSupportedAudioFile,
+  AUDIO_ACCEPT_ATTRIBUTE,
 } from "@/services/teamService"
 import { useAudioPlayer } from "@/hooks/useAudioPlayer"
 import { TeamRosterManager } from "@/components/common/TeamRosterManager"
@@ -84,19 +86,19 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
   const hasJingle = !isJingleRemoved && Boolean(previewAudioUrl || jingleFile)
 
   const jingleDisplayName = useMemo(() => {
-    if (isJingleRemoved) return "Keine MP3-Datei hinterlegt"
+    if (isJingleRemoved) return "Keine Audiodatei hinterlegt"
     if (jingleFile) return jingleFile.name
     if (team.jingleUrl) {
       try {
         const decoded = decodeURIComponent(team.jingleUrl)
         const pathname = decoded.split("?")[0]
         const filename = pathname.split("/").pop()
-        return filename || "Hinterlegte MP3-Datei"
+        return filename || "Hinterlegte Audiodatei"
       } catch {
-        return "Hinterlegte MP3-Datei"
+        return "Hinterlegte Audiodatei"
       }
     }
-    return "Keine MP3-Datei hinterlegt"
+    return "Keine Audiodatei hinterlegt"
   }, [isJingleRemoved, jingleFile, team.jingleUrl])
 
   // Erkennung ungespeicherter Änderungen
@@ -188,9 +190,8 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
     const file = e.target.files?.[0]
     if (!file) return
 
-    const isMp3 = file.type.includes("audio") || file.name.toLowerCase().endsWith(".mp3")
-    if (!isMp3) {
-      setError("Der Torjingle muss eine MP3-Datei sein.")
+    if (!isSupportedAudioFile(file)) {
+      setError("Der Torjingle muss eine Audiodatei im Format MP3, M4A, AAC, WAV oder OGG sein.")
       return
     }
 
@@ -500,7 +501,7 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
                 type="text"
                 readOnly
                 value={jingleDisplayName}
-                placeholder="Keine MP3-Datei hinterlegt"
+                placeholder="Keine Audiodatei hinterlegt"
                 className={`w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs truncate focus:outline-none ${
                   hasJingle
                     ? "bg-purple-50/40 text-purple-900 font-medium"
@@ -519,14 +520,14 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
                   type="file"
                   ref={jingleInputRef}
                   onChange={handleJingleChange}
-                  accept="audio/mp3,audio/mpeg,.mp3"
+                  accept={AUDIO_ACCEPT_ATTRIBUTE}
                   className="hidden"
                 />
                 <button
                   type="button"
                   onClick={() => jingleInputRef.current?.click()}
                   className="inline-flex items-center justify-center h-[31.5px] w-[34px] rounded-lg border border-slate-300 bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
-                  title={hasJingle ? "Torjingle ändern" : "MP3 wählen"}
+                  title={hasJingle ? "Torjingle ändern" : "Audiodatei wählen"}
                 >
                   <Upload className="h-3.5 w-3.5" />
                 </button>
