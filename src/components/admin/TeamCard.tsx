@@ -1,6 +1,6 @@
 import { useState } from "react"
 import type { Team } from "@/types/database"
-import { regenerateTeamJingleToken } from "@/services/teamService"
+import { formatTeamJingleToken } from "@/services/teamService"
 import { Play, Square, Edit2, ShieldAlert, Link as LinkIcon, Check, ArrowLeftRight } from "lucide-react"
 
 interface TeamCardProps {
@@ -24,21 +24,14 @@ export function TeamCard({
   const isFemale = team.gender === "wU14"
 
   const handleCopyLink = async () => {
-    let token = team.jingleToken
-    if (!token || token.length < 16) {
-      try {
-        token = await regenerateTeamJingleToken(team.id)
-      } catch {
-        token = team.id
-      }
-    }
-    const url = `${window.location.origin}/jingle/${token}`
+    const token = formatTeamJingleToken(team.shortName, team.gender, team.jingleToken)
+    const url = `${window.location.origin}/team/${token}`
     try {
       await navigator.clipboard.writeText(url)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      prompt("Upload-Link für dieses Team:", url)
+      prompt("Betreuer-Link für dieses Team:", url)
     }
   }
 

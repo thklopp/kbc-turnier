@@ -1,5 +1,6 @@
 import { useState } from "react"
 import type { Team } from "@/types/database"
+import { formatTeamJingleToken } from "@/services/teamService"
 import {
   X,
   Music,
@@ -43,21 +44,21 @@ export function TeamJingleOverviewModal({
   const teamsWithJingle = teams.filter((t) => Boolean(t.jingleUrl)).length
 
   const handleCopySingle = async (team: Team) => {
-    const token = team.jingleToken || team.id
-    const url = `${window.location.origin}/jingle/${token}`
+    const token = formatTeamJingleToken(team.shortName, team.gender, team.jingleToken)
+    const url = `${window.location.origin}/team/${token}`
     try {
       await navigator.clipboard.writeText(url)
       setCopiedTokenId(team.id)
       setTimeout(() => setCopiedTokenId(null), 2000)
     } catch {
-      prompt(`Upload-Link für ${team.name}:`, url)
+      prompt(`Betreuer-Link für ${team.name}:`, url)
     }
   }
 
   const handleCopyAll = async () => {
     const lines = filteredTeams.map((team) => {
-      const token = team.jingleToken || team.id
-      const url = `${window.location.origin}/jingle/${token}`
+      const token = formatTeamJingleToken(team.shortName, team.gender, team.jingleToken)
+      const url = `${window.location.origin}/team/${token}`
       return `${team.name} (${team.gender}): ${url}`
     })
     const text = lines.join("\n")
