@@ -1,6 +1,6 @@
 # SPEC-052: Unterstützung erweiterter Audio-Formate für Torjingles (.mp3, .m4a, .aac, .wav, .ogg)
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature / Optimierung  
 > **Branch**: feat/SPEC-052-audio-formate-jingle-upload  
 > **Autor**: Antigravity  
@@ -156,4 +156,4 @@ Da die Wiedergabe im Browser über natives HTML5 Audio (`new Audio()` bzw. `<aud
 | Phase | Datum | Freigegeben durch | Status / Anmerkungen |
 | :--- | :--- | :--- | :--- |
 | **Spezifikation (1. Gate)** | 2026-10-20 | Nutzer | APPROVED |
-| **Abnahme (2. Gate)** | *Offen* | Nutzer | Ausstehend nach Implementierung |
+| **Abnahme (2. Gate)** | 2026-10-20 | Nutzer | MERGE |
