@@ -5,6 +5,8 @@ import type {
   TournamentGroup,
   MatchPhase,
   FinalMatchType,
+  MatchEvent,
+  Player,
 } from "@/types/database"
 import { getMatchDisplayName } from "@/services/matchService"
 import {
@@ -25,6 +27,8 @@ interface ScoreboardDisplayProps {
   awayTeam?: Team
   homePlaceholder?: string
   awayPlaceholder?: string
+  teamHomeId?: string
+  teamAwayId?: string
   scoreHome: number
   scoreAway: number
   currentMinute: number
@@ -52,6 +56,9 @@ interface ScoreboardDisplayProps {
   onFadeOutAudio?: (durationMs?: number) => void
   isPlayingAudio?: (url?: string) => boolean
   isFadingAudio?: boolean
+  // Goal events & scorer integration
+  events?: MatchEvent[]
+  onUpdateGoalScorer?: (eventId: string, player?: Player | null) => void
 }
 
 export function ScoreboardDisplay({
@@ -59,6 +66,8 @@ export function ScoreboardDisplay({
   awayTeam,
   homePlaceholder,
   awayPlaceholder,
+  teamHomeId,
+  teamAwayId,
   scoreHome,
   scoreAway,
   currentMinute,
@@ -82,6 +91,8 @@ export function ScoreboardDisplay({
   onFadeOutAudio,
   isPlayingAudio,
   isFadingAudio,
+  events,
+  onUpdateGoalScorer,
 }: ScoreboardDisplayProps) {
   const isFemale = gender === "wU14"
   const tagClass = isFemale
@@ -168,6 +179,20 @@ export function ScoreboardDisplay({
     timerBtnAction = onStartTimer
     goalBtnColor = "bg-amber-500 hover:bg-amber-400 text-white"
   }
+
+  const homeGoalEvents =
+    events?.filter(
+      (ev) =>
+        ev.type === "goal" &&
+        (ev.teamId === (teamHomeId || homeTeam?.id) || ev.teamId === "home")
+    ) || []
+
+  const awayGoalEvents =
+    events?.filter(
+      (ev) =>
+        ev.type === "goal" &&
+        (ev.teamId === (teamAwayId || awayTeam?.id) || ev.teamId === "away")
+    ) || []
 
   return (
     <div className="w-full rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 lg:p-6 shadow-sm">
@@ -303,9 +328,9 @@ export function ScoreboardDisplay({
       </div>
 
       {/* Mannschaften, Torbuttons & Ergebnisanzeige (Optimierte Breitenverteilung ohne Umbruch) */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 lg:gap-6">
+      <div className="flex flex-col md:flex-row items-start justify-between gap-4 lg:gap-6">
         {/* Team Heim */}
-        <div className="flex-1 w-full md:w-auto flex flex-col items-center text-center p-3 rounded-2xl bg-slate-50/60 border border-slate-100">
+        <div className="flex-1 w-full md:w-auto flex flex-col items-center text-center p-3 sm:p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs">
           <div className="relative flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-sm mb-2">
             {homeTeam?.logoUrl ? (
               <img
@@ -358,13 +383,59 @@ export function ScoreboardDisplay({
               <span>Tor abziehen (Korrektur)</span>
             </button>
           </div>
+
+          {/* Torschützen Heim */}
+          {homeGoalEvents.length > 0 && (
+            <div className="w-full mt-4 pt-3 border-t border-slate-100 text-left space-y-2">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
+                  <span>🥅 Torschützen ({homeGoalEvents.length})</span>
+                </span>
+              </div>
+              <div className="space-y-1.5 w-full">
+                {homeGoalEvents.map((ev, idx) => (
+                  <div
+                    key={ev.id || idx}
+                    className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50/70 p-1.5 shadow-2xs hover:bg-slate-50 transition-colors"
+                  >
+                    <span className="shrink-0 inline-flex items-center gap-1 rounded-md bg-white border border-slate-200 px-1.5 py-0.5 text-xs font-mono font-bold text-slate-700">
+                      <Clock className="h-3 w-3 text-slate-400" />
+                      {ev.matchMinute}&apos;
+                    </span>
+                    <select
+                      value={ev.playerId || ""}
+                      onChange={(e) => {
+                        const targetPlayerId = e.target.value
+                        const player =
+                          (homeTeam?.players || []).find((p) => p.id === targetPlayerId) || null
+                        onUpdateGoalScorer?.(ev.id, player)
+                      }}
+                      className="flex-1 min-w-0 rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer truncate"
+                    >
+                      <option value="">Schütze unbekannt</option>
+                      {(homeTeam?.players || []).map((p) => (
+                        <option key={p.id} value={p.id}>
+                          #{p.number} {p.firstName ? p.firstName.charAt(0) + ". " : ""}{p.lastName}
+                        </option>
+                      ))}
+                      {(homeTeam?.players || []).length === 0 && (
+                        <option value="" disabled>
+                          (Kein Kader hinterlegt)
+                        </option>
+                      )}
+                    </select>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Center Live Score: Vollständig gegen Umbrüche gesichert */}
-        <div className="shrink-0 flex flex-col items-center justify-center py-2 px-2">
+        <div className="shrink-0 flex flex-col items-center justify-start py-1 px-2">
           {/* Tags: Reihenfolge Uhrzeit, Geschlecht, Spielname */}
           {(scheduledTime || gender || groupOrPhaseLabel) && (
-            <div className="flex items-center gap-2 mb-6 sm:mb-8">
+            <div className="flex items-center gap-1.5 mb-2">
               {scheduledTime && (
                 <span className={`inline-flex items-center gap-1 rounded-md px-2.5 py-0.5 text-xs font-bold border shadow-2xs ${tagClass}`}>
                   <Clock className="h-3 w-3" />
@@ -387,13 +458,25 @@ export function ScoreboardDisplay({
           <div className="whitespace-nowrap font-mono text-5xl sm:text-6xl lg:text-7xl font-medium tracking-tight text-slate-900 bg-white rounded-2xl border-2 border-slate-200 px-6 py-3 shadow-inner text-center min-w-[150px]">
             {scoreHome} : {scoreAway}
           </div>
-          <span className="text-xs font-bold text-slate-400 mt-2 uppercase tracking-wider">
+          <span className="text-xs font-bold text-slate-400 mt-1.5 uppercase tracking-wider">
             Live-Ergebnis
           </span>
+
+          {/* Ecken-Jingle Button (Platzhalter) in der Mitte unter der Ergebnisanzeige */}
+          <div className="mt-4 sm:mt-5 w-full flex justify-center">
+            <button
+              type="button"
+              className="w-full max-w-[200px] inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-slate-50 hover:bg-slate-100 px-4 py-3 text-sm font-medium text-slate-700 shadow-xs active:scale-98 transition-all cursor-pointer"
+              title="Ecken-Jingle (Platzhalter)"
+            >
+              <Music className="h-4 w-4 text-slate-500" />
+              <span>Ecken-Jingle</span>
+            </button>
+          </div>
         </div>
 
         {/* Team Gast */}
-        <div className="flex-1 w-full md:w-auto flex flex-col items-center text-center p-3 rounded-2xl bg-slate-50/60 border border-slate-100">
+        <div className="flex-1 w-full md:w-auto flex flex-col items-center text-center p-3 sm:p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs">
           <div className="relative flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-sm mb-2">
             {awayTeam?.logoUrl ? (
               <img
@@ -446,6 +529,52 @@ export function ScoreboardDisplay({
               <span>Tor abziehen (Korrektur)</span>
             </button>
           </div>
+
+          {/* Torschützen Gast */}
+          {awayGoalEvents.length > 0 && (
+            <div className="w-full mt-4 pt-3 border-t border-slate-100 text-left space-y-2">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
+                  <span>🥅 Torschützen ({awayGoalEvents.length})</span>
+                </span>
+              </div>
+              <div className="space-y-1.5 w-full">
+                {awayGoalEvents.map((ev, idx) => (
+                  <div
+                    key={ev.id || idx}
+                    className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50/70 p-1.5 shadow-2xs hover:bg-slate-50 transition-colors"
+                  >
+                    <span className="shrink-0 inline-flex items-center gap-1 rounded-md bg-white border border-slate-200 px-1.5 py-0.5 text-xs font-mono font-bold text-slate-700">
+                      <Clock className="h-3 w-3 text-slate-400" />
+                      {ev.matchMinute}&apos;
+                    </span>
+                    <select
+                      value={ev.playerId || ""}
+                      onChange={(e) => {
+                        const targetPlayerId = e.target.value
+                        const player =
+                          (awayTeam?.players || []).find((p) => p.id === targetPlayerId) || null
+                        onUpdateGoalScorer?.(ev.id, player)
+                      }}
+                      className="flex-1 min-w-0 rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs font-medium text-slate-800 focus:border-blue-500 focus:outline-none cursor-pointer truncate"
+                    >
+                      <option value="">Schütze unbekannt</option>
+                      {(awayTeam?.players || []).map((p) => (
+                        <option key={p.id} value={p.id}>
+                          #{p.number} {p.firstName ? p.firstName.charAt(0) + ". " : ""}{p.lastName}
+                        </option>
+                      ))}
+                      {(awayTeam?.players || []).length === 0 && (
+                        <option value="" disabled>
+                          (Kein Kader hinterlegt)
+                        </option>
+                      )}
+                    </select>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
