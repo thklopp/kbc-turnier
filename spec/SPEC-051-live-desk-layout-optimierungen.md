@@ -1,6 +1,6 @@
 # SPEC-051: Live-Desk Layout-Optimierungen (Weißer Hintergrund, Score-Ausrichtung, Ecken-Jingle-Platzhalter & Torschützen-Integration)
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Optimierung / UI-Redesign  
 > **Branch**: feat/SPEC-051-live-desk-layout-optimierungen  
 > **Autor**: Antigravity  
