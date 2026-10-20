@@ -96,7 +96,7 @@ export interface Team {
   logoUrl: string | null;            // Firebase Storage Download-URL (PNG/SVG/WebP)
   jingleUrl: string | null;          // Firebase Storage Download-URL (MP3)
   jingleStartTimeMs?: number;        // Startzeitpunkt in Millisekunden (Standard: 0)
-  jingleToken?: string;              // Eindeutiger Secret-Token für den Betreuer-Upload ohne Login
+  jingleToken?: string;              // Strukturierter Secret-Token (<KURZNAME>-<MU14/WU14>-<HEX32>) für den Betreuer-Bereich (/team/...) ohne Login
   jingleUpdatedAt?: FirebaseFirestore.Timestamp | null; // Zeitpunkt der letzten Jingle-Aktualisierung
   players?: Player[];                // Liste der gemeldeten Spielerinnen und Spieler
   contactPerson?: {

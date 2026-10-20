@@ -398,9 +398,26 @@ export function TeamJinglePage() {
             </div>
           )}
           <div className="min-w-0">
-            <span className="inline-block px-2 py-0.5 rounded text-[11px] font-semibold tracking-wide uppercase bg-slate-100 text-slate-600 mb-1">
-              {team.gender === "wU14" ? "Weibliche U14" : "Männliche U14"} • Gruppe {team.group}
-            </span>
+            <div className="flex items-center gap-1.5 mb-1.5">
+              <span
+                className={`inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-bold ${
+                  team.gender === "wU14"
+                    ? "bg-purple-50 text-purple-700 border-purple-200"
+                    : "bg-blue-50 text-blue-700 border-blue-200"
+                }`}
+              >
+                {team.gender}
+              </span>
+              <span
+                className={`inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-bold ${
+                  team.gender === "wU14"
+                    ? "bg-purple-50 text-purple-700 border-purple-200"
+                    : "bg-blue-50 text-blue-700 border-blue-200"
+                }`}
+              >
+                Gruppe {team.group}
+              </span>
+            </div>
             <h1 className="text-xl font-bold text-slate-900 truncate">{team.name}</h1>
             <p className="text-xs text-slate-500 mt-0.5">
               Verwalte hier den Tor-Jingle und den Spielerkader eurer Mannschaft.
@@ -709,7 +726,7 @@ export function TeamJinglePage() {
           <ul className="list-disc list-inside space-y-1 text-blue-800">
             <li>Wähle eine Stelle im Song, an der der Refrain oder Beat sofort laut einsetzt.</li>
             <li>Nutze den Slider und klicke auf „Aktuelle Position als Startzeit übernehmen“.</li>
-            <li>Der Jingle wird bei einem Tor von der Turnierleitung für ca. 15 Sekunden eingespielt.</li>
+            <li>Der Jingle wird bei einem Tor von der Turnierleitung für maximal 15 Sekunden eingespielt.</li>
           </ul>
         </div>
         </>

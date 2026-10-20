@@ -1,6 +1,6 @@
 # SPEC-050: Betreuerbereich – Tags, Hinweistext und strukturierter Linkaufbau
 
-> **Status**: In Review  
+> **Status**: In Abnahme  
 > **Typ**: Feature / UI- & Link-Optimierung  
 > **Branch**: feat/SPEC-050-betreuerbereich-tags-hinweistext-und-linkformat  
 > **Autor**: Antigravity  

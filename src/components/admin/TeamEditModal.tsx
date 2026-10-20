@@ -7,7 +7,7 @@ import {
   saveTeamPlayers,
   deleteTeam,
   regenerateTeamJingleToken,
-  generateJingleToken,
+  formatTeamJingleToken,
 } from "@/services/teamService"
 import { useAudioPlayer } from "@/hooks/useAudioPlayer"
 import { TeamRosterManager } from "@/components/common/TeamRosterManager"
@@ -62,13 +62,14 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
 
   // Betreuer-Token State
   const [currentToken, setCurrentToken] = useState<string>(() => {
-    if (team.jingleToken && team.jingleToken.length >= 16 && !team.jingleToken.startsWith("token-team-")) {
-      return team.jingleToken
-    }
-    return generateJingleToken()
+    return formatTeamJingleToken(team.shortName, team.gender, team.jingleToken)
   })
   const [copiedLink, setCopiedLink] = useState(false)
   const [regeneratingToken, setRegeneratingToken] = useState(false)
+
+  const currentFormattedToken = useMemo(() => {
+    return formatTeamJingleToken(shortName, gender, currentToken)
+  }, [shortName, gender, currentToken])
 
   // UI & Dialog States
   const [saving, setSaving] = useState(false)
@@ -107,7 +108,7 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
     if (logoFile !== null || isLogoRemoved) return true
     if (jingleFile !== null || isJingleRemoved) return true
     if (jingleStartTimeMs !== (team.jingleStartTimeMs ?? 0)) return true
-    if (currentToken !== team.jingleToken) return true
+    if (currentFormattedToken !== team.jingleToken) return true
 
     const initialPlayers = team.players || []
     if (currentPlayers.length !== initialPlayers.length) return true
@@ -134,7 +135,7 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
     jingleFile,
     isJingleRemoved,
     jingleStartTimeMs,
-    currentToken,
+    currentFormattedToken,
     currentPlayers,
     team,
   ])
@@ -224,13 +225,13 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
   }
 
   const handleCopyLink = async () => {
-    const url = `${window.location.origin}/jingle/${currentToken}`
+    const url = `${window.location.origin}/team/${currentFormattedToken}`
     try {
       await navigator.clipboard.writeText(url)
       setCopiedLink(true)
       setTimeout(() => setCopiedLink(false), 2000)
     } catch {
-      prompt("Upload-Link für dieses Team:", url)
+      prompt("Betreuer-Link für dieses Team:", url)
     }
   }
 
@@ -245,9 +246,9 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
     setRegeneratingToken(true)
     setError(null)
     try {
-      const newToken = await regenerateTeamJingleToken(team.id)
+      const newToken = await regenerateTeamJingleToken(team.id, shortName, gender)
       setCurrentToken(newToken)
-      setSuccess("Neuer Upload-Link wurde generiert!")
+      setSuccess("Neuer Betreuer-Link wurde generiert!")
       setTimeout(() => setSuccess(null), 3000)
     } catch {
       setError("Fehler beim Generieren des neuen Tokens.")
@@ -314,7 +315,7 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
         logoUrl: finalLogoUrl,
         jingleUrl: finalJingleUrl,
         jingleStartTimeMs: isJingleRemoved ? 0 : Math.max(0, Number(jingleStartTimeMs) || 0),
-        jingleToken: currentToken,
+        jingleToken: currentFormattedToken,
       })
 
       // 4. Spielerkader speichern
@@ -633,7 +634,7 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
             <input
               type="text"
               readOnly
-              value={`${window.location.origin}/jingle/${currentToken}`}
+              value={`${window.location.origin}/team/${currentFormattedToken}`}
               className="flex-1 rounded-lg border border-slate-300 bg-slate-50/60 px-2.5 py-1.5 font-mono text-xs text-slate-700 select-all focus:outline-none"
             />
 
