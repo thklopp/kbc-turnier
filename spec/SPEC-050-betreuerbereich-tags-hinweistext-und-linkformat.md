@@ -15,19 +15,19 @@
 ### 1.1 Problemstellung / Kontext
 1. **Einheitliche visuelle Tags**: Im Betreuer-Portal (`TeamJinglePage.tsx`) werden Altersklasse und Vorrundengruppe aktuell in einem gemeinsamen grauen Badge zusammengefasst (`Weibliche U14 • Gruppe A` auf `bg-slate-100 text-slate-600`). Im restlichen System (Scoreboard, Spielplan, Tabellen, Teamkarten) werden Geschlecht und Gruppe jedoch stets als zwei separate Tags in den etablierten CI-Farben dargestellt (wU14 in Lila, mU14 in Blau).
 2. **Präziser Hinweistext**: Im Info-Kasten der Betreuerseite steht derzeit: *„Der Jingle wird bei einem Tor von der Turnierleitung für ca. 15 Sekunden eingespielt.“* Das Wort „ca.“ soll durch das verbindlichere „maximal“ ersetzt werden, um klarzustellen, dass die Einspielung höchstens 15 Sekunden dauert.
-3. **Erkennbarkeit beim Link-Versand**: Betreuer-Links bestehen bisher aus rein zufälligen 32-Zeichen-Hexwerten (z. B. `https://kbc-hallenhockey.web.app/jingle/4f8b919a3c7e42d...`). Wenn die Turnierleitung diese Links vorab an Betreuer via E-Mail oder WhatsApp versendet, ist in der URL selbst nicht ersichtlich, für welchen Verein und welche Altersklasse der Link bestimmt ist.
+3. **Erkennbarkeit beim Link-Versand**: Betreuer-Links verwendeten bisher das Pfad-Präfix `/jingle/` und bestanden aus rein zufälligen 32-Zeichen-Hexwerten (z. B. `https://kbc-hallenhockey.web.app/jingle/4f8b919a3c7e42d...`). Der Link soll als Team-Link unter dem Pfad `/team/` geführt werden (da dort nicht nur Jingles, sondern auch der Kader gepflegt wird). Zudem ist in der reinen Hash-URL nicht ersichtlich, für welchen Verein und welche Altersklasse der Link bestimmt ist.
 
 ### 1.2 Zielzustand & Mehrwert
 - **Getrennte Tags im bekannten CI-Farbschema**: Im oberen Teambanner der Betreuerseite werden zwei separate Tags angezeigt:
   - Geschlecht: `wU14` bzw. `mU14` (Lila für wU14: `bg-purple-50 text-purple-700 border-purple-200`; Blau für mU14: `bg-blue-50 text-blue-700 border-blue-200`)
   - Gruppe: `Gruppe {group}` im gleichen CI-Farbschema.
 - **Klarer Hinweistext**: Der Text lautet nun verbindlich: *„Der Jingle wird bei einem Tor von der Turnierleitung für maximal 15 Sekunden eingespielt.“*
-- **Selbsterklärender Linkaufbau**: Der Betreuer-Link folgt dem Format:
+- **Selbsterklärender Linkaufbau unter `/team/`**: Der Betreuer-Link folgt dem Format:
   ```text
-  <KURZNAME>-<MU14/WU14>-<TOKEN>
+  https://<DOMAIN>/team/<KURZNAME>-<MU14/WU14>-<TOKEN>
   ```
-  *(Beispiel: `https://.../jingle/KHC-WU14-4f8b919a3c7e42d887a...` oder `https://.../jingle/RRK-MU14-0e1b2c...`)*
-- **Volle Rückwärtskompatibilität**: Bestehende Links und ältere Tokens ohne Präfix bleiben weiterhin 100 % funktionsfähig und werden durch den `teamService` transparent aufgelöst.
+  *(Beispiel: `https://.../team/KHC-WU14-4f8b919a3c7e42d887a...` oder `https://.../team/RRK-MU14-0e1b2c...`)*
+- **Keine Altlasten / Keine Rückwärtskompatibilität erforderlich**: Da bisher noch keine Links an Betreuer verschickt wurden, werden die Tokens direkt und sauber im neuen Format `<KURZNAME>-<MU14/WU14>-<TOKEN>` als `jingleToken` in Firestore gespeichert und abgefragt.
 
 ---
 
@@ -54,21 +54,20 @@
     *„Der Jingle wird bei einem Tor von der Turnierleitung für ca. 15 Sekunden eingespielt.“*  
     in:  
     *„Der Jingle wird bei einem Tor von der Turnierleitung für maximal 15 Sekunden eingespielt.“*
-- [ ] **FR-3: Strukturierter Link- und Tokenaufbau `<KURZNAME>-<MU14/WU14>-<TOKEN>`**:
-  - Implementierung zentraler Formatierungs- und Extraktionsfunktionen in `src/services/teamService.ts`:
+- [ ] **FR-3: Strukturierter Link- und Tokenaufbau `/team/<KURZNAME>-<MU14/WU14>-<TOKEN>`**:
+  - Betreuer-Links nutzen einheitlich den Pfad `/team/` (statt `/jingle/`).
+  - Implementierung zentraler Formatierungs- und Generierungsfunktionen in `src/services/teamService.ts`:
     - `formatTeamJingleToken(shortName: string, gender: string, rawToken?: string): string`: Erzeugt `<KURZNAME>-<MU14/WU14>-<TOKEN>` mit bereinigtem Kurznamen (Großbuchstaben), standardisierter Altersklasse in Großbuchstaben (`WU14` oder `MU14`) und dem Secret-Token.
-    - `extractRawJingleToken(token?: string | null): string`: Extrahiert sicher den Hex-Secret-Teil.
-  - Aktualisierung aller Link-Generierungsstellen in der Turnierleitung:
-    - `TeamCard.tsx`: Einzel-Link kopieren
-    - `TeamEditModal.tsx`: Link-Anzeige im Eingabefeld, Kopieren-Button, Neugenerierung des Tokens
-    - `TeamJingleOverviewModal.tsx`: Einzel-Link kopieren und „Alle Links kopieren“
-- [ ] **FR-4: Robuste Rückwärts- und Vorwärtskompatibilität in `teamService.ts`**:
+    - `generateJingleToken(shortName?: string, gender?: string): string`: Erzeugt direkt ein strukturiertes Token.
+  - Aktualisierung aller Betreuerlink-Generierungsstellen in der Turnierleitung auf den Pfad `/team/`:
+    - `TeamCard.tsx`: Einzel-Link kopieren (`/team/...`)
+    - `TeamEditModal.tsx`: Link-Anzeige im Eingabefeld (`/team/...`), Kopieren-Button, Neugenerierung des Tokens
+    - `TeamJingleOverviewModal.tsx`: Einzel-Link kopieren und „Alle Links kopieren“ (`/team/...`)
+- [ ] **FR-4: Token-Auflösung & automatische Strukturierung in `teamService.ts`**:
   - `getTeamByJingleToken(token: string)`:
-    - 1. Exakter Match auf das übergebene Token.
-    - 2. Falls nicht gefunden: Match auf den extrahierten Secret-Teil (Suffix-Match bzw. Match gegen bestehende Token-Felder).
-    - 3. Automatisches Nachpflegen / Normalisieren bei erfolgreichem Finden.
+    - Direkte Suche über das Feld `jingleToken` in Firestore.
   - `subscribeTeams`:
-    - Vorhandene unstrukturierte Tokens werden automatisch mit Kurzname und Altersklasse angereichert, ohne den bestehenden Secret-Teil zu verändern (keine Ungültigkeit bereits geteilter Links).
+    - Alle Teams in Firestore, deren `jingleToken` noch nicht das Format `<KURZNAME>-<MU14/WU14>-<TOKEN>` aufweist, werden automatisch auf das neue Format aktualisiert.
 
 ### 3.2 Explizit Out-of-Scope
 - Keine Änderungen an der Audio-Wiedergabelogik im Live-Desk oder der Einspieldauer-Steuerung.
@@ -91,15 +90,16 @@
   - **Wenn**: Der Betreuer die Infobox am Seitenende liest.
   - **Dann**: Lautet der 3. Aufzählungspunkt: *„Der Jingle wird bei einem Tor von der Turnierleitung für maximal 15 Sekunden eingespielt.“*
 
-- [ ] **AC-3: Linkaufbau `<KURZNAME>-<MU14/WU14>-<TOKEN>` in Admin-Ansichten**
+- [ ] **AC-3: Linkaufbau `/team/<KURZNAME>-<MU14/WU14>-<TOKEN>` in Admin-Ansichten**
   - **Gegeben sei**: Der Turnierleiter befindet sich im Admin-Bereich (`/admin`).
   - **Wenn**: Auf einer `TeamCard`, im `TeamEditModal` oder in der Sammelübersicht (`TeamJingleOverviewModal`) der Betreuerlink kopiert oder angezeigt wird.
-  - **Dann**: Hat der Link das Format `https://<DOMAIN>/jingle/<KURZNAME>-<MU14/WU14>-<TOKEN>` (z. B. `https://.../jingle/KHC-WU14-3a7b...` oder `https://.../jingle/RRK-MU14-f91c...`).
+  - **Dann**: Hat der Link das Format `https://<DOMAIN>/team/<KURZNAME>-<MU14/WU14>-<TOKEN>` (z. B. `https://.../team/KHC-WU14-3a7b...` oder `https://.../team/RRK-MU14-f91c...`).
 
-- [ ] **AC-4: Rückwärtskompatibilität alter Links**
-  - **Gegeben sei**: Ein Betreuer ruft eine Betreuer-URL mit einem alten, reinen 32-Zeichen-Hash (ohne Kurzname/Gender-Präfix) auf.
+- [ ] **AC-4: Token-Auflösung und Auto-Migration**
+  - **Gegeben sei**: Ein Betreuer ruft eine Betreuer-URL mit dem neuen Format auf (`/team/<KURZNAME>-<MU14/WU14>-<TOKEN>`).
   - **Wenn**: Die URL aufgerufen wird.
   - **Dann**: Wird das Team korrekt geladen, der Betreuer kann Jingle und Kader wie gewohnt pflegen und speichern.
+  - **Und**: In `subscribeTeams` werden Teams in Firestore automatisch auf das neue Format aktualisiert.
 
 ### 4.2 Allgemeine Qualitätskriterien
 - [ ] Strikte TypeScript-Typisierung ohne `any`.
