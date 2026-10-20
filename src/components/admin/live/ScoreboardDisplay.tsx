@@ -330,7 +330,7 @@ export function ScoreboardDisplay({
       {/* Mannschaften, Torbuttons & Ergebnisanzeige (Optimierte Breitenverteilung ohne Umbruch) */}
       <div className="flex flex-col md:flex-row items-start justify-between gap-4 lg:gap-6">
         {/* Team Heim */}
-        <div className="flex-1 w-full md:w-auto flex flex-col items-center text-center p-3 sm:p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs">
+        <div className="flex-1 w-full md:w-auto flex flex-col items-center text-center p-3 sm:p-4">
           <div className="flex flex-col items-center sm:h-[148px]">
             <div className="relative flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-sm mb-2">
               {homeTeam?.logoUrl ? (
@@ -479,7 +479,7 @@ export function ScoreboardDisplay({
         </div>
 
         {/* Team Gast */}
-        <div className="flex-1 w-full md:w-auto flex flex-col items-center text-center p-3 sm:p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs">
+        <div className="flex-1 w-full md:w-auto flex flex-col items-center text-center p-3 sm:p-4">
           <div className="flex flex-col items-center sm:h-[148px]">
             <div className="relative flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-sm mb-2">
               {awayTeam?.logoUrl ? (

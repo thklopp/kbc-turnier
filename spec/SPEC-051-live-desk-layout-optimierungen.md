@@ -20,7 +20,7 @@ Im Live-Desk der Turnierleitung (`/admin`) wirkt der zentrale Spielbereich aktue
 4. **Getrennte Torschützen-Verwaltung**: Die Torschützen-Zuordnung befindet sich derzeit in einer separaten Box unterhalb des Scoreboards als chronologische Gesamttabelle. Dies zwingt die Turnierleitung zum Scrollen und trennt die Schützen visuell von der Mannschaft, die das Tor erzielt hat.
 
 ### 1.2 Zielzustand & Mehrwert
-- Der Spielbereich der Mannschaften erhält einen sauberen, konsistenten weißen Hintergrund (`bg-white`).
+- Der Spielbereich der Mannschaften erhält einen sauberen, rahmenlosen weißen Hintergrund (ohne störende Umrandungsboxen), wodurch das Gesamtbild flüssiger und offener wirkt. Die dezente Trennlinie zwischen dem Mannschafts-Aktionsbereich und der Torschützenliste bleibt erhalten.
 - Die Ergebnisanzeige (Scoreboard) rückt an die oberste Position des Mittelbereichs auf direkte horizontale Höhe der Teamlogos.
 - Der Text „Live-Ergebnis“ wird entfernt, um vertikalen Raum freizugeben und visuelles Rauschen zu reduzieren.
 - Die Meta-Tags (Uhrzeit, Geschlecht, Gruppe/Phase) wandern direkt unter die Ergebnisanzeige.
@@ -42,7 +42,7 @@ Im Live-Desk der Turnierleitung (`/admin`) wirkt der zentrale Spielbereich aktue
 ## 3. Fachliche Anforderungen & Scope
 
 ### 3.1 Im Scope (Must-Have)
-- [ ] **Weißer Hintergrund**: Entfernung von `bg-slate-50/60` in den Teambereichen; Umstellung auf `bg-white` mit dezenter Border (`border-slate-200` bzw. `border-slate-100`).
+- [ ] **Rahmenlose Mannschaftsbereiche**: Entfernung von Rahmen (`border border-slate-200`) und Schatten um die Teambereiche; Beibehaltung der Trennlinie (`border-t`) zwischen Mannschaftsbereich und Torschützenliste.
 - [ ] **Ergebnisanzeige auf Logo-Höhe**:
   - Horizontale Ausrichtung der großen Spielstandsziffern (`0 : 0`) an oberster Stelle des Mittelbereichs auf exakter Höhe der Teamlogos.
   - Verschiebung der Meta-Tags (Uhrzeit, Geschlecht, Gruppe/Phase) unter die Ergebnisanzeige.
