@@ -21,8 +21,10 @@ Im Live-Desk der Turnierleitung (`/admin`) wirkt der zentrale Spielbereich aktue
 
 ### 1.2 Zielzustand & Mehrwert
 - Der Spielbereich der Mannschaften erhält einen sauberen, konsistenten weißen Hintergrund (`bg-white`).
-- Der Abstand zwischen den Meta-Tags (Uhrzeit, Geschlecht, Gruppe/Phase) und der Ergebnisanzeige wird verringert, sodass die große Toranzeige auf direkter horizontaler Höhe der Teamlogos platziert ist.
-- Unterhalb der Ergebnisanzeige wird zentral zwischen den beiden Tor-Buttons („Tor Heim (+1)“ und „Tor Gast (+1)“) ein Platzhalter-Button für den „Ecken-Jingle“ eingefügt (zunächst ohne Spielfunktion, styling-konform vorbereitet).
+- Die Ergebnisanzeige (Scoreboard) rückt an die oberste Position des Mittelbereichs auf direkte horizontale Höhe der Teamlogos.
+- Der Text „Live-Ergebnis“ wird entfernt, um vertikalen Raum freizugeben und visuelles Rauschen zu reduzieren.
+- Die Meta-Tags (Uhrzeit, Geschlecht, Gruppe/Phase) wandern direkt unter die Ergebnisanzeige.
+- Unterhalb der Meta-Tags wird zentral zwischen den beiden Tor-Buttons („Tor Heim (+1)“ und „Tor Gast (+1)“) der Platzhalter-Button für den „Ecken-Jingle“ platziert.
 - Die Erfassung und Anzeige der Torschützen wandert direkt in den Spielbereich unter die jeweilige Mannschaft (Heim-Torschützen unter Team Heim, Gast-Torschützen unter Team Gast). Der separate Torschützen-Block darunter entfällt, wodurch der Live-Desk deutlich kompakter, aufgeräumter und ohne vertikales Scrollen bedienbar wird.
 
 ---
@@ -41,10 +43,11 @@ Im Live-Desk der Turnierleitung (`/admin`) wirkt der zentrale Spielbereich aktue
 ### 3.1 Im Scope (Must-Have)
 - [ ] **Weißer Hintergrund**: Entfernung von `bg-slate-50/60` in den Teambereichen; Umstellung auf `bg-white` mit dezenter Border (`border-slate-200` bzw. `border-slate-100`).
 - [ ] **Ergebnisanzeige auf Logo-Höhe**:
-  - Reduktion des vertikalen Abstands zwischen Meta-Tags (Uhrzeit, Geschlecht, Gruppe/Phase) und dem Scoreboard.
-  - Horizontale Ausrichtung der großen Spielstandsziffern (`0 : 0`) auf Höhe der Teamlogos (mittig zentriert zur Logo-Box).
+  - Horizontale Ausrichtung der großen Spielstandsziffern (`0 : 0`) an oberster Stelle des Mittelbereichs auf exakter Höhe der Teamlogos.
+  - Verschiebung der Meta-Tags (Uhrzeit, Geschlecht, Gruppe/Phase) unter die Ergebnisanzeige.
+  - Entfernung der Beschriftung „Live-Ergebnis“.
 - [ ] **Ecken-Jingle Button (Platzhalter)**:
-  - Platzierung unterhalb der Ergebnisanzeige in der Mitte zwischen dem Heim-Torbutton und dem Gast-Torbutton.
+  - Platzierung unterhalb der Meta-Tags in der Mitte zwischen dem Heim-Torbutton und dem Gast-Torbutton.
   - Beschriftung z. B. „Ecken-Jingle“ mit passendem Icon (z. B. Flagge / Horn / Sound / Sparkles).
   - Vorerst als Platzhalter ohne Audioauslösung (z. B. dezenter Toast-Hinweis oder neutraler Button-State).
 - [ ] **Torschützen direkt unter den jeweiligen Mannschaften**:
@@ -100,9 +103,9 @@ Im Live-Desk der Turnierleitung (`/admin`) wirkt der zentrale Spielbereich aktue
 | Header: Aktuelles Spiel | Zeitsteuerung (Start/Pause/Reset) | Spiel beenden & weiter|
 +-----------------------------------------------------------------------------------+
 |                                                                                   |
-|  [Team Heim Logo]               [Uhrzeit] [Geschlecht] [Gruppe]     [Team Gast Logo]|
-|  Teamname Heim                         [  0  :  0  ]                 Teamname Gast|
-|  Kürzel                               Live-Ergebnis                         Kürzel|
+|  [Team Heim Logo]                     [  0  :  0  ]                 [Team Gast Logo]|
+|  Teamname Heim                 [Uhrzeit] [Geschlecht] [Gruppe]       Teamname Gast|
+|  Kürzel                                                                     Kürzel|
 |                                                                                   |
 |  [ + Tor Heim (+1) ]                [ Ecken-Jingle ]             [ + Tor Gast (+1) ]|
 |  [ - Tor abziehen  ]                                             [ - Tor abziehen  ]|

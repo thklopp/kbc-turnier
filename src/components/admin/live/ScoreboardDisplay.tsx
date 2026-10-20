@@ -432,10 +432,15 @@ export function ScoreboardDisplay({
         </div>
 
         {/* Center Live Score: Vollständig gegen Umbrüche gesichert */}
-        <div className="shrink-0 flex flex-col items-center justify-start py-1 px-2">
-          {/* Tags: Reihenfolge Uhrzeit, Geschlecht, Spielname */}
+        <div className="shrink-0 flex flex-col items-center justify-start pt-3 sm:pt-4 px-2">
+          {/* Ergebnisanzeige exakt auf Höhe der Logos */}
+          <div className="whitespace-nowrap font-mono text-5xl sm:text-6xl lg:text-7xl font-medium tracking-tight text-slate-900 bg-white rounded-2xl border-2 border-slate-200 px-6 py-3 shadow-inner text-center min-w-[150px]">
+            {scoreHome} : {scoreAway}
+          </div>
+
+          {/* Tags unter der Ergebnisanzeige: Reihenfolge Uhrzeit, Geschlecht, Spielname */}
           {(scheduledTime || gender || groupOrPhaseLabel) && (
-            <div className="flex items-center gap-1.5 mb-2">
+            <div className="flex items-center gap-1.5 mt-2.5 sm:mt-3">
               {scheduledTime && (
                 <span className={`inline-flex items-center gap-1 rounded-md px-2.5 py-0.5 text-xs font-bold border shadow-2xs ${tagClass}`}>
                   <Clock className="h-3 w-3" />
@@ -454,13 +459,6 @@ export function ScoreboardDisplay({
               )}
             </div>
           )}
-
-          <div className="whitespace-nowrap font-mono text-5xl sm:text-6xl lg:text-7xl font-medium tracking-tight text-slate-900 bg-white rounded-2xl border-2 border-slate-200 px-6 py-3 shadow-inner text-center min-w-[150px]">
-            {scoreHome} : {scoreAway}
-          </div>
-          <span className="text-xs font-bold text-slate-400 mt-1.5 uppercase tracking-wider">
-            Live-Ergebnis
-          </span>
 
           {/* Ecken-Jingle Button (Platzhalter) in der Mitte unter der Ergebnisanzeige */}
           <div className="mt-4 sm:mt-5 w-full flex justify-center">
