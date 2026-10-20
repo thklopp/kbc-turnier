@@ -3,7 +3,6 @@ import assert from "node:assert/strict"
 import {
   formatTeamJingleToken,
   extractRawJingleToken,
-  generateRawSecretToken,
   getTeamByJingleToken,
   saveTeam,
   getDefaultTeams,
