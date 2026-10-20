@@ -16,7 +16,7 @@ flowchart TD
 
     subgraph FirebaseServices["Google Firebase Backend"]
         Firestore["Cloud Firestore<br/>(Live NoSQL Database)"]
-        Storage["Firebase Storage<br/>(Team-Logos & MP3-Jingles)"]
+        Storage["Firebase Storage<br/>(Team-Logos & Audio-Jingles)"]
         Auth["Firebase Authentication<br/>(Turnierleitung Login)"]
     end
 
@@ -29,12 +29,12 @@ flowchart TD
     AdminUI -->|Write Scores / Control Timer| Firestore
     AdminUI -->|Upload Logos & Jingles| Storage
     AdminUI -->|Authenticate| Auth
-    AdminUI -->|Trigger MP3 Playback| AdminUI
+    AdminUI -->|Trigger Audio Playback| AdminUI
 
     Firestore -->|onSnapshot (Live Data)| GuestUI
     Firestore -->|onSnapshot (Live Data)| KioskUI
     Firestore -->|onSnapshot (Sync State)| AdminUI
-    Storage -->|Serve Images & MP3| GuestUI
+    Storage -->|Serve Images & Audio| GuestUI
     Storage -->|Serve Images| KioskUI
 
     GitRepo -->|Webhook Trigger| Railway
@@ -70,7 +70,7 @@ Um Latenzen und unnötige Polling-Requests zu vermeiden, basiert die gesamte Spi
 
 1. **Turnierleitung (`/admin`)**:
    - Turnierleitung klickt auf "Tor Team Heim".
-   - Der lokale AudioContext spielt sofort den gecachten MP3-Jingle des Heimteams ab.
+   - Der lokale AudioContext spielt sofort den gecachten Jingle des Heimteams ab.
    - Ein Firestore-Update erhöht `scoreHome` und hängt das Tor-Event an die Match-Historie an.
 2. **Cloud Firestore**:
    - Replikation des Dokuments in Millisekunden.
@@ -83,7 +83,7 @@ Um Latenzen und unnötige Polling-Requests zu vermeiden, basiert die gesamte Spi
 
 ## 🎵 Audio-Architektur (Torjingles)
 
-- **Audio-Quelle**: MP3-Dateien werden im Firebase Storage unter `/teams/{teamId}/jingle.mp3` gespeichert.
+- **Audio-Quelle**: Audiodateien (MP3, M4A, AAC, WAV, OGG) werden im Firebase Storage unter `/teams/{teamId}/jingle_{timestamp}.{ext}` gespeichert.
 - **Audio-Engine**: HTML5 Audio API über einen dedizierten React-Hook / AudioContext.
 - **Preloading**: Beim Laden des Admin-Panels werden die Audio-Elemente der aktiven Teams vorab gepuffert (`preload="auto"`), um Verzögerungen beim Torjubel zu verhindern.
 - **Fallback**: Besitzt ein Team keinen individuellen Jingle, wird ein Standard-Turnierjingle abgespielt.

@@ -4,6 +4,8 @@ import {
   getTeamByJingleToken,
   saveTeamJingleByToken,
   saveTeamPlayersByToken,
+  isSupportedAudioFile,
+  AUDIO_ACCEPT_ATTRIBUTE,
 } from "@/services/teamService"
 import type { Team, Player } from "@/types/database"
 import { TeamRosterManager } from "@/components/common/TeamRosterManager"
@@ -125,7 +127,7 @@ export function TeamJinglePage() {
     }
   }, [])
 
-  // 2. Handle File Selection (MP3, max 5 MB) - Client-side preview only
+  // 2. Handle File Selection (MP3, M4A, AAC, WAV, OGG, max 5 MB) - Client-side preview only
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     setActionError(null)
     setSaveSuccess(false)
@@ -134,9 +136,10 @@ export function TeamJinglePage() {
     const file = e.target.files?.[0]
     if (!file) return
 
-    const isMp3 = file.type.includes("audio") || file.name.toLowerCase().endsWith(".mp3")
-    if (!isMp3) {
-      setActionError("Bitte wähle eine MP3-Audiodatei aus.")
+    if (!isSupportedAudioFile(file)) {
+      setActionError(
+        "Bitte wähle eine gültige Audiodatei (MP3, M4A, AAC, WAV oder OGG) aus."
+      )
       return
     }
 
@@ -512,7 +515,7 @@ export function TeamJinglePage() {
             {/* File Input / Dropzone */}
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-2">
-                MP3-Datei auswählen (max. 5 MB)
+                Audiodatei auswählen (max. 5 MB)
               </label>
               <div
                 onClick={() => fileInputRef.current?.click()}
@@ -525,7 +528,7 @@ export function TeamJinglePage() {
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept=".mp3,audio/mpeg,audio/mp3"
+                  accept={AUDIO_ACCEPT_ATTRIBUTE}
                   className="hidden"
                   onChange={handleFileChange}
                 />
@@ -535,12 +538,12 @@ export function TeamJinglePage() {
                   </div>
                   <div>
                     <span className="text-sm font-semibold text-slate-800">
-                      {selectedFile ? selectedFile.name : "Klicke hier, um eine MP3-Datei auszuwählen"}
+                      {selectedFile ? selectedFile.name : "Klicke hier, um eine Audiodatei auszuwählen"}
                     </span>
                     <p className="text-xs text-slate-500 mt-0.5">
                       {selectedFile
                         ? `${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB • Klicke zum Ändern`
-                        : "Unterstützt ausschließlich MP3-Format bis 5 MB"}
+                        : "Unterstützt MP3, M4A, AAC, WAV oder OGG bis 5 MB"}
                     </p>
                   </div>
                 </div>
@@ -680,7 +683,7 @@ export function TeamJinglePage() {
               </div>
             ) : (
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-6 text-center text-slate-500 text-sm">
-                Noch kein Tor-Jingle hinterlegt. Wähle oben eine MP3-Datei aus, um loszulegen.
+                Noch kein Tor-Jingle hinterlegt. Wähle oben eine Audiodatei aus, um loszulegen.
               </div>
             )}
           </div>
