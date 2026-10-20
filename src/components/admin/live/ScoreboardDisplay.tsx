@@ -387,13 +387,13 @@ export function ScoreboardDisplay({
           </div>
 
           {/* Torschützen Heim */}
-          {homeGoalEvents.length > 0 && (
-            <div className="w-full mt-4 pt-3 border-t border-slate-100 text-left space-y-2">
-              <div className="flex items-center justify-between px-1">
-                <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
-                  <span>🥅 Torschützen ({homeGoalEvents.length})</span>
-                </span>
-              </div>
+          <div className="w-full mt-4 pt-3 border-t border-slate-100 text-left space-y-2">
+            <div className="flex items-center justify-between px-1">
+              <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
+                <span>🥅 Torschützen ({homeGoalEvents.length})</span>
+              </span>
+            </div>
+            {homeGoalEvents.length > 0 && (
               <div className="space-y-1.5 w-full">
                 {homeGoalEvents.map((ev, idx) => (
                   <div
@@ -429,8 +429,8 @@ export function ScoreboardDisplay({
                   </div>
                 ))}
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Center Live Score: Vollständig gegen Umbrüche gesichert */}
@@ -536,13 +536,13 @@ export function ScoreboardDisplay({
           </div>
 
           {/* Torschützen Gast */}
-          {awayGoalEvents.length > 0 && (
-            <div className="w-full mt-4 pt-3 border-t border-slate-100 text-left space-y-2">
-              <div className="flex items-center justify-between px-1">
-                <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
-                  <span>🥅 Torschützen ({awayGoalEvents.length})</span>
-                </span>
-              </div>
+          <div className="w-full mt-4 pt-3 border-t border-slate-100 text-left space-y-2">
+            <div className="flex items-center justify-between px-1">
+              <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
+                <span>🥅 Torschützen ({awayGoalEvents.length})</span>
+              </span>
+            </div>
+            {awayGoalEvents.length > 0 && (
               <div className="space-y-1.5 w-full">
                 {awayGoalEvents.map((ev, idx) => (
                   <div
@@ -578,8 +578,8 @@ export function ScoreboardDisplay({
                   </div>
                 ))}
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>

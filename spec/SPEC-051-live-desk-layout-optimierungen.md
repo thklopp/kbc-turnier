@@ -25,7 +25,7 @@ Im Live-Desk der Turnierleitung (`/admin`) wirkt der zentrale Spielbereich aktue
 - Der Text „Live-Ergebnis“ wird entfernt, um vertikalen Raum freizugeben und visuelles Rauschen zu reduzieren.
 - Die Meta-Tags (Uhrzeit, Geschlecht, Gruppe/Phase) wandern direkt unter die Ergebnisanzeige.
 - Unterhalb der Meta-Tags wird zentral zwischen den beiden Tor-Buttons („Tor Heim (+1)“ und „Tor Gast (+1)“) der Platzhalter-Button für den „Ecken-Jingle“ platziert.
-- Die Erfassung und Anzeige der Torschützen wandert direkt in den Spielbereich unter die jeweilige Mannschaft (Heim-Torschützen unter Team Heim, Gast-Torschützen unter Team Gast). Der separate Torschützen-Block darunter entfällt, wodurch der Live-Desk deutlich kompakter, aufgeräumter und ohne vertikales Scrollen bedienbar wird.
+- Die Erfassung und Anzeige der Torschützen wandert direkt in den Spielbereich unter die jeweilige Mannschaft (Heim-Torschützen unter Team Heim, Gast-Torschützen unter Team Gast). Die Trennlinie und die Kopfzeile „🥅 Torschützen (0)“ sind permanent sichtbar, um von Beginn an ein symmetrisches Layout zu bieten. Der separate Torschützen-Block darunter entfällt, wodurch der Live-Desk deutlich kompakter, aufgeräumter und ohne vertikales Scrollen bedienbar wird.
 - Das bisherige Soundboard-Panel (`SoundboardPanel`) wird vollständig aus dem Live-Desk entfernt, da es nicht mehr benötigt wird.
 
 ---
@@ -53,7 +53,8 @@ Im Live-Desk der Turnierleitung (`/admin`) wirkt der zentrale Spielbereich aktue
   - Vorerst als Platzhalter ohne Audioauslösung (styling-konform vorbereitet).
 - [ ] **Torschützen direkt unter den jeweiligen Mannschaften**:
   - Aufteilung der gefallenen Tore (`goalEvents`) nach `teamHomeId` und `teamAwayId`.
-  - Direkte Anzeige der Torschützenliste mit Minute und Spieler-Dropdown unterhalb der jeweiligen Mannschaftsbox.
+  - Permanente Anzeige der Trennlinie und Überschrift „Torschützen (0)“ bei beiden Mannschaften.
+  - Direkte Anzeige der Torschützenliste mit Minute und Spieler-Dropdown unterhalb der jeweiligen Mannschaftsbox bei gefallenen Toren.
   - Entfernung des separaten unteren Chronik-Blocks `Tore-Chronik & Schützen` in `LiveMatchDesk.tsx`.
 - [ ] **Entfernung des Soundboards**:
   - Vollständiges Entfernen der Komponente `SoundboardPanel` aus `LiveMatchDesk.tsx`.
