@@ -1,6 +1,6 @@
 import { Outlet, Link, useNavigate, useLocation } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
-import { UserRoundKey, LogOut, ArrowLeft, Users, Calendar, PlayCircle, FileText } from "lucide-react"
+import { UserRoundKey, LogOut, ArrowLeft, Users, Calendar, PlayCircle, FileText, Music } from "lucide-react"
 
 export function AdminLayout() {
   const { currentUser, logout } = useAuth()
@@ -18,8 +18,9 @@ export function AdminLayout() {
 
   const isTeams = location.pathname === "/admin" && location.hash === "#teams"
   const isSchedule = location.pathname === "/admin" && location.hash === "#schedule"
+  const isCorners = location.pathname === "/admin" && location.hash === "#corners"
   const isInfo = location.pathname === "/admin" && location.hash === "#info"
-  const isLiveDesk = location.pathname === "/admin" && !isTeams && !isSchedule && !isInfo
+  const isLiveDesk = location.pathname === "/admin" && !isTeams && !isSchedule && !isCorners && !isInfo
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-100 text-slate-900">
@@ -98,6 +99,17 @@ export function AdminLayout() {
             >
               <Calendar className="h-3.5 w-3.5" />
               <span>Zeiten & Spielplan</span>
+            </Link>
+            <Link
+              to="/admin#corners"
+              className={`flex items-center gap-1.5 py-1 border-b-2 transition-colors ${
+                isCorners
+                  ? "border-blue-600 text-blue-600 font-bold"
+                  : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
+              }`}
+            >
+              <Music className="h-3.5 w-3.5" />
+              <span>Ecken-Jingles</span>
             </Link>
             <Link
               to="/admin#info"

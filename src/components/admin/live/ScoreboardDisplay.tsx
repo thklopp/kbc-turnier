@@ -7,6 +7,7 @@ import type {
   FinalMatchType,
   MatchEvent,
   Player,
+  CornerJingle,
 } from "@/types/database"
 import { getMatchDisplayName } from "@/services/matchService"
 import {
@@ -20,7 +21,10 @@ import {
   Clock,
   CheckCircle,
   Square,
+  ChevronDown,
+  Check,
 } from "lucide-react"
+import { useState, useRef, useEffect } from "react"
 
 interface ScoreboardDisplayProps {
   homeTeam?: Team
@@ -56,6 +60,13 @@ interface ScoreboardDisplayProps {
   onFadeOutAudio?: (durationMs?: number) => void
   isPlayingAudio?: (url?: string) => boolean
   isFadingAudio?: boolean
+  // Ecken-Jingles Integration
+  cornerJingles?: CornerJingle[]
+  activeCornerJingle?: CornerJingle | null
+  activeCornerJingleId?: string | null
+  onSelectCornerJingle?: (id: string) => void
+  onPlayCornerJingle?: () => void
+  isPlayingCornerJingle?: boolean
   // Goal events & scorer integration
   events?: MatchEvent[]
   onUpdateGoalScorer?: (eventId: string, player?: Player | null) => void
@@ -91,9 +102,31 @@ export function ScoreboardDisplay({
   onFadeOutAudio,
   isPlayingAudio,
   isFadingAudio,
+  cornerJingles = [],
+  activeCornerJingle,
+  activeCornerJingleId,
+  onSelectCornerJingle,
+  onPlayCornerJingle,
+  isPlayingCornerJingle = false,
   events,
   onUpdateGoalScorer,
 }: ScoreboardDisplayProps) {
+  const [isCornerMenuOpen, setIsCornerMenuOpen] = useState(false)
+  const cornerMenuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (cornerMenuRef.current && !cornerMenuRef.current.contains(event.target as Node)) {
+        setIsCornerMenuOpen(false)
+      }
+    }
+    if (isCornerMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside)
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [isCornerMenuOpen])
   const isFemale = gender === "wU14"
   const tagClass = isFemale
     ? "bg-purple-50 text-purple-700 border-purple-200"
@@ -465,16 +498,97 @@ export function ScoreboardDisplay({
             )}
           </div>
 
-          {/* Ecken-Jingle Button (Platzhalter) in der Mitte exakt auf Höhe der Tor-Buttons */}
-          <div className="w-full flex flex-col items-center mt-4">
-            <button
-              type="button"
-              className="w-full max-w-[200px] inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-slate-50 hover:bg-slate-100 px-4 py-3 text-sm font-medium text-slate-700 shadow-xs active:scale-98 transition-all cursor-pointer"
-              title="Ecken-Jingle (Platzhalter)"
-            >
-              <Music className="h-4 w-4 text-slate-500" />
-              <span>Ecken-Jingle</span>
-            </button>
+          {/* Ecken-Jingle Split-Button in der Mitte exakt auf Höhe der Tor-Buttons */}
+          <div className="w-full flex flex-col items-center mt-4 relative" ref={cornerMenuRef}>
+            {cornerJingles.length === 0 || !activeCornerJingle ? (
+              <button
+                type="button"
+                disabled
+                className="w-full max-w-[240px] inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-sm font-medium text-slate-400 shadow-xs cursor-not-allowed opacity-60"
+                title="Keine Ecken-Jingles hinterlegt (im Admin-Bereich anlegen)"
+              >
+                <Music className="h-4 w-4 text-slate-400" />
+                <span>Ecken-Jingle</span>
+              </button>
+            ) : (
+              <div className="w-full max-w-[240px] inline-flex rounded-xl shadow-xs">
+                {isPlayingCornerJingle ? (
+                  <button
+                    type="button"
+                    onClick={onPlayCornerJingle}
+                    className="flex-1 min-w-0 inline-flex items-center justify-center gap-2 rounded-l-xl border-2 border-r-0 border-emerald-500 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 px-3 py-3 text-sm font-bold shadow-xs animate-pulse cursor-pointer transition-all"
+                    title="Ecken-Jingle innerhalb von 1 Sekunde sanft ausblenden"
+                  >
+                    <Square className="h-4 w-4 fill-emerald-600 text-emerald-600 shrink-0" />
+                    <span className="truncate">Ecke: {activeCornerJingle.name}</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={onPlayCornerJingle}
+                    className="flex-1 min-w-0 inline-flex items-center justify-center gap-2 rounded-l-xl border border-r-0 border-slate-300 bg-slate-50 hover:bg-slate-100 px-3 py-3 text-sm font-medium text-slate-700 shadow-xs active:scale-98 transition-all cursor-pointer"
+                    title={`Ecken-Jingle abspielen (${activeCornerJingle.name})`}
+                  >
+                    <Music className="h-4 w-4 text-amber-500 shrink-0" />
+                    <span className="truncate">Ecke: {activeCornerJingle.name}</span>
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setIsCornerMenuOpen((prev) => !prev)}
+                  className={`inline-flex items-center justify-center rounded-r-xl border border-slate-300 px-2.5 py-3 text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer ${
+                    isPlayingCornerJingle ? "border-2 border-l-0 border-emerald-500 bg-emerald-50" : "bg-slate-50"
+                  }`}
+                  title="Anderen Ecken-Jingle wählen"
+                >
+                  <ChevronDown className={`h-4 w-4 transition-transform ${isCornerMenuOpen ? "rotate-180" : ""}`} />
+                </button>
+              </div>
+            )}
+
+            {/* Dropdown-Popover zur Auswahl des Ecken-Jingles */}
+            {isCornerMenuOpen && cornerJingles.length > 0 && (
+              <div className="absolute top-full mt-1.5 z-40 w-full max-w-[260px] rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl animate-in fade-in-50 zoom-in-95">
+                <div className="px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                  Ecken-Jingle wählen
+                </div>
+                <div className="max-h-52 overflow-y-auto space-y-0.5">
+                  {cornerJingles.map((jingle) => {
+                    const isSelected = jingle.id === activeCornerJingleId
+                    return (
+                      <button
+                        key={jingle.id}
+                        type="button"
+                        onClick={() => {
+                          onSelectCornerJingle?.(jingle.id)
+                          setIsCornerMenuOpen(false)
+                        }}
+                        className={`w-full flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg text-xs font-medium text-left transition-colors cursor-pointer ${
+                          isSelected
+                            ? "bg-blue-50 text-blue-700 font-bold"
+                            : "text-slate-700 hover:bg-slate-100"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 truncate">
+                          {isSelected ? (
+                            <Check className="h-3.5 w-3.5 text-blue-600 shrink-0" />
+                          ) : (
+                            <div className="h-3.5 w-3.5 shrink-0" />
+                          )}
+                          <span className="truncate">{jingle.name}</span>
+                        </div>
+                        {jingle.isDefault && (
+                          <span className="shrink-0 text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200">
+                            Standard
+                          </span>
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

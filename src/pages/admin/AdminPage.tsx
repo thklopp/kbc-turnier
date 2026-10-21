@@ -3,6 +3,7 @@ import { TeamList } from "@/components/admin/TeamList"
 import { ScheduleManager } from "@/components/admin/ScheduleManager"
 import { LiveMatchDesk } from "@/components/admin/live/LiveMatchDesk"
 import { AdminInfoEditor } from "@/components/admin/AdminInfoEditor"
+import { CornerJingleManager } from "@/components/admin/corners/CornerJingleManager"
 
 export function AdminPage() {
   const location = useLocation()
@@ -12,6 +13,8 @@ export function AdminPage() {
       ? "teams"
       : location.hash === "#schedule"
       ? "schedule"
+      : location.hash === "#corners"
+      ? "corners"
       : location.hash === "#info"
       ? "info"
       : "desk"
@@ -28,6 +31,12 @@ export function AdminPage() {
       {activeTab === "schedule" && (
         <section>
           <ScheduleManager />
+        </section>
+      )}
+
+      {activeTab === "corners" && (
+        <section>
+          <CornerJingleManager />
         </section>
       )}
 

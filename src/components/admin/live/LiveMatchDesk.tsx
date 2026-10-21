@@ -63,6 +63,12 @@ export function LiveMatchDesk() {
     fadeOutAudio,
     isPlayingAudio,
     isFadingAudio,
+    cornerJingles,
+    activeCornerJingle,
+    activeCornerJingleId,
+    setActiveCornerJingleId,
+    playCornerJingle,
+    isPlayingCornerJingle,
     currentMinute,
   } = useLiveMatchDesk(currentMatch, teams, config.gameDurationMinutes, matches)
 
@@ -176,6 +182,12 @@ export function LiveMatchDesk() {
         onFadeOutAudio={fadeOutAudio}
         isPlayingAudio={isPlayingAudio}
         isFadingAudio={isFadingAudio}
+        cornerJingles={cornerJingles}
+        activeCornerJingle={activeCornerJingle}
+        activeCornerJingleId={activeCornerJingleId}
+        onSelectCornerJingle={setActiveCornerJingleId}
+        onPlayCornerJingle={playCornerJingle}
+        isPlayingCornerJingle={isPlayingCornerJingle}
         scheduledTime={currentMatch?.scheduledTime}
         gender={currentMatch?.gender}
         group={currentMatch?.group}

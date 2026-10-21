@@ -1,5 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from "react"
 
+export interface AudioPlayOptions {
+  maxDurationMs?: number
+  fadeOutDurationMs?: number
+}
+
 export function useAudioPlayer() {
   const [currentUrl, setCurrentUrl] = useState<string | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -7,8 +12,17 @@ export function useAudioPlayer() {
   const [error, setError] = useState<string | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const fadeTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const maxDurationTimerRef = useRef<NodeJS.Timeout | null>(null)
+
+  const clearMaxDurationTimer = useCallback(() => {
+    if (maxDurationTimerRef.current) {
+      clearTimeout(maxDurationTimerRef.current)
+      maxDurationTimerRef.current = null
+    }
+  }, [])
 
   const stop = useCallback(() => {
+    clearMaxDurationTimer()
     if (fadeTimerRef.current) {
       clearInterval(fadeTimerRef.current)
       fadeTimerRef.current = null
@@ -21,10 +35,11 @@ export function useAudioPlayer() {
     setIsFading(false)
     setIsPlaying(false)
     setCurrentUrl(null)
-  }, [])
+  }, [clearMaxDurationTimer])
 
   const fadeOut = useCallback(
     (durationMs = 1000) => {
+      clearMaxDurationTimer()
       if (!audioRef.current || !isPlaying || isFading) return
 
       if (fadeTimerRef.current) {
@@ -63,17 +78,18 @@ export function useAudioPlayer() {
         }
       }, stepInterval)
     },
-    [isPlaying, isFading]
+    [isPlaying, isFading, clearMaxDurationTimer]
   )
 
   const play = useCallback(
-    (url?: string | null, startTimeMs?: number) => {
+    (url?: string | null, startTimeMs?: number, options?: AudioPlayOptions) => {
       setError(null)
 
       if (!url || typeof url !== "string" || !url.trim()) {
         return
       }
 
+      clearMaxDurationTimer()
       if (fadeTimerRef.current) {
         clearInterval(fadeTimerRef.current)
         fadeTimerRef.current = null
@@ -113,12 +129,14 @@ export function useAudioPlayer() {
       }
 
       audio.onended = () => {
+        clearMaxDurationTimer()
         setIsPlaying(false)
         setIsFading(false)
         setCurrentUrl(null)
       }
 
       audio.onerror = () => {
+        clearMaxDurationTimer()
         setError("Audio konnte nicht abgespielt werden. Bitte prüfe das Format.")
         setIsPlaying(false)
         setIsFading(false)
@@ -131,20 +149,30 @@ export function useAudioPlayer() {
           setIsPlaying(true)
           setCurrentUrl(url)
           applyStartTime()
+
+          if (options?.maxDurationMs && options.maxDurationMs > 0) {
+            const fadeOutDuration = options.fadeOutDurationMs ?? 1000
+            const timeUntilFade = Math.max(0, options.maxDurationMs - fadeOutDuration)
+            maxDurationTimerRef.current = setTimeout(() => {
+              fadeOut(fadeOutDuration)
+            }, timeUntilFade)
+          }
         })
         .catch((err) => {
           console.warn("Autoplay / Wiedergabe-Fehler:", err)
+          clearMaxDurationTimer()
           setError("Wiedergabe blockiert oder nicht unterstützt.")
           setIsPlaying(false)
           setIsFading(false)
           setCurrentUrl(null)
         })
     },
-    [currentUrl, isPlaying, fadeOut]
+    [currentUrl, isPlaying, fadeOut, clearMaxDurationTimer]
   )
 
   useEffect(() => {
     return () => {
+      clearMaxDurationTimer()
       if (fadeTimerRef.current) {
         clearInterval(fadeTimerRef.current)
       }
@@ -153,7 +181,7 @@ export function useAudioPlayer() {
         audioRef.current = null
       }
     }
-  }, [])
+  }, [clearMaxDurationTimer])
 
   return {
     play,

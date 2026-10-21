@@ -137,3 +137,16 @@ export interface FinalRanking {
   gender: GenderCategory
 }
 
+export interface CornerJingle {
+  id: string
+  name: string
+  audioUrl: string
+  storagePath: string
+  startTimeMs: number
+  isDefault: boolean
+  fileSize?: number
+  mimeType?: string
+  createdAt?: Timestamp
+  updatedAt?: Timestamp
+}
+

@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react"
-import type { Match, Team, MatchEvent, Player } from "@/types/database"
+import type { Match, Team, MatchEvent, Player, CornerJingle } from "@/types/database"
 import { updateMatch, updateMatchEventScorer } from "@/services/matchService"
 import { syncFinalRoundMatches } from "@/services/matchProgressionService"
+import { subscribeCornerJingles } from "@/services/cornerJingleService"
 import { useAudioPlayer } from "./useAudioPlayer"
 import { playBuzzerHorn } from "@/lib/soundboard"
 
@@ -30,6 +31,46 @@ export function useLiveMatchDesk(
 
   const { play, stop, fadeOut, isPlaying, isFading } = useAudioPlayer()
   const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Ecken-Jingles State & Echtzeit-Abo
+  const [cornerJingles, setCornerJingles] = useState<CornerJingle[]>([])
+  const [activeCornerJingleId, setActiveCornerJingleId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const unsub = subscribeCornerJingles(
+      (jingles) => {
+        setCornerJingles(jingles)
+        setActiveCornerJingleId((prev) => {
+          if (prev && jingles.some((j) => j.id === prev)) {
+            return prev
+          }
+          const defaultJingle = jingles.find((j) => j.isDefault) || jingles[0]
+          return defaultJingle ? defaultJingle.id : null
+        })
+      },
+      (err) => console.error("Fehler beim Laden der Ecken-Jingles im LiveDesk:", err)
+    )
+    return () => unsub()
+  }, [])
+
+  const activeCornerJingle =
+    cornerJingles.find((j) => j.id === activeCornerJingleId) || null
+
+  const playCornerJingle = useCallback(() => {
+    if (!activeCornerJingle || !activeCornerJingle.audioUrl) return
+    if (isPlaying(activeCornerJingle.audioUrl)) {
+      fadeOut(1000)
+      return
+    }
+    play(activeCornerJingle.audioUrl, activeCornerJingle.startTimeMs || 0, {
+      maxDurationMs: 15000,
+      fadeOutDurationMs: 1000,
+    })
+  }, [activeCornerJingle, isPlaying, fadeOut, play])
+
+  const isPlayingCornerJingle = Boolean(
+    activeCornerJingle?.audioUrl && isPlaying(activeCornerJingle.audioUrl)
+  )
 
   // Helper zum Berechnen der aktuellen Spielminute
   const getCurrentMinute = useCallback(() => {
@@ -312,6 +353,13 @@ export function useLiveMatchDesk(
     fadeOutAudio: fadeOut,
     isPlayingAudio: isPlaying,
     isFadingAudio: isFading,
+    // Ecken-Jingles Integration
+    cornerJingles,
+    activeCornerJingle,
+    activeCornerJingleId,
+    setActiveCornerJingleId,
+    playCornerJingle,
+    isPlayingCornerJingle,
     currentMinute: getCurrentMinute(),
   }
 }
