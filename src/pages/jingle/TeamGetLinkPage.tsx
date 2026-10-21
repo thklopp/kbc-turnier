@@ -75,6 +75,15 @@ export function TeamGetLinkPage() {
     return clubTeams.find((t) => t.gender === selectedGender) || null
   }, [clubTeams, selectedClub, selectedGender])
 
+  // Logo und Kurzname des ausgewählten Vereins
+  const clubLogoUrl = useMemo(() => {
+    return selectedTeam?.logoUrl || clubTeams.find((t) => t.logoUrl)?.logoUrl || null
+  }, [clubTeams, selectedTeam])
+
+  const clubShortName = useMemo(() => {
+    return selectedTeam?.shortName || clubTeams[0]?.shortName || ""
+  }, [clubTeams, selectedTeam])
+
   // Handler für Vereinswechsel
   const handleClubChange = (club: string) => {
     setSelectedClub(club)
@@ -210,59 +219,80 @@ export function TeamGetLinkPage() {
                 </select>
               </div>
 
-              {/* Schritt 2: Altersklasse / Geschlecht auswählen */}
+              {/* Schritt 2: Altersklasse / Geschlecht auswählen & Vereins-Logo */}
               {selectedClub && (
                 <div>
                   <span className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
                     2. Altersklasse / Geschlecht wählen
                   </span>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {clubTeams.map((t) => {
-                      const isSelected = selectedGender === t.gender
-                      const isFemale = t.gender === "wU14"
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                    {/* Vereins-Logo */}
+                    <div className="flex flex-col items-center justify-center p-3 rounded-2xl border border-slate-200 bg-white shadow-xs shrink-0 w-24 h-24 sm:w-28 sm:h-28 self-center sm:self-auto">
+                      {clubLogoUrl ? (
+                        <img
+                          src={clubLogoUrl}
+                          alt={`${selectedClub} Logo`}
+                          className="h-full w-full object-contain p-1"
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center text-center">
+                          <span className="text-3xl opacity-60">🏑</span>
+                          <span className="text-[11px] font-bold text-slate-400 font-mono mt-1">
+                            {clubShortName}
+                          </span>
+                        </div>
+                      )}
+                    </div>
 
-                      return (
-                        <button
-                          key={t.id}
-                          type="button"
-                          onClick={() => handleGenderChange(t.gender)}
-                          className={`flex items-center justify-between p-3.5 rounded-xl border text-left transition-all ${
-                            isSelected
-                              ? isFemale
-                                ? "border-purple-500 bg-purple-50/70 shadow-sm ring-2 ring-purple-500/20"
-                                : "border-blue-500 bg-blue-50/70 shadow-sm ring-2 ring-blue-500/20"
-                              : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
-                          }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <span
-                              className={`inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-xs font-bold uppercase tracking-wider ${
-                                isFemale
-                                  ? "bg-purple-100 text-purple-700"
-                                  : "bg-blue-100 text-blue-700"
-                              }`}
-                            >
-                              {t.gender}
-                            </span>
-                            <div>
-                              <span className="block text-sm font-bold text-slate-900">
-                                {isFemale ? "Weibliche U14" : "Männliche U14"}
+                    {/* Auswahlbuttons Altersklasse */}
+                    <div className="flex-1 w-full grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {clubTeams.map((t) => {
+                        const isSelected = selectedGender === t.gender
+                        const isFemale = t.gender === "wU14"
+
+                        return (
+                          <button
+                            key={t.id}
+                            type="button"
+                            onClick={() => handleGenderChange(t.gender)}
+                            className={`flex items-center justify-between p-3.5 rounded-xl border text-left transition-all ${
+                              isSelected
+                                ? isFemale
+                                  ? "border-purple-500 bg-purple-50/70 shadow-sm ring-2 ring-purple-500/20"
+                                  : "border-blue-500 bg-blue-50/70 shadow-sm ring-2 ring-blue-500/20"
+                                : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <span
+                                className={`inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-xs font-bold uppercase tracking-wider ${
+                                  isFemale
+                                    ? "bg-purple-100 text-purple-700"
+                                    : "bg-blue-100 text-blue-700"
+                                }`}
+                              >
+                                {t.gender}
                               </span>
-                              <span className="block text-xs text-slate-500">
-                                Gruppe {t.group}
-                              </span>
+                              <div>
+                                <span className="block text-sm font-bold text-slate-900">
+                                  {isFemale ? "Weibliche U14" : "Männliche U14"}
+                                </span>
+                                <span className="block text-xs text-slate-500">
+                                  Gruppe {t.group}
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                          {isSelected && (
-                            <CheckCircle2
-                              className={`h-5 w-5 ${
-                                isFemale ? "text-purple-600" : "text-blue-600"
-                              }`}
-                            />
-                          )}
-                        </button>
-                      )
-                    })}
+                            {isSelected && (
+                              <CheckCircle2
+                                className={`h-5 w-5 ${
+                                  isFemale ? "text-purple-600" : "text-blue-600"
+                                }`}
+                              />
+                            )}
+                          </button>
+                        )
+                      })}
+                    </div>
                   </div>
                 </div>
               )}
