@@ -14,7 +14,7 @@ import {
   type Unsubscribe,
 } from "firebase/firestore"
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage"
-import { db, storage, isFirebaseConfigured } from "@/lib/firebase"
+import { db, storage, isFirebaseConfigured, ensureAnonymousAuth } from "@/lib/firebase"
 import type { CornerJingle } from "@/types/database"
 import {
   isSupportedAudioFile,
@@ -132,7 +132,7 @@ export async function uploadCornerJingleAudio(
     if (typeof FileReader === "undefined") {
       return {
         downloadUrl: `data:${getAudioMimeType(file.name, file.type)};base64,mock`,
-        storagePath: `mock/corner_jingles/${jingleId}`,
+        storagePath: `teams/corners/mock_${jingleId}`,
       }
     }
     return new Promise((resolve) => {
@@ -140,15 +140,17 @@ export async function uploadCornerJingleAudio(
       reader.onload = (e) =>
         resolve({
           downloadUrl: e.target?.result as string,
-          storagePath: `mock/corner_jingles/${jingleId}`,
+          storagePath: `teams/corners/mock_${jingleId}`,
         })
       reader.readAsDataURL(file)
     })
   }
 
+  await ensureAnonymousAuth()
+
   const ext = getAudioExtension(file.name)
   const mimeType = getAudioMimeType(file.name, file.type)
-  const storagePath = `corner_jingles/${jingleId}_${Date.now()}.${ext}`
+  const storagePath = `teams/corners/${jingleId}_${Date.now()}.${ext}`
   const storageRef = ref(storage, storagePath)
 
   const snapshot = await uploadBytes(storageRef, file, { contentType: mimeType })
@@ -202,6 +204,7 @@ export async function createCornerJingle(params: {
   }
 
   // Prüfen, ob bereits andere Jingles existieren
+  await ensureAnonymousAuth()
   const existingDocs = await getDocs(collection(db, CORNER_JINGLES_COLLECTION))
   const shouldBeDefault = isDefault || existingDocs.empty
 
@@ -306,6 +309,7 @@ export async function updateCornerJingle(
     return
   }
 
+  await ensureAnonymousAuth()
   const batch = writeBatch(db)
   const targetDocRef = doc(db, CORNER_JINGLES_COLLECTION, id)
 
@@ -360,6 +364,8 @@ export async function deleteCornerJingle(id: string, storagePath?: string): Prom
     return
   }
 
+  await ensureAnonymousAuth()
+
   // 1. Datei in Storage löschen (falls Pfad vorhanden)
   if (storagePath) {
     try {
@@ -406,6 +412,8 @@ export async function setDefaultCornerJingle(id: string): Promise<void> {
     }
     return
   }
+
+  await ensureAnonymousAuth()
 
   const allDocs = await getDocs(collection(db, CORNER_JINGLES_COLLECTION))
   const batch = writeBatch(db)

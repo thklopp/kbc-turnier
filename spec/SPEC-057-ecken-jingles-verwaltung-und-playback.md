@@ -49,7 +49,7 @@ Im Hallenhockey führen Strafecken (kurze Ecken) zu spannenden und dynamischen S
   - `isDefault`: boolean (ob dieser Jingle als Standard vorgewählt ist)
   - `createdAt`: Timestamp
   - `updatedAt`: Timestamp
-- [x] **Firebase Storage Upload**: Speicherung unter `/corner_jingles/{jingleId}.{ext}` mit Validierung auf max. 5 MB und Audio-MIME-Types.
+- [x] **Firebase Storage Upload**: Speicherung unter `/teams/corners/{jingleId}.{ext}` mit Validierung auf max. 5 MB und Audio-MIME-Types (kompatibel mit den bestehenden Storage-Rules für `/teams/{teamId}/**`).
 - [x] **Admin-UI zur Verwaltung**:
   - Übersichtliche Karten/Liste aller hinterlegten Ecken-Jingles mit Name, Startzeit, Format/Badge, Standard-Indikator.
   - Vorhör-Player (Play/Pause/Fade) für jeden Jingle.

@@ -238,11 +238,11 @@ export interface TeamStanding {
 ```
 storage/
 ├── teams/
-│   └── {teamId}/
-│       ├── logo.{png|jpg|webp|svg}   # Maximale Upload-Größe: 2 MB
-│       └── jingle.{mp3|m4a|aac|wav|ogg} # Maximale Upload-Größe: 5 MB
-└── corner_jingles/
-    └── {jingleId}.{mp3|m4a|aac|wav|ogg} # Maximale Upload-Größe: 5 MB
+│   ├── {teamId}/
+│   │   ├── logo.{png|jpg|webp|svg}      # Maximale Upload-Größe: 2 MB
+│   │   └── jingle.{mp3|m4a|aac|wav|ogg} # Maximale Upload-Größe: 5 MB
+│   └── corners/
+│       └── {jingleId}.{mp3|m4a|aac|wav|ogg} # Maximale Upload-Größe: 5 MB (Ecken-Jingles)
 ```
 
 ---

@@ -85,7 +85,7 @@ Um Latenzen und unnötige Polling-Requests zu vermeiden, basiert die gesamte Spi
 
 - **Audio-Quelle**:
   - **Torjingles**: Audiodateien (MP3, M4A, AAC, WAV, OGG) werden im Firebase Storage unter `/teams/{teamId}/jingle_{timestamp}.{ext}` gespeichert.
-  - **Ecken-Jingles**: Neutrale Audio-Jingles für Strafecken werden im Firebase Storage unter `/corner_jingles/{jingleId}.{ext}` abgelegt und in der Firestore-Collection `cornerJingles` verwaltet.
+  - **Ecken-Jingles**: Neutrale Audio-Jingles für Strafecken werden im Firebase Storage unter `/teams/corners/{jingleId}.{ext}` abgelegt und in der Firestore-Collection `cornerJingles` verwaltet.
 - **Audio-Engine**: HTML5 Audio API über dedizierte React-Hooks (`useAudioPlayer`, `useLiveMatchDesk`).
 - **Wiedergabelimits & Fade-Out**: Jingles können mit konfigurierter Startzeit (`startTimeMs`) abgespielt werden. Ecken-Jingles besitzen ein automatisches 15-Sekunden-Limit mit 1-Sekunden-Fade-Out ab Sekunde 14 sowie manuelles Ausfaden per Klick.
 - **Preloading**: Beim Laden des Admin-Panels werden Audio-Elemente vorab gepuffert (`preload="auto"`), um verzögerungsfreie Wiedergabe sicherzustellen.
