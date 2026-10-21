@@ -486,13 +486,13 @@ export async function uploadTeamLogo(teamId: string, file: File): Promise<string
 }
 
 /**
- * Lädt einen Torjingle für ein Team in Firebase Storage hoch (max. 5 MB).
+ * Lädt einen Torjingle für ein Team in Firebase Storage hoch (max. 10 MB).
  * Unterstützte Formate: MP3, M4A, AAC, WAV, OGG.
  */
 export async function uploadTeamJingle(teamId: string, file: File): Promise<string> {
-  const MAX_SIZE = 5 * 1024 * 1024 // 5 MB
+  const MAX_SIZE = 10 * 1024 * 1024 // 10 MB
   if (file.size > MAX_SIZE) {
-    throw new Error("Der Torjingle darf maximal 5 MB groß sein.")
+    throw new Error("Der Torjingle darf maximal 10 MB groß sein.")
   }
 
   if (!isSupportedAudioFile(file)) {
@@ -674,9 +674,9 @@ export async function saveTeamJingleByToken(
   let finalJingleUrl = currentTeam.jingleUrl
 
   if (options.file) {
-    const MAX_SIZE = 5 * 1024 * 1024 // 5 MB
+    const MAX_SIZE = 10 * 1024 * 1024 // 10 MB
     if (options.file.size > MAX_SIZE) {
-      throw new Error("Der Torjingle darf maximal 5 MB groß sein.")
+      throw new Error("Der Torjingle darf maximal 10 MB groß sein.")
     }
 
     if (!isSupportedAudioFile(options.file)) {

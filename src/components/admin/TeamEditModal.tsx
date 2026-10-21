@@ -200,8 +200,8 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
       return
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      setError("Der Torjingle darf maximal 5 MB groß sein.")
+    if (file.size > 10 * 1024 * 1024) {
+      setError("Der Torjingle darf maximal 10 MB groß sein.")
       return
     }
 

@@ -49,8 +49,9 @@ Dieses Dokument erfasst alle Aufgaben, Meilensteine und den Entwicklungsfortschr
 - [x] Logo-Upload nach Firebase Storage (`/teams/{teamId}/logo.*`) mit Bildvorschau.
 - [x] Torjingle-Upload nach Firebase Storage (`/teams/{teamId}/jingle.mp3`).
 - [x] Integrierter Audio-Player zum Probehören des Torjingles direkt in der Team-Tabelle.
-- [x] Validierung: Max. Dateigrößen (Logo: 2MB, Jingle: 5MB MP3) und MIME-Types.
+- [x] Validierung: Max. Dateigrößen (Logo: 2MB, Jingle: 10MB) und MIME-Types.
 - [x] Teams & Spielplan-Plätze tauschen (SPEC-038): Atomarer Tausch zweier Teams innerhalb einer Altersklasse (gruppenintern und gruppenübergreifend) mit automatischer Spielplan- und Tabellensynchronisation.
+- [x] [SPEC-059] Erhöhung des Jingle-Upload-Limits auf 10 MB (Tor- & Ecken-Jingles): Erhöhung der maximalen Dateigröße für Tor-Jingles (Admin & Self-Service) und Ecken-Jingles von 5 MB auf 10 MB (`10 * 1024 * 1024` Bytes), Aktualisierung aller Validierungen, Hinweistexte und Tests.
 
 ---
 

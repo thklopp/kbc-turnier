@@ -131,7 +131,7 @@ function CornerJingleModalContent({
     }
 
     if (!isEditing && !selectedFile) {
-      setError("Bitte wähle eine Audiodatei (max. 5 MB) aus.")
+      setError("Bitte wähle eine Audiodatei (max. 10 MB) aus.")
       return
     }
 
@@ -303,7 +303,7 @@ function CornerJingleModalContent({
                   Audiodatei auswählen oder hierher ziehen
                 </p>
                 <p className="text-[11px] text-slate-400 mt-0.5">
-                  MP3, M4A, AAC, WAV, OGG bis maximal 5 MB
+                  MP3, M4A, AAC, WAV, OGG bis maximal 10 MB
                 </p>
               </div>
             )}

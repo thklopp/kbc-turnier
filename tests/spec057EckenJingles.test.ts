@@ -42,15 +42,15 @@ describe("SPEC-057: Ecken-Jingles Verwaltung und Playback", () => {
   })
 
   describe("AC-2: Validierung von Ecken-Jingles", () => {
-    test("Akzeptiert gültige MP3, M4A, AAC, WAV und OGG Dateien unter 5 MB", () => {
+    test("Akzeptiert gültige MP3, M4A, AAC, WAV und OGG Dateien unter 10 MB", () => {
       assert.doesNotThrow(() => {
         validateCornerJingleFile(createMockFile("corner.mp3", "audio/mpeg", 2 * 1024 * 1024))
       })
       assert.doesNotThrow(() => {
-        validateCornerJingleFile(createMockFile("track.m4a", "audio/mp4", 3 * 1024 * 1024))
+        validateCornerJingleFile(createMockFile("track.m4a", "audio/mp4", 7 * 1024 * 1024))
       })
       assert.doesNotThrow(() => {
-        validateCornerJingleFile(createMockFile("horn.wav", "audio/wav", 4 * 1024 * 1024))
+        validateCornerJingleFile(createMockFile("horn.wav", "audio/wav", 9 * 1024 * 1024))
       })
       assert.doesNotThrow(() => {
         validateCornerJingleFile(createMockFile("sound.ogg", "audio/ogg", 1 * 1024 * 1024))
@@ -60,11 +60,11 @@ describe("SPEC-057: Ecken-Jingles Verwaltung und Playback", () => {
       })
     })
 
-    test("Lehnt Dateien > 5 MB sicher ab", () => {
+    test("Lehnt Dateien > 10 MB sicher ab", () => {
       const oversizedFile = createMockFile("huge.mp3", "audio/mpeg", MAX_AUDIO_FILE_SIZE + 1)
       assert.throws(
         () => validateCornerJingleFile(oversizedFile),
-        /Der Ecken-Jingle darf maximal 5 MB groß sein/
+        /Der Ecken-Jingle darf maximal 10 MB groß sein/
       )
     })
 

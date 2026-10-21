@@ -24,7 +24,7 @@ import {
 
 export const CORNER_JINGLES_COLLECTION = "corners"
 const MOCK_CORNER_JINGLES_KEY = "kbc_mock_corner_jingles"
-export const MAX_AUDIO_FILE_SIZE = 5 * 1024 * 1024 // 5 MB
+export const MAX_AUDIO_FILE_SIZE = 10 * 1024 * 1024 // 10 MB
 
 function getStoredMockCornerJingles(): CornerJingle[] {
   if (typeof window === "undefined" || !window.localStorage) {
@@ -59,7 +59,7 @@ function saveStoredMockCornerJingles(jingles: CornerJingle[]) {
  */
 export function validateCornerJingleFile(file: File): void {
   if (file.size > MAX_AUDIO_FILE_SIZE) {
-    throw new Error("Der Ecken-Jingle darf maximal 5 MB groß sein.")
+    throw new Error("Der Ecken-Jingle darf maximal 10 MB groß sein.")
   }
 
   if (!isSupportedAudioFile(file)) {

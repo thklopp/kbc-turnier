@@ -193,7 +193,7 @@ export interface CornerJingle {
   storagePath: string;                       // Interner Storage-Pfad zum Löschen (/corners/{cornerId}.{ext})
   startTimeMs: number;                       // Startzeitpunkt in Millisekunden (Standard: 0)
   isDefault: boolean;                        // Genau ein Jingle als Standard vorgewählt
-  fileSize?: number;                         // Dateigröße in Bytes (max. 5 MB)
+  fileSize?: number;                         // Dateigröße in Bytes (max. 10 MB)
   mimeType?: string;                         // MIME-Type (audio/mpeg, audio/mp4, etc.)
   createdAt: FirebaseFirestore.Timestamp;    // Erstellungszeitpunkt
   updatedAt: FirebaseFirestore.Timestamp;    // Letzte Aktualisierung
@@ -240,9 +240,9 @@ storage/
 ├── teams/
 │   └── {teamId}/
 │       ├── logo.{png|jpg|webp|svg}      # Maximale Upload-Größe: 2 MB
-│       └── jingle.{mp3|m4a|aac|wav|ogg} # Maximale Upload-Größe: 5 MB
+│       └── jingle.{mp3|m4a|aac|wav|ogg} # Maximale Upload-Größe: 10 MB
 └── corners/
-    └── {cornerId}.{mp3|m4a|aac|wav|ogg} # Maximale Upload-Größe: 5 MB (Ecken-Jingles)
+    └── {cornerId}.{mp3|m4a|aac|wav|ogg} # Maximale Upload-Größe: 10 MB (Ecken-Jingles)
 ```
 
 ---
@@ -291,13 +291,13 @@ service firebase.storage {
     match /teams/{teamId}/{allPaths=**} {
       allow read: if true;
       allow write: if request.auth != null
-                   && request.resource.size < 5 * 1024 * 1024; // Max 5 MB
+                   && request.resource.size < 10 * 1024 * 1024; // Max 10 MB
     }
 
     match /corners/{allPaths=**} {
       allow read: if true;
       allow write: if request.auth != null
-                   && request.resource.size < 5 * 1024 * 1024; // Max 5 MB
+                   && request.resource.size < 10 * 1024 * 1024; // Max 10 MB
     }
   }
 }

@@ -127,7 +127,7 @@ export function TeamJinglePage() {
     }
   }, [])
 
-  // 2. Handle File Selection (MP3, M4A, AAC, WAV, OGG, max 5 MB) - Client-side preview only
+  // 2. Handle File Selection (MP3, M4A, AAC, WAV, OGG, max 10 MB) - Client-side preview only
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     setActionError(null)
     setSaveSuccess(false)
@@ -143,8 +143,8 @@ export function TeamJinglePage() {
       return
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      setActionError("Die Datei darf maximal 5 MB groß sein.")
+    if (file.size > 10 * 1024 * 1024) {
+      setActionError("Die Datei darf maximal 10 MB groß sein.")
       return
     }
 
@@ -555,7 +555,7 @@ export function TeamJinglePage() {
             {/* File Input / Dropzone */}
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-2">
-                Audiodatei auswählen (max. 5 MB)
+                Audiodatei auswählen (max. 10 MB)
               </label>
               <div
                 onClick={() => fileInputRef.current?.click()}
@@ -583,7 +583,7 @@ export function TeamJinglePage() {
                     <p className="text-xs text-slate-500 mt-0.5">
                       {selectedFile
                         ? `${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB • Klicke zum Ändern`
-                        : "Unterstützt MP3, M4A, AAC, WAV oder OGG bis 5 MB"}
+                        : "Unterstützt MP3, M4A, AAC, WAV oder OGG bis 10 MB"}
                     </p>
                   </div>
                 </div>

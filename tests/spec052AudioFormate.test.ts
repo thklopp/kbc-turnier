@@ -93,11 +93,11 @@ describe("SPEC-052: Unterstützung erweiterter Audio-Formate für Torjingles", (
   })
 
   describe("AC-1, AC-2 & AC-3: Service Upload-Validierung", () => {
-    test("uploadTeamJingle wirft Fehler bei Dateigröße > 5 MB", async () => {
-      const oversizedFile = createMockFile("too-big.m4a", "audio/mp4", 6 * 1024 * 1024)
+    test("uploadTeamJingle wirft Fehler bei Dateigröße > 10 MB", async () => {
+      const oversizedFile = createMockFile("too-big.m4a", "audio/mp4", 11 * 1024 * 1024)
       await assert.rejects(
         () => uploadTeamJingle("team-1", oversizedFile),
-        /Der Torjingle darf maximal 5 MB groß sein/
+        /Der Torjingle darf maximal 10 MB groß sein/
       )
     })
 
