@@ -12,6 +12,7 @@ import {
   isSupportedAudioFile,
   AUDIO_ACCEPT_ATTRIBUTE,
 } from "@/services/teamService"
+import { calculateAudioGain } from "@/lib/audioNormalization"
 import { useAudioPlayer } from "@/hooks/useAudioPlayer"
 import { TeamRosterManager } from "@/components/common/TeamRosterManager"
 import {
@@ -54,6 +55,7 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
   const [jingleFile, setJingleFile] = useState<File | null>(null)
   const [previewAudioUrl, setPreviewAudioUrl] = useState<string | null>(team.jingleUrl)
   const [jingleStartTimeMs, setJingleStartTimeMs] = useState<number>(team.jingleStartTimeMs ?? 0)
+  const [previewGain, setPreviewGain] = useState<number>(team.jingleGain ?? 1.0)
   const [isJingleRemoved, setIsJingleRemoved] = useState(false)
 
   // Audio Playback
@@ -209,6 +211,9 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
     setIsJingleRemoved(false)
     const objectUrl = URL.createObjectURL(file)
     setPreviewAudioUrl(objectUrl)
+    calculateAudioGain(file, jingleStartTimeMs)
+      .then((g) => setPreviewGain(g))
+      .catch(() => {})
   }
 
   const handleRemoveJingle = () => {
@@ -217,6 +222,7 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
     setPreviewAudioUrl(null)
     setIsJingleRemoved(true)
     setJingleStartTimeMs(0)
+    setPreviewGain(1.0)
     if (jingleInputRef.current) jingleInputRef.current.value = ""
   }
 
@@ -226,7 +232,7 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
     if (isPreviewPlaying(url)) {
       stopPreview()
     } else {
-      playPreview(url, jingleStartTimeMs)
+      playPreview(url, jingleStartTimeMs, { gain: previewGain })
     }
   }
 
@@ -331,7 +337,10 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
 
       // 2. Jingle hochladen falls neue Datei gewählt
       if (jingleFile) {
-        finalJingleUrl = await uploadTeamJingle(team.id, jingleFile)
+        finalJingleUrl = await uploadTeamJingle(team.id, jingleFile, {
+          startTimeMs: jingleStartTimeMs,
+          gain: previewGain,
+        })
       }
 
       // 3. Stammdaten speichern
@@ -344,6 +353,7 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
         logoUrl: finalLogoUrl,
         jingleUrl: finalJingleUrl,
         jingleStartTimeMs: isJingleRemoved ? 0 : Math.max(0, Number(jingleStartTimeMs) || 0),
+        jingleGain: isJingleRemoved ? 1.0 : (jingleFile ? previewGain : (team.jingleGain ?? 1.0)),
         jingleToken: currentFormattedToken,
       })
 

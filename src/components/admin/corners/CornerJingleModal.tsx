@@ -5,6 +5,7 @@ import {
   updateCornerJingle,
   validateCornerJingleFile,
 } from "@/services/cornerJingleService"
+import { calculateAudioGain } from "@/lib/audioNormalization"
 import { AUDIO_ACCEPT_ATTRIBUTE } from "@/services/teamService"
 import { useAudioPlayer } from "@/hooks/useAudioPlayer"
 import {
@@ -60,6 +61,7 @@ function CornerJingleModalContent({
   const [previewAudioUrl, setPreviewAudioUrl] = useState<string | null>(
     jingle?.audioUrl || null
   )
+  const [previewGain, setPreviewGain] = useState<number>(jingle?.gain ?? 1.0)
 
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -103,6 +105,9 @@ function CornerJingleModalContent({
     const objectUrl = URL.createObjectURL(file)
     setSelectedFile(file)
     setPreviewAudioUrl(objectUrl)
+    calculateAudioGain(file, startTimeMs)
+      .then((g) => setPreviewGain(g))
+      .catch(() => {})
 
     // Falls Name noch leer, Dateinamen ohne Endung als Vorschlag setzen
     if (!name.trim()) {
@@ -116,7 +121,7 @@ function CornerJingleModalContent({
     if (isAudioPlaying) {
       fadeOut(1000)
     } else {
-      play(previewAudioUrl, startTimeMs)
+      play(previewAudioUrl, startTimeMs, { gain: previewGain })
     }
   }
 

@@ -17,6 +17,7 @@ import {
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import { db, storage, isFirebaseConfigured, ensureAnonymousAuth } from "@/lib/firebase"
 import type { Team, Player } from "@/types/database"
+import { calculateAudioGain } from "@/lib/audioNormalization"
 
 const TEAMS_COLLECTION = "teams"
 const MOCK_STORAGE_KEY = "kbc_mock_teams"
@@ -486,10 +487,15 @@ export async function uploadTeamLogo(teamId: string, file: File): Promise<string
 }
 
 /**
- * Lädt einen Torjingle für ein Team in Firebase Storage hoch (max. 10 MB).
+ * Lädt einen Torjingle für ein Team in Firebase Storage hoch (max. 10 MB)
+ * und ermittelt automatisch den normalisierten Lautstärkefaktor (jingleGain).
  * Unterstützte Formate: MP3, M4A, AAC, WAV, OGG.
  */
-export async function uploadTeamJingle(teamId: string, file: File): Promise<string> {
+export async function uploadTeamJingle(
+  teamId: string,
+  file: File,
+  options?: { startTimeMs?: number; gain?: number }
+): Promise<string> {
   const MAX_SIZE = 10 * 1024 * 1024 // 10 MB
   if (file.size > MAX_SIZE) {
     throw new Error("Der Torjingle darf maximal 10 MB groß sein.")
@@ -501,7 +507,19 @@ export async function uploadTeamJingle(teamId: string, file: File): Promise<stri
     )
   }
 
+  const gain =
+    typeof options?.gain === "number"
+      ? options.gain
+      : await calculateAudioGain(file, options?.startTimeMs || 0)
+
   if (!isFirebaseConfigured) {
+    const idx = localMockTeams.findIndex((t) => t.id === teamId)
+    if (idx >= 0) {
+      localMockTeams[idx] = {
+        ...localMockTeams[idx],
+        jingleGain: gain,
+      }
+    }
     return new Promise((resolve) => {
       const reader = new FileReader()
       reader.onload = (e) => resolve(e.target?.result as string)
@@ -517,6 +535,7 @@ export async function uploadTeamJingle(teamId: string, file: File): Promise<stri
 
   await updateDoc(doc(db, TEAMS_COLLECTION, teamId), {
     jingleUrl: downloadUrl,
+    jingleGain: gain,
     jingleUpdatedAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   })
@@ -633,6 +652,7 @@ export async function saveTeamJingleByToken(
     file?: File | null
     startTimeMs: number
     removeJingle?: boolean
+    gain?: number
   }
 ): Promise<Team> {
   await ensureAnonymousAuth()
@@ -650,6 +670,7 @@ export async function saveTeamJingleByToken(
           ...localMockTeams[idx],
           jingleUrl: null,
           jingleStartTimeMs: 0,
+          jingleGain: 1.0,
         }
         notifyMockListeners()
         return { ...localMockTeams[idx] }
@@ -661,6 +682,7 @@ export async function saveTeamJingleByToken(
     await updateDoc(teamRef, {
       jingleUrl: null,
       jingleStartTimeMs: 0,
+      jingleGain: 1.0,
       jingleUpdatedAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     })
@@ -668,10 +690,13 @@ export async function saveTeamJingleByToken(
       ...currentTeam,
       jingleUrl: null,
       jingleStartTimeMs: 0,
+      jingleGain: 1.0,
     }
   }
 
   let finalJingleUrl = currentTeam.jingleUrl
+  const startTime = Math.max(0, Math.round(options.startTimeMs || 0))
+  let finalGain = typeof options.gain === "number" ? options.gain : (currentTeam.jingleGain ?? 1.0)
 
   if (options.file) {
     const MAX_SIZE = 10 * 1024 * 1024 // 10 MB
@@ -684,6 +709,11 @@ export async function saveTeamJingleByToken(
         "Bitte lade eine gültige Audiodatei (MP3, M4A, AAC, WAV oder OGG) hoch."
       )
     }
+
+    finalGain =
+      typeof options.gain === "number"
+        ? options.gain
+        : await calculateAudioGain(options.file, startTime)
 
     if (!isFirebaseConfigured) {
       finalJingleUrl = await new Promise<string>((resolve) => {
@@ -703,8 +733,6 @@ export async function saveTeamJingleByToken(
     }
   }
 
-  const startTime = Math.max(0, Math.round(options.startTimeMs || 0))
-
   if (!isFirebaseConfigured) {
     const idx = localMockTeams.findIndex((t) => t.id === currentTeam.id)
     if (idx >= 0) {
@@ -712,6 +740,7 @@ export async function saveTeamJingleByToken(
         ...localMockTeams[idx],
         jingleUrl: finalJingleUrl,
         jingleStartTimeMs: startTime,
+        jingleGain: finalGain,
       }
       notifyMockListeners()
       return { ...localMockTeams[idx] }
@@ -723,6 +752,7 @@ export async function saveTeamJingleByToken(
   await updateDoc(teamRef, {
     jingleUrl: finalJingleUrl,
     jingleStartTimeMs: startTime,
+    jingleGain: finalGain,
     jingleUpdatedAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   })
@@ -731,6 +761,7 @@ export async function saveTeamJingleByToken(
     ...currentTeam,
     jingleUrl: finalJingleUrl,
     jingleStartTimeMs: startTime,
+    jingleGain: finalGain,
   }
 }
 

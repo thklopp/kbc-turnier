@@ -65,6 +65,7 @@ export function useLiveMatchDesk(
     play(activeCornerJingle.audioUrl, activeCornerJingle.startTimeMs || 0, {
       maxDurationMs: 15000,
       fadeOutDurationMs: 1000,
+      gain: activeCornerJingle.gain,
     })
   }, [activeCornerJingle, isPlaying, fadeOut, play])
 
@@ -237,7 +238,9 @@ export function useLiveMatchDesk(
       // 1. Torjingle abspielen falls vorhanden (inkl. individuellem Startzeitpunkt)
       if (scoringTeam?.jingleUrl && scoringTeam.jingleUrl.trim() !== "") {
         try {
-          play(scoringTeam.jingleUrl, scoringTeam.jingleStartTimeMs || 0)
+          play(scoringTeam.jingleUrl, scoringTeam.jingleStartTimeMs || 0, {
+            gain: scoringTeam.jingleGain,
+          })
         } catch (audioErr) {
           console.warn("Torjingle konnte nicht abgespielt werden:", audioErr)
         }

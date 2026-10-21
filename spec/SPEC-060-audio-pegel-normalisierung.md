@@ -1,6 +1,6 @@
 # SPEC-060: Automatische Audio-Pegel-Normalisierung und Dynamik-Limiter für Jingles
 
-> **Status**: In Review  
+> **Status**: In Abnahme  
 > **Typ**: Feature / Optimierung  
 > **Branch**: feat/SPEC-060-audio-pegel-normalisierung  
 > **Autor**: Antigravity  
