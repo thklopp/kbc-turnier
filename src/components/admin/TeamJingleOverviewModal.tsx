@@ -300,9 +300,7 @@ export function TeamJingleOverviewModal({
                             : "bg-emerald-50 border-emerald-200 text-emerald-700"
                         }`}
                       >
-                        {(team.linkGenerationCount ?? 0) === 0
-                          ? "Link: 0 (gesperrt)"
-                          : `Link: ${team.linkGenerationCount}x`}
+                        Link: {team.linkGenerationCount ?? 0}
                       </span>
 
                       {(team.linkGenerationCount ?? 0) > 0 && (

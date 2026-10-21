@@ -663,9 +663,7 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
                     : "bg-emerald-50 border border-emerald-200 text-emerald-700"
                 }`}
               >
-                {linkGenerationCount === 0
-                  ? "Gesperrt (0)"
-                  : `Aktiv (${linkGenerationCount}x generiert)`}
+                Link: {linkGenerationCount}
               </span>
               {linkGenerationCount > 0 && (
                 <button

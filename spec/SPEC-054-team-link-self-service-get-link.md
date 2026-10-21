@@ -76,12 +76,13 @@ Zudem gibt es derzeit keine Zugriffskontrolle darüber, ob ein Betreuer-Link ber
 
 - [x] **FR-4: Turnierleitungs-Funktionen im Admin-Bereich (`/admin`)**:
   - In `TeamCard.tsx`:
-    - Anzeige des Zählerstands (z. B. Badge `Link-Zähler: X` oder `Gesperrt (0)`).
+    - Anzeige des Zählerstands schlicht als `Link: <Zähler>` (z. B. `Link: 0` oder `Link: 1`).
+    - Entfernung des Kurznamens oben rechts aus den Team-Karten.
     - Aktion: „Zähler zurücksetzen (auf 0)“ mit Bestätigung.
   - In `TeamEditModal.tsx`:
-    - Anzeige des Zählerstands mit Button „Auf 0 zurücksetzen“.
+    - Anzeige des Zählerstands (`Link: <Zähler>`) mit Button „Auf 0 zurücksetzen“.
   - In `TeamJingleOverviewModal.tsx`:
-    - Zusätzliche Spalte für den Link-Zähler.
+    - Zusätzliche Spalte/Badge für den Link-Zähler (`Link: <Zähler>`).
     - Globaler Aktions-Button „Alle Link-Zähler auf 0 zurücksetzen“ mit Sicherheitsabfrage.
 
 - [x] **FR-5: Service-Funktionen in `teamService.ts`**:

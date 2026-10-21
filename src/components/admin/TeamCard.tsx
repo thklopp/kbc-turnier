@@ -78,21 +78,11 @@ export function TeamCard({
                   ? "bg-slate-100 border-slate-200 text-slate-500"
                   : "bg-emerald-50 border-emerald-200 text-emerald-700"
               }`}
-              title={
-                (team.linkGenerationCount ?? 0) === 0
-                  ? "Link gesperrt / nicht generiert"
-                  : `${team.linkGenerationCount}x generiert`
-              }
+              title={`Link-Generierungen: ${team.linkGenerationCount ?? 0}`}
             >
-              {(team.linkGenerationCount ?? 0) === 0
-                ? "Link: 0 (gesperrt)"
-                : `Link: ${team.linkGenerationCount}x`}
+              Link: {team.linkGenerationCount ?? 0}
             </span>
           </div>
-
-          <span className="font-mono text-xs font-bold text-slate-400">
-            {team.shortName}
-          </span>
         </div>
 
         {/* Logo and Name */}
