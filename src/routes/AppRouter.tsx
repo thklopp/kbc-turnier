@@ -11,6 +11,7 @@ import { LoginPage } from "@/pages/admin/LoginPage"
 import { KioskPage } from "@/pages/kiosk/KioskPage"
 import { TeamJinglePage } from "@/pages/jingle/TeamJinglePage"
 import { TeamGetLinkPage } from "@/pages/jingle/TeamGetLinkPage"
+import { PdfSchedulePage } from "@/pages/guest/PdfSchedulePage"
 import { NotFoundPage } from "@/pages/NotFoundPage"
 import { UmamiTracker } from "@/components/common/UmamiTracker"
 
@@ -25,6 +26,9 @@ export function AppRouter() {
           <Route path="/info" element={<InfoPage />} />
           <Route path="/impressum" element={<ImpressumPage />} />
         </Route>
+
+        {/* PDF-Spielplan (Vollbild-Viewer / Direkte Route) */}
+        <Route path="/pdf" element={<PdfSchedulePage />} />
 
         {/* Team-Link Self-Service (ohne Login) */}
         <Route path="/team/get-link" element={<TeamGetLinkPage />} />

@@ -1,17 +1,13 @@
 import { useState, useEffect } from "react"
 import { Outlet, Link, useLocation } from "react-router-dom"
-import { Radio, Calendar, Trophy, Medal, Info, FileDown, Loader2, Table } from "lucide-react"
+import { Radio, Calendar, Trophy, Medal, Info, FileText, Table } from "lucide-react"
 import rrkLogo from "@/assets/images/RRK.webp"
-import { getTournamentConfig } from "@/services/configService"
-import { getTeams } from "@/services/teamService"
-import { getMatches, subscribeMatches } from "@/services/matchService"
-import { downloadSchedulePdf } from "@/services/pdfScheduleService"
+import { subscribeMatches } from "@/services/matchService"
 import { isTournamentFinished } from "@/services/standingsService"
 
 export function GuestLayout() {
   const location = useLocation()
   const hash = location.hash
-  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false)
   const [tournamentFinished, setTournamentFinished] = useState(false)
 
   useEffect(() => {
@@ -23,24 +19,6 @@ export function GuestLayout() {
     )
     return () => unsub()
   }, [])
-
-  const handleDownloadPdf = async () => {
-    if (isDownloadingPdf) return
-    setIsDownloadingPdf(true)
-    try {
-      const [config, teams, matches] = await Promise.all([
-        getTournamentConfig(),
-        getTeams(),
-        getMatches(),
-      ])
-      await downloadSchedulePdf(config, teams, matches, rrkLogo)
-    } catch (err) {
-      console.error("Fehler beim Erstellen des PDF-Spielplans:", err)
-      alert("Der PDF-Spielplan konnte leider nicht generiert werden. Bitte versuche es erneut.")
-    } finally {
-      setIsDownloadingPdf(false)
-    }
-  }
 
   const isHome = location.pathname === "/"
   const isSchedule = isHome && (hash === "#vorrunde" || hash === "#schedule")
@@ -211,19 +189,16 @@ export function GuestLayout() {
       <footer className="border-t border-slate-200 bg-white py-6">
         <div className="container mx-auto flex max-w-5xl flex-col sm:flex-row items-center justify-between gap-4 px-4 text-xs text-slate-500">
           <div className="flex items-center gap-4">
-            <button
-              onClick={handleDownloadPdf}
-              disabled={isDownloadingPdf}
-              className="inline-flex items-center gap-1.5 font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer disabled:opacity-50"
-              title="Spielplan als PDF herunterladen"
+            <a
+              href="/pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 font-medium text-slate-600 hover:text-slate-900 transition-colors"
+              title="PDF-Spielplan im neuen Tab öffnen"
             >
-              {isDownloadingPdf ? (
-                <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
-              ) : (
-                <FileDown className="h-4 w-4 text-blue-600" />
-              )}
-              <span>{isDownloadingPdf ? "Wird erstellt..." : "PDF-Spielplan"}</span>
-            </button>
+              <FileText className="h-4 w-4 text-blue-600" />
+              <span>PDF-Spielplan</span>
+            </a>
           </div>
 
           <div className="text-center text-slate-400">

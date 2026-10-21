@@ -456,6 +456,19 @@ export async function generateSchedulePdf(
 }
 
 /**
+ * Erzeugt das PDF und gibt es als Blob zurück (z. B. für Browser-Vorschau im iframe).
+ */
+export async function generateSchedulePdfBlob(
+  config: TournamentConfig,
+  teams: Team[],
+  matches: Match[],
+  logoUrl?: string
+): Promise<Blob> {
+  const doc = await generateSchedulePdf(config, teams, matches, logoUrl)
+  return doc.output("blob")
+}
+
+/**
  * Erstellt das PDF und stößt den direkten Download im Browser an.
  */
 export async function downloadSchedulePdf(
