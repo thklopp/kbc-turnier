@@ -196,7 +196,7 @@ export function TeamGetLinkPage() {
             </div>
           ) : (
             <div className="space-y-6">
-              {/* Schritt 1: Verein auswählen */}
+              {/* Schritt 1: Verein auswählen & Vereins-Logo */}
               <div>
                 <label
                   htmlFor="club-select"
@@ -204,95 +204,98 @@ export function TeamGetLinkPage() {
                 >
                   1. Verein auswählen
                 </label>
-                <select
-                  id="club-select"
-                  value={selectedClub}
-                  onChange={(e) => handleClubChange(e.target.value)}
-                  className="w-full h-12 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                >
-                  <option value="">-- Bitte Verein wählen --</option>
-                  {clubList.map((club) => (
-                    <option key={club} value={club}>
-                      {club}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex items-center gap-3">
+                  <select
+                    id="club-select"
+                    value={selectedClub}
+                    onChange={(e) => handleClubChange(e.target.value)}
+                    className="flex-1 h-12 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  >
+                    <option value="">-- Bitte Verein wählen --</option>
+                    {clubList.map((club) => (
+                      <option key={club} value={club}>
+                        {club}
+                      </option>
+                    ))}
+                  </select>
+
+                  {/* Logo rechts neben der Vereinsauswahl */}
+                  {selectedClub && (
+                    <div className="flex items-center justify-center p-1.5 rounded-xl border border-slate-200 bg-white shadow-xs shrink-0 w-12 h-12">
+                      {clubLogoUrl ? (
+                        <img
+                          src={clubLogoUrl}
+                          alt={`${selectedClub} Logo`}
+                          className="h-full w-full object-contain"
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center text-center">
+                          <span className="text-lg opacity-60">🏑</span>
+                          {clubShortName && (
+                            <span className="text-[9px] font-bold text-slate-400 font-mono leading-none">
+                              {clubShortName}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {/* Schritt 2: Altersklasse / Geschlecht auswählen & Vereins-Logo */}
+              {/* Schritt 2: Altersklasse / Geschlecht auswählen */}
               {selectedClub && (
                 <div>
                   <span className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
                     2. Altersklasse / Geschlecht wählen
                   </span>
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-                    {/* Vereins-Logo */}
-                    <div className="flex flex-col items-center justify-center p-3 rounded-2xl border border-slate-200 bg-white shadow-xs shrink-0 w-24 h-24 sm:w-28 sm:h-28 self-center sm:self-auto">
-                      {clubLogoUrl ? (
-                        <img
-                          src={clubLogoUrl}
-                          alt={`${selectedClub} Logo`}
-                          className="h-full w-full object-contain p-1"
-                        />
-                      ) : (
-                        <div className="flex flex-col items-center justify-center text-center">
-                          <span className="text-3xl opacity-60">🏑</span>
-                          <span className="text-[11px] font-bold text-slate-400 font-mono mt-1">
-                            {clubShortName}
-                          </span>
-                        </div>
-                      )}
-                    </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {clubTeams.map((t) => {
+                      const isSelected = selectedGender === t.gender
+                      const isFemale = t.gender === "wU14"
 
-                    {/* Auswahlbuttons Altersklasse */}
-                    <div className="flex-1 w-full grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {clubTeams.map((t) => {
-                        const isSelected = selectedGender === t.gender
-                        const isFemale = t.gender === "wU14"
-
-                        return (
-                          <button
-                            key={t.id}
-                            type="button"
-                            onClick={() => handleGenderChange(t.gender)}
-                            className={`flex items-center justify-between p-3.5 rounded-xl border text-left transition-all ${
-                              isSelected
-                                ? isFemale
-                                  ? "border-purple-500 bg-purple-50/70 shadow-sm ring-2 ring-purple-500/20"
-                                  : "border-blue-500 bg-blue-50/70 shadow-sm ring-2 ring-blue-500/20"
-                                : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
-                            }`}
-                          >
-                            <div className="flex items-center gap-3">
-                              <span
-                                className={`inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-xs font-bold uppercase tracking-wider ${
-                                  isFemale
-                                    ? "bg-purple-100 text-purple-700"
-                                    : "bg-blue-100 text-blue-700"
-                                }`}
-                              >
-                                {t.gender}
+                      return (
+                        <button
+                          key={t.id}
+                          type="button"
+                          onClick={() => handleGenderChange(t.gender)}
+                          className={`flex items-center justify-between p-3.5 rounded-xl border text-left transition-all ${
+                            isSelected
+                              ? isFemale
+                                ? "border-purple-500 bg-purple-50/70 shadow-sm ring-2 ring-purple-500/20"
+                                : "border-blue-500 bg-blue-50/70 shadow-sm ring-2 ring-blue-500/20"
+                              : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <span
+                              className={`inline-flex items-center justify-center rounded-lg px-2.5 py-1 text-xs font-bold uppercase tracking-wider ${
+                                isFemale
+                                  ? "bg-purple-100 text-purple-700"
+                                  : "bg-blue-100 text-blue-700"
+                              }`}
+                            >
+                              {t.gender}
+                            </span>
+                            <div>
+                              <span className="block text-sm font-bold text-slate-900">
+                                {isFemale ? "Weibliche U14" : "Männliche U14"}
                               </span>
-                              <div>
-                                <span className="block text-sm font-bold text-slate-900">
-                                  {isFemale ? "Weibliche U14" : "Männliche U14"}
-                                </span>
-                                <span className="block text-xs text-slate-500">
-                                  Gruppe {t.group}
-                                </span>
-                              </div>
+                              <span className="block text-xs text-slate-500">
+                                Gruppe {t.group}
+                              </span>
                             </div>
-                            {isSelected && (
-                              <CheckCircle2
-                                className={`h-5 w-5 ${
-                                  isFemale ? "text-purple-600" : "text-blue-600"
-                                }`}
-                              />
-                            )}
-                          </button>
-                        )
-                      })}
-                    </div>
+                          </div>
+                          {isSelected && (
+                            <CheckCircle2
+                              className={`h-5 w-5 ${
+                                isFemale ? "text-purple-600" : "text-blue-600"
+                              }`}
+                            />
+                          )}
+                        </button>
+                      )
+                    })}
                   </div>
                 </div>
               )}
@@ -306,7 +309,7 @@ export function TeamGetLinkPage() {
                       <Info className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
                       <div>
                         <span className="font-semibold block">Bereit zur Link-Erstellung</span>
-                        Für <span className="font-bold">{selectedTeam.name}</span> wurde bisher noch kein Link generiert. Mit Klick auf „Link erstellen & anzeigen“ wird der offizielle Zugang für euer Team aktiviert.
+                        Für <span className="font-bold">{selectedClub} – {selectedTeam.gender === "wU14" ? "Weibliche U14 (wU14)" : "Männliche U14 (mU14)"}</span> wurde bisher noch kein Link generiert. Mit Klick auf „Link erstellen & anzeigen“ wird der offizielle Zugang für euer Team aktiviert.
                       </div>
                     </div>
                   ) : (
@@ -316,7 +319,7 @@ export function TeamGetLinkPage() {
                         <span className="font-semibold block">
                           Bereits ein Link generiert ({currentCount}x)
                         </span>
-                        Für <span className="font-bold">{selectedTeam.name}</span> wurde bereits ein Zugangslink generiert. Wenn du einen neuen Link erstellst, wird der bisherige Link{" "}
+                        Für <span className="font-bold">{selectedClub} – {selectedTeam.gender === "wU14" ? "Weibliche U14 (wU14)" : "Männliche U14 (mU14)"}</span> wurde bereits ein Zugangslink generiert. Wenn du einen neuen Link erstellst, wird der bisherige Link{" "}
                         <span className="font-bold underline">sofort ungültig</span>.
                       </div>
                     </div>
@@ -359,7 +362,7 @@ export function TeamGetLinkPage() {
 
                       <div>
                         <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                          Euer Zugangslink (für Trainer & Betreuer):
+                          Zugangslink für {selectedClub} ({selectedTeam.gender === "wU14" ? "Weibliche U14" : "Männliche U14"}):
                         </label>
                         <div className="flex items-center gap-2">
                           <input
@@ -421,11 +424,11 @@ export function TeamGetLinkPage() {
             </h3>
 
             <p className="text-sm text-slate-600 mb-4 leading-relaxed">
-              Für <span className="font-semibold text-slate-900">{selectedTeam.name}</span> wurde bereits ein Link generiert.
+              Für <span className="font-semibold text-slate-900">{selectedClub} – {selectedTeam.gender === "wU14" ? "Weibliche U14 (wU14)" : "Männliche U14 (mU14)"}</span> wurde bereits ein Link generiert.
             </p>
 
             <div className="rounded-xl bg-amber-50 border border-amber-200 p-3 text-xs text-amber-900 mb-6 font-medium">
-              ⚠️ <strong>Wichtiger Hinweis:</strong> Der bisherige Link wird dadurch <strong>sofort ungültig</strong>. Bereits verteilte Links können danach nicht mehr verwendet werden!
+              ⚠️ <strong>Wichtiger Hinweis:</strong> Der bisherige Link für <strong>{selectedClub} ({selectedTeam.gender})</strong> wird dadurch <strong>sofort ungültig</strong>. Bereits verteilte Links können danach nicht mehr verwendet werden!
             </div>
 
             <div className="flex items-center justify-end gap-3">
