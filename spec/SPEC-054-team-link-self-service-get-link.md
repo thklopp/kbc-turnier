@@ -1,6 +1,6 @@
 # SPEC-054: Team-Link Self-Service (/team/get-link) & Linkzähler-Sperre
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature  
 > **Branch**: `feat/SPEC-054-team-link-self-service-get-link`  
 > **Autor**: Antigravity (nach `/grill-me` Abstimmung mit Nutzer)  
