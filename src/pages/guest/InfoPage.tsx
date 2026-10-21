@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import ReactMarkdown from "react-markdown"
-import { ArrowLeft, Info, Calendar, Utensils, Award, BookOpen } from "lucide-react"
+import { ArrowLeft, Info } from "lucide-react"
 import { subscribeTournamentInfo, DEFAULT_INFO_MARKDOWN } from "@/services/infoService"
 import type { TournamentInfoConfig } from "@/types/database"
 
@@ -38,39 +38,6 @@ export function InfoPage() {
 
       {/* Main Info Card */}
       <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        {/* Header Banner */}
-        <div className="border-b border-slate-100 bg-gradient-to-r from-blue-900 via-blue-800 to-slate-900 px-6 py-8 text-white">
-          <div className="flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-blue-200">
-            <span>Rüsselsheimer Ruder-Klub 08 e.V.</span>
-          </div>
-          <h1 className="mt-2 text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-            20. Kurt-Becker-Cup
-          </h1>
-          <p className="mt-2 max-w-2xl text-sm sm:text-base text-blue-100 leading-relaxed">
-            Wichtige Hinweise zum Spielbetrieb, Ablauf, Penalty-Regeln und Verpflegung in der Großsporthalle Rüsselsheim.
-          </p>
-
-          {/* Quick Info Badges */}
-          <div className="mt-6 flex flex-wrap gap-2 text-xs font-medium text-white/90">
-            <span className="inline-flex items-center gap-1.5 rounded-lg bg-white/10 backdrop-blur px-3 py-1.5 border border-white/15">
-              <Calendar className="h-3.5 w-3.5 text-amber-300" />
-              <span>31.10. – 01.11.2026</span>
-            </span>
-            <span className="inline-flex items-center gap-1.5 rounded-lg bg-white/10 backdrop-blur px-3 py-1.5 border border-white/15">
-              <Award className="h-3.5 w-3.5 text-blue-300" />
-              <span>mU14 & wU14</span>
-            </span>
-            <span className="inline-flex items-center gap-1.5 rounded-lg bg-white/10 backdrop-blur px-3 py-1.5 border border-white/15">
-              <Utensils className="h-3.5 w-3.5 text-emerald-300" />
-              <span>Mittagessen & Kiosk</span>
-            </span>
-            <span className="inline-flex items-center gap-1.5 rounded-lg bg-white/10 backdrop-blur px-3 py-1.5 border border-white/15">
-              <BookOpen className="h-3.5 w-3.5 text-purple-300" />
-              <span>Schiedsrichter-Regelung</span>
-            </span>
-          </div>
-        </div>
-
         {/* Markdown Rendered Content */}
         <div className="p-6 sm:p-8">
           {loading ? (
@@ -87,7 +54,7 @@ export function InfoPage() {
               <ReactMarkdown
                 components={{
                   h1: ({ children }) => (
-                    <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mt-6 mb-3 pb-2 border-b border-slate-100 flex items-center gap-2">
+                    <h1 className="text-xl sm:text-2xl font-bold text-slate-900 first:mt-0 mt-6 mb-3 pb-2 border-b border-slate-100 flex items-center gap-2">
                       {children}
                     </h1>
                   ),
