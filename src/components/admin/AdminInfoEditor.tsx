@@ -18,6 +18,7 @@ import {
   Minus,
   Quote,
 } from "lucide-react"
+import rrkLogo from "@/assets/images/RRK.webp"
 import { useAuth } from "@/hooks/useAuth"
 import {
   subscribeTournamentInfo,
@@ -368,8 +369,13 @@ export function AdminInfoEditor() {
                   <ReactMarkdown
                     components={{
                       h1: ({ children }) => (
-                        <h1 className="text-lg font-bold text-slate-900 mt-4 mb-2 pb-1 border-b border-slate-100">
-                          {children}
+                        <h1 className="text-lg font-bold text-slate-900 mt-4 mb-2 pb-1 border-b border-slate-100 flex items-center gap-2">
+                          <img
+                            src={rrkLogo}
+                            alt="RRK Logo"
+                            className="h-6 w-6 object-contain rounded shrink-0"
+                          />
+                          <span>{children}</span>
                         </h1>
                       ),
                       h2: ({ children }) => (
