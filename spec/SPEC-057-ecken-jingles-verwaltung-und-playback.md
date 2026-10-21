@@ -1,6 +1,6 @@
 # SPEC-057: Ecken-Jingles Verwaltung und Live-Desk Playback
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature  
 > **Branch**: feat/SPEC-057-ecken-jingles  
 > **Autor**: Antigravity  
