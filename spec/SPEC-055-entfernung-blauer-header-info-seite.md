@@ -1,6 +1,6 @@
 # SPEC-055: Entfernung des blauen Headers von der Info-Seite & RRK-Logo vor dem Titel
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: UI-Optimierung / Redesign  
 > **Branch**: `feat/SPEC-055-entfernung-blauer-header-info-seite`  
 > **Autor**: Antigravity  
