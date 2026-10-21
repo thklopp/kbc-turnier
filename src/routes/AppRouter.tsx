@@ -10,6 +10,7 @@ import { AdminPage } from "@/pages/admin/AdminPage"
 import { LoginPage } from "@/pages/admin/LoginPage"
 import { KioskPage } from "@/pages/kiosk/KioskPage"
 import { TeamJinglePage } from "@/pages/jingle/TeamJinglePage"
+import { TeamGetLinkPage } from "@/pages/jingle/TeamGetLinkPage"
 import { NotFoundPage } from "@/pages/NotFoundPage"
 import { UmamiTracker } from "@/components/common/UmamiTracker"
 
@@ -25,7 +26,10 @@ export function AppRouter() {
           <Route path="/impressum" element={<ImpressumPage />} />
         </Route>
 
-        {/* Betreuer Tor-Jingle & Kader-Verwaltung über Unique-Link (ohne Login) */}
+        {/* Team-Link Self-Service (ohne Login) */}
+        <Route path="/team/get-link" element={<TeamGetLinkPage />} />
+
+        {/* Team Tor-Jingle & Kader-Verwaltung über Unique-Link (ohne Login) */}
         <Route path="/jingle/:token" element={<TeamJinglePage />} />
         <Route path="/team/:token" element={<TeamJinglePage />} />
 

@@ -1,6 +1,10 @@
 import { useState } from "react"
 import type { Team } from "@/types/database"
-import { formatTeamJingleToken } from "@/services/teamService"
+import {
+  formatTeamJingleToken,
+  resetTeamLinkCount,
+  resetAllTeamLinkCounts,
+} from "@/services/teamService"
 import {
   X,
   Music,
@@ -11,6 +15,7 @@ import {
   AlertCircle,
   CheckCircle2,
   Share2,
+  RotateCcw,
 } from "lucide-react"
 
 interface TeamJingleOverviewModalProps {
@@ -33,6 +38,46 @@ export function TeamJingleOverviewModal({
   const [filterGender, setFilterGender] = useState<"all" | "wU14" | "mU14">("all")
   const [copiedTokenId, setCopiedTokenId] = useState<string | null>(null)
   const [copiedAll, setCopiedAll] = useState(false)
+  const [resettingTeamId, setResettingTeamId] = useState<string | null>(null)
+  const [isResettingAll, setIsResettingAll] = useState(false)
+
+  const handleResetTeamCount = async (team: Team) => {
+    if (
+      !window.confirm(
+        `Linkzähler für "${team.name}" wirklich auf 0 zurücksetzen?\n\nDer aktuelle Team-Link wird dadurch sofort gesperrt!`
+      )
+    ) {
+      return
+    }
+    setResettingTeamId(team.id)
+    try {
+      await resetTeamLinkCount(team.id)
+    } catch (err) {
+      console.error("Fehler beim Zurücksetzen des Linkzählers:", err)
+      alert("Fehler beim Zurücksetzen.")
+    } finally {
+      setResettingTeamId(null)
+    }
+  }
+
+  const handleResetAllCounts = async () => {
+    if (
+      !window.confirm(
+        "Möchtest du wirklich die Linkzähler ALLER Teams auf 0 zurücksetzen?\n\nDadurch werden die Betreuer-Links aller Mannschaften sofort gesperrt, bis unter /team/get-link neue Links angefordert werden!"
+      )
+    ) {
+      return
+    }
+    setIsResettingAll(true)
+    try {
+      await resetAllTeamLinkCounts()
+    } catch (err) {
+      console.error("Fehler beim Zurücksetzen aller Linkzähler:", err)
+      alert("Fehler beim Zurücksetzen aller Linkzähler.")
+    } finally {
+      setIsResettingAll(false)
+    }
+  }
 
   if (!isOpen) return null
 
@@ -145,27 +190,40 @@ export function TeamJingleOverviewModal({
             </button>
           </div>
 
-          <button
-            type="button"
-            onClick={handleCopyAll}
-            className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold shadow-sm transition-colors cursor-pointer ${
-              copiedAll
-                ? "border-emerald-300 bg-emerald-50 text-emerald-700"
-                : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
-            }`}
-          >
-            {copiedAll ? (
-              <>
-                <Check className="h-4 w-4 text-emerald-600" />
-                <span>Alle Links kopiert!</span>
-              </>
-            ) : (
-              <>
-                <Share2 className="h-4 w-4 text-purple-600" />
-                <span>Alle {filteredTeams.length} Links kopieren</span>
-              </>
-            )}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleResetAllCounts}
+              disabled={isResettingAll}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-800 shadow-sm transition-colors hover:bg-amber-100 cursor-pointer disabled:opacity-50"
+              title="Setzt die Linkzähler aller Teams auf 0 und sperrt bestehende Links"
+            >
+              <RotateCcw className={`h-3.5 w-3.5 text-amber-600 ${isResettingAll ? "animate-spin" : ""}`} />
+              <span>{isResettingAll ? "Setze zurück..." : "Alle Zähler auf 0"}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleCopyAll}
+              className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold shadow-sm transition-colors cursor-pointer ${
+                copiedAll
+                  ? "border-emerald-300 bg-emerald-50 text-emerald-700"
+                  : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              {copiedAll ? (
+                <>
+                  <Check className="h-4 w-4 text-emerald-600" />
+                  <span>Alle Links kopiert!</span>
+                </>
+              ) : (
+                <>
+                  <Share2 className="h-4 w-4 text-purple-600" />
+                  <span>Alle {filteredTeams.length} Links kopieren</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Scrollable Table Area */}
@@ -230,6 +288,38 @@ export function TeamJingleOverviewModal({
                           <AlertCircle className="h-3.5 w-3.5" />
                           <span>Kein Jingle</span>
                         </span>
+                      )}
+                    </div>
+
+                    {/* Link-Zähler Badge & Reset */}
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className={`inline-flex items-center text-[11px] font-semibold px-2 py-0.5 rounded-full border ${
+                          (team.linkGenerationCount ?? 0) === 0
+                            ? "bg-slate-100 border-slate-200 text-slate-500"
+                            : "bg-emerald-50 border-emerald-200 text-emerald-700"
+                        }`}
+                      >
+                        {(team.linkGenerationCount ?? 0) === 0
+                          ? "Link: 0 (gesperrt)"
+                          : `Link: ${team.linkGenerationCount}x`}
+                      </span>
+
+                      {(team.linkGenerationCount ?? 0) > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => handleResetTeamCount(team)}
+                          disabled={resettingTeamId === team.id}
+                          className="inline-flex items-center gap-1 rounded-md border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700 hover:bg-amber-100 transition-colors disabled:opacity-50"
+                          title="Zähler auf 0 setzen & Link sperren"
+                        >
+                          <RotateCcw
+                            className={`h-2.5 w-2.5 ${
+                              resettingTeamId === team.id ? "animate-spin" : ""
+                            }`}
+                          />
+                          <span>Reset</span>
+                        </button>
                       )}
                     </div>
 

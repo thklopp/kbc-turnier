@@ -1,7 +1,7 @@
 import { useState } from "react"
 import type { Team } from "@/types/database"
-import { formatTeamJingleToken } from "@/services/teamService"
-import { Play, Square, Edit2, ShieldAlert, Link as LinkIcon, Check, ArrowLeftRight } from "lucide-react"
+import { formatTeamJingleToken, resetTeamLinkCount } from "@/services/teamService"
+import { Play, Square, Edit2, ShieldAlert, Link as LinkIcon, Check, ArrowLeftRight, RotateCcw } from "lucide-react"
 
 interface TeamCardProps {
   team: Team
@@ -21,6 +21,7 @@ export function TeamCard({
   isPlayingJingle,
 }: TeamCardProps) {
   const [copied, setCopied] = useState(false)
+  const [resettingCount, setResettingCount] = useState(false)
   const isFemale = team.gender === "wU14"
 
   const handleCopyLink = async () => {
@@ -32,6 +33,24 @@ export function TeamCard({
       setTimeout(() => setCopied(false), 2000)
     } catch {
       prompt("Betreuer-Link für dieses Team:", url)
+    }
+  }
+
+  const handleResetLink = async () => {
+    if (
+      window.confirm(
+        `Linkzähler für "${team.name}" auf 0 zurücksetzen?\n\nDer aktuelle Team-Link wird dadurch sofort gesperrt!`
+      )
+    ) {
+      try {
+        setResettingCount(true)
+        await resetTeamLinkCount(team.id)
+      } catch (err) {
+        console.error("Fehler beim Zurücksetzen des Linkzählers:", err)
+        alert("Fehler beim Zurücksetzen.")
+      } finally {
+        setResettingCount(false)
+      }
     }
   }
 
@@ -52,6 +71,22 @@ export function TeamCard({
             </span>
             <span className="rounded-md bg-slate-100 border border-slate-200 px-2 py-0.5 text-[11px] font-bold text-slate-700">
               Gruppe {team.group}
+            </span>
+            <span
+              className={`rounded-md border px-2 py-0.5 text-[11px] font-bold tracking-wide ${
+                (team.linkGenerationCount ?? 0) === 0
+                  ? "bg-slate-100 border-slate-200 text-slate-500"
+                  : "bg-emerald-50 border-emerald-200 text-emerald-700"
+              }`}
+              title={
+                (team.linkGenerationCount ?? 0) === 0
+                  ? "Link gesperrt / nicht generiert"
+                  : `${team.linkGenerationCount}x generiert`
+              }
+            >
+              {(team.linkGenerationCount ?? 0) === 0
+                ? "Link: 0 (gesperrt)"
+                : `Link: ${team.linkGenerationCount}x`}
             </span>
           </div>
 
@@ -142,6 +177,22 @@ export function TeamCard({
             {copied ? "Kopiert!" : "Link kopieren"}
           </span>
         </button>
+
+        {/* Linkzähler zurücksetzen */}
+        {(team.linkGenerationCount ?? 0) > 0 && (
+          <button
+            type="button"
+            onClick={handleResetLink}
+            disabled={resettingCount}
+            className="group inline-flex items-center justify-center h-8 px-2 rounded-lg border border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 text-xs font-semibold transition-all duration-200 cursor-pointer overflow-hidden disabled:opacity-50"
+            title="Linkzähler auf 0 zurücksetzen und Zugang sperren"
+          >
+            <RotateCcw className={`h-3.5 w-3.5 shrink-0 ${resettingCount ? "animate-spin" : ""}`} />
+            <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-all duration-200 group-hover:max-w-xs group-hover:opacity-100 group-hover:ml-1 text-[11px]">
+              Zähler auf 0
+            </span>
+          </button>
+        )}
 
         {/* Tauschen */}
         {onSwap && (

@@ -7,6 +7,7 @@ import {
   saveTeamPlayers,
   deleteTeam,
   regenerateTeamJingleToken,
+  resetTeamLinkCount,
   formatTeamJingleToken,
   isSupportedAudioFile,
   AUDIO_ACCEPT_ATTRIBUTE,
@@ -68,6 +69,10 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
   })
   const [copiedLink, setCopiedLink] = useState(false)
   const [regeneratingToken, setRegeneratingToken] = useState(false)
+  const [linkGenerationCount, setLinkGenerationCount] = useState<number>(
+    team.linkGenerationCount ?? 0
+  )
+  const [resettingCount, setResettingCount] = useState(false)
 
   const currentFormattedToken = useMemo(() => {
     return formatTeamJingleToken(shortName, gender, currentToken)
@@ -249,12 +254,35 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
     try {
       const newToken = await regenerateTeamJingleToken(team.id, shortName, gender)
       setCurrentToken(newToken)
+      setLinkGenerationCount((prev) => Math.max(1, prev + 1))
       setSuccess("Neuer Betreuer-Link wurde generiert!")
       setTimeout(() => setSuccess(null), 3000)
     } catch {
       setError("Fehler beim Generieren des neuen Tokens.")
     } finally {
       setRegeneratingToken(false)
+    }
+  }
+
+  const handleResetCount = async () => {
+    if (
+      !window.confirm(
+        `Linkzähler für "${team.name}" wirklich auf 0 zurücksetzen?\n\nDer aktuelle Team-Link wird dadurch sofort gesperrt!`
+      )
+    ) {
+      return
+    }
+    setResettingCount(true)
+    setError(null)
+    try {
+      await resetTeamLinkCount(team.id)
+      setLinkGenerationCount(0)
+      setSuccess("Linkzähler auf 0 zurückgesetzt (Zugang gesperrt)!")
+      setTimeout(() => setSuccess(null), 3000)
+    } catch {
+      setError("Fehler beim Zurücksetzen des Linkzählers.")
+    } finally {
+      setResettingCount(false)
     }
   }
 
@@ -620,15 +648,41 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
           />
         </div>
 
-        {/* BEREICH 3: BETREUERLINK */}
+        {/* BEREICH 3: TEAM-LINK & ZÄHLER */}
         <div className="rounded-xl border border-blue-200 bg-white p-3.5 shadow-2xs space-y-2">
-          <div className="flex items-center gap-1.5">
-            <LinkIcon className="h-4 w-4 text-blue-600" />
-            <h3 className="text-xs font-bold text-slate-800">Betreuerlink</h3>
+          <div className="flex items-center justify-between gap-1.5">
+            <div className="flex items-center gap-1.5">
+              <LinkIcon className="h-4 w-4 text-blue-600" />
+              <h3 className="text-xs font-bold text-slate-800">Team-Link & Zähler</h3>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span
+                className={`rounded-md px-2 py-0.5 text-[11px] font-bold ${
+                  linkGenerationCount === 0
+                    ? "bg-slate-100 border border-slate-200 text-slate-500"
+                    : "bg-emerald-50 border border-emerald-200 text-emerald-700"
+                }`}
+              >
+                {linkGenerationCount === 0
+                  ? "Gesperrt (0)"
+                  : `Aktiv (${linkGenerationCount}x generiert)`}
+              </span>
+              {linkGenerationCount > 0 && (
+                <button
+                  type="button"
+                  onClick={handleResetCount}
+                  disabled={resettingCount}
+                  className="rounded-md border border-amber-200 bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700 hover:bg-amber-100 transition-colors disabled:opacity-50"
+                  title="Linkzähler auf 0 zurücksetzen und Zugang sperren"
+                >
+                  {resettingCount ? "Setze zurück..." : "Auf 0 zurücksetzen"}
+                </button>
+              )}
+            </div>
           </div>
 
           <p className="text-[11px] text-slate-500">
-            Über diesen Link kann der Betreuer ohne Login den Torjingle und Spielerkader pflegen:
+            Über diesen Link können Trainer & Betreuer ohne Login den Torjingle und Spielerkader pflegen:
           </p>
 
           <div className="flex items-center gap-1.5">

@@ -20,19 +20,26 @@ export function sanitizeAnalyticsPath(pathname: string): SanitizedRouteResult {
     return { shouldTrack: false, sanitizedPath: pathname, title: "Kiosk" }
   }
 
-  // 2. Betreuer-Links maskieren, um Secret-Tokens zu schützen
+  // 2. Team-Links & Tokens maskieren, um Secret-Tokens zu schützen
+  if (pathname === "/team/get-link") {
+    return {
+      shouldTrack: true,
+      sanitizedPath: "/team/get-link",
+      title: "Team-Link anfordern",
+    }
+  }
   if (pathname === "/team" || pathname.startsWith("/team/")) {
     return {
       shouldTrack: true,
       sanitizedPath: "/team",
-      title: "Betreuerbereich (Kader & Jingle)",
+      title: "Team-Bereich (Kader & Jingle)",
     }
   }
   if (pathname === "/jingle" || pathname.startsWith("/jingle/")) {
     return {
       shouldTrack: true,
       sanitizedPath: "/jingle",
-      title: "Betreuerbereich (Jingle Upload)",
+      title: "Team-Bereich (Jingle Upload)",
     }
   }
 

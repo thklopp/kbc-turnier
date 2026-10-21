@@ -11,6 +11,7 @@ import {
   query,
   where,
   getDocs,
+  Timestamp,
   type Unsubscribe,
 } from "firebase/firestore"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
@@ -50,6 +51,15 @@ export function extractRawJingleToken(token?: string | null): string {
     }
   }
   return trimmed
+}
+
+/**
+ * Entfernt den Geschlechtszusatz wie "(w)", "(m)", "(wU14)", "(mU14)" vom Teamnamen,
+ * um den reinen Vereinsnamen zu ermitteln.
+ */
+export function extractClubName(name: string): string {
+  if (!name) return ""
+  return name.replace(/\s*\((?:w|m|wU14|mU14)\)\s*$/i, "").trim()
 }
 
 /**
@@ -192,23 +202,23 @@ function saveStoredMockTeams(teams: Team[]) {
 // Lokaler Speicher-Fallback, falls Firebase noch nicht mit Cloud-Keys verbunden ist
 let localMockTeams: Team[] = [
   // 8x wU14 (Gruppe A: 4, Gruppe B: 4)
-  { id: "team-wu14-1", name: "Kreuznacher HC (w)", shortName: "KHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("KHC", "wU14") },
-  { id: "team-wu14-2", name: "Dürkheimer HC (w)", shortName: "DHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("DHC", "wU14") },
-  { id: "team-wu14-3", name: "Wiesbadener THC (w)", shortName: "WTHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("WTHC", "wU14") },
-  { id: "team-wu14-4", name: "TG Frankenthal (w)", shortName: "TGF", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("TGF", "wU14") },
-  { id: "team-wu14-5", name: "Mannheimer HC (w)", shortName: "MHC", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("MHC", "wU14") },
-  { id: "team-wu14-6", name: "SC Frankfurt 1880 (w)", shortName: "SCF", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("SCF", "wU14") },
-  { id: "team-wu14-7", name: "HTC Stuttgarter Kickers (w)", shortName: "KICK", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("KICK", "wU14") },
-  { id: "team-wu14-8", name: "TSV Schott Mainz (w)", shortName: "TSVM", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("TSVM", "wU14") },
+  { id: "team-wu14-1", name: "Kreuznacher HC (w)", shortName: "KHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("KHC", "wU14"), linkGenerationCount: 0 },
+  { id: "team-wu14-2", name: "Dürkheimer HC (w)", shortName: "DHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("DHC", "wU14"), linkGenerationCount: 0 },
+  { id: "team-wu14-3", name: "Wiesbadener THC (w)", shortName: "WTHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("WTHC", "wU14"), linkGenerationCount: 0 },
+  { id: "team-wu14-4", name: "TG Frankenthal (w)", shortName: "TGF", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("TGF", "wU14"), linkGenerationCount: 0 },
+  { id: "team-wu14-5", name: "Mannheimer HC (w)", shortName: "MHC", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("MHC", "wU14"), linkGenerationCount: 0 },
+  { id: "team-wu14-6", name: "SC Frankfurt 1880 (w)", shortName: "SCF", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("SCF", "wU14"), linkGenerationCount: 0 },
+  { id: "team-wu14-7", name: "HTC Stuttgarter Kickers (w)", shortName: "KICK", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("KICK", "wU14"), linkGenerationCount: 0 },
+  { id: "team-wu14-8", name: "TSV Schott Mainz (w)", shortName: "TSVM", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("TSVM", "wU14"), linkGenerationCount: 0 },
   // 8x mU14 (Gruppe A: 4, Gruppe B: 4)
-  { id: "team-mu14-1", name: "Kreuznacher HC (m)", shortName: "KHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("KHC", "mU14") },
-  { id: "team-mu14-2", name: "Dürkheimer HC (m)", shortName: "DHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("DHC", "mU14") },
-  { id: "team-mu14-3", name: "Wiesbadener THC (m)", shortName: "WTHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("WTHC", "mU14") },
-  { id: "team-mu14-4", name: "TG Frankenthal (m)", shortName: "TGF", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("TGF", "mU14") },
-  { id: "team-mu14-5", name: "Mannheimer HC (m)", shortName: "MHC", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("MHC", "mU14") },
-  { id: "team-mu14-6", name: "SC Frankfurt 1880 (m)", shortName: "SCF", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("SCF", "mU14") },
-  { id: "team-mu14-7", name: "HTC Stuttgarter Kickers (m)", shortName: "KICK", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("KICK", "mU14") },
-  { id: "team-mu14-8", name: "TSV Schott Mainz (m)", shortName: "TSVM", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("TSVM", "mU14") },
+  { id: "team-mu14-1", name: "Kreuznacher HC (m)", shortName: "KHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("KHC", "mU14"), linkGenerationCount: 0 },
+  { id: "team-mu14-2", name: "Dürkheimer HC (m)", shortName: "DHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("DHC", "mU14"), linkGenerationCount: 0 },
+  { id: "team-mu14-3", name: "Wiesbadener THC (m)", shortName: "WTHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("WTHC", "mU14"), linkGenerationCount: 0 },
+  { id: "team-mu14-4", name: "TG Frankenthal (m)", shortName: "TGF", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("TGF", "mU14"), linkGenerationCount: 0 },
+  { id: "team-mu14-5", name: "Mannheimer HC (m)", shortName: "MHC", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("MHC", "mU14"), linkGenerationCount: 0 },
+  { id: "team-mu14-6", name: "SC Frankfurt 1880 (m)", shortName: "SCF", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("SCF", "mU14"), linkGenerationCount: 0 },
+  { id: "team-mu14-7", name: "HTC Stuttgarter Kickers (m)", shortName: "KICK", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("KICK", "mU14"), linkGenerationCount: 0 },
+  { id: "team-mu14-8", name: "TSV Schott Mainz (m)", shortName: "TSVM", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("TSVM", "mU14"), linkGenerationCount: 0 },
 ]
 
 // Initialisiere mit localStorage, falls vorhanden
@@ -517,24 +527,24 @@ export async function uploadTeamJingle(teamId: string, file: File): Promise<stri
 export function getDefaultTeams(): Team[] {
   return [
     // 8x wU14
-    { id: "team-wu14-1", name: "Kreuznacher HC (w)", shortName: "KHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("KHC", "wU14") },
-    { id: "team-wu14-2", name: "Dürkheimer HC (w)", shortName: "DHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("DHC", "wU14") },
-    { id: "team-wu14-3", name: "Wiesbadener THC (w)", shortName: "WTHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("WTHC", "wU14") },
-    { id: "team-wu14-4", name: "TG Frankenthal (w)", shortName: "TGF", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("TGF", "wU14") },
-    { id: "team-wu14-5", name: "Mannheimer HC (w)", shortName: "MHC", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("MHC", "wU14") },
-    { id: "team-wu14-6", name: "SC Frankfurt 1880 (w)", shortName: "SCF", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("SCF", "wU14") },
-    { id: "team-wu14-7", name: "HTC Stuttgarter Kickers (w)", shortName: "KICK", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("KICK", "wU14") },
-    { id: "team-wu14-8", name: "TSV Schott Mainz (w)", shortName: "TSVM", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("TSVM", "wU14") },
+    { id: "team-wu14-1", name: "Kreuznacher HC (w)", shortName: "KHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("KHC", "wU14"), linkGenerationCount: 0 },
+    { id: "team-wu14-2", name: "Dürkheimer HC (w)", shortName: "DHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("DHC", "wU14"), linkGenerationCount: 0 },
+    { id: "team-wu14-3", name: "Wiesbadener THC (w)", shortName: "WTHC", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("WTHC", "wU14"), linkGenerationCount: 0 },
+    { id: "team-wu14-4", name: "TG Frankenthal (w)", shortName: "TGF", gender: "wU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("TGF", "wU14"), linkGenerationCount: 0 },
+    { id: "team-wu14-5", name: "Mannheimer HC (w)", shortName: "MHC", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("MHC", "wU14"), linkGenerationCount: 0 },
+    { id: "team-wu14-6", name: "SC Frankfurt 1880 (w)", shortName: "SCF", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("SCF", "wU14"), linkGenerationCount: 0 },
+    { id: "team-wu14-7", name: "HTC Stuttgarter Kickers (w)", shortName: "KICK", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("KICK", "wU14"), linkGenerationCount: 0 },
+    { id: "team-wu14-8", name: "TSV Schott Mainz (w)", shortName: "TSVM", gender: "wU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("TSVM", "wU14"), linkGenerationCount: 0 },
 
     // 8x mU14
-    { id: "team-mu14-1", name: "Kreuznacher HC (m)", shortName: "KHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("KHC", "mU14") },
-    { id: "team-mu14-2", name: "Dürkheimer HC (m)", shortName: "DHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("DHC", "mU14") },
-    { id: "team-mu14-3", name: "Wiesbadener THC (m)", shortName: "WTHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("WTHC", "mU14") },
-    { id: "team-mu14-4", name: "TG Frankenthal (m)", shortName: "TGF", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("TGF", "mU14") },
-    { id: "team-mu14-5", name: "Mannheimer HC (m)", shortName: "MHC", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("MHC", "mU14") },
-    { id: "team-mu14-6", name: "SC Frankfurt 1880 (m)", shortName: "SCF", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("SCF", "mU14") },
-    { id: "team-mu14-7", name: "HTC Stuttgarter Kickers (m)", shortName: "KICK", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("KICK", "mU14") },
-    { id: "team-mu14-8", name: "TSV Schott Mainz (m)", shortName: "TSVM", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("TSVM", "mU14") },
+    { id: "team-mu14-1", name: "Kreuznacher HC (m)", shortName: "KHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("KHC", "mU14"), linkGenerationCount: 0 },
+    { id: "team-mu14-2", name: "Dürkheimer HC (m)", shortName: "DHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("DHC", "mU14"), linkGenerationCount: 0 },
+    { id: "team-mu14-3", name: "Wiesbadener THC (m)", shortName: "WTHC", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("WTHC", "mU14"), linkGenerationCount: 0 },
+    { id: "team-mu14-4", name: "TG Frankenthal (m)", shortName: "TGF", gender: "mU14", group: "A", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("TGF", "mU14"), linkGenerationCount: 0 },
+    { id: "team-mu14-5", name: "Mannheimer HC (m)", shortName: "MHC", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("MHC", "mU14"), linkGenerationCount: 0 },
+    { id: "team-mu14-6", name: "SC Frankfurt 1880 (m)", shortName: "SCF", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("SCF", "mU14"), linkGenerationCount: 0 },
+    { id: "team-mu14-7", name: "HTC Stuttgarter Kickers (m)", shortName: "KICK", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("KICK", "mU14"), linkGenerationCount: 0 },
+    { id: "team-mu14-8", name: "TSV Schott Mainz (m)", shortName: "TSVM", gender: "mU14", group: "B", logoUrl: null, jingleUrl: null, jingleStartTimeMs: 0, jingleToken: formatTeamJingleToken("TSVM", "mU14"), linkGenerationCount: 0 },
   ]
 }
 
@@ -734,25 +744,27 @@ export async function regenerateTeamJingleToken(
 ): Promise<string> {
   let sName = shortName
   let gnd = gender
+  let currentCount = 0
 
-  if (!sName || !gnd) {
-    if (!isFirebaseConfigured) {
-      const found = localMockTeams.find((t) => t.id === teamId)
-      if (found) {
-        sName = found.shortName
-        gnd = found.gender
-      }
-    } else {
-      const docSnap = await getDoc(doc(db, TEAMS_COLLECTION, teamId))
-      if (docSnap.exists()) {
-        const data = docSnap.data() as Team
-        sName = data.shortName
-        gnd = data.gender
-      }
+  if (!isFirebaseConfigured) {
+    const found = localMockTeams.find((t) => t.id === teamId)
+    if (found) {
+      sName = sName || found.shortName
+      gnd = gnd || found.gender
+      currentCount = found.linkGenerationCount ?? 0
+    }
+  } else {
+    const docSnap = await getDoc(doc(db, TEAMS_COLLECTION, teamId))
+    if (docSnap.exists()) {
+      const data = docSnap.data() as Team
+      sName = sName || data.shortName
+      gnd = gnd || data.gender
+      currentCount = data.linkGenerationCount ?? 0
     }
   }
 
   const newToken = formatTeamJingleToken(sName || "TEAM", gnd || "U14")
+  const nextCount = Math.max(1, currentCount + 1)
 
   if (!isFirebaseConfigured) {
     const idx = localMockTeams.findIndex((t) => t.id === teamId)
@@ -760,6 +772,7 @@ export async function regenerateTeamJingleToken(
       localMockTeams[idx] = {
         ...localMockTeams[idx],
         jingleToken: newToken,
+        linkGenerationCount: nextCount,
       }
       notifyMockListeners()
     }
@@ -769,6 +782,7 @@ export async function regenerateTeamJingleToken(
   const teamRef = doc(db, TEAMS_COLLECTION, teamId)
   await updateDoc(teamRef, {
     jingleToken: newToken,
+    linkGenerationCount: nextCount,
     updatedAt: serverTimestamp(),
   })
 
@@ -837,3 +851,125 @@ export async function saveTeamPlayersByToken(token: string, players: Player[]): 
     players: sortedPlayers,
   }
 }
+
+/**
+ * Erzeugt die vollständige URL für einen Betreuer/Team-Link.
+ */
+export function getTeamLinkUrl(token: string): string {
+  const origin =
+    typeof window !== "undefined" && window.location?.origin
+      ? window.location.origin
+      : "https://kbc-turnier.web.app"
+  return `${origin}/team/${token}`
+}
+
+/**
+ * Generiert einen neuen Token für das Team und erhöht den Link-Zähler (bzw. setzt auf 1).
+ */
+export async function generateTeamLink(teamId: string): Promise<{ team: Team; fullUrl: string }> {
+  await ensureAnonymousAuth()
+
+  let team: Team | undefined
+  if (!isFirebaseConfigured) {
+    const idx = localMockTeams.findIndex((t) => t.id === teamId)
+    if (idx < 0) {
+      throw new Error("Team nicht gefunden.")
+    }
+    team = localMockTeams[idx]
+  } else {
+    const docSnap = await getDoc(doc(db, TEAMS_COLLECTION, teamId))
+    if (!docSnap.exists()) {
+      throw new Error("Team nicht gefunden.")
+    }
+    team = { ...(docSnap.data() as Team), id: docSnap.id }
+  }
+
+  const newToken = formatTeamJingleToken(team.shortName, team.gender)
+  const nextCount = (team.linkGenerationCount ?? 0) + 1
+
+  if (!isFirebaseConfigured) {
+    const idx = localMockTeams.findIndex((t) => t.id === teamId)
+    const updatedTeam: Team = {
+      ...localMockTeams[idx],
+      jingleToken: newToken,
+      linkGenerationCount: nextCount,
+      linkLastGeneratedAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    }
+    localMockTeams[idx] = updatedTeam
+    notifyMockListeners()
+    return {
+      team: updatedTeam,
+      fullUrl: getTeamLinkUrl(newToken),
+    }
+  }
+
+  const teamRef = doc(db, TEAMS_COLLECTION, teamId)
+  await updateDoc(teamRef, {
+    jingleToken: newToken,
+    linkGenerationCount: nextCount,
+    linkLastGeneratedAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  })
+
+  const updatedTeam: Team = {
+    ...team,
+    jingleToken: newToken,
+    linkGenerationCount: nextCount,
+  }
+
+  return {
+    team: updatedTeam,
+    fullUrl: getTeamLinkUrl(newToken),
+  }
+}
+
+/**
+ * Setzt den Linkzähler eines Teams auf 0 zurück (sperrt den Betreuerzugang).
+ */
+export async function resetTeamLinkCount(teamId: string): Promise<void> {
+  if (!isFirebaseConfigured) {
+    const idx = localMockTeams.findIndex((t) => t.id === teamId)
+    if (idx >= 0) {
+      localMockTeams[idx] = {
+        ...localMockTeams[idx],
+        linkGenerationCount: 0,
+        updatedAt: Timestamp.now(),
+      }
+      notifyMockListeners()
+    }
+    return
+  }
+
+  const teamRef = doc(db, TEAMS_COLLECTION, teamId)
+  await updateDoc(teamRef, {
+    linkGenerationCount: 0,
+    updatedAt: serverTimestamp(),
+  })
+}
+
+/**
+ * Setzt die Linkzähler aller Teams gesammelt auf 0 zurück.
+ */
+export async function resetAllTeamLinkCounts(): Promise<void> {
+  if (!isFirebaseConfigured) {
+    localMockTeams = localMockTeams.map((t) => ({
+      ...t,
+      linkGenerationCount: 0,
+      updatedAt: Timestamp.now(),
+    }))
+    notifyMockListeners()
+    return
+  }
+
+  const snapshot = await getDocs(collection(db, TEAMS_COLLECTION))
+  const batch = writeBatch(db)
+  snapshot.forEach((docSnap) => {
+    batch.update(doc(db, TEAMS_COLLECTION, docSnap.id), {
+      linkGenerationCount: 0,
+      updatedAt: serverTimestamp(),
+    })
+  })
+  await batch.commit()
+}
+

@@ -41,14 +41,14 @@ describe("SPEC-053: Umami Web Analytics Integration", () => {
     assert.equal(teamRoute.shouldTrack, true)
     assert.equal(teamRoute.sanitizedPath, "/team")
     assert.equal(teamRoute.sanitizedPath.includes(secretTeamToken), false)
-    assert.equal(teamRoute.title, "Betreuerbereich (Kader & Jingle)")
+    assert.equal(teamRoute.title, "Team-Bereich (Kader & Jingle)")
 
     const secretJingleToken = "RRK-WU14-00112233445566778899aabbccddeeff"
     const jingleRoute = sanitizeAnalyticsPath(`/jingle/${secretJingleToken}`)
     assert.equal(jingleRoute.shouldTrack, true)
     assert.equal(jingleRoute.sanitizedPath, "/jingle")
     assert.equal(jingleRoute.sanitizedPath.includes(secretJingleToken), false)
-    assert.equal(jingleRoute.title, "Betreuerbereich (Jingle Upload)")
+    assert.equal(jingleRoute.title, "Team-Bereich (Jingle Upload)")
   })
 
   test("AC-4: trackPageView ruft window.umami.track mit maskierter URL auf", () => {

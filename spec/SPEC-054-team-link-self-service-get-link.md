@@ -1,6 +1,6 @@
 # SPEC-054: Team-Link Self-Service (/team/get-link) & Linkzähler-Sperre
 
-> **Status**: In Review  
+> **Status**: In Abnahme  
 > **Typ**: Feature  
 > **Branch**: `feat/SPEC-054-team-link-self-service-get-link`  
 > **Autor**: Antigravity (nach `/grill-me` Abstimmung mit Nutzer)  
@@ -48,12 +48,12 @@ Zudem gibt es derzeit keine Zugriffskontrolle darüber, ob ein Betreuer-Link ber
 
 ### 3.1 Im Scope (Must-Have)
 
-- [ ] **FR-1: Datenbank-Erweiterung (`Team`-Schema)**:
+- [x] **FR-1: Datenbank-Erweiterung (`Team`-Schema)**:
   - Neues Feld `linkGenerationCount?: number` in `Team` (Standard `0`).
   - Neues optionales Feld `linkLastGeneratedAt?: Timestamp | null`.
   - Anpassung von `DATABASE.md` und `src/types/database.ts`.
 
-- [ ] **FR-2: Self-Service-Seite `/team/get-link` (`TeamGetLinkPage.tsx`)**:
+- [x] **FR-2: Self-Service-Seite `/team/get-link` (`TeamGetLinkPage.tsx`)**:
   - Eigene mobilfreundliche Route `/team/get-link` in `AppRouter.tsx` (ohne Admin-Layout, im CI-Design analog zum Betreuerbereich).
   - Zweistufige Auswahl:
     - Schritt 1: Dropdown / Auswahlliste der Vereine (eindeutig extrahierte Vereinsnamen ohne Geschlechtszusatz `(w)` / `(m)`).
@@ -68,13 +68,13 @@ Zudem gibt es derzeit keine Zugriffskontrolle darüber, ob ein Betreuer-Link ber
     - Bei Klick: Bestätigungs-Modal („Achtung: Der bisherige Link wird dadurch sofort ungültig. Fortfahren?“).
     - Nach Bestätigung: Erzeugt neuen Zufalls-Token, inkrementiert `linkGenerationCount`, speichert in Firestore und zeigt neuen Link inkl. Copy-Button.
 
-- [ ] **FR-3: Sperrlogik in der Betreuerseite (`TeamJinglePage.tsx`)**:
+- [x] **FR-3: Sperrlogik in der Betreuerseite (`TeamJinglePage.tsx`)**:
   - Prüfung beim Aufruf von `/team/:token` bzw. `/jingle/:token`:
     - Wenn `(team.linkGenerationCount ?? 0) === 0`: Zugriff verweigern und Sperrbildschirm anzeigen:
       *„Dieser Betreuer-Link ist gesperrt oder noch nicht aktiviert. Bitte generiere einen Link unter /team/get-link.“* inkl. Link zu `/team/get-link`.
     - Wenn `linkGenerationCount > 0`: Regulärer Zugriff auf Jingle-Upload und Kader-Verwaltung.
 
-- [ ] **FR-4: Turnierleitungs-Funktionen im Admin-Bereich (`/admin`)**:
+- [x] **FR-4: Turnierleitungs-Funktionen im Admin-Bereich (`/admin`)**:
   - In `TeamCard.tsx`:
     - Anzeige des Zählerstands (z. B. Badge `Link-Zähler: X` oder `Gesperrt (0)`).
     - Aktion: „Zähler zurücksetzen (auf 0)“ mit Bestätigung.
@@ -84,7 +84,7 @@ Zudem gibt es derzeit keine Zugriffskontrolle darüber, ob ein Betreuer-Link ber
     - Zusätzliche Spalte für den Link-Zähler.
     - Globaler Aktions-Button „Alle Link-Zähler auf 0 zurücksetzen“ mit Sicherheitsabfrage.
 
-- [ ] **FR-5: Service-Funktionen in `teamService.ts`**:
+- [x] **FR-5: Service-Funktionen in `teamService.ts`**:
   - `generateTeamLink(teamId: string): Promise<{ team: Team; fullUrl: string }>`:
     - Generiert neuen Token via `formatTeamJingleToken(...)`, setzt `linkGenerationCount = (current || 0) + 1`, aktualisiert `jingleToken` und Zeitstempel.
   - `resetTeamLinkCount(teamId: string): Promise<void>`:
@@ -92,7 +92,7 @@ Zudem gibt es derzeit keine Zugriffskontrolle darüber, ob ein Betreuer-Link ber
   - `resetAllTeamLinkCounts(): Promise<void>`:
     - Setzt per Batch-Update `linkGenerationCount = 0` für alle Teams.
 
-- [ ] **FR-6: Tag-Anpassung in `TeamJinglePage.tsx`**:
+- [x] **FR-6: Tag-Anpassung in `TeamJinglePage.tsx`**:
   - Der Badge im Header oben rechts wird von `Betreuer-Bereich` in `Team-Bereich` geändert.
 
 ### 3.2 Explizit Out-of-Scope
@@ -105,19 +105,19 @@ Zudem gibt es derzeit keine Zugriffskontrolle darüber, ob ein Betreuer-Link ber
 
 ### 4.1 Szenarien / Kriterien
 
-- [ ] **AC-1: Zweistufige Vereins- und Geschlechtsauswahl**
+- [x] **AC-1: Zweistufige Vereins- und Geschlechtsauswahl**
   - **Gegeben sei**: Ein Betreuer öffnet `/team/get-link`.
   - **Wenn**: Er die Seite sieht.
   - **Dann**: Sieht er zunächst ein Dropdown mit allen teilnehmenden Vereinen (ohne doppelte Einträge und ohne `(w)`/`(m)`-Zusatz).
   - **Wenn**: Ein Verein ausgewählt wird.
   - **Dann**: Werden im zweiten Dropdown nur die Altersklassen/Geschlechter angezeigt, die für diesen Verein existieren (z. B. `wU14` und `mU14`).
 
-- [ ] **AC-2: Erstmalige Link-Generierung bei Zähler = 0**
+- [x] **AC-2: Erstmalige Link-Generierung bei Zähler = 0**
   - **Gegeben sei**: Für ein Team steht `linkGenerationCount` auf `0`.
   - **Wenn**: Der Betreuer das Team auswählt und auf „Link erstellen & anzeigen“ klickt.
   - **Dann**: Wird ein neuer Token generiert, `linkGenerationCount` wird auf `1` gesetzt und der erzeugte Betreuerlink (`https://<domain>/team/<KURZNAME>-<GESCHLECHT>-<TOKEN>`) wird mit einem Copy-Button angezeigt.
 
-- [ ] **AC-3: Warnung und Bestätigung bei bestehendem Link (Zähler > 0)**
+- [x] **AC-3: Warnung und Bestätigung bei bestehendem Link (Zähler > 0)**
   - **Gegeben sei**: Für ein ausgewähltes Team ist `linkGenerationCount >= 1`.
   - **Wenn**: Das Team auf `/team/get-link` ausgewählt ist.
   - **Dann**: Erscheint ein deutlicher Warnhinweis, dass bereits ein Link existiert.
@@ -126,28 +126,28 @@ Zudem gibt es derzeit keine Zugriffskontrolle darüber, ob ein Betreuer-Link ber
   - **Wenn**: Der Dialog bestätigt wird.
   - **Dann**: Wird ein neuer Token generiert, der Zähler inkrementiert und der neue Link angezeigt. Der alte Link verliert sofort seine Gültigkeit.
 
-- [ ] **AC-4: Zugriffssperre auf `/team/:token` bei Zähler = 0**
+- [x] **AC-4: Zugriffssperre auf `/team/:token` bei Zähler = 0**
   - **Gegeben sei**: Der Linkzähler eines Teams steht auf `0`.
   - **Wenn**: Ein Betreuer die URL `/team/:token` aufruft.
   - **Dann**: Erscheint die Sperrmeldung („Dieser Betreuer-Link ist gesperrt oder noch nicht aktiviert. Bitte generiere einen Link unter /team/get-link“) und Upload- sowie Kaderfunktionen sind nicht zugänglich.
 
-- [ ] **AC-5: Admin-Reset einzeln und gesammelt**
+- [x] **AC-5: Admin-Reset einzeln und gesammelt**
   - **Gegeben sei**: Der Turnierleiter ist im Admin-Bereich (`/admin`).
   - **Wenn**: Er bei einem Team auf „Zähler zurücksetzen“ klickt und bestätigt.
   - **Dann**: Wird `linkGenerationCount` dieses Teams auf `0` gesetzt und dessen Betreuerbereich sofort gesperrt.
   - **Wenn**: Er im Jingle-Übersichts-Modal auf „Alle Zähler auf 0 zurücksetzen“ klickt und bestätigt.
   - **Dann**: Werden alle Teams auf `linkGenerationCount = 0` gesetzt.
 
-- [ ] **AC-6: Tag-Bezeichnung „Team-Bereich“**
+- [x] **AC-6: Tag-Bezeichnung „Team-Bereich“**
   - **Gegeben sei**: Ein Team-Link wird aufgerufen (`/team/:token`).
   - **Wenn**: Die Seite geladen ist.
   - **Dann**: Zeigt das Badge oben rechts den Text „Team-Bereich“ an (statt zuvor „Betreuer-Bereich“).
 
 ### 4.2 Allgemeine Qualitätskriterien
-- Keine fest kodierten Parameter.
-- Vollständige TypeScript-Typisierung ohne `any`.
-- Fehlerfreie Ausführung von `npm run build` und bestehende Tests laufen grün durch.
-- Sauberes Aufräumen aller Firestore-Listener (`unsubscribe`).
+- [x] Keine fest kodierten Parameter.
+- [x] Vollständige TypeScript-Typisierung ohne `any`.
+- [x] Fehlerfreie Ausführung von `npm run build` und bestehende Tests laufen grün durch.
+- [x] Sauberes Aufräumen aller Firestore-Listener (`unsubscribe`).
 
 ---
 

@@ -42,6 +42,8 @@ export interface Team {
   jingleStartTimeMs?: number
   jingleToken?: string
   jingleUpdatedAt?: Timestamp | null
+  linkGenerationCount?: number
+  linkLastGeneratedAt?: Timestamp | null
   players?: Player[]
   contactPerson?: {
     name: string

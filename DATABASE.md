@@ -98,6 +98,8 @@ export interface Team {
   jingleStartTimeMs?: number;        // Startzeitpunkt in Millisekunden (Standard: 0)
   jingleToken?: string;              // Strukturierter Secret-Token (<KURZNAME>-<MU14/WU14>-<HEX32>) für den Betreuer-Bereich (/team/...) ohne Login
   jingleUpdatedAt?: FirebaseFirestore.Timestamp | null; // Zeitpunkt der letzten Jingle-Aktualisierung
+  linkGenerationCount?: number;      // Anzahl der Link-Generierungen (0 = gesperrt / nicht aktiviert, >= 1 = aktiv)
+  linkLastGeneratedAt?: FirebaseFirestore.Timestamp | null; // Zeitpunkt der letzten Link-Generierung
   players?: Player[];                // Liste der gemeldeten Spielerinnen und Spieler
   contactPerson?: {
     name: string;

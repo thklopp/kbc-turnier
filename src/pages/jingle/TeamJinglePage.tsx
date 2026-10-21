@@ -339,12 +339,52 @@ export function TeamJinglePage() {
           <p className="text-sm text-slate-600 mb-6">
             {loadError || "Dieser Jingle-Upload-Link ist nicht mehr gültig."}
           </p>
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
-          >
-            Zur Turnier-Startseite
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              to="/team/get-link"
+              className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+            >
+              Link anfordern
+            </Link>
+            <Link
+              to="/"
+              className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+            >
+              Zur Startseite
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Sperrprüfung: Steht der Linkzähler auf 0, ist der Bereich gesperrt
+  if ((team.linkGenerationCount ?? 0) === 0) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-2xl p-6 shadow-sm border border-slate-200 text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-100 text-amber-600 mb-4">
+            <AlertCircle className="h-7 w-7" />
+          </div>
+          <h1 className="text-xl font-bold text-slate-900 mb-2">Team-Bereich gesperrt</h1>
+          <p className="text-sm text-slate-600 mb-6">
+            Dieser Betreuer-Link ist gesperrt oder noch nicht aktiviert. Bitte generiere einen Link unter{" "}
+            <span className="font-semibold text-slate-800">/team/get-link</span>.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              to="/team/get-link"
+              className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+            >
+              Link anfordern
+            </Link>
+            <Link
+              to="/"
+              className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+            >
+              Zur Startseite
+            </Link>
+          </div>
         </div>
       </div>
     )
@@ -380,7 +420,7 @@ export function TeamJinglePage() {
           </div>
           <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700 border border-blue-100">
             <Sparkles className="h-3 w-3" />
-            Betreuer-Bereich
+            Team-Bereich
           </span>
         </div>
       </header>
