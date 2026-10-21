@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import ReactMarkdown from "react-markdown"
 import { ArrowLeft, Info } from "lucide-react"
+import rrkLogo from "@/assets/images/RRK.webp"
 import { subscribeTournamentInfo, DEFAULT_INFO_MARKDOWN } from "@/services/infoService"
 import type { TournamentInfoConfig } from "@/types/database"
 
@@ -54,8 +55,13 @@ export function InfoPage() {
               <ReactMarkdown
                 components={{
                   h1: ({ children }) => (
-                    <h1 className="text-xl sm:text-2xl font-bold text-slate-900 first:mt-0 mt-6 mb-3 pb-2 border-b border-slate-100 flex items-center gap-2">
-                      {children}
+                    <h1 className="text-xl sm:text-2xl font-bold text-slate-900 first:mt-0 mt-6 mb-3 pb-2 border-b border-slate-100 flex items-center gap-2.5">
+                      <img
+                        src={rrkLogo}
+                        alt="RRK Logo"
+                        className="h-8 w-8 sm:h-9 sm:w-9 object-contain rounded-md shrink-0"
+                      />
+                      <span>{children}</span>
                     </h1>
                   ),
                   h2: ({ children }) => (
