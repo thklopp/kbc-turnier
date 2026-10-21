@@ -22,7 +22,7 @@ import {
   getAudioMimeType,
 } from "./teamService"
 
-export const CORNER_JINGLES_COLLECTION = "cornerJingles"
+export const CORNER_JINGLES_COLLECTION = "corners"
 const MOCK_CORNER_JINGLES_KEY = "kbc_mock_corner_jingles"
 export const MAX_AUDIO_FILE_SIZE = 5 * 1024 * 1024 // 5 MB
 
@@ -132,7 +132,7 @@ export async function uploadCornerJingleAudio(
     if (typeof FileReader === "undefined") {
       return {
         downloadUrl: `data:${getAudioMimeType(file.name, file.type)};base64,mock`,
-        storagePath: `teams/corners/mock_${jingleId}`,
+        storagePath: `corners/mock_${jingleId}`,
       }
     }
     return new Promise((resolve) => {
@@ -140,7 +140,7 @@ export async function uploadCornerJingleAudio(
       reader.onload = (e) =>
         resolve({
           downloadUrl: e.target?.result as string,
-          storagePath: `teams/corners/mock_${jingleId}`,
+          storagePath: `corners/mock_${jingleId}`,
         })
       reader.readAsDataURL(file)
     })
@@ -150,7 +150,7 @@ export async function uploadCornerJingleAudio(
 
   const ext = getAudioExtension(file.name)
   const mimeType = getAudioMimeType(file.name, file.type)
-  const storagePath = `teams/corners/${jingleId}_${Date.now()}.${ext}`
+  const storagePath = `corners/${jingleId}_${Date.now()}.${ext}`
   const storageRef = ref(storage, storagePath)
 
   const snapshot = await uploadBytes(storageRef, file, { contentType: mimeType })

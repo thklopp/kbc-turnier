@@ -40,8 +40,8 @@ Im Hallenhockey führen Strafecken (kurze Ecken) zu spannenden und dynamischen S
 
 ### 3.1 Im Scope (Must-Have)
 - [x] **Admin-Tab „Ecken-Jingles“**: Neuer Navigationspunkt im `AdminLayout` (`/admin#corners`) und entsprechende Einbindung in `AdminPage`.
-- [x] **Firestore Collection `cornerJingles`**:
-  - `id`: string (eindeutige Dokumenten-ID)
+- [x] **Firestore Collection `corners`**:
+  - `id`: string (eindeutige Dokumenten-ID / cornerId)
   - `name`: string (kurzer Name, z. B. „Techno Horn“, „Seven Nation Army“)
   - `audioUrl`: string (Firebase Storage Download-URL)
   - `storagePath`: string (Pfad in Firebase Storage zum sauberen Löschen)
@@ -49,7 +49,7 @@ Im Hallenhockey führen Strafecken (kurze Ecken) zu spannenden und dynamischen S
   - `isDefault`: boolean (ob dieser Jingle als Standard vorgewählt ist)
   - `createdAt`: Timestamp
   - `updatedAt`: Timestamp
-- [x] **Firebase Storage Upload**: Speicherung unter `/teams/corners/{jingleId}.{ext}` mit Validierung auf max. 5 MB und Audio-MIME-Types (kompatibel mit den bestehenden Storage-Rules für `/teams/{teamId}/**`).
+- [x] **Firebase Storage Upload**: Speicherung unter `/corners/{cornerId}.{ext}` mit Validierung auf max. 5 MB und Audio-MIME-Types.
 - [x] **Admin-UI zur Verwaltung**:
   - Übersichtliche Karten/Liste aller hinterlegten Ecken-Jingles mit Name, Startzeit, Format/Badge, Standard-Indikator.
   - Vorhör-Player (Play/Pause/Fade) für jeden Jingle.

@@ -15,8 +15,8 @@ firestore/
 │   └── {teamId}               # 16 Mannschaften (8x mU14, 8x wU14) mit Logos & Jingles
 ├── matches/
 │   └── {matchId}              # 40 Spiele (24 Samstag Gruppenphase, 16 Sonntag Finalphase)
-├── cornerJingles/
-│   └── {jingleId}             # Neutrale Ecken-Jingles für Strafecken
+├── corners/
+│   └── {cornerId}             # Neutrale Ecken-Jingles für Strafecken
 └── auditLogs/
     └── {logId}                # Protokollierung von Turnierleitungs-Aktionen (optional / audit)
 ```
@@ -181,16 +181,16 @@ export interface Match {
 
 ---
 
-## 4. Collection `cornerJingles`
+## 4. Collection `corners`
 
 Neutrale Audio-Jingles für Strafecken, die turnierweit auf dem Live-Desk abgespielt werden können.
 
 ```typescript
 export interface CornerJingle {
-  id: string;                                // Eindeutige Dokument-ID
+  id: string;                                // Eindeutige Dokument-ID ({cornerId})
   name: string;                              // Kurzer Name / Titel des Jingles
   audioUrl: string;                          // Firebase Storage Download-URL
-  storagePath: string;                       // Interner Storage-Pfad zum Löschen
+  storagePath: string;                       // Interner Storage-Pfad zum Löschen (/corners/{cornerId}.{ext})
   startTimeMs: number;                       // Startzeitpunkt in Millisekunden (Standard: 0)
   isDefault: boolean;                        // Genau ein Jingle als Standard vorgewählt
   fileSize?: number;                         // Dateigröße in Bytes (max. 5 MB)
@@ -238,11 +238,11 @@ export interface TeamStanding {
 ```
 storage/
 ├── teams/
-│   ├── {teamId}/
-│   │   ├── logo.{png|jpg|webp|svg}      # Maximale Upload-Größe: 2 MB
-│   │   └── jingle.{mp3|m4a|aac|wav|ogg} # Maximale Upload-Größe: 5 MB
-│   └── corners/
-│       └── {jingleId}.{mp3|m4a|aac|wav|ogg} # Maximale Upload-Größe: 5 MB (Ecken-Jingles)
+│   └── {teamId}/
+│       ├── logo.{png|jpg|webp|svg}      # Maximale Upload-Größe: 2 MB
+│       └── jingle.{mp3|m4a|aac|wav|ogg} # Maximale Upload-Größe: 5 MB
+└── corners/
+    └── {cornerId}.{mp3|m4a|aac|wav|ogg} # Maximale Upload-Größe: 5 MB (Ecken-Jingles)
 ```
 
 ---
@@ -270,7 +270,7 @@ service cloud.firestore {
       allow write: if request.auth != null;
     }
 
-    match /cornerJingles/{jingleId} {
+    match /corners/{cornerId} {
       allow read: if true;
       allow write: if request.auth != null;
     }
@@ -294,7 +294,7 @@ service firebase.storage {
                    && request.resource.size < 5 * 1024 * 1024; // Max 5 MB
     }
 
-    match /corner_jingles/{allPaths=**} {
+    match /corners/{allPaths=**} {
       allow read: if true;
       allow write: if request.auth != null
                    && request.resource.size < 5 * 1024 * 1024; // Max 5 MB
