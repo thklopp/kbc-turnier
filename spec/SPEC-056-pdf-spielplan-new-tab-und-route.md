@@ -1,6 +1,6 @@
 # SPEC-056: PDF-Spielplan im neuen Tab öffnen und direkte Route /pdf
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature / UX-Optimierung  
 > **Branch**: `feat/SPEC-056-pdf-spielplan-new-tab-und-route`  
 > **Autor**: Antigravity  
