@@ -106,6 +106,47 @@ npm run preview
 
 ---
 
+## 🧪 Lokale Testumgebung (Firebase Emulator & Testdaten)
+
+Um gefahrlos Änderungen an Code, Spielplänen oder Leitstand-Aktionen zu testen, ohne die echte Produktions-Datenbank zu manipulieren, steht die **Firebase Local Emulator Suite** zur Verfügung.
+
+### Voraussetzungen
+Der Firebase-Emulator benötigt eine Java-Laufzeitumgebung (JRE ab Version 11):
+- **macOS (via Homebrew)**: `brew install openjdk`
+- **Linux / Ubuntu**: `sudo apt install default-jre`
+- **Windows**: [OpenJDK](https://adoptium.net/) oder Java Runtime installieren.
+
+### Workflow: In 4 Schritten zur vollständigen Testumgebung
+
+1. **Aktuelle Produktionsdaten exportieren**:
+   Sichert alle Collections (`config`, `teams`, `matches`, `corners`, `auditLogs`) in `backup/production_snapshot.json`:
+   ```bash
+   npm run data:export
+   ```
+
+2. **Firebase Emulator starten**:
+   Startet lokale Instanzen für Firestore (Port 8080), Auth (Port 9099), Storage (Port 9199) und die Web-UI (Port 4000):
+   ```bash
+   npm run emulators
+   ```
+   > 🌐 **Emulator Web-UI**: [http://localhost:4000](http://localhost:4000)  
+   > Daten werden beim Beenden (`Ctrl+C`) automatisch im Ordner `backup/emulator_data` gesichert und beim nächsten Start wieder geladen.
+
+3. **Daten in den laufenden Emulator importieren**:
+   *(In einem zweiten Terminal ausführen, während der Emulator läuft)*:
+   ```bash
+   npm run data:import
+   ```
+
+4. **Web-App auf Emulator umschalten**:
+   In deiner `.env`-Datei aktivieren:
+   ```env
+   VITE_USE_FIREBASE_EMULATOR=true
+   ```
+   Anschließend `npm run dev` starten. Die App arbeitet nun vollständig isoliert gegen den lokalen Emulator!
+
+---
+
 ## 🚢 Deployment (Railway)
 
 Das Projekt enthält ein für Railway optimiertes Multi-Stage `Dockerfile`:
@@ -117,6 +158,7 @@ Das Projekt enthält ein für Railway optimiertes Multi-Stage `Dockerfile`:
 
 ## 📖 Dokumentation (Spec Driven Development)
 
+- [TEST_ENVIRONMENT.md](./TEST_ENVIRONMENT.md) – Detaillierte Anleitung zur lokalen Testumgebung, Firebase Emulator & Daten-Synchronisation.
 - [spec/README.md](./spec/README.md) – Spezifikations-Richtlinien, Vorlage & Lifecycle für neue Features und Bugfixes.
 - [ARCHITECTURE.md](./ARCHITECTURE.md) – Detaillierte Systemarchitektur, Datenfluss und Docker/Railway-Setup.
 - [DATABASE.md](./DATABASE.md) – NoSQL-Datenmodell (Collections, Schemas & Security Rules).

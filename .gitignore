@@ -1,7 +1,13 @@
 
 raspberry/
 
-# Logs
+# Firebase & Local Emulators
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
+backup/
+!backup/.gitkeep
 logs
 *.log
 npm-debug.log*

@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react"
 import { useNavigate, useLocation, Link } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
+import { isEmulatorActive } from "@/lib/firebase"
 import { UserRoundKey, ArrowLeft, AlertCircle, Lock, Mail } from "lucide-react"
 
 export function LoginPage() {
@@ -61,6 +62,13 @@ export function LoginPage() {
           <p className="mt-1 text-center text-xs text-slate-500 mb-6">
             Bitte melde dich an, um Spiele, Timer und Jingles zu steuern.
           </p>
+
+          {isEmulatorActive && (
+            <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 p-2.5 text-xs text-emerald-800 flex items-center gap-2">
+              <span className="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+              <span><strong>Lokaler Emulator aktiv:</strong> Neue Logins werden automatisch registriert.</span>
+            </div>
+          )}
 
           {!isConfigured && (
             <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-3.5 text-xs text-amber-800 flex items-start gap-2.5">

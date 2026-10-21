@@ -6,10 +6,11 @@ import {
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
   type User,
 } from "firebase/auth"
-import { auth, isFirebaseConfigured } from "@/lib/firebase"
+import { auth, isFirebaseConfigured, isEmulatorActive } from "@/lib/firebase"
 import { AuthContext } from "./auth-context-def"
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -42,7 +43,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         "Firebase ist noch nicht konfiguriert. Bitte erstelle deine .env Datei mit gültigen Zugangsdaten."
       )
     }
-    await signInWithEmailAndPassword(auth, email, password)
+    try {
+      await signInWithEmailAndPassword(auth, email, password)
+    } catch (err: unknown) {
+      const fbErr = err as { code?: string }
+      // Im lokalen Emulator: Falls der Benutzer noch nicht existiert, direkt anlegen und einloggen!
+      if (isEmulatorActive && (fbErr?.code === "auth/user-not-found" || fbErr?.code === "auth/invalid-credential")) {
+        try {
+          await createUserWithEmailAndPassword(auth, email, password)
+          return
+        } catch {
+          // Falls createUser fehlschlägt (z.B. User existiert bereits, aber falsches Passwort)
+          throw err
+        }
+      }
+      throw err
+    }
   }
 
   const logout = async () => {
