@@ -270,6 +270,11 @@ service cloud.firestore {
       allow write: if request.auth != null;
     }
 
+    match /cornerJingles/{jingleId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
     match /auditLogs/{logId} {
       allow read, write: if request.auth != null;
     }
@@ -284,6 +289,12 @@ rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
     match /teams/{teamId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null
+                   && request.resource.size < 5 * 1024 * 1024; // Max 5 MB
+    }
+
+    match /corner_jingles/{allPaths=**} {
       allow read: if true;
       allow write: if request.auth != null
                    && request.resource.size < 5 * 1024 * 1024; // Max 5 MB
