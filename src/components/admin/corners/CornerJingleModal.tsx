@@ -67,7 +67,7 @@ function CornerJingleModalContent({
   const [error, setError] = useState<string | null>(null)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const { play, stop, fadeOut, isPlaying } = useAudioPlayer()
+  const { play, stop, fadeOut, isPlaying, duration } = useAudioPlayer()
 
   const isAudioPlaying = previewAudioUrl ? isPlaying(previewAudioUrl) : false
 
@@ -315,28 +315,50 @@ function CornerJingleModalContent({
           </div>
 
           {/* Startzeit Offset */}
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="text-xs font-bold text-slate-700">
-                Startzeitpunkt im Jingle
-              </label>
-              <span className="text-xs font-mono font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-                {(startTimeMs / 1000).toFixed(1)}s ({startTimeMs} ms)
-              </span>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <label className="block text-xs font-bold text-slate-700">
+                  Startzeitpunkt im Jingle
+                </label>
+                <span className="text-[11px] font-mono text-slate-500">
+                  {(startTimeMs / 1000).toFixed(2)}s im Song
+                </span>
+              </div>
+
+              {/* Direkte Millisekunden-Eingabe */}
+              <div className="flex items-center">
+                <input
+                  type="number"
+                  min={0}
+                  max={300000}
+                  step={100}
+                  value={startTimeMs}
+                  onChange={(e) =>
+                    setStartTimeMs(Math.max(0, parseInt(e.target.value, 10) || 0))
+                  }
+                  disabled={!previewAudioUrl}
+                  placeholder="0"
+                  className="w-24 sm:w-28 rounded-l-lg border border-r-0 border-slate-300 bg-white px-2.5 py-1.5 text-xs font-mono font-bold text-slate-900 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500 disabled:opacity-50 text-right"
+                />
+                <span className="inline-flex items-center h-[31.5px] rounded-r-lg border border-l-0 border-slate-300 bg-slate-100 px-2 text-[11px] font-mono text-slate-500 select-none">
+                  ms
+                </span>
+              </div>
             </div>
 
             <input
               type="range"
               min={0}
-              max={60000}
-              step={500}
+              max={Math.max(60000, Math.round((duration || 0) * 1000), startTimeMs)}
+              step={100}
               value={startTimeMs}
               onChange={(e) => setStartTimeMs(Number(e.target.value))}
               disabled={!previewAudioUrl}
               className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-600 disabled:opacity-40"
             />
-            <p className="text-[11px] text-slate-400 mt-1">
-              Legt fest, ab welcher Sekunde die Musik beim Klick auf den Ecken-Button startet.
+            <p className="text-[11px] text-slate-400">
+              Legt fest, ab welcher Millisekunde die Musik beim Klick auf den Ecken-Button startet.
             </p>
           </div>
 
