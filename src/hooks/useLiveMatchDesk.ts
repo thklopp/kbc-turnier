@@ -239,6 +239,8 @@ export function useLiveMatchDesk(
       if (scoringTeam?.jingleUrl && scoringTeam.jingleUrl.trim() !== "") {
         try {
           play(scoringTeam.jingleUrl, scoringTeam.jingleStartTimeMs || 0, {
+            maxDurationMs: 15000,
+            fadeOutDurationMs: 1000,
             gain: scoringTeam.jingleGain,
           })
         } catch (audioErr) {
@@ -340,6 +342,22 @@ export function useLiveMatchDesk(
     )
   }, [match, stop, allMatches, teams])
 
+  const playJingle = useCallback(
+    (url?: string | null, startTimeMs?: number, gain?: number) => {
+      if (!url) return
+      if (isPlaying(url)) {
+        fadeOut(1000)
+        return
+      }
+      play(url, startTimeMs || 0, {
+        maxDurationMs: 15000,
+        fadeOutDurationMs: 1000,
+        gain,
+      })
+    },
+    [isPlaying, fadeOut, play]
+  )
+
   return {
     secondsRemaining,
     isRunning,
@@ -351,7 +369,7 @@ export function useLiveMatchDesk(
     decrementScore,
     updateGoalScorer,
     finishMatch,
-    playJingle: play,
+    playJingle,
     stopAudio: stop,
     fadeOutAudio: fadeOut,
     isPlayingAudio: isPlaying,

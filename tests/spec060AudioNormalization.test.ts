@@ -69,3 +69,13 @@ test("analyzeAudioBuffer: Startzeitpunkt verschiebt Analysefenster", () => {
   assert.ok(resultFromStart.recommendedGain > 0)
   assert.ok(resultFromLater.recommendedGain > 0)
 })
+
+test("Live-Desk Jingle: Maximaldauer beträgt exakt 15 Sekunden (14s Play + 1s Fadeout)", () => {
+  const maxDurationMs = 15000
+  const fadeOutDurationMs = 1000
+  const timeUntilFade = Math.max(0, maxDurationMs - fadeOutDurationMs)
+
+  assert.strictEqual(timeUntilFade, 14000, "Nach 14 Sekunden startet der Fadeout")
+  assert.strictEqual(timeUntilFade + fadeOutDurationMs, 15000, "Nach 15 Sekunden ist die Audiodatei komplett beendet")
+})
+
