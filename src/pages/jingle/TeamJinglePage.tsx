@@ -7,6 +7,8 @@ import {
   isSupportedAudioFile,
   AUDIO_ACCEPT_ATTRIBUTE,
 } from "@/services/teamService"
+import { useAudioPlayer } from "@/hooks/useAudioPlayer"
+import { calculateAudioGain } from "@/lib/audioNormalization"
 import type { Team, Player } from "@/types/database"
 import { TeamRosterManager } from "@/components/common/TeamRosterManager"
 import {
@@ -37,20 +39,35 @@ export function TeamJinglePage() {
   // Audio & File State
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [previewGain, setPreviewGain] = useState<number>(1.0)
   const [startTimeMs, setStartTimeMs] = useState<number>(0)
+  const [scrubTimeSec, setScrubTimeSec] = useState<number | null>(null)
 
-  // Playback State
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [currentTimeSec, setCurrentTimeSec] = useState<number>(0)
-  const [durationSec, setDurationSec] = useState<number>(0)
+  // Central Audio Player Integration
+  const {
+    play: playAudio,
+    pause: pauseAudio,
+    stop: stopAudioPlayer,
+    seek: seekAudio,
+    load: loadAudio,
+    isPlayingState,
+    currentTime: playerCurrentTime,
+    duration: playerDuration,
+    error: audioPlayerError,
+  } = useAudioPlayer()
 
   // Submission State
   const [saving, setSaving] = useState(false)
   const [saveSuccess, setSaveSuccess] = useState(false)
   const [actionError, setActionError] = useState<string | null>(null)
+  const displayError = actionError || audioPlayerError
 
-  const audioRef = useRef<HTMLAudioElement | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const isPlaying = isPlayingState
+  const durationSec = playerDuration
+  const displayCurrentTime =
+    scrubTimeSec !== null ? scrubTimeSec : isPlaying ? playerCurrentTime : startTimeMs / 1000
 
   // 1. Load team data by token
   useEffect(() => {
@@ -77,9 +94,10 @@ export function TeamJinglePage() {
         } else {
           setTeam(teamData)
           setPreviewUrl(teamData.jingleUrl)
+          setPreviewGain(teamData.jingleGain ?? 1.0)
           const startMs = teamData.jingleStartTimeMs ?? 0
           setStartTimeMs(startMs)
-          setCurrentTimeSec(startMs / 1000)
+          seekAudio(startMs / 1000)
         }
       } catch (err) {
         console.error("Fehler beim Laden der Team-Daten per Token:", err)
@@ -95,39 +113,40 @@ export function TeamJinglePage() {
     return () => {
       isMounted = false
     }
-  }, [token])
+  }, [token, seekAudio])
+
+  // Vorab-Laden für Audio-Dauer
+  useEffect(() => {
+    if (previewUrl) {
+      loadAudio(previewUrl)
+    }
+  }, [previewUrl, loadAudio])
+
 
   // Aktualisiert die Startzeit und synchronisiert bei Inaktivität den Slider
   const updateStartTime = (ms: number) => {
     const validMs = Math.max(0, ms)
     setStartTimeMs(validMs)
     if (!isPlaying) {
-      const sec = validMs / 1000
-      setCurrentTimeSec(sec)
-      if (audioRef.current) {
-        audioRef.current.currentTime = sec
-      }
+      setScrubTimeSec(null)
+      seekAudio(validMs / 1000)
     }
   }
 
   // Stoppt die Wiedergabe. Bei Stopp steht der Slider immer auf der eingestellten Startzeit
   const stopAudio = () => {
-    const targetSec = Math.max(0, startTimeMs / 1000)
-    if (audioRef.current) {
-      audioRef.current.pause()
-      audioRef.current.currentTime = targetSec
-    }
-    setIsPlaying(false)
-    setCurrentTimeSec(targetSec)
+    stopAudioPlayer()
+    setScrubTimeSec(null)
+    seekAudio(startTimeMs / 1000)
   }
 
   useEffect(() => {
     return () => {
-      stopAudio()
+      stopAudioPlayer()
     }
-  }, [])
+  }, [stopAudioPlayer])
 
-  // 2. Handle File Selection (MP3, M4A, AAC, WAV, OGG, max 10 MB) - Client-side preview only
+  // 2. Handle File Selection (MP3, M4A, AAC, WAV, OGG, max 10 MB)
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     setActionError(null)
     setSaveSuccess(false)
@@ -151,53 +170,24 @@ export function TeamJinglePage() {
     setSelectedFile(file)
     const localBlobUrl = URL.createObjectURL(file)
     setPreviewUrl(localBlobUrl)
+    calculateAudioGain(file, startTimeMs)
+      .then((g) => setPreviewGain(g))
+      .catch(() => {})
   }
 
-  // 3. Audio Player Events
-  const handleTimeUpdate = () => {
-    if (audioRef.current) {
-      setCurrentTimeSec(audioRef.current.currentTime)
-    }
-  }
-
-  const handleLoadedMetadata = () => {
-    if (audioRef.current) {
-      setDurationSec(audioRef.current.duration || 0)
-      if (!isPlaying) {
-        const startSec = Math.max(0, startTimeMs / 1000)
-        audioRef.current.currentTime = startSec
-        setCurrentTimeSec(startSec)
-      }
-    }
-  }
-
-  const handleAudioEnded = () => {
-    stopAudio()
-  }
-
-  // 4. Toggle Play / Pause (unbegrenzte Vorschau)
+  // 3. Toggle Play / Pause
   const handleTogglePlayPause = () => {
-    if (!previewUrl || !audioRef.current) return
+    if (!previewUrl) return
     setActionError(null)
 
     if (isPlaying) {
-      // Pause
-      audioRef.current.pause()
-      setIsPlaying(false)
+      pauseAudio()
       return
     }
 
-    // Play / Resume
-    audioRef.current
-      .play()
-      .then(() => {
-        setIsPlaying(true)
-      })
-      .catch((err) => {
-        console.warn("Wiedergabe fehlgeschlagen:", err)
-        setActionError("Die Audiowiedergabe konnte nicht gestartet werden.")
-        setIsPlaying(false)
-      })
+    const startPosSec = scrubTimeSec !== null ? scrubTimeSec : startTimeMs / 1000
+    setScrubTimeSec(null)
+    playAudio(previewUrl, Math.round(startPosSec * 1000), { gain: previewGain })
   }
 
   // Stopp Button: stoppt und setzt Slider auf die Startzeit zurück
@@ -205,33 +195,29 @@ export function TeamJinglePage() {
     stopAudio()
   }
 
-  // 5. Seek slider change
+  // 4. Seek slider change
   const handleSliderChange = (newSec: number) => {
-    setCurrentTimeSec(newSec)
-    if (audioRef.current) {
-      audioRef.current.currentTime = newSec
-    }
+    setScrubTimeSec(newSec)
+    seekAudio(newSec)
   }
 
-  // 6. Set current position as start time
+  // 5. Set current position as start time
   const handleSetCurrentAsStartTime = () => {
-    const ms = Math.round(currentTimeSec * 1000)
+    const ms = Math.round(displayCurrentTime * 1000)
     setStartTimeMs(ms)
+    setScrubTimeSec(null)
   }
 
-  // 7. Reset / Abbrechen
+  // 6. Reset / Abbrechen
   const handleReset = () => {
     const originalMs = team?.jingleStartTimeMs ?? 0
     setSelectedFile(null)
     setPreviewUrl(team?.jingleUrl ?? null)
+    setPreviewGain(team?.jingleGain ?? 1.0)
     setStartTimeMs(originalMs)
-    const targetSec = originalMs / 1000
-    if (audioRef.current) {
-      audioRef.current.pause()
-      audioRef.current.currentTime = targetSec
-    }
-    setIsPlaying(false)
-    setCurrentTimeSec(targetSec)
+    stopAudioPlayer()
+    setScrubTimeSec(null)
+    seekAudio(originalMs / 1000)
     setActionError(null)
     setSaveSuccess(false)
     if (fileInputRef.current) {
@@ -251,10 +237,12 @@ export function TeamJinglePage() {
       const updated = await saveTeamJingleByToken(token, {
         file: selectedFile,
         startTimeMs,
+        gain: previewGain,
       })
       setTeam(updated)
       setSelectedFile(null)
       setPreviewUrl(updated.jingleUrl)
+      setPreviewGain(updated.jingleGain ?? 1.0)
       setSaveSuccess(true)
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Fehler beim Speichern des Tor-Jingles."
@@ -291,6 +279,7 @@ export function TeamJinglePage() {
       setTeam(updated)
       setSelectedFile(null)
       setPreviewUrl(null)
+      setPreviewGain(1.0)
       setStartTimeMs(0)
       setSaveSuccess(true)
       if (fileInputRef.current) {
@@ -392,18 +381,6 @@ export function TeamJinglePage() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
-      {/* Hidden Audio Element for Playback */}
-      {previewUrl && (
-        <audio
-          ref={audioRef}
-          src={previewUrl}
-          onTimeUpdate={handleTimeUpdate}
-          onLoadedMetadata={handleLoadedMetadata}
-          onEnded={handleAudioEnded}
-          preload="metadata"
-        />
-      )}
-
       {/* Header */}
       <header className="border-b border-slate-200 bg-white/95 backdrop-blur sticky top-0 z-20">
         <div className="container mx-auto flex h-16 max-w-2xl items-center justify-between px-4">
@@ -512,12 +489,12 @@ export function TeamJinglePage() {
           </div>
         )}
 
-        {actionError && (
+        {displayError && (
           <div className="mb-6 rounded-xl bg-rose-50 border border-rose-200 p-4 text-sm text-rose-800 flex items-start gap-3">
             <AlertCircle className="h-5 w-5 text-rose-600 shrink-0 mt-0.5" />
             <div>
               <p className="font-semibold">Fehler</p>
-              <p className="text-xs text-rose-700 mt-0.5">{actionError}</p>
+              <p className="text-xs text-rose-700 mt-0.5">{displayError}</p>
             </div>
           </div>
         )}
@@ -598,7 +575,7 @@ export function TeamJinglePage() {
                   <div className="flex items-center gap-1.5 font-medium">
                     <Volume2 className="h-4 w-4 text-slate-500" />
                     <span className="font-mono">
-                      {formatMs(currentTimeSec)} / {formatMs(durationSec)}
+                      {formatMs(displayCurrentTime)} / {formatMs(durationSec)}
                     </span>
                   </div>
                   <div className="text-[11px] text-slate-500 font-mono">
@@ -613,7 +590,7 @@ export function TeamJinglePage() {
                     min="0"
                     max={durationSec || 100}
                     step="0.05"
-                    value={currentTimeSec}
+                    value={displayCurrentTime}
                     onChange={(e) => handleSliderChange(parseFloat(e.target.value))}
                     className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                   />
@@ -657,7 +634,7 @@ export function TeamJinglePage() {
                       className="inline-flex items-center gap-1.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1.5 text-xs font-semibold transition-colors"
                     >
                       <Clock className="h-3.5 w-3.5" />
-                      Aktuelle Position ({formatMs(currentTimeSec)}) als Startzeit übernehmen
+                      Aktuelle Position ({formatMs(displayCurrentTime)}) als Startzeit übernehmen
                     </button>
                     <button
                       type="button"

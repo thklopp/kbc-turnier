@@ -40,6 +40,7 @@ export interface Team {
   logoUrl: string | null
   jingleUrl: string | null
   jingleStartTimeMs?: number
+  jingleGain?: number
   jingleToken?: string
   jingleUpdatedAt?: Timestamp | null
   linkGenerationCount?: number
@@ -143,6 +144,7 @@ export interface CornerJingle {
   audioUrl: string
   storagePath: string
   startTimeMs: number
+  gain?: number
   isDefault: boolean
   fileSize?: number
   mimeType?: string

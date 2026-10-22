@@ -1,5 +1,6 @@
 import { useState } from "react"
 import type { Team } from "@/types/database"
+import type { AudioPlayOptions } from "@/hooks/useAudioPlayer"
 import { formatTeamJingleToken } from "@/services/teamService"
 import { Play, Square, Edit2, ShieldAlert, Link as LinkIcon, Check, ArrowLeftRight } from "lucide-react"
 
@@ -7,7 +8,7 @@ interface TeamCardProps {
   team: Team
   onEdit: (team: Team) => void
   onSwap?: (team: Team) => void
-  onPlayJingle: (url: string, startTimeMs?: number) => void
+  onPlayJingle: (url: string, startTimeMs?: number, options?: AudioPlayOptions) => void
   onStopJingle: () => void
   isPlayingJingle: boolean
 }
@@ -98,7 +99,9 @@ export function TeamCard({
             onClick={() =>
               isPlayingJingle
                 ? onStopJingle()
-                : onPlayJingle(team.jingleUrl!, team.jingleStartTimeMs || 0)
+                : onPlayJingle(team.jingleUrl!, team.jingleStartTimeMs || 0, {
+                    gain: team.jingleGain,
+                  })
             }
             className={`group inline-flex items-center justify-center h-8 px-2.5 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer overflow-hidden ${
               isPlayingJingle

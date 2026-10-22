@@ -63,7 +63,7 @@ export function CornerJingleManager() {
     if (isPlaying(jingle.audioUrl)) {
       fadeOut(1000)
     } else {
-      play(jingle.audioUrl, jingle.startTimeMs || 0)
+      play(jingle.audioUrl, jingle.startTimeMs || 0, { gain: jingle.gain })
     }
   }
 

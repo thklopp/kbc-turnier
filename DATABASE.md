@@ -98,6 +98,7 @@ export interface Team {
   logoUrl: string | null;            // Firebase Storage Download-URL (PNG/SVG/WebP)
   jingleUrl: string | null;          // Firebase Storage Download-URL (MP3, M4A, AAC, WAV, OGG)
   jingleStartTimeMs?: number;        // Startzeitpunkt in Millisekunden (Standard: 0)
+  jingleGain?: number;               // Lautstärke-Multiplikator zur Pegelnormalisierung (Standard: 1.0)
   jingleToken?: string;              // Strukturierter Secret-Token (<KURZNAME>-<MU14/WU14>-<HEX32>) für den Betreuer-Bereich (/team/...) ohne Login
   jingleUpdatedAt?: FirebaseFirestore.Timestamp | null; // Zeitpunkt der letzten Jingle-Aktualisierung
   linkGenerationCount?: number;      // Anzahl der Link-Generierungen (0 = gesperrt / nicht aktiviert, >= 1 = aktiv)
@@ -192,6 +193,7 @@ export interface CornerJingle {
   audioUrl: string;                          // Firebase Storage Download-URL
   storagePath: string;                       // Interner Storage-Pfad zum Löschen (/corners/{cornerId}.{ext})
   startTimeMs: number;                       // Startzeitpunkt in Millisekunden (Standard: 0)
+  gain?: number;                             // Lautstärke-Multiplikator zur Pegelnormalisierung (Standard: 1.0)
   isDefault: boolean;                        // Genau ein Jingle als Standard vorgewählt
   fileSize?: number;                         // Dateigröße in Bytes (max. 10 MB)
   mimeType?: string;                         // MIME-Type (audio/mpeg, audio/mp4, etc.)

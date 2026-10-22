@@ -21,6 +21,7 @@ import {
   getAudioExtension,
   getAudioMimeType,
 } from "./teamService"
+import { calculateAudioGain } from "@/lib/audioNormalization"
 
 export const CORNER_JINGLES_COLLECTION = "corners"
 const MOCK_CORNER_JINGLES_KEY = "kbc_mock_corner_jingles"
@@ -174,6 +175,7 @@ export async function createCornerJingle(params: {
 
   const { downloadUrl, storagePath } = await uploadCornerJingleAudio(jingleId, file)
   const mimeType = getAudioMimeType(file.name, file.type)
+  const gain = await calculateAudioGain(file, startTimeMs)
 
   if (!isFirebaseConfigured) {
     const list = getStoredMockCornerJingles()
@@ -188,6 +190,7 @@ export async function createCornerJingle(params: {
       audioUrl: downloadUrl,
       storagePath,
       startTimeMs: Math.max(0, startTimeMs || 0),
+      gain,
       isDefault: willBeDefault,
       fileSize: file.size,
       mimeType,
@@ -227,6 +230,7 @@ export async function createCornerJingle(params: {
     audioUrl: downloadUrl,
     storagePath,
     startTimeMs: Math.max(0, startTimeMs || 0),
+    gain,
     isDefault: shouldBeDefault,
     fileSize: file.size,
     mimeType,
@@ -261,15 +265,23 @@ export async function updateCornerJingle(
   },
   newFile?: File | null
 ): Promise<void> {
-  let fileData: { downloadUrl?: string; storagePath?: string; fileSize?: number; mimeType?: string } = {}
+  let fileData: {
+    downloadUrl?: string
+    storagePath?: string
+    fileSize?: number
+    mimeType?: string
+    gain?: number
+  } = {}
 
   if (newFile) {
     const uploaded = await uploadCornerJingleAudio(id, newFile)
+    const gain = await calculateAudioGain(newFile, updates.startTimeMs || 0)
     fileData = {
       downloadUrl: uploaded.downloadUrl,
       storagePath: uploaded.storagePath,
       fileSize: newFile.size,
       mimeType: getAudioMimeType(newFile.name, newFile.type),
+      gain,
     }
   }
 
@@ -288,6 +300,7 @@ export async function updateCornerJingle(
             updates.startTimeMs !== undefined
               ? Math.max(0, updates.startTimeMs)
               : item.startTimeMs,
+          gain: fileData.gain !== undefined ? fileData.gain : item.gain,
           isDefault: makeDefault ? true : item.isDefault,
           audioUrl: fileData.downloadUrl ?? item.audioUrl,
           storagePath: fileData.storagePath ?? item.storagePath,
@@ -337,6 +350,9 @@ export async function updateCornerJingle(
     patch.storagePath = fileData.storagePath
     patch.fileSize = fileData.fileSize
     patch.mimeType = fileData.mimeType
+  }
+  if (fileData.gain !== undefined) {
+    patch.gain = fileData.gain
   }
 
   batch.update(targetDocRef, patch)
