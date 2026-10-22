@@ -1,6 +1,6 @@
 # SPEC-061: Ausfallsicheres Audio-Playback mit CORS-Fallback & Ecken-Jingle Gain-Sync
 
-> **Status**: In Review  
+> **Status**: In Abnahme  
 > **Typ**: Bugfix  
 > **Branch**: fix/SPEC-061-audio-playback-cors-fallback  
 > **Autor**: Antigravity  
@@ -47,17 +47,17 @@ Dies führt zu folgendem kritischen Fehler:
 ## 3. Fachliche Anforderungen & Scope
 
 ### 3.1 Im Scope (Must-Have)
-- [ ] **Robuster Dual-Mode Audio-Player in `src/hooks/useAudioPlayer.ts`**:
+- [x] **Robuster Dual-Mode Audio-Player in `src/hooks/useAudioPlayer.ts`**:
   - Unterstützung für Direkt-Wiedergabe via nativem `HTMLAudioElement` ohne `crossOrigin`-Zwang.
   - Unterstützung für Web-Audio-Kette (`GainNode` + `DynamicsCompressorNode`) für Same-Origin-Quellen (z. B. `blob:`) oder wenn CORS verfügbar ist.
   - Sofortiger, fehlerfreier Fallback: Wenn `audio.onerror` feuert (CORS-Blockade) oder die URL eine `data:`-URL ist, wird das Audio direkt über ein ungebundenes HTML-Audioelement abgespielt.
   - Keine Stummschaltung (keine Stille durch MediaElementAudioSourceNode-Tainting).
   - Volle Unterstützung von `startTimeMs`, `maxDurationMs`, `fadeOutDurationMs`, `seek`, `play`, `stop` und `fadeOut`.
   - Lautstärkesteuerung im Fallback-Modus über `audio.volume = Math.max(0, Math.min(1.0, options?.gain ?? 1.0))`.
-- [ ] **Korrektur `src/services/cornerJingleService.ts`**:
+- [x] **Korrektur `src/services/cornerJingleService.ts`**:
   - Einbindung von `gain: typeof data.gain === "number" ? data.gain : 1.0` in `subscribeCornerJingles`.
   - Rückgabe von `gain` im Resultat von `createCornerJingle`.
-- [ ] **Firebase Storage CORS Template**:
+- [x] **Firebase Storage CORS Template**:
   - Bereitstellung einer `cors.json` im Projekt-Root zur einfachen Konfiguration via `gsutil` / Google Cloud SDK.
   - Dokumentation des Befehls in `TEST_ENVIRONMENT.md` bzw. `README.md`.
 
@@ -71,38 +71,38 @@ Dies führt zu folgendem kritischen Fehler:
 
 ### 4.1 Szenarien / Kriterien
 
-- [ ] **AC-1: Ecken-Jingle Wiedergabe nach dem Speichern (Admin)**
+- [x] **AC-1: Ecken-Jingle Wiedergabe nach dem Speichern (Admin)**
   - **Gegeben sei**: Ein Administrator lädt im `CornerJingleModal` eine MP3-Datei hoch, testet sie erfolgreich und klickt auf „Speichern“.
   - **Wenn**: Der Dialog geschlossen ist und der Play-Button des gespeicherten Jingles in `CornerJingleManager` geklickt wird,
   - **Dann**: Ertönt die Audiodatei sofort ab dem konfigurierten Startzeitpunkt, ohne Fehlermeldung oder CORS-Abbruch.
 
-- [ ] **AC-2: Ecken-Jingle am Live-Desk abspielen**
+- [x] **AC-2: Ecken-Jingle am Live-Desk abspielen**
   - **Gegeben sei**: Mindestens ein Ecken-Jingle ist in Firestore gespeichert und als Standard aktiv.
   - **Wenn**: Der Turnierleiter auf dem Live-Desk (`/admin#live`) auf den Button „Ecke: [Name]“ klickt,
   - **Dann**: Spielt der Jingle sofort ab.
   - **Wenn**: Nach 14 Sekunden keine Aktion erfolgt, fadet der Jingle innerhalb 1 Sekunde aus und stoppt nach 15 Sekunden.
   - **Wenn**: Während des Spielens erneut geklickt wird, fadet er sofort innerhalb von 1 Sekunde aus.
 
-- [ ] **AC-3: Fallback bei blockiertem CORS oder Data-URLs**
+- [x] **AC-3: Fallback bei blockiertem CORS oder Data-URLs**
   - **Gegeben sei**: Eine Audiodatei wird von einer Domain geladen, die keine CORS-Header mitsendet, oder im lokalen Mock-Modus als `data:`-URL.
   - **Wenn**: `play(url)` aufgerufen wird,
   - **Dann**: Blockiert der Player nicht, sondern spielt die Datei über das native HTML-Audioelement ab, wobei die Lautstärke über `audio.volume` geregelt wird.
 
-- [ ] **AC-4: Gain-Feld Sync in `cornerJingleService`**
+- [x] **AC-4: Gain-Feld Sync in `cornerJingleService`**
   - **Gegeben sei**: Ein Ecken-Jingle wurde mit einem berechneten `gain` in Firestore abgelegt.
   - **Wenn**: `subscribeCornerJingles` die Daten lädt,
   - **Dann**: Besitzt das geladene `CornerJingle`-Objekt die Eigenschaft `gain` mit dem korrekten Zahlenwert.
 
-- [ ] **AC-5: Team-Jingle Wiedergabe abgesichert**
+- [x] **AC-5: Team-Jingle Wiedergabe abgesichert**
   - **Gegeben sei**: Ein Team hat einen Torjingle in Firebase Storage hinterlegt.
   - **Wenn**: Der Jingle in `TeamCard`, `TeamEditModal` oder am Live-Desk abgespielt wird,
   - **Dann**: Ertönt der Torjingle zuverlässig und ohne CORS-Fehler.
 
 ### 4.2 Allgemeine Qualitätskriterien
-- [ ] Keine fest kodierten Grenzwerte oder URLs gemäß `AGENTS.md`.
-- [ ] 100 % TypeScript-Typisierung ohne `any`.
-- [ ] `npm run build` und `npm test` laufen fehlerfrei durch.
-- [ ] Sauberes Aufräumen aller Event-Listener und Timer.
+- [x] Keine fest kodierten Grenzwerte oder URLs gemäß `AGENTS.md`.
+- [x] 100 % TypeScript-Typisierung ohne `any`.
+- [x] `npm run build` und `npm test` laufen fehlerfrei durch.
+- [x] Sauberes Aufräumen aller Event-Listener und Timer.
 
 ---
 
