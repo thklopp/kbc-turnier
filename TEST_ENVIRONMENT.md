@@ -189,3 +189,14 @@ Falls du beim Testen Daten manipuliert hast und wieder den sauberen Ausgangszust
 ### Was passiert mit Tor-Jingles und Team-Logos?
 * Die Storage-Download-URLs der Teams und Jingles aus dem Production-Snapshot verweisen weiterhin auf die bestehenden Cloud-Storage-Dateien. Audio-Streams und Wappen funktionieren daher auch im lokalen Testbetrieb direkt weiter, ohne dass große Audio-Dateien synchronisiert werden müssen.
 * Neue Uploads, die du im Emulator-Modus durchführst, landen sicher im lokalen Storage-Emulator (`localhost:9199`).
+
+### Firebase Cloud Storage CORS einrichten (optional für Web Audio Limiter)
+Falls die Web Audio API Pegel-Normalisierung auch für Remote-Dateien aus Firebase Storage ohne Fallback genutzt werden soll, kann CORS auf dem Bucket aktiviert werden:
+```bash
+# Mit Google Cloud CLI:
+gcloud storage buckets update gs://kbc-turnier.firebasestorage.app --cors-file=cors.json
+
+# Alternativ mit gsutil:
+gsutil cors set cors.json gs://kbc-turnier.firebasestorage.app
+```
+*Hinweis*: Die App verfügt über einen automatischen Fallback auf natives HTML5 Audio, sodass alle Jingles auch ohne aktive CORS-Header auf dem Bucket immer zuverlässig abgespielt werden.
