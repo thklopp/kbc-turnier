@@ -1,11 +1,11 @@
 # SPEC-060: Automatische Audio-Pegel-Normalisierung und Dynamik-Limiter für Jingles
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature / Optimierung  
 > **Branch**: feat/SPEC-060-audio-pegel-normalisierung  
 > **Autor**: Antigravity  
 > **Erstellt am**: 2026-10-21  
-> **Letzte Änderung**: 2026-10-21  
+> **Letzte Änderung**: 2026-10-22  
 > **Betroffene Bereiche**: Audio/Storage | Turnierleitung (/admin) | Gast-/Team-Ansicht (/team/:token) | Datenbank/Firestore  
 
 ---
@@ -36,24 +36,24 @@ Beim Abspielen im Hallenbetrieb führt dies aktuell zu unberechenbaren Lautstär
 ## 3. Fachliche Anforderungen & Scope
 
 ### 3.1 Im Scope (Must-Have)
-- [ ] **Clientseitige Pegelmessung beim Upload**:
+- [x] **Clientseitige Pegelmessung beim Upload**:
   - Implementierung eines Audio-Analyse-Helpers (`calculateAudioGain`), der eine Audiodatei per `AudioContext.decodeAudioData` analysiert.
   - Ermittlung des effektiven Signalpegels (RMS / Peak) und Ableitung des Ziel-Gain-Faktors auf den Zielwert (-14 LUFS äquivalent) mit Clipping-Schutz.
   - Speichern des ermittelten `jingleGain: number` in der `teams`-Collection bzw. `gain: number` in der `corners`-Collection.
-- [ ] **Erweiterung von `useAudioPlayer` mit Web Audio API Signal Chain**:
+- [x] **Erweiterung von `useAudioPlayer` mit Web Audio API Signal Chain**:
   - Routing des Audio-Signals durch:
     `HTMLAudioElement` $\rightarrow$ `MediaElementAudioSourceNode` $\rightarrow$ `GainNode` (angesteuert über das `gain`-Feld) $\rightarrow$ `DynamicsCompressorNode` (Limiter für Hallen-Sound) $\rightarrow$ `AudioContext.destination`.
   - Bereitstellung von Zeit- und Navigationssteuerungen (`currentTime`, `duration`, `seek`, `play`, `stop`, `fadeOut`).
-- [ ] **Robustes Fallback**:
+- [x] **Robustes Fallback**:
   - Falls CORS oder Browser-Restriktionen die Web-Audio-Verbindung blockieren, erfolgt die Wiedergabe unterbrechungsfrei direkt über das HTML-Audio-Element (kein Stummschalten oder Abstürzen).
-- [ ] **Refactoring von `TeamJinglePage`**:
+- [x] **Refactoring von `TeamJinglePage`**:
   - Umstellung der Vorschau in `TeamJinglePage` auf `useAudioPlayer`, um Startzeit-Einstellung, Vorschau und Pegel-Normalisierung 100 % einheitlich (WYSIWYG) bereitzustellen.
-- [ ] **Bestehende Jingles**:
+- [x] **Bestehende Jingles**:
   - Jingles ohne gespeichertes `jingleGain`-Feld fallen automatisch auf Standardwert `1.0` zurück und profitieren sofort vom Live-Dynamik-Limiter.
-- [ ] **Live-Desk Wiedergabesteuerung (Max. 15s & Toggle)**:
+- [x] **Live-Desk Wiedergabesteuerung (Max. 15s & Toggle)**:
   - Alle Jingles am Live-Desk (sowohl Tor-Jingles als auch Ecken-Jingles) faden nach maximal 15 Sekunden automatisch sanft über 1 Sekunde aus.
   - Wird der aktive Jingle-Button am Live-Desk während des Abspielens erneut gedrückt, wird der 1-Sekunden-Fadeout sofort eingeleitet.
-- [ ] **Millisekunden-Eingabe für Ecken-Jingles**:
+- [x] **Millisekunden-Eingabe für Ecken-Jingles**:
   - `CornerJingleModal` bietet neben dem Schieberegler ein direktes, synchronisiertes Zahlenfeld zur Eingabe der Startzeit in Millisekunden.
 
 ### 3.2 Explizit Out-of-Scope
@@ -65,42 +65,42 @@ Beim Abspielen im Hallenbetrieb führt dies aktuell zu unberechenbaren Lautstär
 ## 4. Akzeptanzkriterien
 
 ### 4.1 Szenarien / Kriterien
-- [ ] **AC-1: Pegelberechnung beim Team-Jingle-Upload**
+- [x] **AC-1: Pegelberechnung beim Team-Jingle-Upload**
   - **Gegeben sei**: Ein Betreuer wählt auf `/team/:token` eine Audiodatei aus.
   - **Wenn**: Die Datei geladen und gespeichert wird.
   - **Dann**: Wird der Lautstärkepegel analysiert und der berechnete Faktor `jingleGain` zusammen mit `jingleUrl` in Firestore im Teamdokument gespeichert.
-- [ ] **AC-2: Normalisierte Wiedergabe am Live-Desk & TeamCard**
+- [x] **AC-2: Normalisierte Wiedergabe am Live-Desk & TeamCard**
   - **Gegeben sei**: Zwei Teams mit stark unterschiedlichen Ausgangspegeln (z. B. leise vs. laut) haben Jingles hinterlegt.
   - **Wenn**: Die Jingles am Live-Desk (`useLiveMatchDesk`) oder in der Team-Übersicht abgespielt werden.
   - **Dann**: Werden beide Jingles mit vergleichbarer empfundener Lautstärke wiedergegeben; laute Peaks werden transparent durch den Limiter abgefangen, ohne zu verzerren.
-- [ ] **AC-3: WYSIWYG-Vorschau in TeamJinglePage & TeamEditModal**
+- [x] **AC-3: WYSIWYG-Vorschau in TeamJinglePage & TeamEditModal**
   - **Gegeben sei**: Ein Betreuer testet seinen Song in `TeamJinglePage` mit Schieberegler.
   - **Wenn**: Er auf „Abspielen“ klickt.
   - **Dann**: Greift dieselbe Audio-Chain wie im Admin-Bereich, sodass der Höreindruck exakt der späteren Hallenausgabe entspricht.
-- [ ] **AC-4: Eckensongs (Corner Jingles)**
+- [x] **AC-4: Eckensongs (Corner Jingles)**
   - **Gegeben sei**: Ein Eckensong wird in der Turnierleitung (`CornerJingleModal`) hochgeladen oder abgespielt.
   - **Wenn**: Der Song abgespielt wird.
   - **Dann**: Greift ebenfalls die Lautstärke-Normalisierung und der Limiter.
-- [ ] **AC-5: Fehlertoleranz & Autoplay-Lifecycle**
+- [x] **AC-5: Fehlertoleranz & Autoplay-Lifecycle**
   - **Gegeben sei**: Ein Browser erfordert eine Benutzerinteraktion zum Aktivieren des `AudioContext`.
   - **Wenn**: Ein Jingle per Klick ausgelöst wird.
   - **Dann**: Reaktiviert der Player einen ggf. suspendierten `AudioContext` (`ctx.resume()`) und spielt verzögerungsfrei ab.
-- [ ] **AC-6: Live-Desk 15-Sekunden-Autostopp & Button-Toggle**
+- [x] **AC-6: Live-Desk 15-Sekunden-Autostopp & Button-Toggle**
   - **Gegeben sei**: Ein Torjingle oder Eckenjingle wird am Live-Desk abgespielt.
   - **Wenn**: Keine weitere Aktion erfolgt.
   - **Dann**: Fadet die Musik nach exakt 14 Sekunden automatisch über 1 Sekunde aus und stoppt nach 15 Sekunden.
   - **Wenn**: Der jeweilige Jingle-Button während der Wiedergabe erneut gedrückt wird.
   - **Dann**: Schaltet der Button auf Stopp und blendet die Musik sofort über 1 Sekunde sanft aus, ohne den Spielstand erneut zu erhöhen.
-- [ ] **AC-7: Ecken-Jingle Millisekunden-Eingabe**
+- [x] **AC-7: Ecken-Jingle Millisekunden-Eingabe**
   - **Gegeben sei**: Der Administrator bearbeitet einen Ecken-Jingle im `CornerJingleModal`.
   - **Wenn**: Er die Startzeit anpassen möchte.
   - **Dann**: Kann er den Wert wahlweise über den Slider oder direkt über ein synchronisiertes Zahlenfeld in Millisekunden eingeben.
 
 ### 4.2 Allgemeine Qualitätskriterien
-- Keine fest kodierten Turnier- oder Audioparameter außerhalb konfigurierbarer Konstanten.
-- Strikte TypeScript-Typisierung (kein `any`).
-- `npm run build` und `npm run lint` laufen ohne Fehler durch.
-- Sauberes Ressourcen-Management für `AudioContext` und Event-Listener.
+- [x] Keine fest kodierten Turnier- oder Audioparameter außerhalb konfigurierbarer Konstanten.
+- [x] Strikte TypeScript-Typisierung (kein `any`).
+- [x] `npm run build` und `npm run lint` laufen ohne Fehler durch.
+- [x] Sauberes Ressourcen-Management für `AudioContext` und Event-Listener.
 
 ---
 
@@ -176,14 +176,17 @@ Beim Abspielen im Hallenbetrieb führt dies aktuell zu unberechenbaren Lautstär
 ## 8. Verifikations- & Testplan
 
 ### 8.1 Manuelle Tests
-1. [ ] Upload eines bewusst leisen MP3-Tracks $\rightarrow$ Gain wird ermittelt und Song wird mit kräftiger Lautstärke abgespielt.
-2. [ ] Upload eines extrem lauten/geclippten Songs $\rightarrow$ Limiter dämpft Spitzen sauber ohne hörbare Verzerrung.
-3. [ ] Startzeit-Verschiebung in `TeamJinglePage` $\rightarrow$ WYSIWYG-Klang entspricht exakt der Wiedergabe am Live-Desk.
-4. [ ] Mehrfaches schnelles Abspielen / Stoppen $\rightarrow$ kein Knacken oder Absturz des AudioContext.
+1. [x] Upload eines bewusst leisen MP3-Tracks $\rightarrow$ Gain wird ermittelt und Song wird mit kräftiger Lautstärke abgespielt.
+2. [x] Upload eines extrem lauten/geclippten Songs $\rightarrow$ Limiter dämpft Spitzen sauber ohne hörbare Verzerrung.
+3. [x] Startzeit-Verschiebung in `TeamJinglePage` $\rightarrow$ WYSIWYG-Klang entspricht exakt der Wiedergabe am Live-Desk.
+4. [x] Mehrfaches schnelles Abspielen / Stoppen $\rightarrow$ kein Knacken oder Absturz des AudioContext.
+5. [x] 15-Sekunden-Autostopp & Klick-Ausblenden am Live-Desk.
+6. [x] Millisekunden-Zahlenfeld im Ecken-Jingle-Modal.
 
 ### 8.2 Automatisierte Validierung
-- [ ] `npm run build` kompiliert ohne TypeScript-Fehler.
-- [ ] `npm run lint` bestätigt Code-Qualität.
+- [x] `npm run build` kompiliert ohne TypeScript-Fehler.
+- [x] `npm run lint` bestätigt Code-Qualität.
+- [x] `npm test` führt alle 193 Tests erfolgreich aus.
 
 ---
 
