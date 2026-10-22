@@ -1,6 +1,6 @@
 # SPEC-061: Ausfallsicheres Audio-Playback mit CORS-Fallback & Ecken-Jingle Gain-Sync
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Bugfix  
 > **Branch**: fix/SPEC-061-audio-playback-cors-fallback  
 > **Autor**: Antigravity  
