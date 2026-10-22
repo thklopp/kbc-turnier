@@ -50,6 +50,11 @@ Beim Abspielen im Hallenbetrieb führt dies aktuell zu unberechenbaren Lautstär
   - Umstellung der Vorschau in `TeamJinglePage` auf `useAudioPlayer`, um Startzeit-Einstellung, Vorschau und Pegel-Normalisierung 100 % einheitlich (WYSIWYG) bereitzustellen.
 - [ ] **Bestehende Jingles**:
   - Jingles ohne gespeichertes `jingleGain`-Feld fallen automatisch auf Standardwert `1.0` zurück und profitieren sofort vom Live-Dynamik-Limiter.
+- [ ] **Live-Desk Wiedergabesteuerung (Max. 15s & Toggle)**:
+  - Alle Jingles am Live-Desk (sowohl Tor-Jingles als auch Ecken-Jingles) faden nach maximal 15 Sekunden automatisch sanft über 1 Sekunde aus.
+  - Wird der aktive Jingle-Button am Live-Desk während des Abspielens erneut gedrückt, wird der 1-Sekunden-Fadeout sofort eingeleitet.
+- [ ] **Millisekunden-Eingabe für Ecken-Jingles**:
+  - `CornerJingleModal` bietet neben dem Schieberegler ein direktes, synchronisiertes Zahlenfeld zur Eingabe der Startzeit in Millisekunden.
 
 ### 3.2 Explizit Out-of-Scope
 - Kein serverseitiges Transcoding oder Neuberechnen über Firebase Cloud Functions oder FFmpeg (bleibt rein clientseitig ohne Serverkosten).
@@ -80,6 +85,16 @@ Beim Abspielen im Hallenbetrieb führt dies aktuell zu unberechenbaren Lautstär
   - **Gegeben sei**: Ein Browser erfordert eine Benutzerinteraktion zum Aktivieren des `AudioContext`.
   - **Wenn**: Ein Jingle per Klick ausgelöst wird.
   - **Dann**: Reaktiviert der Player einen ggf. suspendierten `AudioContext` (`ctx.resume()`) und spielt verzögerungsfrei ab.
+- [ ] **AC-6: Live-Desk 15-Sekunden-Autostopp & Button-Toggle**
+  - **Gegeben sei**: Ein Torjingle oder Eckenjingle wird am Live-Desk abgespielt.
+  - **Wenn**: Keine weitere Aktion erfolgt.
+  - **Dann**: Fadet die Musik nach exakt 14 Sekunden automatisch über 1 Sekunde aus und stoppt nach 15 Sekunden.
+  - **Wenn**: Der jeweilige Jingle-Button während der Wiedergabe erneut gedrückt wird.
+  - **Dann**: Schaltet der Button auf Stopp und blendet die Musik sofort über 1 Sekunde sanft aus, ohne den Spielstand erneut zu erhöhen.
+- [ ] **AC-7: Ecken-Jingle Millisekunden-Eingabe**
+  - **Gegeben sei**: Der Administrator bearbeitet einen Ecken-Jingle im `CornerJingleModal`.
+  - **Wenn**: Er die Startzeit anpassen möchte.
+  - **Dann**: Kann er den Wert wahlweise über den Slider oder direkt über ein synchronisiertes Zahlenfeld in Millisekunden eingeben.
 
 ### 4.2 Allgemeine Qualitätskriterien
 - Keine fest kodierten Turnier- oder Audioparameter außerhalb konfigurierbarer Konstanten.
