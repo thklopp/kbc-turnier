@@ -4,6 +4,7 @@ import {
   generateTeamLink,
   extractClubName,
 } from "@/services/teamService"
+import { ensureAnonymousAuth } from "@/lib/firebase"
 import type { Team, GenderCategory } from "@/types/database"
 import {
   Sparkles,
@@ -34,6 +35,13 @@ export function TeamGetLinkPage() {
   } | null>(null)
   const [copied, setCopied] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
+  // Frühzeitige anonyme Authentifizierung im Hintergrund initiieren
+  useEffect(() => {
+    ensureAnonymousAuth().catch((err) => {
+      console.warn("Vorab-Authentifizierung im Hintergrund:", err)
+    })
+  }, [])
 
   // Echtzeit-Abonnement aller Teams (sauberes unsubscribe)
   useEffect(() => {
@@ -120,9 +128,20 @@ export function TeamGetLinkPage() {
         token: result.team.jingleToken || "",
         fullUrl: result.fullUrl,
       })
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Fehler beim Generieren des Links:", err)
-      setErrorMessage("Fehler beim Erzeugen des Links. Bitte versuche es erneut.")
+      const error = err as { code?: string; message?: string }
+      if (error?.code === "permission-denied" || error?.code?.includes("unauthorized")) {
+        setErrorMessage(
+          "Zugriff verweigert (Berechtigung fehlt). Bitte lade die Seite neu und versuche es erneut."
+        )
+      } else if (error?.code === "unavailable" || error?.message?.includes("offline")) {
+        setErrorMessage(
+          "Serververbindung unterbrochen. Bitte prüfe deine Internetverbindung und versuche es erneut."
+        )
+      } else {
+        setErrorMessage("Fehler beim Erzeugen des Links. Bitte versuche es erneut.")
+      }
     } finally {
       setIsGenerating(false)
     }
