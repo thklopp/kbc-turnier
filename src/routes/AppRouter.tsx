@@ -30,8 +30,9 @@ export function AppRouter() {
         {/* PDF-Spielplan (Vollbild-Viewer / Direkte Route) */}
         <Route path="/pdf" element={<PdfSchedulePage />} />
 
-        {/* Team-Link Self-Service (ohne Login) */}
+        {/* Team-Link Self-Service (ohne Login) & Alias-Weiterleitung */}
         <Route path="/team/get-link" element={<TeamGetLinkPage />} />
+        <Route path="/get-link" element={<Navigate to="/team/get-link" replace />} />
 
         {/* Team Tor-Jingle & Kader-Verwaltung über Unique-Link (ohne Login) */}
         <Route path="/jingle/:token" element={<TeamJinglePage />} />

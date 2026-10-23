@@ -1,5 +1,5 @@
 import { initializeApp, getApps, type FirebaseApp } from "firebase/app"
-import { getAuth, signInAnonymously, type Auth, connectAuthEmulator } from "firebase/auth"
+import { getAuth, signInAnonymously, type Auth, type User, connectAuthEmulator } from "firebase/auth"
 import { initializeFirestore, type Firestore, connectFirestoreEmulator } from "firebase/firestore"
 import { getStorage, type FirebaseStorage, connectStorageEmulator } from "firebase/storage"
 
@@ -66,15 +66,26 @@ if (isEmulatorActive && !globalObj.__FIREBASE_EMULATORS_CONNECTED__) {
 
 /**
  * Stellt sicher, dass ein Firebase-Nutzer angemeldet ist (anonym, falls nicht eingeloggt).
+ * Gibt den aktuellen Benutzer (oder null im Offline/Mock-Modus) zurück.
  */
-export async function ensureAnonymousAuth(): Promise<void> {
-  if (!isFirebaseConfigured && !isEmulatorActive) return
-  if (!auth.currentUser) {
-    try {
-      await signInAnonymously(auth)
-    } catch (err) {
-      console.warn("Anonyme Anmeldung fehlgeschlagen:", err)
-    }
+export async function ensureAnonymousAuth(): Promise<User | null> {
+  if (!isFirebaseConfigured && !isEmulatorActive) {
+    return null
+  }
+  if (auth.currentUser) {
+    return auth.currentUser
+  }
+  try {
+    const cred = await signInAnonymously(auth)
+    return cred.user
+  } catch (err: unknown) {
+    const error = err as { code?: string; message?: string }
+    console.error(
+      "⚠️ [Firebase Auth] Anonyme Anmeldung fehlgeschlagen:",
+      error?.code || err,
+      error?.message || ""
+    )
+    throw err
   }
 }
 
