@@ -1,6 +1,6 @@
 # SPEC-064: Vollständiges Online-Backup mit Zeitstempel & Mediendateien (Teams, Kader, Spielplan, Jingles, Logos, Admins)
 
-> **Status**: Entwurf  
+> **Status**: In Abnahme  
 > **Typ**: Feature / Tooling  
 > **Branch**: `feat/SPEC-064-vollstaendiges-online-backup`  
 > **Autor**: Antigravity  
@@ -40,30 +40,30 @@ Bisher existiert lediglich das Skript `npm run data:export` (`scripts/exportProd
 
 ### 3.1 Im Scope (Must-Have)
 
-- [ ] **Neuer Script-Befehl in `package.json`**:
+- [x] **Neuer Script-Befehl in `package.json`**:
   - `npm run backup:prod`: Führt das neue Skript `tsx scripts/backupProdData.ts` aus.
   - Optionaler Alias `npm run backup`.
-- [ ] **Zeitstempel-Ordnerstruktur**:
+- [x] **Zeitstempel-Ordnerstruktur**:
   - Jede Ausführung erzeugt ein Verzeichnis `backup/archive/backup-YYYY-MM-DD_HH-mm-ss/`.
-- [ ] **Vollständiger Firestore-Export**:
+- [x] **Vollständiger Firestore-Export**:
   - `config` (`tournament`, `info`)
   - `teams` (Stammdaten, Kontaktpersonen, `players`-Kader, `jingleToken`, `linkGenerationCount`, etc.)
   - `matches` (Spielplan mit allen 40 Partien, Schiedsrichtern, Toren, Ereignissen)
   - `corners` (Ecken-Jingles Konfiguration)
   - `auditLogs` (falls vorhanden)
   - Ablage als formatierte `snapshot.json` im Backup-Ordner.
-- [ ] **Physischer Download aller Mediendateien**:
+- [x] **Physischer Download aller Mediendateien**:
   - Team-Logos (`storage/teams/{teamId}/logo.<ext>`)
   - Team Tor-Jingles (`storage/teams/{teamId}/jingle.<ext>`)
   - Ecken-Jingles (`storage/corners/{cornerId}.<ext>`)
   - Erkennung der Dateiendung anhand des URLs bzw. des `content-type`-Headers beim Download.
   - Robuste Fehlerbehandlung: Ein einzelner fehlschlagender Download bricht nicht das gesamte Backup ab, sondern wird geloggt.
-- [ ] **Sicherung der Admin-Benutzer (Firebase Authentication)**:
+- [x] **Sicherung der Admin-Benutzer (Firebase Authentication)**:
   - Automatischer Versuch, `npx firebase auth:export` in den Unterordner `auth/accounts.json` auszuführen.
   - Falls Firebase CLI nicht authentifiziert ist: Erstellung von `auth/README.txt` mit einer exakten Schritt-für-Schritt-Anleitung, wie der Auth-Export mit einem Befehl durchgeführt werden kann.
-- [ ] **Metadaten-Manifest**:
+- [x] **Metadaten-Manifest**:
   - Im Backup wird eine `manifest.json` mit Datum, Projekt-ID, Anzahl der gesicherten Dokumente, Mediendateien und Fehlerprotokollen gespeichert.
-- [ ] **Rückwärtskompatibilität**:
+- [x] **Rückwärtskompatibilität**:
   - Der Snapshot wird zusätzlich nach `backup/production_snapshot.json` geschrieben, damit der bestehende Befehl `npm run data:import` für den Firebase-Emulator weiterhin wie gewohnt funktioniert.
 
 ### 3.2 Explizit Out-of-Scope
@@ -77,36 +77,36 @@ Bisher existiert lediglich das Skript `npm run data:export` (`scripts/exportProd
 
 ### 4.1 Szenarien / Kriterien
 
-- [ ] **AC-1: Aufruf des Backup-Skripts**
+- [x] **AC-1: Aufruf des Backup-Skripts**
   - **Gegeben sei**: Eine konfigurierte `.env`-Datei mit gültigen Firebase-Keys.
   - **Wenn**: Im Terminal `npm run backup:prod` ausgeführt wird.
   - **Dann**: Startet der Prozess, verbindet sich mit Firebase und legt unter `backup/archive/backup-YYYY-MM-DD_HH-mm-ss/` einen neuen Ordner an.
 
-- [ ] **AC-2: Firestore-Daten vollständig gesichert**
+- [x] **AC-2: Firestore-Daten vollständig gesichert**
   - **Gegeben sei**: Teams mit Spielkader, Spielplan und Konfiguration in der Cloud-Datenbank.
   - **Wenn**: Das Backup durchläuft.
   - **Dann**: Enthält `snapshot.json` im Backup-Verzeichnis alle Collections (`config`, `teams`, `matches`, `corners`, `auditLogs`), inklusive aller Spielkader-Einträge und Team-Link-Tokens.
 
-- [ ] **AC-3: Physischer Download von Logos und Jingles**
+- [x] **AC-3: Physischer Download von Logos und Jingles**
   - **Gegeben sei**: Teams und Ecken-Jingles mit hinterlegten URLs.
   - **Wenn**: Das Backup ausgeführt wird.
   - **Dann**: Werden alle referenzierten Bild- und Audiodateien in `storage/teams/{teamId}/...` bzw. `storage/corners/...` physisch gespeichert und sind lokal mit einem Media-Player / Bildbetrachter abspielbar/öffenbar.
 
-- [ ] **AC-4: Auth-Benutzer Handling**
+- [x] **AC-4: Auth-Benutzer Handling**
   - **Gegeben sei**: Das Backup-Skript läuft.
   - **Wenn**: Firebase CLI angemeldet ist, wird `auth/accounts.json` erzeugt.
   - **Dann**: Falls die CLI nicht angemeldet ist, bricht das Skript nicht ab, sondern legt `auth/README.txt` mit klaren Hinweisen an und quittiert dies mit einer gelben Statusmeldung.
 
-- [ ] **AC-5: Terminal-Zusammenfassung & Statusbericht**
+- [x] **AC-5: Terminal-Zusammenfassung & Statusbericht**
   - **Gegeben sei**: Das Skript hat alle Schritte ausgeführt.
   - **Wenn**: Der Prozess endet.
   - **Dann**: Zeigt das Terminal eine formatierte Zusammenfassung (Anzahl Dokumente, Teams, Matches, heruntergeladene Logos, heruntergeladene Jingles, Speicherpfad und Zeitbedarf).
 
 ### 4.2 Allgemeine Qualitätskriterien
 
-- [ ] Keine hardcodierten Pfade oder Anmeldedaten im Quellcode (`AGENTS.md`).
-- [ ] Strikte TypeScript-Typisierung ohne `any`.
-- [ ] `npm run build` und `npm run lint` laufen ohne Warnungen oder Fehler durch.
+- [x] Keine hardcodierten Pfade oder Anmeldedaten im Quellcode (`AGENTS.md`).
+- [x] Strikte TypeScript-Typisierung ohne `any`.
+- [x] `npm run build` und `npm run lint` laufen ohne Warnungen oder Fehler durch.
 
 ---
 
@@ -157,16 +157,16 @@ flowchart TD
 ## 6. Verifikations- & Testplan
 
 ### 6.1 Manuelle Tests
-1. [ ] Aufruf von `npm run backup:prod` im Terminal.
-2. [ ] Prüfung des neu erstellten Ordners `backup/archive/backup-...`.
-3. [ ] Kontrolle der `snapshot.json`: Sind alle 16 Teams, alle Kader (`players`), alle 40 Matches und die Ecken-Jingles enthalten?
-4. [ ] Kontrolle des `storage/`-Verzeichnisses: Sind die Logos und Audio-Dateien vorhanden und funktionstüchtig abspielbar?
-5. [ ] Kontrolle des `auth/`-Ordners.
-6. [ ] Prüfung, ob `npm run data:import` weiterhin funktioniert.
+1. [x] Aufruf von `npm run backup:prod` im Terminal.
+2. [x] Prüfung des neu erstellten Ordners `backup/archive/backup-...`.
+3. [x] Kontrolle der `snapshot.json`: Sind alle 16 Teams, alle Kader (`players`), alle 40 Matches und die Ecken-Jingles enthalten?
+4. [x] Kontrolle des `storage/`-Verzeichnisses: Sind die Logos und Audio-Dateien vorhanden und funktionstüchtig abspielbar?
+5. [x] Kontrolle des `auth/`-Ordners: accounts.json erfolgreich angelegt.
+6. [x] Prüfung, ob `npm run data:import` weiterhin funktioniert.
 
 ### 6.2 Automatisierte Validierung
-- [ ] `npm run lint` fehlerfrei.
-- [ ] `npm run build` fehlerfrei.
+- [x] `npm run lint` fehlerfrei.
+- [x] `npm run build` fehlerfrei.
 
 ---
 

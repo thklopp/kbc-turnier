@@ -147,6 +147,26 @@ Der Firebase-Emulator benötigt eine Java-Laufzeitumgebung (JRE ab Version 11):
 
 ---
 
+## 💾 Vollständiges Online-Backup mit Mediendateien & Admins
+
+Um vor Turnierbeginn oder größeren Änderungen ein vollständiges, autarkes Offline-Backup aller Online-Daten (Firestore, Wappen/Logos, Tor-Jingles, Ecken-Jingles und Admins) zu ziehen:
+
+```bash
+npm run backup:prod
+# oder kurz:
+npm run backup
+```
+
+Das Skript:
+1. Erstellt einen zeitgestempelten Ordner unter `backup/archive/backup-YYYY-MM-DD_HH-mm-ss/`.
+2. Sichert alle Firestore-Collections (`config`, `teams` inkl. gemeldeter Spieler & Team-Tokens, `matches`, `corners`, `auditLogs`) in `snapshot.json`.
+3. Lädt alle aktiven **Team-Logos** und **Tor-Jingles** sowie **Ecken-Jingles** physisch herunter (`storage/`).
+4. Sichert die **Admin-Benutzerkonten** via Firebase Authentication (`auth/`).
+5. Schreibt ein `manifest.json` mit einer vollständigen Übersicht aller gesicherten Datensätze und Dateigrößen.
+6. Aktualisiert automatisch `backup/production_snapshot.json` zur Weiternutzung im Emulator.
+
+---
+
 ## 🚢 Deployment (Railway)
 
 Das Projekt enthält ein für Railway optimiertes Multi-Stage `Dockerfile`:
