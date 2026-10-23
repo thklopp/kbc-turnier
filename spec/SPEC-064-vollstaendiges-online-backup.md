@@ -1,6 +1,6 @@
 # SPEC-064: Vollständiges Online-Backup mit Zeitstempel & Mediendateien (Teams, Kader, Spielplan, Jingles, Logos, Admins)
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature / Tooling  
 > **Branch**: `feat/SPEC-064-vollstaendiges-online-backup`  
 > **Autor**: Antigravity  
