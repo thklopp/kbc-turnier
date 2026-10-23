@@ -1,6 +1,6 @@
 # SPEC-062: Behebung des Link-Erzeugungsfehlers auf Mobilgeräten (/team/get-link) & Anonymous Auth
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Bugfix  
 > **Branch**: `fix/SPEC-062-mobile-team-get-link-anonymous-auth-fix`  
 > **Autor**: Antigravity  
