@@ -1,6 +1,6 @@
 # SPEC-063: Teamverwaltung – Farbgebung Tags (Blue/Fuchsia), Schreibweise mU14/wU14, Konfigurationsstatus & Grüner Card-Rahmen
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature / UI-Verbesserung  
 > **Branch**: feat/SPEC-063-teamverwaltung-tags-und-vollstaendig-konfiguriert-status  
 > **Autor**: Antigravity  
@@ -137,13 +137,13 @@ Auf der Seite **Teamverwaltung** (`/admin/teams`) weicht die visuelle Darstellun
 ## 7. Verifikations- & Testplan
 
 ### 7.1 Manuelle Tests
-1. [ ] Aufrufen von `/admin/teams`.
-2. [ ] Prüfen der Tags auf den Team-Cards: `wU14` in Fuchsia, `mU14` in Blau, Gruppe jeweils passend eingefärbt.
-3. [ ] Prüfen der Schreibweise: Keine verzerrende Großschreibung `WU14`/`MU14`, sondern sauberes `wU14` und `mU14`.
-4. [ ] Prüfen des Filterleisten-Tags: Zeigt z. B. `X / 16 Teams konfiguriert`.
-5. [ ] Prüfen eines vollständig konfigurierten Teams: Grüner Rahmen sichtbar.
-6. [ ] Prüfen eines unvollständigen Teams: Normaler grauer Rahmen.
+1. [x] Aufrufen von `/admin/teams`.
+2. [x] Prüfen der Tags auf den Team-Cards: `wU14` in Fuchsia, `mU14` in Blau, Gruppe jeweils passend eingefärbt.
+3. [x] Prüfen der Schreibweise: Keine verzerrende Großschreibung `WU14`/`MU14`, sondern sauberes `wU14` und `mU14`.
+4. [x] Prüfen des Filterleisten-Tags: Zeigt z. B. `X / 16 Teams konfiguriert`.
+5. [x] Prüfen eines vollständig konfigurierten Teams: Grüner Rahmen sichtbar.
+6. [x] Prüfen eines unvollständigen Teams: Normaler grauer Rahmen.
 
 ### 7.2 Automatisierte Validierung
-- [ ] `npm run build` fehlerfrei.
-- [ ] `npm run lint` fehlerfrei.
+- [x] `npm run build` fehlerfrei.
+- [x] `npm run lint` fehlerfrei.
