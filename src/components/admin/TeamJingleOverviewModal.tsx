@@ -175,7 +175,7 @@ export function TeamJingleOverviewModal({
             <button
               onClick={() => setFilterGender("wU14")}
               className={`px-3 py-1 rounded-md transition-colors ${
-                filterGender === "wU14" ? "bg-white text-pink-700 shadow-sm" : "text-slate-600 hover:text-slate-900"
+                filterGender === "wU14" ? "bg-white text-fuchsia-700 shadow-sm" : "text-slate-600 hover:text-slate-900"
               }`}
             >
               wU14 ({teams.filter((t) => t.gender === "wU14").length})
@@ -261,8 +261,8 @@ export function TeamJingleOverviewModal({
                         <span
                           className={`text-[10px] font-bold px-1.5 py-0.2 rounded ${
                             team.gender === "wU14"
-                              ? "bg-pink-100 text-pink-700"
-                              : "bg-blue-100 text-blue-700"
+                              ? "bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-200"
+                              : "bg-blue-50 text-blue-700 border border-blue-200"
                           }`}
                         >
                           {team.gender}

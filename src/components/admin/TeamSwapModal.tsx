@@ -139,12 +139,12 @@ function TeamSwapModalContent({
                 onClick={() => handleGenderChange("wU14")}
                 className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-bold transition-all cursor-pointer ${
                   gender === "wU14"
-                    ? "bg-white text-pink-700 shadow-xs"
+                    ? "bg-white text-fuchsia-700 shadow-xs"
                     : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 <span>wU14 (Mädchen)</span>
-                <span className="rounded-full bg-pink-100 px-1.5 py-0.2 text-[10px] text-pink-700">
+                <span className="rounded-full bg-fuchsia-100 px-1.5 py-0.2 text-[10px] text-fuchsia-700">
                   {teams.filter((t) => t.gender === "wU14").length}
                 </span>
               </button>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import type { Team, Match, GenderCategory, TournamentGroup } from "@/types/database"
-import { subscribeTeams, seedDefaultTeams, saveTeam } from "@/services/teamService"
+import { subscribeTeams, seedDefaultTeams, saveTeam, isTeamFullyConfigured } from "@/services/teamService"
 import { subscribeMatches } from "@/services/matchService"
 import { useAudioPlayer } from "@/hooks/useAudioPlayer"
 import { TeamCard } from "./TeamCard"
@@ -59,6 +59,7 @@ export function TeamList() {
 
   const wu14Count = teams.filter((t) => t.gender === "wU14").length
   const mu14Count = teams.filter((t) => t.gender === "mU14").length
+  const fullyConfiguredCount = teams.filter(isTeamFullyConfigured).length
 
   const handleEdit = (team: Team) => {
     setSelectedTeam(team)
@@ -178,7 +179,7 @@ export function TeamList() {
             <button
               onClick={() => setGenderFilter("wU14")}
               className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-                genderFilter === "wU14" ? "bg-white text-pink-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
+                genderFilter === "wU14" ? "bg-white text-fuchsia-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
               }`}
             >
               wU14 ({wu14Count}/8)
@@ -223,8 +224,14 @@ export function TeamList() {
 
         {/* Stats summary */}
         <div className="text-xs font-semibold text-slate-600 flex items-center gap-3">
-          <span className={`px-2 py-0.5 rounded-full ${teams.length === 16 ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`}>
-            {teams.length} / 16 Teams konfiguriert
+          <span
+            className={`px-2.5 py-1 rounded-full border text-xs font-semibold ${
+              fullyConfiguredCount === 16
+                ? "bg-emerald-100 text-emerald-800 border-emerald-200"
+                : "bg-amber-100 text-amber-800 border-amber-200"
+            }`}
+          >
+            {fullyConfiguredCount} / 16 Teams konfiguriert
           </span>
         </div>
       </div>

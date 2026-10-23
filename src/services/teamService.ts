@@ -1004,3 +1004,18 @@ export async function resetAllTeamLinkCounts(): Promise<void> {
   await batch.commit()
 }
 
+/**
+ * Prüft, ob ein Team vollständig konfiguriert ist:
+ * 1. Link-Zähler > 0 (linkGenerationCount > 0)
+ * 2. Tor-Jingle hochgeladen (jingleUrl vorhanden und nicht leer)
+ * 3. Mindestens 6 Spieler im Kader eingetragen
+ */
+export function isTeamFullyConfigured(team: Team): boolean {
+  const hasLink = (team.linkGenerationCount ?? 0) > 0
+  const hasJingle = Boolean(team.jingleUrl && team.jingleUrl.trim().length > 0)
+  const hasSixPlayers =
+    (team.players?.filter((p) => p.firstName?.trim() || p.lastName?.trim() || p.number).length ?? 0) >= 6
+  return hasLink && hasJingle && hasSixPlayers
+}
+
+

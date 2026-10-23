@@ -1,7 +1,7 @@
 import { useState } from "react"
 import type { Team } from "@/types/database"
 import type { AudioPlayOptions } from "@/hooks/useAudioPlayer"
-import { formatTeamJingleToken } from "@/services/teamService"
+import { formatTeamJingleToken, isTeamFullyConfigured } from "@/services/teamService"
 import { Play, Square, Edit2, ShieldAlert, Link as LinkIcon, Check, ArrowLeftRight } from "lucide-react"
 
 interface TeamCardProps {
@@ -23,6 +23,10 @@ export function TeamCard({
 }: TeamCardProps) {
   const [copied, setCopied] = useState(false)
   const isFemale = team.gender === "wU14"
+  const isConfigured = isTeamFullyConfigured(team)
+  const tagColorClass = isFemale
+    ? "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200"
+    : "bg-blue-50 text-blue-700 border-blue-200"
 
   const handleCopyLink = async () => {
     const token = formatTeamJingleToken(team.shortName, team.gender, team.jingleToken)
@@ -37,21 +41,23 @@ export function TeamCard({
   }
 
   return (
-    <div className="flex flex-col justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow">
+    <div
+      className={`flex flex-col justify-between rounded-xl bg-white p-4 shadow-sm hover:shadow-md transition-all ${
+        isConfigured ? "border border-emerald-500 ring-1 ring-emerald-500" : "border border-slate-200"
+      }`}
+    >
       <div>
         {/* Top Badges */}
         <div className="flex items-center justify-between gap-2 mb-3">
           <div className="flex items-center gap-1.5">
             <span
-              className={`rounded-md px-2 py-0.5 text-[11px] font-bold tracking-wide uppercase ${
-                isFemale
-                  ? "bg-pink-100 text-pink-700 border border-pink-200"
-                  : "bg-blue-100 text-blue-700 border border-blue-200"
-              }`}
+              className={`rounded-md px-2 py-0.5 text-[11px] font-bold tracking-wide border ${tagColorClass}`}
             >
               {team.gender}
             </span>
-            <span className="rounded-md bg-slate-100 border border-slate-200 px-2 py-0.5 text-[11px] font-bold text-slate-700">
+            <span
+              className={`rounded-md px-2 py-0.5 text-[11px] font-bold tracking-wide border ${tagColorClass}`}
+            >
               Gruppe {team.group}
             </span>
             <span
