@@ -2,6 +2,7 @@ import type { Timestamp } from "firebase/firestore"
 
 export type GenderCategory = "mU14" | "wU14"
 export type TournamentGroup = "A" | "B"
+export type AllstarVotingStatus = "upcoming" | "open" | "closed"
 
 export interface TournamentConfig {
   id: "tournament"
@@ -13,6 +14,7 @@ export interface TournamentConfig {
   activeDay: "saturday" | "sunday"
   courtsCount: number
   rotationPattern: "2w_2m"
+  allstarVotingStatus?: AllstarVotingStatus
   allstarVotingOpen?: boolean
   updatedAt?: Timestamp
   updatedBy?: string

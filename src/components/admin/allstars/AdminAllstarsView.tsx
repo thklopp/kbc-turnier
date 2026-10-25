@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo } from "react"
 import type { Team, GenderCategory } from "@/types/database"
-import type { AllstarVote, AllstarCategoryEvaluation } from "@/types/allstars"
+import type { AllstarVote, AllstarCategoryEvaluation, AllstarVotingStatus } from "@/types/allstars"
 import { subscribeTeams } from "@/services/teamService"
 import { subscribeTournamentConfig } from "@/services/configService"
 import {
   subscribeAllstarVotes,
   evaluateAllstars,
-  setAllstarVotingOpen,
+  setAllstarVotingStatus,
 } from "@/services/allstarService"
 import {
   Star,
@@ -16,7 +16,6 @@ import {
   AlertTriangle,
   Lock,
   Unlock,
-  Copy,
   ChevronDown,
   ChevronUp,
   Loader2,
@@ -26,12 +25,11 @@ import {
 export function AdminAllstarsView() {
   const [teams, setTeams] = useState<Team[]>([])
   const [votes, setVotes] = useState<AllstarVote[]>([])
-  const [isVotingOpen, setIsVotingOpen] = useState(true)
+  const [votingStatus, setVotingStatus] = useState<AllstarVotingStatus>("upcoming")
   const [selectedGender, setSelectedGender] = useState<GenderCategory>("wU14")
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [isToggling, setIsToggling] = useState(false)
-  const [copySuccess, setCopySuccess] = useState<string | null>(null)
 
   // Expand / Collapse State
   const [expandedPositions, setExpandedPositions] = useState<Set<string>>(
@@ -77,7 +75,7 @@ export function AdminAllstarsView() {
     )
 
     const unsubConfig = subscribeTournamentConfig((cfg) => {
-      setIsVotingOpen(cfg.allstarVotingOpen !== false)
+      setVotingStatus(cfg.allstarVotingStatus || (cfg.allstarVotingOpen === false ? "closed" : "open"))
     })
 
     // Sicherheits-Timeout: Nach maximal 2 Sekunden Ladespinner beenden,
@@ -106,10 +104,11 @@ export function AdminAllstarsView() {
   const activeEvaluation: AllstarCategoryEvaluation =
     selectedGender === "wU14" ? evaluationWu14 : evaluationMu14
 
-  const toggleVotingStatus = async () => {
+  const handleStatusChange = async (newStatus: AllstarVotingStatus) => {
+    if (newStatus === votingStatus || isToggling) return
     try {
       setIsToggling(true)
-      await setAllstarVotingOpen(!isVotingOpen)
+      await setAllstarVotingStatus(newStatus)
     } catch (err) {
       console.error("Fehler beim Umschalten des Abstimmungsstatus:", err)
     } finally {
@@ -124,56 +123,6 @@ export function AdminAllstarsView() {
       else next.add(posKey)
       return next
     })
-  }
-
-  const handleCopyForCeremony = async () => {
-    const buildCategoryText = (evalData: AllstarCategoryEvaluation) => {
-      const gLabel = evalData.gender === "wU14" ? "MÄDCHEN (wU14)" : "JUNGS (mU14)"
-      let txt = `=====================================\n`
-      txt += `⭐ ALLSTAR-TEAM ${gLabel}\n`
-      txt += `Kurt-Becker-Cup 2026\n`
-      txt += `=====================================\n\n`
-
-      // Torwart
-      txt += `🧤 TORWART:\n`
-      if (evalData.positions.goalkeeper.winners.length > 0) {
-        evalData.positions.goalkeeper.winners.forEach((p) => {
-          txt += `   • #${p.playerNumber} ${p.playerName} (${p.teamName}) – ${p.votesCount} Stimmen\n`
-        })
-      } else {
-        txt += `   • (Noch keine Stimmen)\n`
-      }
-      if (evalData.positions.goalkeeper.hasTieAtCutoff) {
-        txt += `   ⚠️ HINWEIS: Gleichstand auf der Torwart-Position!\n`
-      }
-
-      // Feldspieler
-      txt += `\n🏑 FELDPLAYER (5 Plätze):\n`
-      if (evalData.positions.fieldPlayers.winners.length > 0) {
-        evalData.positions.fieldPlayers.winners.forEach((p, idx) => {
-          txt += `   • ${idx + 1}. #${p.playerNumber} ${p.playerName} (${p.teamName}) – ${p.votesCount} Stimmen\n`
-        })
-      } else {
-        txt += `   • (Noch keine Stimmen)\n`
-      }
-      if (evalData.positions.fieldPlayers.hasTieAtCutoff) {
-        txt += `   ⚠️ HINWEIS: Gleichstand am Cutoff der Feldspieler-Plätze!\n`
-      }
-
-      txt += `\nStatus: ${evalData.submittedCount} von ${evalData.totalTeams} Teams haben abgestimmt.\n`
-      return txt
-    }
-
-    const fullExport = `${buildCategoryText(evaluationWu14)}\n\n${buildCategoryText(evaluationMu14)}`
-
-    try {
-      await navigator.clipboard.writeText(fullExport)
-      setCopySuccess("Allstar-Kader beider Altersklassen in die Zwischenablage kopiert!")
-      setTimeout(() => setCopySuccess(null), 4000)
-    } catch (err) {
-      console.error("Fehler beim Kopieren:", err)
-      setCopySuccess("Kopieren fehlgeschlagen.")
-    }
   }
 
   if (loading) {
@@ -214,45 +163,68 @@ export function AdminAllstarsView() {
             </div>
           </div>
 
-          {/* Global Toggle & Export Buttons */}
-          <div className="flex flex-wrap items-center gap-2">
-            {/* Status Switch */}
-            <button
-              onClick={toggleVotingStatus}
-              disabled={isToggling}
-              className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all shadow-sm cursor-pointer ${
-                isVotingOpen
-                  ? "bg-emerald-600 text-white hover:bg-emerald-700"
-                  : "bg-slate-700 text-white hover:bg-slate-800"
-              }`}
-            >
-              {isToggling ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : isVotingOpen ? (
-                <Unlock className="h-4 w-4" />
-              ) : (
-                <Lock className="h-4 w-4" />
-              )}
-              <span>{isVotingOpen ? "Abstimmung geöffnet" : "Abstimmung gesperrt"}</span>
-            </button>
+          {/* Voting Status Segmented Control */}
+          <div className="flex items-center">
+            <div className="inline-flex items-center rounded-xl bg-slate-100 p-1 border border-slate-200">
+              <button
+                type="button"
+                onClick={() => handleStatusChange("upcoming")}
+                disabled={isToggling}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  votingStatus === "upcoming"
+                    ? "bg-amber-500 text-white shadow-sm"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+                title="Status: Vor dem Start / In Kürze verfügbar"
+              >
+                {isToggling && votingStatus === "upcoming" ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Clock className="h-3.5 w-3.5" />
+                )}
+                <span>In Kürze</span>
+              </button>
 
-            {/* Copy Button */}
-            <button
-              onClick={handleCopyForCeremony}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold shadow-sm transition-all cursor-pointer"
-            >
-              <Copy className="h-4 w-4 text-slate-500" />
-              <span>Kader kopieren</span>
-            </button>
+              <button
+                type="button"
+                onClick={() => handleStatusChange("open")}
+                disabled={isToggling}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  votingStatus === "open"
+                    ? "bg-emerald-600 text-white shadow-sm"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+                title="Status: Offen zur Abstimmung"
+              >
+                {isToggling && votingStatus === "open" ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Unlock className="h-3.5 w-3.5" />
+                )}
+                <span>Geöffnet</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleStatusChange("closed")}
+                disabled={isToggling}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  votingStatus === "closed"
+                    ? "bg-slate-700 text-white shadow-sm"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+                title="Status: Abstimmung beendet / gesperrt"
+              >
+                {isToggling && votingStatus === "closed" ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Lock className="h-3.5 w-3.5" />
+                )}
+                <span>Geschlossen</span>
+              </button>
+            </div>
           </div>
         </div>
-
-        {copySuccess && (
-          <div className="mt-4 rounded-xl bg-emerald-50 border border-emerald-200 p-3 text-xs text-emerald-800 flex items-center gap-2">
-            <CheckCircle className="h-4 w-4 text-emerald-600 shrink-0" />
-            <span className="font-medium">{copySuccess}</span>
-          </div>
-        )}
 
         {loadError && (
           <div className="mt-4 rounded-xl bg-amber-50 border border-amber-200 p-3 text-xs text-amber-800 flex items-center justify-between">

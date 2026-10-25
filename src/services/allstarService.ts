@@ -17,6 +17,7 @@ import type {
   AllstarPositionResult,
   AllstarAggregatedPlayer,
   AllstarCategoryEvaluation,
+  AllstarVotingStatus,
 } from "@/types/allstars"
 import { getTeamByJingleToken } from "./teamService"
 import { getTournamentConfig, updateTournamentConfig } from "./configService"
@@ -185,7 +186,10 @@ export async function saveTeamAllstarVoteByToken(
 
   // 1. Prüfen, ob Abstimmung geöffnet ist
   const config = await getTournamentConfig()
-  if (config.allstarVotingOpen === false) {
+  if (config.allstarVotingStatus === "upcoming") {
+    throw new Error("Die Allstars-Abstimmung hat noch nicht begonnen.")
+  }
+  if (config.allstarVotingStatus === "closed" || config.allstarVotingOpen === false) {
     throw new Error("Die Allstars-Abstimmung wurde von der Turnierleitung beendet. Es können keine Stimmen mehr abgegeben werden.")
   }
 
@@ -246,12 +250,21 @@ export async function saveTeamAllstarVoteByToken(
 }
 
 /**
+ * Setzt den Status der Allstars-Abstimmung ("upcoming" | "open" | "closed").
+ */
+export async function setAllstarVotingStatus(status: AllstarVotingStatus): Promise<void> {
+  await updateTournamentConfig({
+    allstarVotingStatus: status,
+    allstarVotingOpen: status === "open",
+  })
+}
+
+/**
  * Schaltet die Allstars-Abstimmung im Admin-Bereich frei oder sperrt sie.
+ * @deprecated Bitte stattdessen `setAllstarVotingStatus` verwenden.
  */
 export async function setAllstarVotingOpen(isOpen: boolean): Promise<void> {
-  await updateTournamentConfig({
-    allstarVotingOpen: isOpen,
-  })
+  await setAllstarVotingStatus(isOpen ? "open" : "closed")
 }
 
 /**
