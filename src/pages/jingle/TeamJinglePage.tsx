@@ -25,7 +25,9 @@ import {
   Trash2,
   Volume2,
   Sparkles,
+  Star,
 } from "lucide-react"
+import { TeamAllstarVoting } from "@/components/team/TeamAllstarVoting"
 import rrkLogo from "@/assets/images/RRK.webp"
 
 export function TeamJinglePage() {
@@ -33,7 +35,7 @@ export function TeamJinglePage() {
 
   const [loading, setLoading] = useState(true)
   const [team, setTeam] = useState<Team | null>(null)
-  const [activeTab, setActiveTab] = useState<"jingle" | "roster">("jingle")
+  const [activeTab, setActiveTab] = useState<"jingle" | "roster" | "allstars">("jingle")
   const [loadError, setLoadError] = useState<string | null>(null)
 
   // Audio & File State
@@ -474,6 +476,18 @@ export function TeamJinglePage() {
               {team.players?.length || 0}
             </span>
           </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("allstars")}
+            className={`inline-flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
+              activeTab === "allstars"
+                ? "border-blue-600 text-blue-600 bg-blue-50/50 rounded-t-xl"
+                : "border-transparent text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
+            <span>Allstar-Wahl</span>
+          </button>
         </div>
 
         {/* Feedback Banners */}
@@ -499,7 +513,9 @@ export function TeamJinglePage() {
           </div>
         )}
 
-        {activeTab === "roster" ? (
+        {activeTab === "allstars" ? (
+          <TeamAllstarVoting team={team} token={token!} />
+        ) : activeTab === "roster" ? (
           <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 mb-6">
             <TeamRosterManager
               players={team.players}

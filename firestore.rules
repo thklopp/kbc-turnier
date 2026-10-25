@@ -1,9 +1,40 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Standard-Regeln für lokale Entwicklung & Tests
-    match /{document=**} {
-      allow read, write: if true;
+    
+    // Globale Turnierkonfiguration
+    match /config/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Teams, Logos, Kader & Jingles
+    match /teams/{teamId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Spielplan, Ergebnisse & Events
+    match /matches/{matchId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Ecken-Jingles
+    match /corners/{cornerId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Allstar-Stimmzettel der Teams
+    match /allstarVotes/{teamId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Audit-Logs
+    match /auditLogs/{logId} {
+      allow read, write: if request.auth != null;
     }
   }
 }

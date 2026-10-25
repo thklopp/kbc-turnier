@@ -1,6 +1,6 @@
 import { Outlet, Link, useNavigate, useLocation } from "react-router-dom"
 import { useAuth } from "@/hooks/useAuth"
-import { UserRoundKey, LogOut, ArrowLeft, Users, Calendar, PlayCircle, FileText, Music, BarChart3 } from "lucide-react"
+import { UserRoundKey, LogOut, ArrowLeft, Users, Calendar, PlayCircle, FileText, Music, BarChart3, Star } from "lucide-react"
 
 export function AdminLayout() {
   const { currentUser, logout } = useAuth()
@@ -21,13 +21,15 @@ export function AdminLayout() {
   const isCorners = location.pathname === "/admin" && location.hash === "#corners"
   const isInfo = location.pathname === "/admin" && location.hash === "#info"
   const isStats = location.pathname === "/admin" && location.hash === "#stats"
+  const isAllstars = location.pathname === "/admin" && location.hash === "#allstars"
   const isLiveDesk =
     location.pathname === "/admin" &&
     !isTeams &&
     !isSchedule &&
     !isCorners &&
     !isInfo &&
-    !isStats
+    !isStats &&
+    !isAllstars
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-100 text-slate-900">
@@ -139,6 +141,17 @@ export function AdminLayout() {
             >
               <BarChart3 className="h-3.5 w-3.5" />
               <span>Statistiken</span>
+            </Link>
+            <Link
+              to="/admin#allstars"
+              className={`flex items-center gap-1.5 py-1 border-b-2 transition-colors ${
+                isAllstars
+                  ? "border-blue-600 text-blue-600 font-bold"
+                  : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
+              }`}
+            >
+              <Star className="h-3.5 w-3.5" />
+              <span>Allstars</span>
             </Link>
           </div>
         </div>

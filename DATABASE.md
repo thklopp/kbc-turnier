@@ -17,6 +17,8 @@ firestore/
 │   └── {matchId}              # 40 Spiele (24 Samstag Gruppenphase, 16 Sonntag Finalphase)
 ├── corners/
 │   └── {cornerId}             # Neutrale Ecken-Jingles für Strafecken
+├── allstarVotes/
+│   └── {teamId}               # Stimmzettel der Teams für die Allstars-Wahl
 └── auditLogs/
     └── {logId}                # Protokollierung von Turnierleitungs-Aktionen (optional / audit)
 ```
@@ -38,6 +40,7 @@ export interface TournamentConfig {
   activeDay: "saturday" | "sunday";  // Aktueller Turniertag
   courtsCount: number;               // Standard: 1
   rotationPattern: "2w_2m";          // 2 Mädchenspiele, 2 Jungsspiele im Wechsel
+  allstarVotingOpen?: boolean;       // Status der Allstar-Wahl (Standard: true)
   updatedAt: FirebaseFirestore.Timestamp;
   updatedBy?: string;                // User-ID des Admins
 }
@@ -204,7 +207,40 @@ export interface CornerJingle {
 
 ---
 
-## 5. Berechnete Tabellenlogik (Standings Selector)
+## 5. Collection `allstarVotes`
+
+Speichert die Stimmzettel der teilnehmenden Teams für das Allstar-Team ihrer jeweiligen Altersklasse. Das Dokument verwendet die `teamId` als ID, sodass jedes Team genau einen Stimmzettel besitzt.
+
+```typescript
+export interface AllstarVotePosition {
+  teamId: string;
+  teamName: string;
+  playerId: string;
+  playerName: string;
+  playerNumber: number;
+}
+
+export interface AllstarVote {
+  id: string;                                // Dokument-ID entspricht der teamId des abstimmenden Teams
+  teamId: string;                            // ID des abstimmenden Teams
+  teamName: string;                          // Name des abstimmenden Teams
+  gender: GenderCategory;                    // "wU14" | "mU14" (stimmt für eigene Altersklasse)
+  votes: {
+    goalkeeper: AllstarVotePosition;         // 1x Torwart
+    fieldPlayer1: AllstarVotePosition;       // 1. Feldspieler
+    fieldPlayer2: AllstarVotePosition;       // 2. Feldspieler
+    fieldPlayer3: AllstarVotePosition;       // 3. Feldspieler
+    fieldPlayer4: AllstarVotePosition;       // 4. Feldspieler
+    fieldPlayer5: AllstarVotePosition;       // 5. Feldspieler
+  };
+  submittedAt: FirebaseFirestore.Timestamp;
+  updatedAt: FirebaseFirestore.Timestamp;
+}
+```
+
+---
+
+## 6. Berechnete Tabellenlogik (Standings Selector)
 
 Tabellen werden nicht zwingend persistent gespeichert, sondern direkt per Reactive Selector aus den beendeten `matches` (Status: `"finished"`) ermittelt:
 
@@ -273,6 +309,11 @@ service cloud.firestore {
     }
 
     match /corners/{cornerId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /allstarVotes/{teamId} {
       allow read: if true;
       allow write: if request.auth != null;
     }
