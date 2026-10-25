@@ -51,8 +51,9 @@ Zudem existiert in der Adminoberfläche unter `/admin#allstars` ein Button „Ka
   - Segmented Control / 3er-Button-Gruppe im Header:
     - „In Kürze“ (Status `upcoming`, Amber/Gelb)
     - „Geöffnet“ (Status `open`, Emerald/Grün)
-    - „Geschlossen“ (Status `closed`, Slate/Grau)
-  - Entfernung des Buttons „Kader kopieren“ samt zugehöriger Logik (`handleCopyForCeremony`, `copySuccess` State).
+    - „Geschlossen` (Status `closed`, Slate/Grau)
+  - Vollständige Entfernung des Buttons „Kader kopieren“.
+  - **Nebeneinander-Darstellung (Side-by-Side)**: Standardmäßige 2-Spalten-Ansicht (`lg:grid-cols-2`) für wU14 und mU14, um Abgabestatus (wer hat abgegeben, wer fehlt), Allstar-Kader und Detailstimmen beider Altersklassen gleichzeitig im Blick zu behalten; inklusive View-Tabs („Beide nebeneinander“, „Nur Mädchen“, „Nur Jungs“).
 - **Team-Ansicht (`TeamAllstarVoting.tsx`)**:
   - Globaler Hinweis in allen drei Modi: *„Die Abstimmung ist ab dem Start des ersten Spiels bis 10 Minuten nach dem letzten Finalspiel geöffnet.“*
   - **Modus `upcoming`**:
