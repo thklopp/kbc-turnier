@@ -4,6 +4,7 @@ import { ScheduleManager } from "@/components/admin/ScheduleManager"
 import { LiveMatchDesk } from "@/components/admin/live/LiveMatchDesk"
 import { AdminInfoEditor } from "@/components/admin/AdminInfoEditor"
 import { CornerJingleManager } from "@/components/admin/corners/CornerJingleManager"
+import { AdminStatsView } from "@/components/admin/stats/AdminStatsView"
 
 export function AdminPage() {
   const location = useLocation()
@@ -17,6 +18,8 @@ export function AdminPage() {
       ? "corners"
       : location.hash === "#info"
       ? "info"
+      : location.hash === "#stats"
+      ? "stats"
       : "desk"
 
   return (
@@ -49,6 +52,12 @@ export function AdminPage() {
       {activeTab === "info" && (
         <section>
           <AdminInfoEditor />
+        </section>
+      )}
+
+      {activeTab === "stats" && (
+        <section>
+          <AdminStatsView />
         </section>
       )}
     </div>
