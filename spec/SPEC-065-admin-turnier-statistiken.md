@@ -1,6 +1,6 @@
 # SPEC-065: Admin Turnier-Statistiken (Top-10 Torschützen & Kennzahlen)
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature  
 > **Branch**: feat/SPEC-065-admin-turnier-statistiken  
 > **Autor**: Agent / Antigravity  
