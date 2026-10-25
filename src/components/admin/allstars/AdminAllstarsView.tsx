@@ -145,32 +145,32 @@ export function AdminAllstarsView() {
       {/* Top Action Header */}
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500 text-white shadow-sm">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500 text-white shadow-sm shrink-0">
               <Trophy className="h-6 w-6" />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-bold text-slate-900">Allstars-Auswertung</h1>
-                <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-bold text-amber-800">
+                <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-bold text-amber-800 shrink-0">
                   <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
                   KBC 2026
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5 max-w-sm leading-relaxed">
                 Stimmen der Teams verwalten, Allstar-Kader auswerten (1x Torwart, 5x Feldspieler) und für die Siegerehrung bereitstellen.
               </p>
             </div>
           </div>
 
           {/* Voting Status Segmented Control */}
-          <div className="flex items-center">
-            <div className="inline-flex items-center rounded-xl bg-slate-100 p-1 border border-slate-200">
+          <div className="flex items-center shrink-0">
+            <div className="inline-flex items-center rounded-xl bg-slate-100 p-1 border border-slate-200 shrink-0">
               <button
                 type="button"
                 onClick={() => handleStatusChange("upcoming")}
                 disabled={isToggling}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                   votingStatus === "upcoming"
                     ? "bg-amber-500 text-white shadow-sm"
                     : "text-slate-600 hover:text-slate-900"
@@ -178,18 +178,18 @@ export function AdminAllstarsView() {
                 title="Status: Vor dem Start / In Kürze verfügbar"
               >
                 {isToggling && votingStatus === "upcoming" ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" />
                 ) : (
-                  <Clock className="h-3.5 w-3.5" />
+                  <Clock className="h-3.5 w-3.5 shrink-0" />
                 )}
-                <span>In Kürze</span>
+                <span className="whitespace-nowrap">In Kürze</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleStatusChange("open")}
                 disabled={isToggling}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                   votingStatus === "open"
                     ? "bg-emerald-600 text-white shadow-sm"
                     : "text-slate-600 hover:text-slate-900"
@@ -197,18 +197,18 @@ export function AdminAllstarsView() {
                 title="Status: Offen zur Abstimmung"
               >
                 {isToggling && votingStatus === "open" ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" />
                 ) : (
-                  <Unlock className="h-3.5 w-3.5" />
+                  <Unlock className="h-3.5 w-3.5 shrink-0" />
                 )}
-                <span>Geöffnet</span>
+                <span className="whitespace-nowrap">Geöffnet</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleStatusChange("closed")}
                 disabled={isToggling}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                   votingStatus === "closed"
                     ? "bg-slate-700 text-white shadow-sm"
                     : "text-slate-600 hover:text-slate-900"
@@ -216,11 +216,11 @@ export function AdminAllstarsView() {
                 title="Status: Abstimmung beendet / gesperrt"
               >
                 {isToggling && votingStatus === "closed" ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" />
                 ) : (
-                  <Lock className="h-3.5 w-3.5" />
+                  <Lock className="h-3.5 w-3.5 shrink-0" />
                 )}
-                <span>Geschlossen</span>
+                <span className="whitespace-nowrap">Geschlossen</span>
               </button>
             </div>
           </div>
