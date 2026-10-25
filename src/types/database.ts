@@ -13,6 +13,7 @@ export interface TournamentConfig {
   activeDay: "saturday" | "sunday"
   courtsCount: number
   rotationPattern: "2w_2m"
+  allstarVotingOpen?: boolean
   updatedAt?: Timestamp
   updatedBy?: string
 }
@@ -151,4 +152,6 @@ export interface CornerJingle {
   createdAt?: Timestamp
   updatedAt?: Timestamp
 }
+
+export type { AllstarVote, AllstarVotePosition, AllstarSlotKey } from "./allstars"
 

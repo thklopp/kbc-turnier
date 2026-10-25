@@ -5,6 +5,7 @@ import { LiveMatchDesk } from "@/components/admin/live/LiveMatchDesk"
 import { AdminInfoEditor } from "@/components/admin/AdminInfoEditor"
 import { CornerJingleManager } from "@/components/admin/corners/CornerJingleManager"
 import { AdminStatsView } from "@/components/admin/stats/AdminStatsView"
+import { AdminAllstarsView } from "@/components/admin/allstars/AdminAllstarsView"
 
 export function AdminPage() {
   const location = useLocation()
@@ -20,6 +21,8 @@ export function AdminPage() {
       ? "info"
       : location.hash === "#stats"
       ? "stats"
+      : location.hash === "#allstars"
+      ? "allstars"
       : "desk"
 
   return (
@@ -58,6 +61,12 @@ export function AdminPage() {
       {activeTab === "stats" && (
         <section>
           <AdminStatsView />
+        </section>
+      )}
+
+      {activeTab === "allstars" && (
+        <section>
+          <AdminAllstarsView />
         </section>
       )}
     </div>

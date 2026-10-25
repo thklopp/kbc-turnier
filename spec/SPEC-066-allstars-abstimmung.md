@@ -1,6 +1,6 @@
 # SPEC-066: Allstars-Abstimmung (Team-Wahl & Admin-Auswertung)
 
-> **Status**: In Review  
+> **Status**: In Abnahme  
 > **Typ**: Feature  
 > **Branch**: feat/SPEC-066-allstars-abstimmung  
 > **Autor**: Antigravity  
@@ -39,38 +39,38 @@ Jedes teilnehmende Team erhält in seinem individuellen Betreuer-Link (`/team/:t
 ### 3.1 Im Scope (Must-Have)
 
 #### A. Stimmberechtigung & Altersklassen-Zuordnung
-- [ ] Strikte Trennung nach Altersklasse:
+- [x] Strikte Trennung nach Altersklasse:
   - Teams mit `gender === "wU14"` dürfen ausschließlich für das Allstar-Team der **wU14** abstimmen.
   - Teams mit `gender === "mU14"` dürfen ausschließlich für das Allstar-Team der **mU14** abstimmen.
-- [ ] Jedes Team besitzt genau **einen Stimmzettel**, identifiziert über die `teamId`.
+- [x] Jedes Team besitzt genau **einen Stimmzettel**, identifiziert über die `teamId`.
 
 #### B. Aufstellung & Stimmabgabe im Betreuerbereich (`/team/:token`)
-- [ ] Neuer Tab **„⭐ Allstar-Wahl“** in `TeamJinglePage` neben „Tor-Jingle“ und „Spielerkader“.
-- [ ] Die Abstimmung ist von Turnierbeginn an geöffnet (keine Abhängigkeit von absolvierten Spielen).
-- [ ] Zu besetzende Positionen (genau 6 Spieler):
+- [x] Neuer Tab **„⭐ Allstar-Wahl“** in `TeamJinglePage` neben „Tor-Jingle“ und „Spielerkader“.
+- [x] Die Abstimmung ist von Turnierbeginn an geöffnet (keine Abhängigkeit von absolvierten Spielen).
+- [x] Zu besetzende Positionen (genau 6 Spieler):
   1. **1x Torwart**
   2. **2x Abwehr** (Pool: 2 verschiedene Spieler)
   3. **1x Mittelfeld**
   4. **2x Sturm** (Pool: 2 verschiedene Spieler)
-- [ ] **Kaskadierende Spielerauswahl**:
+- [x] **Kaskadierende Spielerauswahl**:
   - Pro Position wird zunächst das gegnerische Team oder das eigene Team (Dropdown aller Teams der gleichen Altersklasse) gewählt.
   - Anschließend wird der Spieler aus dem hinterlegten Spielerkader (`team.players`) ausgewählt (Anzeige: `#Trikotnummer - Vorname Nachname`).
-- [ ] **Validierungsregeln**:
+- [x] **Validierungsregeln**:
   - Spieler aus dem eigenen Verein/Team sind wählbar.
   - **Eindeutigkeit**: Ein Spieler darf pro Stimmzettel nur **einmal** gewählt werden. Wählt man denselben Spieler auf zwei Positionen, blockiert die Validierung das Speichern mit einem verständlichen Fehlerhinweis.
   - Unvollständige Stimmzettel können nicht als gültig abgesendet werden (alle 6 Positionen müssen ausgewählt sein).
-- [ ] **Bearbeitbarkeit**: Bereits gespeicherte Stimmen werden beim Aufruf des Tabs geladen und können bis zur Sperrung jederzeit geändert und neu gespeichert werden.
-- [ ] **Gesperrter Zustand**: Wenn die Turnierleitung die Wahl geschlossen hat, wird der Stimmzettel schreibgeschützt (Read-Only) mit Hinweis „Die Abstimmung wurde von der Turnierleitung beendet“ dargestellt.
+- [x] **Bearbeitbarkeit**: Bereits gespeicherte Stimmen werden beim Aufruf des Tabs geladen und können bis zur Sperrung jederzeit geändert und neu gespeichert werden.
+- [x] **Gesperrter Zustand**: Wenn die Turnierleitung die Wahl geschlossen hat, wird der Stimmzettel schreibgeschützt (Read-Only) mit Hinweis „Die Abstimmung wurde von der Turnierleitung beendet“ dargestellt.
 
 #### C. Turnierleitung & Auswertung (`/admin#allstars`)
-- [ ] Neuer Navigationsreiter **„Allstars“** in `AdminLayout` und Tab-Content in `AdminPage`.
-- [ ] **Globaler Status-Schalter**:
+- [x] Neuer Navigationsreiter **„Allstars“** in `AdminLayout` und Tab-Content in `AdminPage`.
+- [x] **Globaler Status-Schalter**:
   - Toggle-Button: „Abstimmung geöffnet“ (Grün) vs. „Abstimmung geschlossen“ (Rot/Grau).
   - Status wird im Firestore-Dokument `config/tournament` (`allstarVotingOpen: boolean`) hinterlegt.
-- [ ] **Abgabestatus-Matrix**:
+- [x] **Abgabestatus-Matrix**:
   - Übersicht aller wU14- und mU14-Teams mit Badge (Grün: *Eingereicht* mit Zeitstempel, Grau/Gelb: *Ausstehend*).
   - Filterbar nach Altersklasse oder Gesamtübersicht (z. B. „6 von 8 Teams haben abgestimmt“).
-- [ ] **Live-Ergebnisliste & Allstar-Kader**:
+- [x] **Live-Ergebnisliste & Allstar-Kader**:
   - Getrennte Ansichten für **wU14** und **mU14**.
   - Rangliste je Position:
     - **Torwart**: Platz 1 gewinnt (Top-Scorer).
@@ -78,12 +78,12 @@ Jedes teilnehmende Team erhält in seinem individuellen Betreuer-Link (`/team/:t
     - **Mittelfeld**: Platz 1 gewinnt.
     - **Sturm**: Plätze 1 & 2 gewinnen (die 2 Spieler mit den meisten Stimmen im Sturm-Pool).
   - Anzeige pro Spieler: Rang, Name, Trikotnummer, Vereinsname, Stimmenanzahl.
-- [ ] **Gleichstands-Hervorhebung (Tie-Breaker)**:
+- [x] **Gleichstands-Hervorhebung (Tie-Breaker)**:
   - Bei Stimmengleichheit auf den Siegerplätzen (z. B. Platz 1 und 2 bei TW mit je 3 Stimmen, oder Platz 2 und 3 bei Abwehr mit je 2 Stimmen) wird ein deutliches Badge eingeblendet: `⚠️ Gleichstand - Entscheid nötig`.
   - Die Turnierleitung kann für die Moderation/Ehrung sofort erkennen, wo ein Stich- oder Juryentscheid nötig ist.
-- [ ] **Detail-Einsicht der Stimmzettel**:
+- [x] **Detail-Einsicht der Stimmzettel**:
   - Aufklappbare Übersicht oder Modal, welches Team exakt für welche Spieler gestimmt hat (Transparenz für die Turnierleitung).
-- [ ] **Siegerehrungs-Export**:
+- [x] **Siegerehrungs-Export**:
   - Button „Kader für Siegerehrung kopieren“ (erzeugt formatierten Text für Zwischenablage/Messenger).
   - Druckansicht (Clean Print View) für den Hallensprecher.
 
@@ -98,61 +98,61 @@ Jedes teilnehmende Team erhält in seinem individuellen Betreuer-Link (`/team/:t
 
 ### 4.1 Szenarien / Kriterien
 
-- [ ] **AC-1: Zugriff im Team-Link nur für die eigene Altersklasse**
+- [x] **AC-1: Zugriff im Team-Link nur für die eigene Altersklasse**
   - **Given**: Betreuer öffnet den Team-Link `/team/:token` eines mU14-Teams.
   - **When**: Der Tab „⭐ Allstar-Wahl“ aufgerufen wird.
   - **Then**: Werden im Dropdown zur Spielerauswahl ausschließlich Teams und Spieler der Altersklasse `mU14` zur Auswahl angeboten. Das Allstar-Team der wU14 wird weder angezeigt noch gewählt.
 
-- [ ] **AC-2: Kaskadierende Auswahl von Team und Spieler**
+- [x] **AC-2: Kaskadierende Auswahl von Team und Spieler**
   - **Given**: Betreuer befindet sich auf der Allstar-Wahlmaske für Position „Torwart“.
   - **When**: Der Betreuer Team A auswählt.
   - **Then**: Enthält das Spieler-Dropdown alle Spieler aus `team.players` von Team A mit Trikotnummer und Namen. Ist für ein Team noch kein Spieler hinterlegt, wird ein Hinweistext angezeigt („Noch keine Spieler im Kader von Team A gemeldet“).
 
-- [ ] **AC-3: Eindeutigkeits-Validierung (Keine Doppelbelegung)**
+- [x] **AC-3: Eindeutigkeits-Validierung (Keine Doppelbelegung)**
   - **Given**: Betreuer hat für „Abwehr 1“ Spieler Max Mustermann ausgewählt.
   - **When**: Der Betreuer versucht, für „Abwehr 2“ oder eine andere Position erneut Max Mustermann auszuwählen und zu speichern.
   - **Then**: Verhindert die Maske das Absenden mit einer Fehlermeldung: „Ein Spieler darf nur einmal im Allstar-Team gewählt werden: Max Mustermann ist mehrfach ausgewählt.“
 
-- [ ] **AC-4: Vollständigkeitsprüfung**
+- [x] **AC-4: Vollständigkeitsprüfung**
   - **Given**: Betreuer hat nur 5 von 6 Positionen ausgefüllt.
   - **When**: Der Betreuer auf „Stimmen speichern“ klickt.
   - **Then**: Bleibt der Speicherbutton deaktiviert oder meldet einen Fehler, dass alle 6 Positionen besetzt sein müssen.
 
-- [ ] **AC-5: Erfolgreiche Speicherung & Wiederaufnahme**
+- [x] **AC-5: Erfolgreiche Speicherung & Wiederaufnahme**
   - **Given**: Alle 6 Positionen sind valide ausgewählt.
   - **When**: Der Betreuer auf „Stimmen speichern“ klickt.
   - **Then**: Werden die Stimmen in Firestore unter `allstarVotes/{teamId}` gespeichert. Eine Erfolgsmeldung („Stimmen erfolgreich übermittelt“) erscheint. Beim Neuladen der Seite sind alle 6 Positionen vorausgewählt.
 
-- [ ] **AC-6: Schreibschutz bei geschlossener Abstimmung**
+- [x] **AC-6: Schreibschutz bei geschlossener Abstimmung**
   - **Given**: Die Turnierleitung hat `allstarVotingOpen` auf `false` gesetzt.
   - **When**: Ein Team die Allstar-Wahl im Betreuerlink aufruft.
   - **Then**: Sind alle Formularfelder gesperrt (disabled), ein Info-Banner signalisiert das Ende der Abstimmung, und der Speicher-Button ist ausgeblendet.
 
-- [ ] **AC-7: Admin-Übersicht & Abgabestatus**
+- [x] **AC-7: Admin-Übersicht & Abgabestatus**
   - **Given**: Die Turnierleitung öffnet `/admin#allstars`.
   - **When**: 4 von 8 wU14-Teams haben abgestimmt.
   - **Then**: Zeigt die Übersicht „4 / 8 Teams abgegeben (50 %)“ an und listet die Teams mit grünem Haken bzw. grauem Uhren-Symbol auf.
 
-- [ ] **AC-8: Aggregation & Rangliste im gemeinsamen Pool**
+- [x] **AC-8: Aggregation & Rangliste im gemeinsamen Pool**
   - **Given**: Es liegen 5 Stimmzettel vor. Für Abwehr wurden Spieler A (4 Stimmen), Spieler B (3 Stimmen), Spieler C (2 Stimmen) und Spieler D (1 Stimme) gewählt.
   - **When**: Die Admin-Rangliste für Abwehr gerendert wird.
   - **Then**: Werden Spieler A (Platz 1) und Spieler B (Platz 2) als Allstar-Gewinner gekennzeichnet.
 
-- [ ] **AC-9: Hervorhebung von Stimmengleichstand**
+- [x] **AC-9: Hervorhebung von Stimmengleichstand**
   - **Given**: Auf der Torwart-Position haben zwei Torhüter jeweils 3 Stimmen.
   - **When**: Die Turnierleitung die Auswertung betrachtet.
   - **Then**: Werden beide Torhüter hervorgehoben und ein Warn-Badge `Gleichstand - Entscheid nötig` wird angezeigt.
 
-- [ ] **AC-10: Kopieren & Export für Siegerehrung**
+- [x] **AC-10: Kopieren & Export für Siegerehrung**
   - **Given**: Die Abstimmung ist abgeschlossen.
   - **When**: Die Turnierleitung auf „Kader für Siegerehrung kopieren“ klickt.
   - **Then**: Wird ein sauber formatierter Text (mit TW, Abwehr, MF, Sturm, Vereinszugehörigkeit) in die Zwischenablage kopiert und ein Bestätigungs-Toast angezeigt.
 
 ### 4.2 Allgemeine Qualitätskriterien
-- [ ] Keine fest kodierten Parameter (Verbot von Hardcoding gemäß `AGENTS.md`).
-- [ ] Vollständige TypeScript-Typisierung ohne `any` in `src/types/database.ts` bzw. `src/types/allstars.ts`.
-- [ ] Fehlerfreie Ausführung von `npm run build` und Linting.
-- [ ] Sauberes Aufräumen aller Firestore-Listener (`unsubscribe`).
+- [x] Keine fest kodierten Parameter (Verbot von Hardcoding gemäß `AGENTS.md`).
+- [x] Vollständige TypeScript-Typisierung ohne `any` in `src/types/database.ts` bzw. `src/types/allstars.ts`.
+- [x] Fehlerfreie Ausführung von `npm run build` und Linting.
+- [x] Sauberes Aufräumen aller Firestore-Listener (`unsubscribe`).
 
 ---
 

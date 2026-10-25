@@ -21,6 +21,7 @@ const DEFAULT_CONFIG: TournamentConfig = {
   activeDay: "saturday",
   courtsCount: 1,
   rotationPattern: "2w_2m",
+  allstarVotingOpen: true,
 }
 
 let localMockConfig: TournamentConfig = { ...DEFAULT_CONFIG }
