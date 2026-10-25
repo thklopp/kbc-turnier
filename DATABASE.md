@@ -313,6 +313,11 @@ service cloud.firestore {
       allow write: if request.auth != null;
     }
 
+    match /allstarVotes/{teamId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
     match /auditLogs/{logId} {
       allow read, write: if request.auth != null;
     }

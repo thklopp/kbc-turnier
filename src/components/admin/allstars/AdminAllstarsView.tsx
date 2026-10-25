@@ -30,6 +30,7 @@ export function AdminAllstarsView() {
   const [isVotingOpen, setIsVotingOpen] = useState(true)
   const [selectedGender, setSelectedGender] = useState<GenderCategory>("wU14")
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
   const [isToggling, setIsToggling] = useState(false)
   const [copySuccess, setCopySuccess] = useState<string | null>(null)
 
@@ -49,23 +50,45 @@ export function AdminAllstarsView() {
       }
     }
 
-    const unsubTeams = subscribeTeams((updated) => {
-      setTeams(updated)
-      teamsLoaded = true
-      checkLoaded()
-    })
+    const unsubTeams = subscribeTeams(
+      (updated) => {
+        setTeams(updated)
+        teamsLoaded = true
+        checkLoaded()
+      },
+      (err) => {
+        console.error("Fehler beim Abrufen der Teams in Allstars:", err)
+        teamsLoaded = true
+        checkLoaded()
+      }
+    )
 
-    const unsubVotes = subscribeAllstarVotes((updated) => {
-      setVotes(updated)
-      votesLoaded = true
-      checkLoaded()
-    })
+    const unsubVotes = subscribeAllstarVotes(
+      (updated) => {
+        setVotes(updated)
+        votesLoaded = true
+        checkLoaded()
+      },
+      (err) => {
+        console.error("Fehler beim Abrufen der Allstars-Stimmen:", err)
+        setLoadError(err.message || "Fehler beim Laden der Stimmen")
+        votesLoaded = true
+        checkLoaded()
+      }
+    )
 
     const unsubConfig = subscribeTournamentConfig((cfg) => {
       setIsVotingOpen(cfg.allstarVotingOpen !== false)
     })
 
+    // Sicherheits-Timeout: Nach maximal 2 Sekunden Ladespinner beenden,
+    // selbst wenn eine Firestore-Subscription verzögert ist oder fehlschlägt.
+    const fallbackTimer = setTimeout(() => {
+      setLoading(false)
+    }, 2000)
+
     return () => {
+      clearTimeout(fallbackTimer)
       unsubTeams()
       unsubVotes()
       unsubConfig()
@@ -238,6 +261,22 @@ export function AdminAllstarsView() {
           <div className="mt-4 rounded-xl bg-emerald-50 border border-emerald-200 p-3 text-xs text-emerald-800 flex items-center gap-2">
             <CheckCircle className="h-4 w-4 text-emerald-600 shrink-0" />
             <span className="font-medium">{copySuccess}</span>
+          </div>
+        )}
+
+        {loadError && (
+          <div className="mt-4 rounded-xl bg-amber-50 border border-amber-200 p-3 text-xs text-amber-800 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0" />
+              <span>Hinweis beim Laden der Stimmen: {loadError}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setLoadError(null)}
+              className="text-amber-700 hover:text-amber-900 font-bold ml-2 cursor-pointer"
+            >
+              ×
+            </button>
           </div>
         )}
       </div>

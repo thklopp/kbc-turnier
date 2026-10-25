@@ -56,19 +56,31 @@ export function subscribeAllstarVotes(
   return onSnapshot(
     collRef,
     (snapshot) => {
-      const votes: AllstarVote[] = snapshot.docs.map((docSnap) => {
-        const data = docSnap.data()
-        return {
-          id: docSnap.id,
-          teamId: data.teamId || docSnap.id,
-          teamName: data.teamName || "Unbekanntes Team",
-          gender: data.gender as GenderCategory,
-          votes: data.votes,
-          submittedAt: data.submittedAt,
-          updatedAt: data.updatedAt,
-        }
-      })
-      onUpdate(votes)
+      try {
+        const votes: AllstarVote[] = snapshot.docs.map((docSnap) => {
+          const data = docSnap.data() || {}
+          return {
+            id: docSnap.id,
+            teamId: data.teamId || docSnap.id,
+            teamName: data.teamName || "Unbekanntes Team",
+            gender: (data.gender as GenderCategory) || "wU14",
+            votes: data.votes || {
+              goalkeeper: {} as AllstarVotePosition,
+              fieldPlayer1: {} as AllstarVotePosition,
+              fieldPlayer2: {} as AllstarVotePosition,
+              fieldPlayer3: {} as AllstarVotePosition,
+              fieldPlayer4: {} as AllstarVotePosition,
+              fieldPlayer5: {} as AllstarVotePosition,
+            },
+            submittedAt: data.submittedAt,
+            updatedAt: data.updatedAt,
+          }
+        })
+        onUpdate(votes)
+      } catch (err) {
+        console.error("Fehler beim Verarbeiten der Allstars-Stimmzettel:", err)
+        if (onError && err instanceof Error) onError(err)
+      }
     },
     (error) => {
       console.error("Fehler beim Abonnieren der Allstars-Stimmen:", error)
@@ -337,14 +349,18 @@ export function evaluateAllstars(
     }
   }
 
-  const goalkeeper = aggregatePosition("goalkeeper", "Torwart", 1, (v) => [v.votes.goalkeeper])
-  const fieldPlayers = aggregatePosition("fieldPlayers", "Feldspieler", 5, (v) => [
-    v.votes.fieldPlayer1,
-    v.votes.fieldPlayer2,
-    v.votes.fieldPlayer3,
-    v.votes.fieldPlayer4,
-    v.votes.fieldPlayer5,
-  ])
+  const goalkeeper = aggregatePosition("goalkeeper", "Torwart", 1, (v) =>
+    [v.votes?.goalkeeper].filter(Boolean)
+  )
+  const fieldPlayers = aggregatePosition("fieldPlayers", "Feldspieler", 5, (v) =>
+    [
+      v.votes?.fieldPlayer1,
+      v.votes?.fieldPlayer2,
+      v.votes?.fieldPlayer3,
+      v.votes?.fieldPlayer4,
+      v.votes?.fieldPlayer5,
+    ].filter(Boolean)
+  )
 
   return {
     gender,
