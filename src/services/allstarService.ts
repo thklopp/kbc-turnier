@@ -132,13 +132,20 @@ export function validateAllstarVotes(votes: Record<string, AllstarVotePosition>)
   isValid: boolean
   error?: string
 } {
-  const requiredSlots = ["goalkeeper", "defense1", "defense2", "midfield", "forward1", "forward2"]
+  const requiredSlots = [
+    "goalkeeper",
+    "fieldPlayer1",
+    "fieldPlayer2",
+    "fieldPlayer3",
+    "fieldPlayer4",
+    "fieldPlayer5",
+  ]
   for (const slot of requiredSlots) {
     const pos = votes[slot]
     if (!pos || !pos.playerId || !pos.teamId) {
       return {
         isValid: false,
-        error: "Bitte fülle alle 6 Positionen des Allstar-Teams vollständig aus.",
+        error: "Bitte fülle alle 6 Positionen des Allstar-Teams vollständig aus (1x Torwart, 5x Feldspieler).",
       }
     }
   }
@@ -270,7 +277,7 @@ export function evaluateAllstars(
 
   // Helper zur Aggregation von Nominierungen
   function aggregatePosition(
-    positionKey: "goalkeeper" | "defense" | "midfield" | "forward",
+    positionKey: "goalkeeper" | "fieldPlayers",
     label: string,
     slotsCount: number,
     getSelections: (v: AllstarVote) => AllstarVotePosition[]
@@ -310,7 +317,7 @@ export function evaluateAllstars(
 
     const winners = rankings.slice(0, slotsCount)
 
-    // Gleichstands-Prüfung am Cutoff (z.B. Platz 1 vs 2 bei 1 Slot, oder Platz 2 vs 3 bei 2 Slots)
+    // Gleichstands-Prüfung am Cutoff (z.B. Platz 1 vs 2 bei 1 Slot, oder Platz 5 vs 6 bei 5 Slots)
     let hasTieAtCutoff = false
     if (rankings.length > slotsCount && slotsCount > 0) {
       const cutoffVotes = rankings[slotsCount - 1]?.votesCount
@@ -331,9 +338,13 @@ export function evaluateAllstars(
   }
 
   const goalkeeper = aggregatePosition("goalkeeper", "Torwart", 1, (v) => [v.votes.goalkeeper])
-  const defense = aggregatePosition("defense", "Abwehr", 2, (v) => [v.votes.defense1, v.votes.defense2])
-  const midfield = aggregatePosition("midfield", "Mittelfeld", 1, (v) => [v.votes.midfield])
-  const forward = aggregatePosition("forward", "Sturm", 2, (v) => [v.votes.forward1, v.votes.forward2])
+  const fieldPlayers = aggregatePosition("fieldPlayers", "Feldspieler", 5, (v) => [
+    v.votes.fieldPlayer1,
+    v.votes.fieldPlayer2,
+    v.votes.fieldPlayer3,
+    v.votes.fieldPlayer4,
+    v.votes.fieldPlayer5,
+  ])
 
   return {
     gender,
@@ -344,9 +355,7 @@ export function evaluateAllstars(
     pendingTeams,
     positions: {
       goalkeeper,
-      defense,
-      midfield,
-      forward,
+      fieldPlayers,
     },
     allVotes: categoryVotes,
   }

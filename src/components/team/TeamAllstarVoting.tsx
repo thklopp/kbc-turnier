@@ -30,27 +30,27 @@ type SlotsState = Record<AllstarSlotKey, SlotState>
 
 const INITIAL_SLOTS: SlotsState = {
   goalkeeper: { teamId: "", playerId: "" },
-  defense1: { teamId: "", playerId: "" },
-  defense2: { teamId: "", playerId: "" },
-  midfield: { teamId: "", playerId: "" },
-  forward1: { teamId: "", playerId: "" },
-  forward2: { teamId: "", playerId: "" },
+  fieldPlayer1: { teamId: "", playerId: "" },
+  fieldPlayer2: { teamId: "", playerId: "" },
+  fieldPlayer3: { teamId: "", playerId: "" },
+  fieldPlayer4: { teamId: "", playerId: "" },
+  fieldPlayer5: { teamId: "", playerId: "" },
 }
 
 interface SlotDefinition {
   key: AllstarSlotKey
   label: string
   icon: string
-  group: "goalkeeper" | "defense" | "midfield" | "forward"
+  group: "goalkeeper" | "fieldPlayers"
 }
 
 const SLOT_DEFINITIONS: SlotDefinition[] = [
   { key: "goalkeeper", label: "Torwart", icon: "🧤", group: "goalkeeper" },
-  { key: "defense1", label: "1. Abwehrspieler/in", icon: "🛡️", group: "defense" },
-  { key: "defense2", label: "2. Abwehrspieler/in", icon: "🛡️", group: "defense" },
-  { key: "midfield", label: "Mittelfeldspieler/in", icon: "⚙️", group: "midfield" },
-  { key: "forward1", label: "1. Stürmer/in", icon: "⚡", group: "forward" },
-  { key: "forward2", label: "2. Stürmer/in", icon: "⚡", group: "forward" },
+  { key: "fieldPlayer1", label: "1. Feldspieler/in", icon: "🏑", group: "fieldPlayers" },
+  { key: "fieldPlayer2", label: "2. Feldspieler/in", icon: "🏑", group: "fieldPlayers" },
+  { key: "fieldPlayer3", label: "3. Feldspieler/in", icon: "🏑", group: "fieldPlayers" },
+  { key: "fieldPlayer4", label: "4. Feldspieler/in", icon: "🏑", group: "fieldPlayers" },
+  { key: "fieldPlayer5", label: "5. Feldspieler/in", icon: "🏑", group: "fieldPlayers" },
 ]
 
 export function TeamAllstarVoting({ team, token }: TeamAllstarVotingProps) {
@@ -93,25 +93,25 @@ export function TeamAllstarVoting({ team, token }: TeamAllstarVotingProps) {
               teamId: vote.votes.goalkeeper?.teamId || "",
               playerId: vote.votes.goalkeeper?.playerId || "",
             },
-            defense1: {
-              teamId: vote.votes.defense1?.teamId || "",
-              playerId: vote.votes.defense1?.playerId || "",
+            fieldPlayer1: {
+              teamId: vote.votes.fieldPlayer1?.teamId || "",
+              playerId: vote.votes.fieldPlayer1?.playerId || "",
             },
-            defense2: {
-              teamId: vote.votes.defense2?.teamId || "",
-              playerId: vote.votes.defense2?.playerId || "",
+            fieldPlayer2: {
+              teamId: vote.votes.fieldPlayer2?.teamId || "",
+              playerId: vote.votes.fieldPlayer2?.playerId || "",
             },
-            midfield: {
-              teamId: vote.votes.midfield?.teamId || "",
-              playerId: vote.votes.midfield?.playerId || "",
+            fieldPlayer3: {
+              teamId: vote.votes.fieldPlayer3?.teamId || "",
+              playerId: vote.votes.fieldPlayer3?.playerId || "",
             },
-            forward1: {
-              teamId: vote.votes.forward1?.teamId || "",
-              playerId: vote.votes.forward1?.playerId || "",
+            fieldPlayer4: {
+              teamId: vote.votes.fieldPlayer4?.teamId || "",
+              playerId: vote.votes.fieldPlayer4?.playerId || "",
             },
-            forward2: {
-              teamId: vote.votes.forward2?.teamId || "",
-              playerId: vote.votes.forward2?.playerId || "",
+            fieldPlayer5: {
+              teamId: vote.votes.fieldPlayer5?.teamId || "",
+              playerId: vote.votes.fieldPlayer5?.playerId || "",
             },
           })
         }
@@ -279,7 +279,7 @@ export function TeamAllstarVoting({ team, token }: TeamAllstarVotingProps) {
         </div>
 
         <p className="text-sm text-slate-600 leading-relaxed">
-          Wählt eure 6 Favoriten der Altersklasse {categoryLabel} für das offizielle KBC Allstar-Team (1x Torwart, 2x Abwehr, 1x Mittelfeld, 2x Sturm). Ihr könnt sowohl Spieler anderer Mannschaften als auch eigene Spieler nominieren. Jeder Spieler darf genau einmal aufgestellt werden.
+          Wählt eure 6 Favoriten der Altersklasse {categoryLabel} für das offizielle KBC Allstar-Team (1x Torwart, 5x Feldspieler). Ihr könnt sowohl Spieler anderer Mannschaften als auch eigene Spieler nominieren. Jeder Spieler darf genau einmal aufgestellt werden.
         </p>
 
         {existingVote && (

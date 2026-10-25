@@ -34,7 +34,9 @@ export function AdminAllstarsView() {
   const [copySuccess, setCopySuccess] = useState<string | null>(null)
 
   // Expand / Collapse State
-  const [expandedPositions, setExpandedPositions] = useState<Set<string>>(new Set(["goalkeeper", "defense", "midfield", "forward"]))
+  const [expandedPositions, setExpandedPositions] = useState<Set<string>>(
+    new Set(["goalkeeper", "fieldPlayers"])
+  )
   const [showTeamVotes, setShowTeamVotes] = useState(false)
 
   useEffect(() => {
@@ -123,43 +125,17 @@ export function AdminAllstarsView() {
         txt += `   ⚠️ HINWEIS: Gleichstand auf der Torwart-Position!\n`
       }
 
-      // Abwehr
-      txt += `\n🛡️ ABWEHR:\n`
-      if (evalData.positions.defense.winners.length > 0) {
-        evalData.positions.defense.winners.forEach((p, idx) => {
+      // Feldspieler
+      txt += `\n🏑 FELDPLAYER (5 Plätze):\n`
+      if (evalData.positions.fieldPlayers.winners.length > 0) {
+        evalData.positions.fieldPlayers.winners.forEach((p, idx) => {
           txt += `   • ${idx + 1}. #${p.playerNumber} ${p.playerName} (${p.teamName}) – ${p.votesCount} Stimmen\n`
         })
       } else {
         txt += `   • (Noch keine Stimmen)\n`
       }
-      if (evalData.positions.defense.hasTieAtCutoff) {
-        txt += `   ⚠️ HINWEIS: Gleichstand auf den Abwehr-Plätzen!\n`
-      }
-
-      // Mittelfeld
-      txt += `\n⚙️ MITTELFELD:\n`
-      if (evalData.positions.midfield.winners.length > 0) {
-        evalData.positions.midfield.winners.forEach((p) => {
-          txt += `   • #${p.playerNumber} ${p.playerName} (${p.teamName}) – ${p.votesCount} Stimmen\n`
-        })
-      } else {
-        txt += `   • (Noch keine Stimmen)\n`
-      }
-      if (evalData.positions.midfield.hasTieAtCutoff) {
-        txt += `   ⚠️ HINWEIS: Gleichstand auf der Mittelfeld-Position!\n`
-      }
-
-      // Sturm
-      txt += `\n⚡ STURM:\n`
-      if (evalData.positions.forward.winners.length > 0) {
-        evalData.positions.forward.winners.forEach((p, idx) => {
-          txt += `   • ${idx + 1}. #${p.playerNumber} ${p.playerName} (${p.teamName}) – ${p.votesCount} Stimmen\n`
-        })
-      } else {
-        txt += `   • (Noch keine Stimmen)\n`
-      }
-      if (evalData.positions.forward.hasTieAtCutoff) {
-        txt += `   ⚠️ HINWEIS: Gleichstand auf den Sturm-Plätzen!\n`
+      if (evalData.positions.fieldPlayers.hasTieAtCutoff) {
+        txt += `   ⚠️ HINWEIS: Gleichstand am Cutoff der Feldspieler-Plätze!\n`
       }
 
       txt += `\nStatus: ${evalData.submittedCount} von ${evalData.totalTeams} Teams haben abgestimmt.\n`
@@ -211,7 +187,7 @@ export function AdminAllstarsView() {
                 </span>
               </div>
               <p className="text-xs text-slate-500 mt-0.5">
-                Stimmen der Teams verwalten, Allstar-Kader auswerten und für die Siegerehrung bereitstellen.
+                Stimmen der Teams verwalten, Allstar-Kader auswerten (1x Torwart, 5x Feldspieler) und für die Siegerehrung bereitstellen.
               </p>
             </div>
           </div>
@@ -347,7 +323,7 @@ export function AdminAllstarsView() {
         </div>
       </div>
 
-      {/* Die Allstars Gewinner (Formation Cards) */}
+      {/* Die Allstars Gewinner (1x Torwart, 5x Feldspieler) */}
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
@@ -367,22 +343,22 @@ export function AdminAllstarsView() {
             <p className="text-sm">Noch keine Stimmen für {categoryLabel} eingegangen.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {/* Torwart */}
+          <div className="space-y-4">
+            {/* Torwart Karte */}
             <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
               <div className="flex items-center justify-between mb-3 border-b border-slate-200/60 pb-2">
                 <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
-                  🧤 Torwart
+                  🧤 Torwart (1)
                 </span>
                 {activeEvaluation.positions.goalkeeper.hasTieAtCutoff && (
                   <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">
-                    <AlertTriangle className="h-3 w-3" /> Gleichstand
+                    <AlertTriangle className="h-3 w-3" /> Gleichstand am Cutoff
                   </span>
                 )}
               </div>
               {activeEvaluation.positions.goalkeeper.winners.length > 0 ? (
                 activeEvaluation.positions.goalkeeper.winners.map((p) => (
-                  <div key={p.playerId} className="bg-white rounded-xl p-3 border border-slate-200 shadow-xs">
+                  <div key={p.playerId} className="bg-white rounded-xl p-3 border border-slate-200 shadow-xs max-w-sm">
                     <div className="flex items-start justify-between">
                       <div>
                         <p className="text-sm font-bold text-slate-900 leading-tight">
@@ -401,99 +377,34 @@ export function AdminAllstarsView() {
               )}
             </div>
 
-            {/* Abwehr */}
+            {/* Feldspieler Karten (5) */}
             <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
               <div className="flex items-center justify-between mb-3 border-b border-slate-200/60 pb-2">
                 <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
-                  🛡️ Abwehr (2)
+                  🏑 Feldspieler (5)
                 </span>
-                {activeEvaluation.positions.defense.hasTieAtCutoff && (
+                {activeEvaluation.positions.fieldPlayers.hasTieAtCutoff && (
                   <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">
-                    <AlertTriangle className="h-3 w-3" /> Gleichstand
+                    <AlertTriangle className="h-3 w-3" /> Gleichstand am Cutoff (Platz 5 vs 6)
                   </span>
                 )}
               </div>
-              <div className="space-y-2">
-                {activeEvaluation.positions.defense.winners.length > 0 ? (
-                  activeEvaluation.positions.defense.winners.map((p) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                {activeEvaluation.positions.fieldPlayers.winners.length > 0 ? (
+                  activeEvaluation.positions.fieldPlayers.winners.map((p, idx) => (
                     <div key={p.playerId} className="bg-white rounded-xl p-3 border border-slate-200 shadow-xs">
                       <div className="flex items-start justify-between">
                         <div>
+                          <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded inline-block mb-1">
+                            Platz {idx + 1}
+                          </span>
                           <p className="text-sm font-bold text-slate-900 leading-tight">
                             #{p.playerNumber} {p.playerName}
                           </p>
-                          <p className="text-xs text-slate-500 mt-0.5 font-medium">{p.teamName}</p>
+                          <p className="text-xs text-slate-500 mt-0.5 font-medium truncate">{p.teamName}</p>
                         </div>
-                        <span className="inline-flex items-center justify-center rounded-lg bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700">
-                          {p.votesCount} {p.votesCount === 1 ? "Stimme" : "Stimmen"}
-                        </span>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-xs text-slate-400 italic">Keine Stimmen</p>
-                )}
-              </div>
-            </div>
-
-            {/* Mittelfeld */}
-            <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
-              <div className="flex items-center justify-between mb-3 border-b border-slate-200/60 pb-2">
-                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
-                  ⚙️ Mittelfeld
-                </span>
-                {activeEvaluation.positions.midfield.hasTieAtCutoff && (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">
-                    <AlertTriangle className="h-3 w-3" /> Gleichstand
-                  </span>
-                )}
-              </div>
-              {activeEvaluation.positions.midfield.winners.length > 0 ? (
-                activeEvaluation.positions.midfield.winners.map((p) => (
-                  <div key={p.playerId} className="bg-white rounded-xl p-3 border border-slate-200 shadow-xs">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="text-sm font-bold text-slate-900 leading-tight">
-                          #{p.playerNumber} {p.playerName}
-                        </p>
-                        <p className="text-xs text-slate-500 mt-0.5 font-medium">{p.teamName}</p>
-                      </div>
-                      <span className="inline-flex items-center justify-center rounded-lg bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700">
-                        {p.votesCount} {p.votesCount === 1 ? "Stimme" : "Stimmen"}
-                      </span>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-xs text-slate-400 italic">Keine Stimmen</p>
-              )}
-            </div>
-
-            {/* Sturm */}
-            <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
-              <div className="flex items-center justify-between mb-3 border-b border-slate-200/60 pb-2">
-                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
-                  ⚡ Sturm (2)
-                </span>
-                {activeEvaluation.positions.forward.hasTieAtCutoff && (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">
-                    <AlertTriangle className="h-3 w-3" /> Gleichstand
-                  </span>
-                )}
-              </div>
-              <div className="space-y-2">
-                {activeEvaluation.positions.forward.winners.length > 0 ? (
-                  activeEvaluation.positions.forward.winners.map((p) => (
-                    <div key={p.playerId} className="bg-white rounded-xl p-3 border border-slate-200 shadow-xs">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <p className="text-sm font-bold text-slate-900 leading-tight">
-                            #{p.playerNumber} {p.playerName}
-                          </p>
-                          <p className="text-xs text-slate-500 mt-0.5 font-medium">{p.teamName}</p>
-                        </div>
-                        <span className="inline-flex items-center justify-center rounded-lg bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700">
-                          {p.votesCount} {p.votesCount === 1 ? "Stimme" : "Stimmen"}
+                        <span className="inline-flex items-center justify-center rounded-lg bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700 shrink-0">
+                          {p.votesCount}
                         </span>
                       </div>
                     </div>
@@ -507,18 +418,16 @@ export function AdminAllstarsView() {
         )}
       </div>
 
-      {/* Detaillierte Ranglisten je Position */}
+      {/* Detaillierte Ranglisten je Kategorie */}
       <div className="space-y-4">
         <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider">
-          Detaillierte Stimmenauswertung je Position
+          Detaillierte Stimmenauswertung
         </h3>
 
         {(
           [
             activeEvaluation.positions.goalkeeper,
-            activeEvaluation.positions.defense,
-            activeEvaluation.positions.midfield,
-            activeEvaluation.positions.forward,
+            activeEvaluation.positions.fieldPlayers,
           ] as const
         ).map((pos) => {
           const isExpanded = expandedPositions.has(pos.positionKey)
@@ -651,39 +560,39 @@ export function AdminAllstarsView() {
                         <span className="text-[10px] text-slate-500 block truncate">{v.votes.goalkeeper?.teamName}</span>
                       </div>
                       <div className="bg-white p-2 rounded-lg border border-slate-200">
-                        <span className="block text-[10px] text-slate-400 font-semibold uppercase">Abwehr 1</span>
+                        <span className="block text-[10px] text-slate-400 font-semibold uppercase">Feldspieler 1</span>
                         <span className="font-medium text-slate-800 truncate block">
-                          #{v.votes.defense1?.playerNumber} {v.votes.defense1?.playerName}
+                          #{v.votes.fieldPlayer1?.playerNumber} {v.votes.fieldPlayer1?.playerName}
                         </span>
-                        <span className="text-[10px] text-slate-500 block truncate">{v.votes.defense1?.teamName}</span>
+                        <span className="text-[10px] text-slate-500 block truncate">{v.votes.fieldPlayer1?.teamName}</span>
                       </div>
                       <div className="bg-white p-2 rounded-lg border border-slate-200">
-                        <span className="block text-[10px] text-slate-400 font-semibold uppercase">Abwehr 2</span>
+                        <span className="block text-[10px] text-slate-400 font-semibold uppercase">Feldspieler 2</span>
                         <span className="font-medium text-slate-800 truncate block">
-                          #{v.votes.defense2?.playerNumber} {v.votes.defense2?.playerName}
+                          #{v.votes.fieldPlayer2?.playerNumber} {v.votes.fieldPlayer2?.playerName}
                         </span>
-                        <span className="text-[10px] text-slate-500 block truncate">{v.votes.defense2?.teamName}</span>
+                        <span className="text-[10px] text-slate-500 block truncate">{v.votes.fieldPlayer2?.teamName}</span>
                       </div>
                       <div className="bg-white p-2 rounded-lg border border-slate-200">
-                        <span className="block text-[10px] text-slate-400 font-semibold uppercase">Mittelfeld</span>
+                        <span className="block text-[10px] text-slate-400 font-semibold uppercase">Feldspieler 3</span>
                         <span className="font-medium text-slate-800 truncate block">
-                          #{v.votes.midfield?.playerNumber} {v.votes.midfield?.playerName}
+                          #{v.votes.fieldPlayer3?.playerNumber} {v.votes.fieldPlayer3?.playerName}
                         </span>
-                        <span className="text-[10px] text-slate-500 block truncate">{v.votes.midfield?.teamName}</span>
+                        <span className="text-[10px] text-slate-500 block truncate">{v.votes.fieldPlayer3?.teamName}</span>
                       </div>
                       <div className="bg-white p-2 rounded-lg border border-slate-200">
-                        <span className="block text-[10px] text-slate-400 font-semibold uppercase">Sturm 1</span>
+                        <span className="block text-[10px] text-slate-400 font-semibold uppercase">Feldspieler 4</span>
                         <span className="font-medium text-slate-800 truncate block">
-                          #{v.votes.forward1?.playerNumber} {v.votes.forward1?.playerName}
+                          #{v.votes.fieldPlayer4?.playerNumber} {v.votes.fieldPlayer4?.playerName}
                         </span>
-                        <span className="text-[10px] text-slate-500 block truncate">{v.votes.forward1?.teamName}</span>
+                        <span className="text-[10px] text-slate-500 block truncate">{v.votes.fieldPlayer4?.teamName}</span>
                       </div>
                       <div className="bg-white p-2 rounded-lg border border-slate-200">
-                        <span className="block text-[10px] text-slate-400 font-semibold uppercase">Sturm 2</span>
+                        <span className="block text-[10px] text-slate-400 font-semibold uppercase">Feldspieler 5</span>
                         <span className="font-medium text-slate-800 truncate block">
-                          #{v.votes.forward2?.playerNumber} {v.votes.forward2?.playerName}
+                          #{v.votes.fieldPlayer5?.playerNumber} {v.votes.fieldPlayer5?.playerName}
                         </span>
-                        <span className="text-[10px] text-slate-500 block truncate">{v.votes.forward2?.teamName}</span>
+                        <span className="text-[10px] text-slate-500 block truncate">{v.votes.fieldPlayer5?.teamName}</span>
                       </div>
                     </div>
                   </div>

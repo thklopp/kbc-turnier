@@ -227,11 +227,11 @@ export interface AllstarVote {
   gender: GenderCategory;                    // "wU14" | "mU14" (stimmt für eigene Altersklasse)
   votes: {
     goalkeeper: AllstarVotePosition;         // 1x Torwart
-    defense1: AllstarVotePosition;           // 1. Abwehrspieler
-    defense2: AllstarVotePosition;           // 2. Abwehrspieler
-    midfield: AllstarVotePosition;           // 1x Mittelfeld
-    forward1: AllstarVotePosition;           // 1. Stürmer
-    forward2: AllstarVotePosition;           // 2. Stürmer
+    fieldPlayer1: AllstarVotePosition;       // 1. Feldspieler
+    fieldPlayer2: AllstarVotePosition;       // 2. Feldspieler
+    fieldPlayer3: AllstarVotePosition;       // 3. Feldspieler
+    fieldPlayer4: AllstarVotePosition;       // 4. Feldspieler
+    fieldPlayer5: AllstarVotePosition;       // 5. Feldspieler
   };
   submittedAt: FirebaseFirestore.Timestamp;
   updatedAt: FirebaseFirestore.Timestamp;

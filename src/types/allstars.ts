@@ -11,11 +11,11 @@ export interface AllstarVotePosition {
 
 export type AllstarSlotKey =
   | "goalkeeper"
-  | "defense1"
-  | "defense2"
-  | "midfield"
-  | "forward1"
-  | "forward2"
+  | "fieldPlayer1"
+  | "fieldPlayer2"
+  | "fieldPlayer3"
+  | "fieldPlayer4"
+  | "fieldPlayer5"
 
 export interface AllstarVote {
   id: string // Dokument-ID = teamId des abstimmenden Teams
@@ -24,11 +24,11 @@ export interface AllstarVote {
   gender: GenderCategory
   votes: {
     goalkeeper: AllstarVotePosition
-    defense1: AllstarVotePosition
-    defense2: AllstarVotePosition
-    midfield: AllstarVotePosition
-    forward1: AllstarVotePosition
-    forward2: AllstarVotePosition
+    fieldPlayer1: AllstarVotePosition
+    fieldPlayer2: AllstarVotePosition
+    fieldPlayer3: AllstarVotePosition
+    fieldPlayer4: AllstarVotePosition
+    fieldPlayer5: AllstarVotePosition
   }
   submittedAt: Timestamp
   updatedAt: Timestamp
@@ -45,9 +45,9 @@ export interface AllstarAggregatedPlayer {
 }
 
 export interface AllstarPositionResult {
-  positionKey: "goalkeeper" | "defense" | "midfield" | "forward"
+  positionKey: "goalkeeper" | "fieldPlayers"
   label: string
-  slotsCount: number // 1 für TW/MF, 2 für Abwehr/Sturm
+  slotsCount: number // 1 für TW, 5 für Feldspieler
   rankings: AllstarAggregatedPlayer[]
   winners: AllstarAggregatedPlayer[]
   hasTieAtCutoff: boolean // Wahr, falls auf dem letzten Siegerplatz Gleichstand mit dem nachfolgenden Platz herrscht
@@ -62,9 +62,7 @@ export interface AllstarCategoryEvaluation {
   pendingTeams: { teamId: string; teamName: string }[]
   positions: {
     goalkeeper: AllstarPositionResult
-    defense: AllstarPositionResult
-    midfield: AllstarPositionResult
-    forward: AllstarPositionResult
+    fieldPlayers: AllstarPositionResult
   }
   allVotes: AllstarVote[]
 }

@@ -18,8 +18,8 @@ Beim Hallenhockey-Turnier (Kurt-Becker-Cup) soll traditionell für die weibliche
 ### 1.2 Zielzustand & Mehrwert
 Jedes teilnehmende Team erhält in seinem individuellen Betreuer-Link (`/team/:token`) einen zusätzlichen Tab **„⭐ Allstar-Wahl“**. 
 - Teams stimmen gezielt für ihre eigene Altersklasse ab (wU14 wählt Mädchen-Allstars, mU14 wählt Jungs-Allstars).
-- Gewählt werden 6 Positionen: **1x Torwart**, **2x Abwehr**, **1x Mittelfeld**, **2x Sturm** aus den offiziell gemeldeten Spielerkadern.
-- Die Turnierleitung erhält im Admin-Bereich ein eigenes Register **„Allstars“** (`/admin#allstars`), das den Abgabestatus aller Teams in Echtzeit darstellt, die Stimmen pro Position auswertet, Gleichstände visuell hervorhebt, manuelle Entscheidungen ermöglicht und eine fertige Druck-/Kopieransicht für die Siegerehrung bereitstellt.
+- Gewählt werden 6 Positionen: **1x Torwart**, **5x Feldspieler** (gemeinsamer Pool) aus den offiziell gemeldeten Spielerkadern.
+- Die Turnierleitung erhält im Admin-Bereich ein eigenes Register **„Allstars“** (`/admin#allstars`), das den Abgabestatus aller Teams in Echtzeit darstellt, die Stimmen für Torwart und Feldspieler auswertet, Gleichstände visuell hervorhebt, manuelle Entscheidungen ermöglicht und eine fertige Druck-/Kopieransicht für die Siegerehrung bereitstellt.
 - Die Turnierleitung kann die Abstimmung mit einem Klick sperren (z. B. 30 Minuten vor Turnierende zur Vorbereitung der Siegerehrung).
 
 ---
@@ -28,7 +28,7 @@ Jedes teilnehmende Team erhält in seinem individuellen Betreuer-Link (`/team/:t
 
 - **US-1 (Team-Betreuer)**: Als **Betreuer eines teilnehmenden Teams** möchte ich über unseren Team-Link im Tab „Allstar-Wahl“ unkompliziert 6 herausragende Spieler/innen unserer Altersklasse nominieren und speichern können, um an der Wahl des Allstar-Teams teilzunehmen.
 - **US-2 (Team-Betreuer)**: Als **Betreuer** möchte ich meine abgegebenen Stimmen bis zum offiziellen Abstimmungsende jederzeit einsehen und bei Bedarf anpassen können, um auf Eindrücke späterer Turnierspiele reagieren zu können.
-- **US-3 (Turnierleitung - Live-Auswertung)**: Als **Turnierleiter** möchte ich im Admin-Bereich unter „Allstars“ auf einen Blick sehen, welche Spieler auf den 6 Positionen (TW, Abwehr, MF, Sturm) die meisten Stimmen erhalten haben, um die Siegerehrung zügig vorzubereiten.
+- **US-3 (Turnierleitung - Live-Auswertung)**: Als **Turnierleiter** möchte ich im Admin-Bereich unter „Allstars“ auf einen Blick sehen, welche Spieler auf den Positionen (Torwart & 5x Feldspieler) die meisten Stimmen erhalten haben, um die Siegerehrung zügig vorzubereiten.
 - **US-4 (Turnierleitung - Abgabekontrolle)**: Als **Turnierleiter** möchte ich sehen, welche Teams ihre Stimme bereits eingereicht haben und welche Teams noch fehlen, um säumige Betreuer rechtzeitig an die Stimmabgabe erinnern zu können.
 - **US-5 (Turnierleitung - Steuerung & Export)**: Als **Turnierleiter** möchte ich die Abstimmung sperren können, wenn die Deadline erreicht ist, und das finale Allstar-Team übersichtlich für Hallensprecher und Siegerehrung kopieren oder ausdrucken.
 
@@ -49,9 +49,7 @@ Jedes teilnehmende Team erhält in seinem individuellen Betreuer-Link (`/team/:t
 - [x] Die Abstimmung ist von Turnierbeginn an geöffnet (keine Abhängigkeit von absolvierten Spielen).
 - [x] Zu besetzende Positionen (genau 6 Spieler):
   1. **1x Torwart**
-  2. **2x Abwehr** (Pool: 2 verschiedene Spieler)
-  3. **1x Mittelfeld**
-  4. **2x Sturm** (Pool: 2 verschiedene Spieler)
+  2. **5x Feldspieler** (gemeinsamer Pool: 5 verschiedene Feldspieler)
 - [x] **Kaskadierende Spielerauswahl**:
   - Pro Position wird zunächst das gegnerische Team oder das eigene Team (Dropdown aller Teams der gleichen Altersklasse) gewählt.
   - Anschließend wird der Spieler aus dem hinterlegten Spielerkader (`team.players`) ausgewählt (Anzeige: `#Trikotnummer - Vorname Nachname`).
@@ -72,14 +70,12 @@ Jedes teilnehmende Team erhält in seinem individuellen Betreuer-Link (`/team/:t
   - Filterbar nach Altersklasse oder Gesamtübersicht (z. B. „6 von 8 Teams haben abgestimmt“).
 - [x] **Live-Ergebnisliste & Allstar-Kader**:
   - Getrennte Ansichten für **wU14** und **mU14**.
-  - Rangliste je Position:
-    - **Torwart**: Platz 1 gewinnt (Top-Scorer).
-    - **Abwehr**: Plätze 1 & 2 gewinnen (die 2 Spieler mit den meisten Stimmen im Abwehr-Pool).
-    - **Mittelfeld**: Platz 1 gewinnt.
-    - **Sturm**: Plätze 1 & 2 gewinnen (die 2 Spieler mit den meisten Stimmen im Sturm-Pool).
+  - Rangliste je Kategorie:
+    - **Torwart**: Platz 1 gewinnt (Top-Scorer unter den Torhütern).
+    - **Feldspieler**: Plätze 1 bis 5 gewinnen (die 5 Feldspieler mit den meisten Stimmen im Feldspieler-Pool).
   - Anzeige pro Spieler: Rang, Name, Trikotnummer, Vereinsname, Stimmenanzahl.
 - [x] **Gleichstands-Hervorhebung (Tie-Breaker)**:
-  - Bei Stimmengleichheit auf den Siegerplätzen (z. B. Platz 1 und 2 bei TW mit je 3 Stimmen, oder Platz 2 und 3 bei Abwehr mit je 2 Stimmen) wird ein deutliches Badge eingeblendet: `⚠️ Gleichstand - Entscheid nötig`.
+  - Bei Stimmengleichheit auf den Siegerplätzen (z. B. Platz 1 und 2 bei TW mit gleicher Stimmenanzahl, oder Platz 5 und 6 bei Feldspielern) wird ein deutliches Badge eingeblendet: `⚠️ Gleichstand - Entscheid nötig`.
   - Die Turnierleitung kann für die Moderation/Ehrung sofort erkennen, wo ein Stich- oder Juryentscheid nötig ist.
 - [x] **Detail-Einsicht der Stimmzettel**:
   - Aufklappbare Übersicht oder Modal, welches Team exakt für welche Spieler gestimmt hat (Transparenz für die Turnierleitung).
@@ -109,8 +105,8 @@ Jedes teilnehmende Team erhält in seinem individuellen Betreuer-Link (`/team/:t
   - **Then**: Enthält das Spieler-Dropdown alle Spieler aus `team.players` von Team A mit Trikotnummer und Namen. Ist für ein Team noch kein Spieler hinterlegt, wird ein Hinweistext angezeigt („Noch keine Spieler im Kader von Team A gemeldet“).
 
 - [x] **AC-3: Eindeutigkeits-Validierung (Keine Doppelbelegung)**
-  - **Given**: Betreuer hat für „Abwehr 1“ Spieler Max Mustermann ausgewählt.
-  - **When**: Der Betreuer versucht, für „Abwehr 2“ oder eine andere Position erneut Max Mustermann auszuwählen und zu speichern.
+  - **Given**: Betreuer hat für „Feldspieler 1“ Spieler Max Mustermann ausgewählt.
+  - **When**: Der Betreuer versucht, für „Feldspieler 2“ oder eine andere Position erneut Max Mustermann auszuwählen und zu speichern.
   - **Then**: Verhindert die Maske das Absenden mit einer Fehlermeldung: „Ein Spieler darf nur einmal im Allstar-Team gewählt werden: Max Mustermann ist mehrfach ausgewählt.“
 
 - [x] **AC-4: Vollständigkeitsprüfung**
@@ -133,15 +129,15 @@ Jedes teilnehmende Team erhält in seinem individuellen Betreuer-Link (`/team/:t
   - **When**: 4 von 8 wU14-Teams haben abgestimmt.
   - **Then**: Zeigt die Übersicht „4 / 8 Teams abgegeben (50 %)“ an und listet die Teams mit grünem Haken bzw. grauem Uhren-Symbol auf.
 
-- [x] **AC-8: Aggregation & Rangliste im gemeinsamen Pool**
-  - **Given**: Es liegen 5 Stimmzettel vor. Für Abwehr wurden Spieler A (4 Stimmen), Spieler B (3 Stimmen), Spieler C (2 Stimmen) und Spieler D (1 Stimme) gewählt.
-  - **When**: Die Admin-Rangliste für Abwehr gerendert wird.
-  - **Then**: Werden Spieler A (Platz 1) und Spieler B (Platz 2) als Allstar-Gewinner gekennzeichnet.
+- [x] **AC-8: Aggregation & Rangliste im gemeinsamen Feldspieler-Pool**
+  - **Given**: Es liegen Stimmzettel vor. Im Feldspieler-Pool wurden mehrere Spieler nominiert.
+  - **When**: Die Admin-Rangliste für Feldspieler gerendert wird.
+  - **Then**: Werden die 5 Feldspieler mit den meisten Stimmen als Allstar-Gewinner gekennzeichnet.
 
 - [x] **AC-9: Hervorhebung von Stimmengleichstand**
-  - **Given**: Auf der Torwart-Position haben zwei Torhüter jeweils 3 Stimmen.
+  - **Given**: Auf Platz 5 und Platz 6 der Feldspieler haben zwei Spieler die gleiche Stimmenanzahl.
   - **When**: Die Turnierleitung die Auswertung betrachtet.
-  - **Then**: Werden beide Torhüter hervorgehoben und ein Warn-Badge `Gleichstand - Entscheid nötig` wird angezeigt.
+  - **Then**: Wird ein Warn-Badge `Gleichstand - Entscheid nötig` angezeigt.
 
 - [x] **AC-10: Kopieren & Export für Siegerehrung**
   - **Given**: Die Abstimmung ist abgeschlossen.
@@ -170,11 +166,9 @@ Jedes teilnehmende Team erhält in seinem individuellen Betreuer-Link (`/team/:t
 - **Aufbau der Maske**:
   - Kopfbereich mit Hinweistext: „Wähle das offizielle Allstar-Team der [Mädchen (wU14) / Jungs (mU14)]. Wähle für jede Position eine Mannschaft und anschließend den Spieler aus.“
   - Statusbanner: Falls Abstimmung geschlossen ist -> Gelbes Banner `Abstimmung beendet`.
-  - 4 Positionsblöcke in Hockey-Formation:
+  - 2 Positionsblöcke:
     - 🧤 **Torwart** (1 Slot)
-    - 🛡️ **Abwehr** (2 Slots: Abwehrspieler 1, Abwehrspieler 2)
-    - ⚙️ **Mittelfeld** (1 Slot)
-    - ⚡ **Sturm** (2 Slots: Stürmer 1, Stürmer 2)
+    - 🏑 **Feldspieler** (5 Slots: Feldspieler 1 bis 5)
   - Jeder Slot enthält zwei nebeneinanderliegende Auswahlelemente:
     1. Team-Auswahl (Select)
     2. Spieler-Auswahl (Select mit Trikotnummer und Name)
@@ -183,7 +177,7 @@ Jedes teilnehmende Team erhält in seinem individuellen Betreuer-Link (`/team/:t
 
 #### 2. Turnierleitung (`src/pages/admin/AdminPage.tsx` & `src/components/layouts/AdminLayout.tsx`)
 - **Pfad**: `/admin#allstars`
-- **Navigation**: Neuer Tab `Allstars` mit `Trophy`- oder `Star`-Icon in der oberen Sub-Navigation.
+- **Navigation**: Neuer Tab `Allstars` mit `Star`-Icon in der oberen Sub-Navigation.
 - **Komponente**: `src/components/admin/allstars/AdminAllstarsView.tsx`
 - **Aufbau**:
   1. **Header-Bar**:
@@ -197,12 +191,12 @@ Jedes teilnehmende Team erhält in seinem individuellen Betreuer-Link (`/team/:t
      - Fortschrittsbalken & Zähler (z. B. `6 / 8 Teams`).
      - Badge-Leiste aller Teams der Altersklasse (Grün: abgegeben, Grau: offen).
   4. **Bereich 2: Gewähltes Allstar-Team (Die Gewinner)**:
-     - Visuelle Hockey-Aufstellungskarte (oder übersichtliche Grid-Karten) mit den Erstplatzierten (1x TW, 2x Abwehr, 1x MF, 2x Sturm) inkl. Logo des Vereins, Spielername, Trikotnummer und erhaltener Stimmen.
-  5. **Bereich 3: Detaillierte Stimmenauswertung je Position**:
-     - Aufklappbare Ranglisten-Tabellen pro Position mit allen nominierten Spielern und deren Stimmen.
-     - Gleichstands-Badge bei Punktegleichheit auf relevanten Rängen.
+     - 1x Torwart und 5x Feldspieler mit Logo/Verein, Spielername, Trikotnummer und erhaltener Stimmen.
+  5. **Bereich 3: Detaillierte Stimmenauswertung**:
+     - Ranglisten für Torwart und Feldspieler mit allen nominierten Spielern und deren Stimmen.
+     - Gleichstands-Badge bei Punktegleichheit auf relevanten Rängen (Platz 1 bei TW, Platz 5 vs 6 bei Feldspielern).
   6. **Bereich 4: Stimmzettel der Teams**:
-     - Tabelle aller Teams mit ihren 6 Nominierungen zur Überprüfung.
+     - Übersicht aller Teams mit ihren 6 Nominierungen zur Überprüfung.
 
 ---
 
@@ -237,11 +231,11 @@ export interface AllstarVote {
   gender: GenderCategory // "wU14" | "mU14"
   votes: {
     goalkeeper: AllstarVotePosition
-    defense1: AllstarVotePosition
-    defense2: AllstarVotePosition
-    midfield: AllstarVotePosition
-    forward1: AllstarVotePosition
-    forward2: AllstarVotePosition
+    fieldPlayer1: AllstarVotePosition
+    fieldPlayer2: AllstarVotePosition
+    fieldPlayer3: AllstarVotePosition
+    fieldPlayer4: AllstarVotePosition
+    fieldPlayer5: AllstarVotePosition
   }
   submittedAt: Timestamp
   updatedAt: Timestamp
