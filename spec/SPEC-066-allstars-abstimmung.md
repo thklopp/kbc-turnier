@@ -81,7 +81,6 @@ Jedes teilnehmende Team erhält in seinem individuellen Betreuer-Link (`/team/:t
   - Aufklappbare Übersicht oder Modal, welches Team exakt für welche Spieler gestimmt hat (Transparenz für die Turnierleitung).
 - [x] **Siegerehrungs-Export**:
   - Button „Kader für Siegerehrung kopieren“ (erzeugt formatierten Text für Zwischenablage/Messenger).
-  - Druckansicht (Clean Print View) für den Hallensprecher.
 
 ### 3.2 Explizit Out-of-Scope
 - Keine öffentliche Anzeige der Allstars in der Gast-Ansicht (`/`) oder im Kiosk (`/kiosk`) vor der Siegerehrung (Geheimhaltung bis zur Zeremonie).
@@ -183,7 +182,7 @@ Jedes teilnehmende Team erhält in seinem individuellen Betreuer-Link (`/team/:t
   1. **Header-Bar**:
      - Titel: „Allstars-Auswertung & Wahlleitung“
      - Toggle-Switch: `Abstimmung geöffnet` (Aktiv / Inaktiv) mit sofortiger Synchronisation in Firestore.
-     - Export-Aktionen: `Kader kopieren (Text)` und `Druckansicht`.
+     - Export-Aktion: `Kader kopieren (Text)`.
   2. **Sub-Tabs**:
      - `wU14 Mädchen`
      - `mU14 Jungs`
