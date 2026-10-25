@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react"
 import type { Team } from "@/types/database"
-import type { AllstarSlotKey, AllstarVote, AllstarVotePosition } from "@/types/allstars"
+import type { AllstarSlotKey, AllstarVote, AllstarVotePosition, AllstarVotingStatus } from "@/types/allstars"
 import { subscribeTeams } from "@/services/teamService"
 import { subscribeTournamentConfig } from "@/services/configService"
 import {
@@ -13,6 +13,7 @@ import {
   CheckCircle,
   AlertCircle,
   Lock,
+  Clock,
   Loader2,
 } from "lucide-react"
 
@@ -57,7 +58,7 @@ export function TeamAllstarVoting({ team, token }: TeamAllstarVotingProps) {
   const [teams, setTeams] = useState<Team[]>([])
   const [loading, setLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
-  const [isVotingOpen, setIsVotingOpen] = useState(true)
+  const [votingStatus, setVotingStatus] = useState<AllstarVotingStatus>("upcoming")
   const [slots, setSlots] = useState<SlotsState>(INITIAL_SLOTS)
   const [existingVote, setExistingVote] = useState<AllstarVote | null>(null)
   const [saveSuccess, setSaveSuccess] = useState(false)
@@ -70,7 +71,7 @@ export function TeamAllstarVoting({ team, token }: TeamAllstarVotingProps) {
     })
 
     const unsubConfig = subscribeTournamentConfig((config) => {
-      setIsVotingOpen(config.allstarVotingOpen !== false)
+      setVotingStatus(config.allstarVotingStatus || (config.allstarVotingOpen === false ? "closed" : "open"))
     })
 
     return () => {
@@ -179,8 +180,12 @@ export function TeamAllstarVoting({ team, token }: TeamAllstarVotingProps) {
     setErrorMsg(null)
     setSaveSuccess(false)
 
-    if (!isVotingOpen) {
-      setErrorMsg("Die Abstimmung ist bereits geschlossen.")
+    if (votingStatus !== "open") {
+      setErrorMsg(
+        votingStatus === "upcoming"
+          ? "Die Abstimmung hat noch nicht begonnen."
+          : "Die Abstimmung ist bereits geschlossen."
+      )
       return
     }
 
@@ -235,6 +240,7 @@ export function TeamAllstarVoting({ team, token }: TeamAllstarVotingProps) {
     )
   }
 
+  const isVotingOpen = votingStatus === "open"
   const isFormDisabled = !isVotingOpen || isSaving
   const categoryLabel = team.gender === "wU14" ? "Mädchen (wU14)" : "Jungs (mU14)"
 
@@ -257,30 +263,37 @@ export function TeamAllstarVoting({ team, token }: TeamAllstarVotingProps) {
             </div>
           </div>
 
-          <span
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
-              isVotingOpen
-                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                : "bg-amber-50 text-amber-800 border border-amber-200"
-            }`}
-          >
-            {isVotingOpen ? (
-              <>
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Abstimmung geöffnet</span>
-              </>
-            ) : (
-              <>
-                <Lock className="h-3.5 w-3.5" />
-                <span>Abstimmung geschlossen</span>
-              </>
-            )}
-          </span>
+          {votingStatus === "upcoming" && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+              <Clock className="h-3.5 w-3.5 text-amber-600" />
+              <span>In Kürze verfügbar</span>
+            </span>
+          )}
+          {votingStatus === "open" && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Abstimmung geöffnet</span>
+            </span>
+          )}
+          {votingStatus === "closed" && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-300">
+              <Lock className="h-3.5 w-3.5 text-slate-500" />
+              <span>Abstimmung geschlossen</span>
+            </span>
+          )}
         </div>
 
         <p className="text-sm text-slate-600 leading-relaxed">
           Wählt eure 6 Favoriten der Altersklasse {categoryLabel} für das offizielle KBC Allstar-Team (1x Torwart, 5x Feldspieler). Ihr könnt sowohl Spieler anderer Mannschaften als auch eigene Spieler nominieren. Jeder Spieler darf genau einmal aufgestellt werden.
         </p>
+
+        {/* Zeitplan-Hinweis (in allen drei Modi präsent) */}
+        <div className="mt-4 rounded-xl bg-blue-50/80 border border-blue-200 p-3.5 text-xs text-blue-900 flex items-center gap-2.5">
+          <Clock className="h-4 w-4 text-blue-600 shrink-0" />
+          <span>
+            <strong>Abstimmungszeitraum:</strong> Die Abstimmung ist ab dem Start des ersten Spiels bis 10 Minuten nach dem letzten Finalspiel geöffnet.
+          </span>
+        </div>
 
         {existingVote && (
           <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
@@ -298,14 +311,36 @@ export function TeamAllstarVoting({ team, token }: TeamAllstarVotingProps) {
         )}
       </div>
 
-      {/* Closed Banner */}
-      {!isVotingOpen && (
-        <div className="rounded-2xl bg-amber-50 border border-amber-200 p-4 text-sm text-amber-900 flex items-start gap-3">
-          <Lock className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+      {/* Modus 1: Upcoming Info Card */}
+      {votingStatus === "upcoming" && (
+        <div className="rounded-2xl bg-white border border-slate-200 p-8 text-center shadow-sm space-y-4">
+          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-100 text-amber-600 mx-auto shadow-sm">
+            <Clock className="h-7 w-7" />
+          </div>
+          <div className="max-w-md mx-auto space-y-2">
+            <h3 className="text-lg font-bold text-slate-900">Die Abstimmung startet in Kürze</h3>
+            <p className="text-sm text-slate-600 leading-relaxed">
+              Sobald das erste Turnierspiel beginnt, wird die Stimmabgabe hier für euch freigeschaltet.
+              Ihr könnt dann eure 6 Favoriten (1x Torwart, 5x Feldspieler) aus allen teilnehmenden Mannschaften für das offizielle KBC Allstar-Team nominieren.
+            </p>
+          </div>
+          <div className="pt-2 text-xs text-slate-400">
+            Stimmberechtigt als Mannschaft: <span className="font-semibold text-slate-600">{team.name}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Modus 3: Closed Banner */}
+      {votingStatus === "closed" && (
+        <div className="rounded-2xl bg-slate-100 border border-slate-200 p-4 text-sm text-slate-800 flex items-start gap-3">
+          <Lock className="h-5 w-5 text-slate-600 shrink-0 mt-0.5" />
           <div>
             <p className="font-bold">Die Stimmabgabe ist beendet</p>
-            <p className="text-xs text-amber-800 mt-0.5">
-              Die Turnierleitung hat die Allstars-Wahl offiziell geschlossen, um die Siegerehrung vorzubereiten. Eure abgegebenen Stimmen sind gesichert und können nicht mehr verändert werden.
+            <p className="text-xs text-slate-600 mt-0.5">
+              Die Turnierleitung hat die Allstars-Wahl offiziell geschlossen, um die Siegerehrung vorzubereiten.
+              {existingVote
+                ? " Eure zuvor eingereichten Stimmen sind unten gesichert und schreibgeschützt hinterlegt."
+                : " Für euer Team wurden keine Stimmen vor Ablauf der Frist abgegeben."}
             </p>
           </div>
         </div>
@@ -334,8 +369,9 @@ export function TeamAllstarVoting({ team, token }: TeamAllstarVotingProps) {
         </div>
       )}
 
-      {/* Voting Form */}
-      <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Modus 2 (Open) & Modus 3 (Closed): Voting Form */}
+      {votingStatus !== "upcoming" && (
+        <form onSubmit={handleSubmit} className="space-y-4">
         {/* Positions Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {SLOT_DEFINITIONS.map((def) => {
@@ -472,6 +508,7 @@ export function TeamAllstarVoting({ team, token }: TeamAllstarVotingProps) {
           </div>
         )}
       </form>
+      )}
     </div>
   )
 }

@@ -40,7 +40,8 @@ export interface TournamentConfig {
   activeDay: "saturday" | "sunday";  // Aktueller Turniertag
   courtsCount: number;               // Standard: 1
   rotationPattern: "2w_2m";          // 2 Mädchenspiele, 2 Jungsspiele im Wechsel
-  allstarVotingOpen?: boolean;       // Status der Allstar-Wahl (Standard: true)
+  allstarVotingStatus?: "upcoming" | "open" | "closed"; // Status der Allstar-Wahl (Standard: "upcoming")
+  allstarVotingOpen?: boolean;       // Veraltet / Fallback für ältere Clients
   updatedAt: FirebaseFirestore.Timestamp;
   updatedBy?: string;                // User-ID des Admins
 }

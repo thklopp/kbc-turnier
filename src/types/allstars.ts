@@ -1,5 +1,7 @@
 import type { Timestamp } from "firebase/firestore"
-import type { GenderCategory } from "./database"
+import type { GenderCategory, AllstarVotingStatus } from "./database"
+
+export type { AllstarVotingStatus }
 
 export interface AllstarVotePosition {
   teamId: string

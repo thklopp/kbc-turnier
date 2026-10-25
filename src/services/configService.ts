@@ -21,7 +21,22 @@ const DEFAULT_CONFIG: TournamentConfig = {
   activeDay: "saturday",
   courtsCount: 1,
   rotationPattern: "2w_2m",
-  allstarVotingOpen: true,
+  allstarVotingStatus: "upcoming",
+  allstarVotingOpen: false,
+}
+
+function normalizeConfig(data: Partial<TournamentConfig>): TournamentConfig {
+  const status =
+    data.allstarVotingStatus ||
+    (data.allstarVotingOpen === false ? "closed" : data.allstarVotingOpen === true ? "open" : "upcoming")
+
+  return {
+    ...DEFAULT_CONFIG,
+    ...data,
+    id: "tournament",
+    allstarVotingStatus: status,
+    allstarVotingOpen: status === "open",
+  }
 }
 
 let localMockConfig: TournamentConfig = { ...DEFAULT_CONFIG }
@@ -33,12 +48,12 @@ export function getDefaultConfig(): TournamentConfig {
 
 export async function getTournamentConfig(): Promise<TournamentConfig> {
   if (!isFirebaseConfigured) {
-    return { ...localMockConfig }
+    return normalizeConfig(localMockConfig)
   }
   const docRef = doc(db, CONFIG_DOC_PATH)
   const snapshot = await getDoc(docRef)
   if (snapshot.exists()) {
-    return { ...(snapshot.data() as TournamentConfig), id: "tournament" }
+    return normalizeConfig(snapshot.data() as TournamentConfig)
   }
   return { ...DEFAULT_CONFIG }
 }
@@ -49,7 +64,7 @@ export function subscribeTournamentConfig(
 ): Unsubscribe {
   if (!isFirebaseConfigured) {
     configListeners.add(callback)
-    callback({ ...localMockConfig })
+    callback(normalizeConfig(localMockConfig))
     return () => {
       configListeners.delete(callback)
     }
@@ -60,7 +75,7 @@ export function subscribeTournamentConfig(
     docRef,
     (snapshot) => {
       if (snapshot.exists()) {
-        callback({ ...(snapshot.data() as TournamentConfig), id: "tournament" })
+        callback(normalizeConfig(snapshot.data() as TournamentConfig))
       } else {
         // Falls noch nicht in Firestore vorhanden, Initialwerte anlegen
         setDoc(docRef, { ...DEFAULT_CONFIG, updatedAt: serverTimestamp() })
