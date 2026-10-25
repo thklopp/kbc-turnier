@@ -26,16 +26,16 @@ export function AdminAllstarsView() {
   const [teams, setTeams] = useState<Team[]>([])
   const [votes, setVotes] = useState<AllstarVote[]>([])
   const [votingStatus, setVotingStatus] = useState<AllstarVotingStatus>("upcoming")
-  const [selectedGender, setSelectedGender] = useState<GenderCategory>("wU14")
+  const [viewMode, setViewMode] = useState<"both" | "wU14" | "mU14">("both")
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [isToggling, setIsToggling] = useState(false)
 
-  // Expand / Collapse State
+  // Expand / Collapse State pro Altersklasse & Position
   const [expandedPositions, setExpandedPositions] = useState<Set<string>>(
-    new Set(["goalkeeper", "fieldPlayers"])
+    new Set(["wU14-goalkeeper", "wU14-fieldPlayers", "mU14-goalkeeper", "mU14-fieldPlayers"])
   )
-  const [showTeamVotes, setShowTeamVotes] = useState(false)
+  const [openTeamVotes, setOpenTeamVotes] = useState<Set<GenderCategory>>(new Set())
 
   useEffect(() => {
     let teamsLoaded = false
@@ -78,8 +78,6 @@ export function AdminAllstarsView() {
       setVotingStatus(cfg.allstarVotingStatus || (cfg.allstarVotingOpen === false ? "closed" : "open"))
     })
 
-    // Sicherheits-Timeout: Nach maximal 2 Sekunden Ladespinner beenden,
-    // selbst wenn eine Firestore-Subscription verzögert ist oder fehlschlägt.
     const fallbackTimer = setTimeout(() => {
       setLoading(false)
     }, 2000)
@@ -100,9 +98,6 @@ export function AdminAllstarsView() {
   const evaluationMu14 = useMemo(() => {
     return evaluateAllstars(votes, teams, "mU14")
   }, [votes, teams])
-
-  const activeEvaluation: AllstarCategoryEvaluation =
-    selectedGender === "wU14" ? evaluationWu14 : evaluationMu14
 
   const handleStatusChange = async (newStatus: AllstarVotingStatus) => {
     if (newStatus === votingStatus || isToggling) return
@@ -125,6 +120,15 @@ export function AdminAllstarsView() {
     })
   }
 
+  const toggleTeamVotes = (gender: GenderCategory) => {
+    setOpenTeamVotes((prev) => {
+      const next = new Set(prev)
+      if (next.has(gender)) next.delete(gender)
+      else next.add(gender)
+      return next
+    })
+  }
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-slate-500">
@@ -133,12 +137,6 @@ export function AdminAllstarsView() {
       </div>
     )
   }
-
-  const categoryLabel = selectedGender === "wU14" ? "wU14 (Mädchen)" : "mU14 (Jungs)"
-  const percentage =
-    activeEvaluation.totalTeams > 0
-      ? Math.round((activeEvaluation.submittedCount / activeEvaluation.totalTeams) * 100)
-      : 0
 
   return (
     <div className="space-y-6">
@@ -243,134 +241,215 @@ export function AdminAllstarsView() {
         )}
       </div>
 
-      {/* Category Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-200">
+      {/* View Switcher: Beide nebeneinander | wU14 | mU14 */}
+      <div className="flex items-center gap-2 border-b border-slate-200 overflow-x-auto pb-px">
         <button
-          onClick={() => setSelectedGender("wU14")}
-          className={`inline-flex items-center gap-2 px-5 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
-            selectedGender === "wU14"
+          type="button"
+          onClick={() => setViewMode("both")}
+          className={`inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+            viewMode === "both"
               ? "border-blue-600 text-blue-600 bg-blue-50/50 rounded-t-xl"
               : "border-transparent text-slate-500 hover:text-slate-800"
           }`}
         >
-          <span>Mädchen (wU14)</span>
-          <span className="ml-1 rounded-full bg-slate-200 px-2 py-0.5 text-xs font-mono text-slate-700">
+          <span>Beide Altersklassen nebeneinander</span>
+          <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[11px] font-mono text-slate-700">
+            {evaluationWu14.submittedCount + evaluationMu14.submittedCount}/{evaluationWu14.totalTeams + evaluationMu14.totalTeams}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setViewMode("wU14")}
+          className={`inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+            viewMode === "wU14"
+              ? "border-blue-600 text-blue-600 bg-blue-50/50 rounded-t-xl"
+              : "border-transparent text-slate-500 hover:text-slate-800"
+          }`}
+        >
+          <span>Nur Mädchen (wU14)</span>
+          <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[11px] font-mono text-slate-700">
             {evaluationWu14.submittedCount}/{evaluationWu14.totalTeams}
           </span>
         </button>
 
         <button
-          onClick={() => setSelectedGender("mU14")}
-          className={`inline-flex items-center gap-2 px-5 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
-            selectedGender === "mU14"
+          type="button"
+          onClick={() => setViewMode("mU14")}
+          className={`inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+            viewMode === "mU14"
               ? "border-blue-600 text-blue-600 bg-blue-50/50 rounded-t-xl"
               : "border-transparent text-slate-500 hover:text-slate-800"
           }`}
         >
-          <span>Jungs (mU14)</span>
-          <span className="ml-1 rounded-full bg-slate-200 px-2 py-0.5 text-xs font-mono text-slate-700">
+          <span>Nur Jungs (mU14)</span>
+          <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[11px] font-mono text-slate-700">
             {evaluationMu14.submittedCount}/{evaluationMu14.totalTeams}
           </span>
         </button>
       </div>
 
-      {/* Submission Status Section */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-          <div>
-            <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wider">
-              Abgabestatus {categoryLabel}
-            </h2>
-            <p className="text-xs text-slate-500 mt-0.5">
-              {activeEvaluation.submittedCount} von {activeEvaluation.totalTeams} Teams haben abgestimmt ({percentage}%)
-            </p>
+      {/* Content: 2 Spalten nebeneinander oder Einzelfilter */}
+      <div
+        className={
+          viewMode === "both"
+            ? "grid grid-cols-1 lg:grid-cols-2 gap-6 items-start"
+            : "space-y-6"
+        }
+      >
+        {(viewMode === "both" || viewMode === "wU14") && (
+          <CategoryColumn
+            evaluation={evaluationWu14}
+            expandedPositions={expandedPositions}
+            onTogglePosition={togglePosition}
+            isTeamVotesOpen={openTeamVotes.has("wU14")}
+            onToggleTeamVotes={() => toggleTeamVotes("wU14")}
+          />
+        )}
+
+        {(viewMode === "both" || viewMode === "mU14") && (
+          <CategoryColumn
+            evaluation={evaluationMu14}
+            expandedPositions={expandedPositions}
+            onTogglePosition={togglePosition}
+            isTeamVotesOpen={openTeamVotes.has("mU14")}
+            onToggleTeamVotes={() => toggleTeamVotes("mU14")}
+          />
+        )}
+      </div>
+    </div>
+  )
+}
+
+interface CategoryColumnProps {
+  evaluation: AllstarCategoryEvaluation
+  expandedPositions: Set<string>
+  onTogglePosition: (key: string) => void
+  isTeamVotesOpen: boolean
+  onToggleTeamVotes: () => void
+}
+
+function CategoryColumn({
+  evaluation,
+  expandedPositions,
+  onTogglePosition,
+  isTeamVotesOpen,
+  onToggleTeamVotes,
+}: CategoryColumnProps) {
+  const categoryLabel = evaluation.gender === "wU14" ? "Mädchen (wU14)" : "Jungs (mU14)"
+  const percentage =
+    evaluation.totalTeams > 0
+      ? Math.round((evaluation.submittedCount / evaluation.totalTeams) * 100)
+      : 0
+
+  return (
+    <div className="space-y-6">
+      {/* 1. Abgabestatus Karte */}
+      <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-700 font-bold text-xs shrink-0">
+              {evaluation.gender}
+            </div>
+            <div className="min-w-0">
+              <h2 className="text-base font-bold text-slate-900 truncate">
+                {categoryLabel}
+              </h2>
+              <p className="text-xs text-slate-500">
+                {evaluation.submittedCount} von {evaluation.totalTeams} Teams abgestimmt ({percentage}%)
+              </p>
+            </div>
           </div>
 
-          <div className="w-full sm:w-48 bg-slate-100 rounded-full h-2.5 overflow-hidden">
+          <div className="w-full sm:w-36 bg-slate-100 rounded-full h-2.5 overflow-hidden shrink-0">
             <div
-              className="bg-blue-600 h-2.5 rounded-full transition-all duration-500"
+              className={`h-2.5 rounded-full transition-all duration-500 ${
+                percentage === 100 ? "bg-emerald-500" : "bg-blue-600"
+              }`}
               style={{ width: `${percentage}%` }}
             />
           </div>
         </div>
 
-        {/* Team Badges Matrix */}
-        <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
-          {activeEvaluation.submittedTeams.map((t) => (
+        {/* Team Status Chips */}
+        <div className="flex flex-wrap gap-1.5 pt-3 border-t border-slate-100">
+          {evaluation.submittedTeams.map((t) => (
             <span
               key={t.teamId}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800"
               title={
                 t.submittedAt?.toDate?.()
                   ? `Abgegeben um ${t.submittedAt.toDate().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} Uhr`
                   : "Abgegeben"
               }
             >
-              <CheckCircle className="h-3.5 w-3.5 text-emerald-600" />
-              <span>{t.teamName}</span>
+              <CheckCircle className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+              <span className="truncate max-w-[140px]">{t.teamName}</span>
             </span>
           ))}
 
-          {activeEvaluation.pendingTeams.map((t) => (
+          {evaluation.pendingTeams.map((t) => (
             <span
               key={t.teamId}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs font-medium text-slate-500"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50/70 border border-amber-200 text-xs font-medium text-slate-700"
+              title="Stimmabgabe steht noch aus"
             >
-              <Clock className="h-3.5 w-3.5 text-slate-400" />
-              <span>{t.teamName}</span>
-              <span className="text-[10px] text-amber-600 font-semibold">(fehlt)</span>
+              <Clock className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+              <span className="truncate max-w-[130px]">{t.teamName}</span>
+              <span className="text-[10px] text-amber-700 font-bold shrink-0">(fehlt)</span>
             </span>
           ))}
         </div>
       </div>
 
-      {/* Die Allstars Gewinner (1x Torwart, 5x Feldspieler) */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-        <div className="flex items-center justify-between mb-4">
+      {/* 2. Gewähltes Allstar-Team */}
+      <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2">
-            <Star className="h-5 w-5 text-amber-500 fill-amber-500" />
-            <h2 className="text-base font-bold text-slate-900">
-              Gewähltes Allstar-Team: {categoryLabel}
-            </h2>
+            <Star className="h-5 w-5 text-amber-500 fill-amber-500 shrink-0" />
+            <h3 className="text-sm font-bold text-slate-900">
+              Allstar-Team: {categoryLabel}
+            </h3>
           </div>
-          <span className="text-xs text-slate-500 font-medium">
-            Basierend auf {activeEvaluation.submittedCount} Stimmzetteln
+          <span className="text-[11px] text-slate-500 font-medium">
+            {evaluation.submittedCount} Stimmzettel
           </span>
         </div>
 
-        {activeEvaluation.submittedCount === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-200 p-8 text-center text-slate-400">
-            <Trophy className="h-8 w-8 mx-auto mb-2 text-slate-300" />
-            <p className="text-sm">Noch keine Stimmen für {categoryLabel} eingegangen.</p>
+        {evaluation.submittedCount === 0 ? (
+          <div className="rounded-xl border border-dashed border-slate-200 p-6 text-center text-slate-400">
+            <Trophy className="h-7 w-7 mx-auto mb-1.5 text-slate-300" />
+            <p className="text-xs">Noch keine Stimmen eingegangen.</p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {/* Torwart Karte */}
-            <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
-              <div className="flex items-center justify-between mb-3 border-b border-slate-200/60 pb-2">
-                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+          <div className="space-y-3">
+            {/* Torwart */}
+            <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-3">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
                   🧤 Torwart (1)
                 </span>
-                {activeEvaluation.positions.goalkeeper.hasTieAtCutoff && (
+                {evaluation.positions.goalkeeper.hasTieAtCutoff && (
                   <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">
                     <AlertTriangle className="h-3 w-3" /> Gleichstand am Cutoff
                   </span>
                 )}
               </div>
-              {activeEvaluation.positions.goalkeeper.winners.length > 0 ? (
-                activeEvaluation.positions.goalkeeper.winners.map((p) => (
-                  <div key={p.playerId} className="bg-white rounded-xl p-3 border border-slate-200 shadow-xs max-w-sm">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="text-sm font-bold text-slate-900 leading-tight">
-                          #{p.playerNumber} {p.playerName}
-                        </p>
-                        <p className="text-xs text-slate-500 mt-0.5 font-medium">{p.teamName}</p>
-                      </div>
-                      <span className="inline-flex items-center justify-center rounded-lg bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700">
-                        {p.votesCount} {p.votesCount === 1 ? "Stimme" : "Stimmen"}
-                      </span>
+              {evaluation.positions.goalkeeper.winners.length > 0 ? (
+                evaluation.positions.goalkeeper.winners.map((p) => (
+                  <div
+                    key={p.playerId}
+                    className="bg-white rounded-xl p-2.5 border border-slate-200 shadow-xs flex items-center justify-between"
+                  >
+                    <div>
+                      <p className="text-xs font-bold text-slate-900">
+                        #{p.playerNumber} {p.playerName}
+                      </p>
+                      <p className="text-[11px] text-slate-500 font-medium">{p.teamName}</p>
                     </div>
+                    <span className="inline-flex items-center justify-center rounded-lg bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700 shrink-0">
+                      {p.votesCount} {p.votesCount === 1 ? "Stimme" : "Stimmen"}
+                    </span>
                   </div>
                 ))
               ) : (
@@ -378,40 +457,38 @@ export function AdminAllstarsView() {
               )}
             </div>
 
-            {/* Feldspieler Karten (5) */}
-            <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
-              <div className="flex items-center justify-between mb-3 border-b border-slate-200/60 pb-2">
-                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+            {/* Feldspieler */}
+            <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-3">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
                   🏑 Feldspieler (5)
                 </span>
-                {activeEvaluation.positions.fieldPlayers.hasTieAtCutoff && (
+                {evaluation.positions.fieldPlayers.hasTieAtCutoff && (
                   <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">
-                    <AlertTriangle className="h-3 w-3" /> Gleichstand am Cutoff (Platz 5 vs 6)
+                    <AlertTriangle className="h-3 w-3" /> Gleichstand am Cutoff
                   </span>
                 )}
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-                {activeEvaluation.positions.fieldPlayers.winners.length > 0 ? (
-                  activeEvaluation.positions.fieldPlayers.winners.map((p, idx) => (
-                    <div key={p.playerId} className="bg-white rounded-xl p-3 border border-slate-200 shadow-xs">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded inline-block mb-1">
-                            Platz {idx + 1}
-                          </span>
-                          <p className="text-sm font-bold text-slate-900 leading-tight">
-                            #{p.playerNumber} {p.playerName}
-                          </p>
-                          <p className="text-xs text-slate-500 mt-0.5 font-medium truncate">{p.teamName}</p>
-                        </div>
-                        <span className="inline-flex items-center justify-center rounded-lg bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700 shrink-0">
-                          {p.votesCount}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                {evaluation.positions.fieldPlayers.winners.length > 0 ? (
+                  evaluation.positions.fieldPlayers.winners.map((p, idx) => (
+                    <div key={p.playerId} className="bg-white rounded-xl p-2.5 border border-slate-200 shadow-xs">
+                      <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded inline-block mb-1">
+                        Platz {idx + 1}
+                      </span>
+                      <p className="text-xs font-bold text-slate-900 leading-tight">
+                        #{p.playerNumber} {p.playerName}
+                      </p>
+                      <p className="text-[11px] text-slate-500 font-medium truncate mt-0.5">{p.teamName}</p>
+                      <div className="mt-1.5 flex justify-end">
+                        <span className="inline-flex items-center justify-center rounded-md bg-blue-50 px-1.5 py-0.5 text-[11px] font-bold text-blue-700">
+                          {p.votesCount} Stimmen
                         </span>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <p className="text-xs text-slate-400 italic">Keine Stimmen</p>
+                  <p className="text-xs text-slate-400 italic col-span-full">Keine Stimmen</p>
                 )}
               </div>
             </div>
@@ -419,58 +496,61 @@ export function AdminAllstarsView() {
         )}
       </div>
 
-      {/* Detaillierte Ranglisten je Kategorie */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider">
-          Detaillierte Stimmenauswertung
-        </h3>
+      {/* 3. Detaillierte Stimmenauswertung */}
+      <div className="space-y-3">
+        <h4 className="text-xs font-bold text-slate-600 uppercase tracking-wider">
+          Detaillierte Stimmen ({categoryLabel})
+        </h4>
 
         {(
           [
-            activeEvaluation.positions.goalkeeper,
-            activeEvaluation.positions.fieldPlayers,
+            evaluation.positions.goalkeeper,
+            evaluation.positions.fieldPlayers,
           ] as const
         ).map((pos) => {
-          const isExpanded = expandedPositions.has(pos.positionKey)
+          const key = `${evaluation.gender}-${pos.positionKey}`
+          const isExpanded = expandedPositions.has(key)
+
           return (
-            <div key={pos.positionKey} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div
+              key={pos.positionKey}
+              className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
+            >
               <button
                 type="button"
-                onClick={() => togglePosition(pos.positionKey)}
-                className="w-full p-4 bg-slate-50/70 hover:bg-slate-50 flex items-center justify-between border-b border-slate-100 cursor-pointer text-left"
+                onClick={() => onTogglePosition(key)}
+                className="w-full p-3.5 bg-slate-50/70 hover:bg-slate-50 flex items-center justify-between border-b border-slate-100 cursor-pointer text-left"
               >
-                <div className="flex items-center gap-3">
-                  <span className="font-bold text-slate-900 text-sm">{pos.label}</span>
-                  <span className="text-xs text-slate-500">
-                    ({pos.rankings.length} nominierte {pos.rankings.length === 1 ? "Spieler/in" : "Spieler"})
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="font-bold text-slate-900 text-xs truncate">{pos.label}</span>
+                  <span className="text-[11px] text-slate-500 shrink-0">
+                    ({pos.rankings.length})
                   </span>
                   {pos.hasTieAtCutoff && (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-full">
-                      <AlertTriangle className="h-3 w-3" />
-                      Gleichstand am Cutoff – Entscheid nötig!
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full shrink-0">
+                      <AlertTriangle className="h-3 w-3" /> Cutoff-Gleichstand
                     </span>
                   )}
                 </div>
                 {isExpanded ? (
-                  <ChevronUp className="h-4 w-4 text-slate-400" />
+                  <ChevronUp className="h-4 w-4 text-slate-400 shrink-0" />
                 ) : (
-                  <ChevronDown className="h-4 w-4 text-slate-400" />
+                  <ChevronDown className="h-4 w-4 text-slate-400 shrink-0" />
                 )}
               </button>
 
               {isExpanded && (
-                <div className="p-4 overflow-x-auto">
+                <div className="p-3 overflow-x-auto">
                   {pos.rankings.length === 0 ? (
                     <p className="text-xs text-slate-400 italic py-2">Noch keine Nominierungen auf dieser Position.</p>
                   ) : (
                     <table className="w-full text-xs text-left">
                       <thead>
                         <tr className="border-b border-slate-200 text-slate-500 font-semibold">
-                          <th className="pb-2 w-12">Rang</th>
+                          <th className="pb-2 w-10">Rang</th>
                           <th className="pb-2">Spieler/in</th>
-                          <th className="pb-2">Verein / Team</th>
+                          <th className="pb-2">Verein</th>
                           <th className="pb-2 text-right">Stimmen</th>
-                          <th className="pb-2 pl-4">Gewählt von Teams</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
@@ -483,25 +563,22 @@ export function AdminAllstarsView() {
                                 isWinner ? "bg-amber-50/40 font-semibold" : "hover:bg-slate-50"
                               }`}
                             >
-                              <td className="py-2.5 text-slate-700">
+                              <td className="py-2 text-slate-700">
                                 {isWinner ? (
-                                  <span className="inline-flex items-center gap-1 text-amber-700">
-                                    <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
+                                  <span className="inline-flex items-center gap-0.5 text-amber-700">
+                                    <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
                                     #{idx + 1}
                                   </span>
                                 ) : (
                                   `#${idx + 1}`
                                 )}
                               </td>
-                              <td className="py-2.5 text-slate-900">
+                              <td className="py-2 text-slate-900">
                                 #{p.playerNumber} {p.playerName}
                               </td>
-                              <td className="py-2.5 text-slate-600">{p.teamName}</td>
-                              <td className="py-2.5 text-right font-bold text-slate-900">
+                              <td className="py-2 text-slate-600 truncate max-w-[120px]">{p.teamName}</td>
+                              <td className="py-2 text-right font-bold text-slate-900">
                                 {p.votesCount}
-                              </td>
-                              <td className="py-2.5 pl-4 text-slate-500">
-                                {p.voterTeamNames.join(", ")}
                               </td>
                             </tr>
                           )
@@ -516,89 +593,81 @@ export function AdminAllstarsView() {
         })}
       </div>
 
-      {/* Eingereichte Stimmzettel der Teams */}
+      {/* 4. Eingereichte Stimmzettel */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <button
           type="button"
-          onClick={() => setShowTeamVotes((prev) => !prev)}
-          className="w-full p-4 bg-slate-50/70 hover:bg-slate-50 flex items-center justify-between cursor-pointer text-left"
+          onClick={onToggleTeamVotes}
+          className="w-full p-3.5 bg-slate-50/70 hover:bg-slate-50 flex items-center justify-between cursor-pointer text-left"
         >
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4 text-slate-500" />
-            <h3 className="font-bold text-slate-900 text-sm">
-              Eingereichte Stimmzettel der Teams ({activeEvaluation.allVotes.length})
-            </h3>
+            <h4 className="font-bold text-slate-900 text-xs">
+              Eingereichte Stimmzettel ({evaluation.allVotes.length})
+            </h4>
           </div>
-          {showTeamVotes ? (
+          {isTeamVotesOpen ? (
             <ChevronUp className="h-4 w-4 text-slate-400" />
           ) : (
             <ChevronDown className="h-4 w-4 text-slate-400" />
           )}
         </button>
 
-        {showTeamVotes && (
-          <div className="p-4 border-t border-slate-100 overflow-x-auto">
-            {activeEvaluation.allVotes.length === 0 ? (
+        {isTeamVotesOpen && (
+          <div className="p-3 border-t border-slate-100 space-y-3">
+            {evaluation.allVotes.length === 0 ? (
               <p className="text-xs text-slate-400 italic">Noch keine Stimmzettel eingereicht.</p>
             ) : (
-              <div className="space-y-4">
-                {activeEvaluation.allVotes.map((v) => (
-                  <div key={v.teamId} className="rounded-xl border border-slate-200 p-4 bg-slate-50/30">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-bold text-slate-900 text-sm">{v.teamName}</span>
-                      <span className="text-[11px] text-slate-400">
-                        {v.updatedAt?.toDate?.()
-                          ? v.updatedAt.toDate().toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" })
-                          : ""}
+              evaluation.allVotes.map((v) => (
+                <div key={v.teamId} className="rounded-xl border border-slate-200 p-3 bg-slate-50/30">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-bold text-slate-900 text-xs">{v.teamName}</span>
+                    <span className="text-[10px] text-slate-400">
+                      {v.updatedAt?.toDate?.()
+                        ? v.updatedAt.toDate().toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" })
+                        : ""}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 text-[11px]">
+                    <div className="bg-white p-1.5 rounded-lg border border-slate-200">
+                      <span className="block text-[9px] text-slate-400 font-semibold uppercase">Torwart</span>
+                      <span className="font-medium text-slate-800 truncate block">
+                        #{v.votes.goalkeeper?.playerNumber} {v.votes.goalkeeper?.playerName}
                       </span>
                     </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 text-xs">
-                      <div className="bg-white p-2 rounded-lg border border-slate-200">
-                        <span className="block text-[10px] text-slate-400 font-semibold uppercase">Torwart</span>
-                        <span className="font-medium text-slate-800 truncate block">
-                          #{v.votes.goalkeeper?.playerNumber} {v.votes.goalkeeper?.playerName}
-                        </span>
-                        <span className="text-[10px] text-slate-500 block truncate">{v.votes.goalkeeper?.teamName}</span>
-                      </div>
-                      <div className="bg-white p-2 rounded-lg border border-slate-200">
-                        <span className="block text-[10px] text-slate-400 font-semibold uppercase">Feldspieler 1</span>
-                        <span className="font-medium text-slate-800 truncate block">
-                          #{v.votes.fieldPlayer1?.playerNumber} {v.votes.fieldPlayer1?.playerName}
-                        </span>
-                        <span className="text-[10px] text-slate-500 block truncate">{v.votes.fieldPlayer1?.teamName}</span>
-                      </div>
-                      <div className="bg-white p-2 rounded-lg border border-slate-200">
-                        <span className="block text-[10px] text-slate-400 font-semibold uppercase">Feldspieler 2</span>
-                        <span className="font-medium text-slate-800 truncate block">
-                          #{v.votes.fieldPlayer2?.playerNumber} {v.votes.fieldPlayer2?.playerName}
-                        </span>
-                        <span className="text-[10px] text-slate-500 block truncate">{v.votes.fieldPlayer2?.teamName}</span>
-                      </div>
-                      <div className="bg-white p-2 rounded-lg border border-slate-200">
-                        <span className="block text-[10px] text-slate-400 font-semibold uppercase">Feldspieler 3</span>
-                        <span className="font-medium text-slate-800 truncate block">
-                          #{v.votes.fieldPlayer3?.playerNumber} {v.votes.fieldPlayer3?.playerName}
-                        </span>
-                        <span className="text-[10px] text-slate-500 block truncate">{v.votes.fieldPlayer3?.teamName}</span>
-                      </div>
-                      <div className="bg-white p-2 rounded-lg border border-slate-200">
-                        <span className="block text-[10px] text-slate-400 font-semibold uppercase">Feldspieler 4</span>
-                        <span className="font-medium text-slate-800 truncate block">
-                          #{v.votes.fieldPlayer4?.playerNumber} {v.votes.fieldPlayer4?.playerName}
-                        </span>
-                        <span className="text-[10px] text-slate-500 block truncate">{v.votes.fieldPlayer4?.teamName}</span>
-                      </div>
-                      <div className="bg-white p-2 rounded-lg border border-slate-200">
-                        <span className="block text-[10px] text-slate-400 font-semibold uppercase">Feldspieler 5</span>
-                        <span className="font-medium text-slate-800 truncate block">
-                          #{v.votes.fieldPlayer5?.playerNumber} {v.votes.fieldPlayer5?.playerName}
-                        </span>
-                        <span className="text-[10px] text-slate-500 block truncate">{v.votes.fieldPlayer5?.teamName}</span>
-                      </div>
+                    <div className="bg-white p-1.5 rounded-lg border border-slate-200">
+                      <span className="block text-[9px] text-slate-400 font-semibold uppercase">Feldspieler 1</span>
+                      <span className="font-medium text-slate-800 truncate block">
+                        #{v.votes.fieldPlayer1?.playerNumber} {v.votes.fieldPlayer1?.playerName}
+                      </span>
+                    </div>
+                    <div className="bg-white p-1.5 rounded-lg border border-slate-200">
+                      <span className="block text-[9px] text-slate-400 font-semibold uppercase">Feldspieler 2</span>
+                      <span className="font-medium text-slate-800 truncate block">
+                        #{v.votes.fieldPlayer2?.playerNumber} {v.votes.fieldPlayer2?.playerName}
+                      </span>
+                    </div>
+                    <div className="bg-white p-1.5 rounded-lg border border-slate-200">
+                      <span className="block text-[9px] text-slate-400 font-semibold uppercase">Feldspieler 3</span>
+                      <span className="font-medium text-slate-800 truncate block">
+                        #{v.votes.fieldPlayer3?.playerNumber} {v.votes.fieldPlayer3?.playerName}
+                      </span>
+                    </div>
+                    <div className="bg-white p-1.5 rounded-lg border border-slate-200">
+                      <span className="block text-[9px] text-slate-400 font-semibold uppercase">Feldspieler 4</span>
+                      <span className="font-medium text-slate-800 truncate block">
+                        #{v.votes.fieldPlayer4?.playerNumber} {v.votes.fieldPlayer4?.playerName}
+                      </span>
+                    </div>
+                    <div className="bg-white p-1.5 rounded-lg border border-slate-200">
+                      <span className="block text-[9px] text-slate-400 font-semibold uppercase">Feldspieler 5</span>
+                      <span className="font-medium text-slate-800 truncate block">
+                        #{v.votes.fieldPlayer5?.playerNumber} {v.votes.fieldPlayer5?.playerName}
+                      </span>
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))
             )}
           </div>
         )}
