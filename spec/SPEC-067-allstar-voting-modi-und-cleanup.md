@@ -1,6 +1,6 @@
 # SPEC-067: Allstar-Abstimmung: 3 Modi-Steuerung und Cleanup
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature / Refactoring  
 > **Branch**: feat/SPEC-067-allstar-voting-modi-und-cleanup  
 > **Autor**: Antigravity  
