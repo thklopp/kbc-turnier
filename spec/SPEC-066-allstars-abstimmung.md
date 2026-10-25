@@ -1,6 +1,6 @@
 # SPEC-066: Allstars-Abstimmung (Team-Wahl & Admin-Auswertung)
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature  
 > **Branch**: feat/SPEC-066-allstars-abstimmung  
 > **Autor**: Antigravity  
