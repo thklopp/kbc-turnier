@@ -9,8 +9,13 @@ import {
 } from "@/services/teamService"
 import { useAudioPlayer } from "@/hooks/useAudioPlayer"
 import { calculateAudioGain } from "@/lib/audioNormalization"
-import type { Team, Player } from "@/types/database"
+import type { Team, Player, Match } from "@/types/database"
 import { TeamRosterManager } from "@/components/common/TeamRosterManager"
+import {
+  subscribeTournamentPage,
+  extractTeamMealTimes,
+} from "@/services/infoService"
+import { subscribeMatches } from "@/services/matchService"
 import {
   Music,
   Users,
@@ -26,6 +31,8 @@ import {
   Volume2,
   Sparkles,
   Star,
+  Utensils,
+  ArrowRight,
 } from "lucide-react"
 import { TeamAllstarVoting } from "@/components/team/TeamAllstarVoting"
 import rrkLogo from "@/assets/images/RRK.webp"
@@ -37,6 +44,8 @@ export function TeamJinglePage() {
   const [team, setTeam] = useState<Team | null>(null)
   const [activeTab, setActiveTab] = useState<"jingle" | "roster" | "allstars">("jingle")
   const [loadError, setLoadError] = useState<string | null>(null)
+  const [essenContent, setEssenContent] = useState<string>("")
+  const [matches, setMatches] = useState<Match[]>([])
 
   // Audio & File State
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -123,6 +132,23 @@ export function TeamJinglePage() {
       loadAudio(previewUrl)
     }
   }, [previewUrl, loadAudio])
+
+  // Lade Essensplan & Spielplan für team-spezifische Essenszeiten
+  useEffect(() => {
+    const unsubPage = subscribeTournamentPage(
+      "essen",
+      (page) => setEssenContent(page.content),
+      (err) => console.error("TeamJinglePage: Fehler beim Laden des Essensplans", err)
+    )
+    const unsubMatches = subscribeMatches(
+      (data) => setMatches(data),
+      (err) => console.error("TeamJinglePage: Fehler beim Laden der Matches", err)
+    )
+    return () => {
+      unsubPage()
+      unsubMatches()
+    }
+  }, [])
 
 
   // Aktualisiert die Startzeit und synchronisiert bei Inaktivität den Slider
@@ -446,6 +472,53 @@ export function TeamJinglePage() {
             </p>
           </div>
         </div>
+
+        {/* Team Meal Times Banner */}
+        {(() => {
+          const mealTimes = extractTeamMealTimes(essenContent, team, matches)
+          if (!mealTimes.saturday && !mealTimes.sunday) return null
+
+          return (
+            <div className="bg-amber-50/80 border border-amber-200 rounded-2xl p-4 sm:p-5 mb-6 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500 text-white shadow-xs">
+                  <Utensils className="h-5 w-5" />
+                </div>
+                <div>
+                  <h2 className="text-sm font-bold text-slate-900">
+                    Eure Essenszeiten (Mittagessen)
+                  </h2>
+                  <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-700">
+                    {mealTimes.saturday && (
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-semibold text-slate-900">Samstag:</span>
+                        <span className="rounded bg-white/90 border border-amber-200 px-1.5 py-0.5 font-mono font-medium text-amber-950">
+                          {mealTimes.saturday}
+                        </span>
+                      </div>
+                    )}
+                    {mealTimes.sunday && (
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-semibold text-slate-900">Sonntag:</span>
+                        <span className="rounded bg-white/90 border border-amber-200 px-1.5 py-0.5 font-mono font-medium text-amber-950">
+                          {mealTimes.sunday}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <Link
+                to="/info#essen"
+                className="inline-flex items-center gap-1 rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-xs font-bold text-amber-900 shadow-xs hover:bg-amber-50 transition-colors shrink-0"
+              >
+                <span>Gesamter Essensplan</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          )
+        })()}
 
         {/* Tab Navigation */}
         <div className="flex items-center gap-2 mb-6 border-b border-slate-200">
