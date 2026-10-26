@@ -98,6 +98,10 @@ export function GuestScheduleView({
 
                   <div className="flex items-center gap-1.5 shrink-0">
                     <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold border ${tagClass}`}>
+                      #{match.matchNumber}
+                    </span>
+
+                    <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold border ${tagClass}`}>
                       {match.gender}
                     </span>
 

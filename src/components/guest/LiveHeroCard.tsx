@@ -74,6 +74,9 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
           </span>
         )}
         <span className={`inline-flex items-center rounded-full border px-3 py-1 text-xs sm:text-sm font-medium ${badgeClass}`}>
+          #{currentMatch.matchNumber}
+        </span>
+        <span className={`inline-flex items-center rounded-full border px-3 py-1 text-xs sm:text-sm font-medium ${badgeClass}`}>
           {currentMatch.gender}
         </span>
         <span className={`inline-flex items-center rounded-full border px-3 py-1 text-xs sm:text-sm font-medium ${badgeClass}`}>
@@ -138,13 +141,6 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
               <span className="text-slate-400 text-2xl sm:text-3xl font-sans font-bold">vs</span>
             )}
           </div>
-
-          {/* Subtext BELOW the score */}
-          {!isLive && !isPaused && (
-            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mt-1 whitespace-nowrap">
-              Spiel #{currentMatch.matchNumber}
-            </span>
-          )}
         </div>
 
         {/* Away Team Logo */}
