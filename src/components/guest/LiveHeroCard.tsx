@@ -2,6 +2,7 @@ import type { Match, Team } from "@/types/database"
 import { getMatchDisplayName } from "@/services/matchService"
 import { ShieldAlert, Sparkles, Trophy } from "lucide-react"
 import { HockeyGoalIcon } from "@/components/common/HockeyGoalIcon"
+import { MatchRefereeDisplay } from "@/components/common/MatchRefereeDisplay"
 
 interface LiveHeroCardProps {
   matches: Match[]
@@ -281,6 +282,15 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
           })}
         </div>
       )}
+
+      {/* Schiedsrichter (SPEC-070) */}
+      <MatchRefereeDisplay
+        referee1={currentMatch.referee1}
+        referee2={currentMatch.referee2}
+        matches={matches}
+        teams={teams}
+        variant="hero"
+      />
     </div>
   )
 }

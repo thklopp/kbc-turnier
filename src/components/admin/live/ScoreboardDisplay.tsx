@@ -25,6 +25,7 @@ import {
   Check,
 } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
+import { MatchRefereeDisplay } from "@/components/common/MatchRefereeDisplay"
 
 interface ScoreboardDisplayProps {
   homeTeam?: Team
@@ -70,6 +71,11 @@ interface ScoreboardDisplayProps {
   // Goal events & scorer integration
   events?: MatchEvent[]
   onUpdateGoalScorer?: (eventId: string, player?: Player | null) => void
+  // Schiedsrichter (SPEC-070)
+  referee1?: string
+  referee2?: string
+  matches?: Match[]
+  teams?: Team[]
 }
 
 export function ScoreboardDisplay({
@@ -110,6 +116,10 @@ export function ScoreboardDisplay({
   isPlayingCornerJingle = false,
   events,
   onUpdateGoalScorer,
+  referee1,
+  referee2,
+  matches,
+  teams,
 }: ScoreboardDisplayProps) {
   const [isCornerMenuOpen, setIsCornerMenuOpen] = useState(false)
   const cornerMenuRef = useRef<HTMLDivElement>(null)
@@ -696,6 +706,17 @@ export function ScoreboardDisplay({
           </div>
         </div>
       </div>
+
+      {/* Schiedsrichter (SPEC-070) */}
+      {matches && teams && (
+        <MatchRefereeDisplay
+          referee1={referee1}
+          referee2={referee2}
+          matches={matches}
+          teams={teams}
+          variant="desk"
+        />
+      )}
     </div>
   )
 }

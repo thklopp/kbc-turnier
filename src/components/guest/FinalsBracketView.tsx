@@ -1,5 +1,6 @@
 import type { Match, Team, GenderCategory } from "@/types/database"
 import { getMatchDisplayName } from "@/services/matchService"
+import { MatchRefereeDisplay } from "@/components/common/MatchRefereeDisplay"
 
 interface FinalsBracketViewProps {
   matches: Match[]
@@ -167,6 +168,17 @@ export function FinalsBracketView({
             </span>
           </div>
         </div>
+
+        {/* Schiedsrichter (SPEC-070) - nur bei offenen Partien */}
+        {!isFinished && (
+          <MatchRefereeDisplay
+            referee1={m.referee1}
+            referee2={m.referee2}
+            matches={matches}
+            teams={teams}
+            variant="card"
+          />
+        )}
       </div>
     )
   }

@@ -6,7 +6,7 @@ import {
   type Unsubscribe,
 } from "firebase/firestore"
 import { db, isFirebaseConfigured } from "@/lib/firebase"
-import type { TournamentPageConfig, Match, Team, TeamMealTimes } from "@/types/database"
+import type { TournamentPageConfig, Match, Team, TeamMealTimes, GenderCategory } from "@/types/database"
 
 export const DEFAULT_INFO_MARKDOWN = `# Willkommen zum 20. Kurt-Becker-Cup! 🏑
 
@@ -327,6 +327,138 @@ export function resolveMatchVariables(
       return teamId || (isHome ? "Heimteam" : "Gastteam")
     }
   )
+}
+
+/**
+ * Resolves a referee team specification (plain text or variable like {{spiel:6:heim}})
+ * to the team's full long name.
+ */
+export function resolveRefereeText(
+  text: string,
+  matches: Match[],
+  teams: Team[]
+): string {
+  if (!text) return ""
+  return resolveMatchVariables(text.trim(), matches, teams).trim()
+}
+
+/**
+ * Returns the formatted pair of referees separated by a slash (e.g. "Team A / Team B"),
+ * or null if either referee is missing or empty.
+ */
+export function formatRefereePair(
+  referee1: string | undefined,
+  referee2: string | undefined,
+  matches: Match[],
+  teams: Team[]
+): string | null {
+  const r1 = referee1?.trim()
+  const r2 = referee2?.trim()
+  if (!r1 || !r2) return null
+
+  const resolved1 = resolveRefereeText(r1, matches, teams)
+  const resolved2 = resolveRefereeText(r2, matches, teams)
+  if (!resolved1 || !resolved2) return null
+
+  return `${resolved1} / ${resolved2}`
+}
+
+/**
+ * Determines the gender category of a referee specification (variable or team name/ID).
+ * Returns "mU14", "wU14" or null if it cannot be determined.
+ */
+export function getRefereeGender(
+  rawText: string,
+  matches: Match[] = [],
+  teams: Team[] = []
+): GenderCategory | null {
+  if (!rawText) return null
+  const trimmed = rawText.trim()
+  if (!trimmed) return null
+
+  // 1. Check for match variable: {{spiel:X:heim}}, {{match:X:away}}, etc.
+  const matchVarRegex = /\{\{(?:spiel|match):(\d+):(heim|gast|home|away)(?::(?:kurz|short))?\}\}/i
+  const varMatch = trimmed.match(matchVarRegex)
+  if (varMatch) {
+    const matchNum = parseInt(varMatch[1], 10)
+    const targetMatch = matches.find((m) => m.matchNumber === matchNum)
+    if (targetMatch) {
+      return targetMatch.gender
+    }
+  }
+
+  // 2. Check in teams list by ID, shortName, or exact name
+  const lower = trimmed.toLowerCase()
+  const exactTeam = teams.find(
+    (t) =>
+      t.id.toLowerCase() === lower ||
+      t.shortName.toLowerCase() === lower ||
+      t.name.toLowerCase() === lower
+  )
+  if (exactTeam) {
+    return exactTeam.gender
+  }
+
+  // 3. Fallback: check if raw text contains keywords
+  if (lower.includes("wu14") || lower.includes("weiblich") || lower.includes("mädchen")) {
+    return "wU14"
+  }
+  if (lower.includes("mu14") || lower.includes("männlich") || lower.includes("jungen")) {
+    return "mU14"
+  }
+
+  // 4. Partial match against team names
+  const partialTeam = teams.find(
+    (t) =>
+      (t.name && lower.includes(t.name.toLowerCase())) ||
+      (t.shortName && lower.includes(t.shortName.toLowerCase()))
+  )
+  if (partialTeam) {
+    return partialTeam.gender
+  }
+
+  return null
+}
+
+export interface RefereePreviewInfo {
+  resolvedText: string
+  gender: GenderCategory | null
+  isMismatch: boolean
+  hasError: boolean
+  errorMessage?: string
+}
+
+/**
+ * Provides preview and validation info for a referee input string in MatchEditModal.
+ */
+export function getRefereePreviewInfo(
+  rawText: string,
+  targetMatchGender: GenderCategory,
+  matches: Match[] = [],
+  teams: Team[] = []
+): RefereePreviewInfo | null {
+  const trimmed = rawText.trim()
+  if (!trimmed) return null
+
+  const resolvedText = resolveRefereeText(trimmed, matches, teams)
+  const gender = getRefereeGender(trimmed, matches, teams)
+  const isMismatch = Boolean(gender && gender !== targetMatchGender)
+  const hasError = resolvedText.startsWith("[Spiel #")
+
+  let errorMessage: string | undefined
+  if (hasError) {
+    errorMessage = resolvedText
+  } else if (isMismatch) {
+    errorMessage = `Altersklasse ${gender} passt nicht zum Spiel (${targetMatchGender})`
+  }
+
+  return {
+    resolvedText,
+    gender,
+    isMismatch,
+    hasError,
+    errorMessage,
+  }
 }
 
 /**

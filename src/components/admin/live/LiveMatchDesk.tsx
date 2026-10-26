@@ -196,6 +196,10 @@ export function LiveMatchDesk() {
         matchName={currentMatch?.matchName}
         events={currentMatch?.events}
         onUpdateGoalScorer={updateGoalScorer}
+        referee1={currentMatch?.referee1}
+        referee2={currentMatch?.referee2}
+        matches={matches}
+        teams={teams}
       />
     </div>
   )

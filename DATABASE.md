@@ -185,6 +185,10 @@ export interface Match {
   // Ereignisse
   events: MatchEvent[];              // Liste aller Tore & Karten
 
+  // Schiedsrichter (SPEC-070)
+  referee1?: string;                 // Schiedsrichter 1 (Freitext oder Variable wie {{spiel:6:heim}})
+  referee2?: string;                 // Schiedsrichter 2 (Freitext oder Variable wie {{spiel:6:gast}})
+
   updatedAt: FirebaseFirestore.Timestamp;
 }
 ```

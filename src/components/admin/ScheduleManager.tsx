@@ -23,6 +23,7 @@ import {
   RefreshCw,
 } from "lucide-react"
 import { syncFinalRoundMatches } from "@/services/matchProgressionService"
+import { formatRefereePair } from "@/services/infoService"
 
 export function ScheduleManager() {
   const [matches, setMatches] = useState<Match[]>([])
@@ -329,7 +330,7 @@ export function ScheduleManager() {
           <button
             onClick={() => setGenderFilter("wU14")}
             className={`rounded-md px-2.5 py-1 transition-colors cursor-pointer ${
-              genderFilter === "wU14" ? "bg-white text-pink-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
+              genderFilter === "wU14" ? "bg-white text-fuchsia-700 shadow-xs" : "text-slate-600 hover:text-slate-900"
             }`}
           >
             wU14
@@ -431,10 +432,10 @@ export function ScheduleManager() {
 
                       <td className="py-3 px-4">
                         <span
-                          className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${
+                          className={`rounded px-1.5 py-0.5 text-[10px] font-bold border ${
                             isFemale
-                              ? "bg-pink-100 text-pink-700 border border-pink-200"
-                              : "bg-blue-100 text-blue-700 border border-blue-200"
+                              ? "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200"
+                              : "bg-blue-50 text-blue-700 border-blue-200"
                           }`}
                         >
                           {match.gender}
@@ -442,7 +443,13 @@ export function ScheduleManager() {
                       </td>
 
                       <td className="py-3 px-4 font-semibold text-slate-900">
-                        {getMatchDisplayName(match)}
+                        <div>{getMatchDisplayName(match)}</div>
+                        {match.status !== "finished" && match.referee1 && match.referee2 && (
+                          <div className="mt-1 text-[11px] text-slate-500 font-normal">
+                            <span className="font-semibold text-slate-600">SR:</span>{" "}
+                            {formatRefereePair(match.referee1, match.referee2, matches, teams)}
+                          </div>
+                        )}
                       </td>
 
                       <td className="py-3 px-4 text-center">
@@ -549,6 +556,7 @@ export function ScheduleManager() {
         teams={teams}
         isOpen={Boolean(selectedMatch)}
         onClose={() => setSelectedMatch(null)}
+        onSelectMatch={setSelectedMatch}
       />
     </div>
   )

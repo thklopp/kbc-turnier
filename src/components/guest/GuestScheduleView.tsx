@@ -1,4 +1,5 @@
 import type { Match, Team, GenderCategory } from "@/types/database"
+import { MatchRefereeDisplay } from "@/components/common/MatchRefereeDisplay"
 
 interface GuestScheduleViewProps {
   matches: Match[]
@@ -204,6 +205,17 @@ export function GuestScheduleView({
                     </span>
                   </div>
                 </div>
+
+                {/* Schiedsrichter (SPEC-070) - nur bei offenen Partien */}
+                {!isFinished && (
+                  <MatchRefereeDisplay
+                    referee1={match.referee1}
+                    referee2={match.referee2}
+                    matches={matches}
+                    teams={teams}
+                    variant="card"
+                  />
+                )}
               </div>
             )
           })}

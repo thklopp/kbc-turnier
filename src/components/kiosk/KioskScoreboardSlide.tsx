@@ -3,12 +3,14 @@ import { Clock, Calendar, CheckCircle2, Pause } from "lucide-react"
 import type { Match, Team } from "@/types/database"
 import { HockeyGoalIcon } from "@/components/common/HockeyGoalIcon"
 import { getMatchDisplayName } from "@/services/matchService"
+import { MatchRefereeDisplay } from "@/components/common/MatchRefereeDisplay"
 import rrkLogo from "@/assets/images/RRK.webp"
 
 interface KioskScoreboardSlideProps {
   currentMatch: Match | null
   nextMatch: Match | null
   teams: Team[]
+  matches?: Match[]
 }
 
 function getTeamDetails(teamId: string, placeholder?: string, teams: Team[] = []) {
@@ -35,6 +37,7 @@ export function KioskScoreboardSlide({
   currentMatch,
   nextMatch,
   teams,
+  matches = [],
 }: KioskScoreboardSlideProps) {
   const [logoErrors, setLogoErrors] = useState<Record<string, boolean>>({})
 
@@ -307,28 +310,53 @@ export function KioskScoreboardSlide({
             </div>
           </div>
         )}
+
+        {/* Schiedsrichter (SPEC-070) */}
+        {matches.length > 0 && (
+          <MatchRefereeDisplay
+            referee1={displayMatch.referee1}
+            referee2={displayMatch.referee2}
+            matches={matches}
+            teams={teams}
+            variant="kiosk"
+          />
+        )}
       </div>
 
       {/* Up Next Preview sub-bar if currently live or paused */}
       {(isLive || isPaused) && nextMatch && (
-        <div className="mt-4 w-full flex items-center justify-center gap-3 md:gap-4 rounded-2xl border-2 border-slate-200 bg-white px-8 py-3.5 text-base md:text-lg font-medium text-slate-900 shadow-xl">
-          <span className="font-bold text-blue-700 uppercase text-xs md:text-sm tracking-wider bg-blue-50 border border-blue-200 px-3.5 py-1 rounded-full flex-none mr-1">
-            Als Nächstes
-          </span>
-          <span>{nextMatch.scheduledTime} Uhr</span>
-          <span className="text-slate-300">&bull;</span>
-          <span>{nextMatch.gender}</span>
-          <span className="text-slate-300">&bull;</span>
-          <span>
-            {nextMatch.phase === "group"
-              ? `Gruppe ${nextMatch.group}`
-              : nextMatch.matchName || "Finalspiel"}
-          </span>
-          <span className="text-slate-300">&bull;</span>
-          <span>
-            {getTeamDetails(nextMatch.teamHomeId, nextMatch.teamHomePlaceholder, teams).name} vs.{" "}
-            {getTeamDetails(nextMatch.teamAwayId, nextMatch.teamAwayPlaceholder, teams).name}
-          </span>
+        <div className="mt-4 w-full rounded-2xl border-2 border-slate-200 bg-white px-8 py-3.5 shadow-xl text-center">
+          <div className="flex items-center justify-center gap-3 md:gap-4 text-base md:text-lg font-medium text-slate-900">
+            <span className="font-bold text-blue-700 uppercase text-xs md:text-sm tracking-wider bg-blue-50 border border-blue-200 px-3.5 py-1 rounded-full flex-none mr-1">
+              Als Nächstes
+            </span>
+            <span>{nextMatch.scheduledTime} Uhr</span>
+            <span className="text-slate-300">&bull;</span>
+            <span>{nextMatch.gender}</span>
+            <span className="text-slate-300">&bull;</span>
+            <span>
+              {nextMatch.phase === "group"
+                ? `Gruppe ${nextMatch.group}`
+                : nextMatch.matchName || "Finalspiel"}
+            </span>
+            <span className="text-slate-300">&bull;</span>
+            <span>
+              {getTeamDetails(nextMatch.teamHomeId, nextMatch.teamHomePlaceholder, teams).name} vs.{" "}
+              {getTeamDetails(nextMatch.teamAwayId, nextMatch.teamAwayPlaceholder, teams).name}
+            </span>
+          </div>
+
+          {/* Schiedsrichter Nächstes Spiel (SPEC-070) */}
+          {matches.length > 0 && (
+            <MatchRefereeDisplay
+              referee1={nextMatch.referee1}
+              referee2={nextMatch.referee2}
+              matches={matches}
+              teams={teams}
+              variant="card"
+              className="mt-2.5 pt-2"
+            />
+          )}
         </div>
       )}
     </div>

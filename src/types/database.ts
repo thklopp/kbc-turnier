@@ -121,6 +121,10 @@ export interface Match {
   // Ereignisse
   events: MatchEvent[]
 
+  // Schiedsrichter (SPEC-070)
+  referee1?: string
+  referee2?: string
+
   updatedAt?: Timestamp
 }
 

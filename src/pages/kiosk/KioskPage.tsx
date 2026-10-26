@@ -179,6 +179,7 @@ export function KioskPage() {
               currentMatch={liveMatch}
               nextMatch={nextMatch}
               teams={teams}
+              matches={matches}
             />
           )
         )}
