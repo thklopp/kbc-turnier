@@ -20,11 +20,19 @@ export interface TournamentConfig {
   updatedBy?: string
 }
 
-export interface TournamentInfoConfig {
-  id: "info"
+export interface TournamentPageConfig {
+  id: string
+  title?: string
   content: string
   updatedAt?: Timestamp
   updatedBy?: string
+}
+
+export type TournamentInfoConfig = TournamentPageConfig
+
+export interface TeamMealTimes {
+  saturday?: string
+  sunday?: string
 }
 
 export interface Player {

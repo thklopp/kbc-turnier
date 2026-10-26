@@ -10,7 +10,8 @@ Dieses Dokument definiert das vollständige Datenmodell der **KBC Hallenhockey-T
 firestore/
 ├── config/
 │   ├── tournament             # Globale Turnierkonfiguration (Zeiten, Pausen, Rhythmus)
-│   └── info                   # Info-Seite Markdown-Inhalt (Regeln, Zeiten, Catering, Historie)
+│   ├── info                   # Info-Seite "Allgemeines" Markdown-Inhalt (Regeln, Zeiten, Historie)
+│   └── essen                  # Essensplan Markdown-Inhalt (Mittagessen-Slots & Tabellen)
 ├── teams/
 │   └── {teamId}               # 16 Mannschaften (8x mU14, 8x wU14) mit Logos & Jingles
 ├── matches/
@@ -63,17 +64,21 @@ export interface TournamentConfig {
 
 ---
 
-### 1.2 Dokument `info`
+### 1.2 Dokumente `info` und `essen` (Markdown-Seiten)
 
-Speichert den redaktionellen Inhalt der Info-Seite (`/info`) im Markdown-Format.
+Speichert die redaktionellen Inhalte der Info-Seiten (`/info` und `/info#essen`) im Markdown-Format.
 
 ```typescript
-export interface TournamentInfoConfig {
-  id: "info";
-  content: string;                   // Vollständiger Markdown-Text der Info-Seite
+export interface TournamentPageConfig {
+  id: "info" | "essen" | string;
+  title?: string;                    // Optionaler Seitentitel
+  content: string;                   // Vollständiger Markdown-Text der Seite
   updatedAt: FirebaseFirestore.Timestamp;
   updatedBy?: string;                // User-ID des bearbeitenden Admins
 }
+
+// Kompatibilitäts-Alias für bestehenden Code
+export type TournamentInfoConfig = TournamentPageConfig;
 ```
 
 ---

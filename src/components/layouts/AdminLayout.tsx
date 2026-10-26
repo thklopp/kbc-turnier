@@ -19,7 +19,9 @@ export function AdminLayout() {
   const isTeams = location.pathname === "/admin" && location.hash === "#teams"
   const isSchedule = location.pathname === "/admin" && location.hash === "#schedule"
   const isCorners = location.pathname === "/admin" && location.hash === "#corners"
-  const isInfo = location.pathname === "/admin" && location.hash === "#info"
+  const isMarkdown =
+    location.pathname === "/admin" &&
+    (location.hash === "#markdown" || location.hash === "#info")
   const isStats = location.pathname === "/admin" && location.hash === "#stats"
   const isAllstars = location.pathname === "/admin" && location.hash === "#allstars"
   const isLiveDesk =
@@ -27,7 +29,7 @@ export function AdminLayout() {
     !isTeams &&
     !isSchedule &&
     !isCorners &&
-    !isInfo &&
+    !isMarkdown &&
     !isStats &&
     !isAllstars
 
@@ -121,15 +123,15 @@ export function AdminLayout() {
               <span>Ecken-Jingles</span>
             </Link>
             <Link
-              to="/admin#info"
+              to="/admin#markdown"
               className={`flex items-center gap-1.5 py-1 border-b-2 transition-colors ${
-                isInfo
+                isMarkdown
                   ? "border-blue-600 text-blue-600 font-bold"
                   : "border-transparent text-slate-600 hover:border-slate-300 hover:text-slate-900"
               }`}
             >
               <FileText className="h-3.5 w-3.5" />
-              <span>Info-Seite</span>
+              <span>Markdown</span>
             </Link>
             <Link
               to="/admin#stats"

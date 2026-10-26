@@ -17,8 +17,8 @@ export function AdminPage() {
       ? "schedule"
       : location.hash === "#corners"
       ? "corners"
-      : location.hash === "#info"
-      ? "info"
+      : location.hash === "#markdown" || location.hash === "#info"
+      ? "markdown"
       : location.hash === "#stats"
       ? "stats"
       : location.hash === "#allstars"
@@ -52,7 +52,7 @@ export function AdminPage() {
         </section>
       )}
 
-      {activeTab === "info" && (
+      {activeTab === "markdown" && (
         <section>
           <AdminInfoEditor />
         </section>
