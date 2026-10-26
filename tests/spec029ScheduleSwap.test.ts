@@ -101,20 +101,20 @@ describe("SPEC-029: Tausch der Halbfinals mit den Platzierungsspielen am Sonntag
     const m36 = matches.find((m) => m.matchNumber === 36)!
 
     assert.equal(m33.matchName, "Spiel um Platz 7")
-    assert.equal(m33.teamHomePlaceholder, "Verlierer Spiel 25")
-    assert.equal(m33.teamAwayPlaceholder, "Verlierer Spiel 26")
+    assert.equal(m33.teamHomePlaceholder, "Verlierer #25")
+    assert.equal(m33.teamAwayPlaceholder, "Verlierer #26")
 
     assert.equal(m34.matchName, "Spiel um Platz 5")
-    assert.equal(m34.teamHomePlaceholder, "Sieger Spiel 25")
-    assert.equal(m34.teamAwayPlaceholder, "Sieger Spiel 26")
+    assert.equal(m34.teamHomePlaceholder, "Sieger #25")
+    assert.equal(m34.teamAwayPlaceholder, "Sieger #26")
 
     assert.equal(m35.matchName, "Spiel um Platz 7")
-    assert.equal(m35.teamHomePlaceholder, "Verlierer Spiel 27")
-    assert.equal(m35.teamAwayPlaceholder, "Verlierer Spiel 28")
+    assert.equal(m35.teamHomePlaceholder, "Verlierer #27")
+    assert.equal(m35.teamAwayPlaceholder, "Verlierer #28")
 
     assert.equal(m36.matchName, "Spiel um Platz 5")
-    assert.equal(m36.teamHomePlaceholder, "Sieger Spiel 27")
-    assert.equal(m36.teamAwayPlaceholder, "Sieger Spiel 28")
+    assert.equal(m36.teamHomePlaceholder, "Sieger #27")
+    assert.equal(m36.teamAwayPlaceholder, "Sieger #28")
 
     // Block 4: Spiele 37-40 (Platz 3 & Finale)
     const m37 = matches.find((m) => m.matchNumber === 37)!
@@ -123,20 +123,20 @@ describe("SPEC-029: Tausch der Halbfinals mit den Platzierungsspielen am Sonntag
     const m40 = matches.find((m) => m.matchNumber === 40)!
 
     assert.equal(m37.matchName, "Spiel um Platz 3")
-    assert.equal(m37.teamHomePlaceholder, "Verlierer Spiel 29")
-    assert.equal(m37.teamAwayPlaceholder, "Verlierer Spiel 30")
+    assert.equal(m37.teamHomePlaceholder, "Verlierer #29")
+    assert.equal(m37.teamAwayPlaceholder, "Verlierer #30")
 
     assert.equal(m38.matchName, "Finale")
-    assert.equal(m38.teamHomePlaceholder, "Sieger Spiel 29")
-    assert.equal(m38.teamAwayPlaceholder, "Sieger Spiel 30")
+    assert.equal(m38.teamHomePlaceholder, "Sieger #29")
+    assert.equal(m38.teamAwayPlaceholder, "Sieger #30")
 
     assert.equal(m39.matchName, "Spiel um Platz 3")
-    assert.equal(m39.teamHomePlaceholder, "Verlierer Spiel 31")
-    assert.equal(m39.teamAwayPlaceholder, "Verlierer Spiel 32")
+    assert.equal(m39.teamHomePlaceholder, "Verlierer #31")
+    assert.equal(m39.teamAwayPlaceholder, "Verlierer #32")
 
     assert.equal(m40.matchName, "Finale")
-    assert.equal(m40.teamHomePlaceholder, "Sieger Spiel 31")
-    assert.equal(m40.teamAwayPlaceholder, "Sieger Spiel 32")
+    assert.equal(m40.teamHomePlaceholder, "Sieger #31")
+    assert.equal(m40.teamAwayPlaceholder, "Sieger #32")
   })
 
   it("AC-2 & AC-3: Progression füllt 25-28 mit 3./4. Plätzen und 29-32 mit 1./2. Plätzen", async () => {
