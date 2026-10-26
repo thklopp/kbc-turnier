@@ -6,6 +6,7 @@ import {
   saveTeamPlayersByToken,
   isSupportedAudioFile,
   AUDIO_ACCEPT_ATTRIBUTE,
+  subscribeTeams,
 } from "@/services/teamService"
 import { useAudioPlayer } from "@/hooks/useAudioPlayer"
 import { calculateAudioGain } from "@/lib/audioNormalization"
@@ -35,6 +36,7 @@ import {
   ArrowRight,
 } from "lucide-react"
 import { TeamAllstarVoting } from "@/components/team/TeamAllstarVoting"
+import { TeamRefereeScheduleCard } from "@/components/team/TeamRefereeScheduleCard"
 import rrkLogo from "@/assets/images/RRK.webp"
 
 export function TeamJinglePage() {
@@ -46,6 +48,7 @@ export function TeamJinglePage() {
   const [loadError, setLoadError] = useState<string | null>(null)
   const [essenContent, setEssenContent] = useState<string>("")
   const [matches, setMatches] = useState<Match[]>([])
+  const [allTeams, setAllTeams] = useState<Team[]>([])
 
   // Audio & File State
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -133,7 +136,7 @@ export function TeamJinglePage() {
     }
   }, [previewUrl, loadAudio])
 
-  // Lade Essensplan & Spielplan für team-spezifische Essenszeiten
+  // Lade Essensplan, Spielplan & Teams für team-spezifische Essenszeiten & Schiedsrichter
   useEffect(() => {
     const unsubPage = subscribeTournamentPage(
       "essen",
@@ -144,9 +147,14 @@ export function TeamJinglePage() {
       (data) => setMatches(data),
       (err) => console.error("TeamJinglePage: Fehler beim Laden der Matches", err)
     )
+    const unsubTeams = subscribeTeams(
+      (teams) => setAllTeams(teams),
+      (err) => console.error("TeamJinglePage: Fehler beim Laden der Teams", err)
+    )
     return () => {
       unsubPage()
       unsubMatches()
+      unsubTeams()
     }
   }, [])
 
@@ -475,8 +483,13 @@ export function TeamJinglePage() {
 
         {/* Team Meal Times Banner */}
         {(() => {
-          const mealTimes = extractTeamMealTimes(essenContent, team, matches)
-          if (!mealTimes.saturday && !mealTimes.sunday) return null
+          const mealTimes = extractTeamMealTimes(essenContent, team, matches, allTeams)
+          const hasTimes =
+            Boolean(mealTimes.saturday) ||
+            Boolean(mealTimes.sunday) ||
+            Boolean(mealTimes.hasSaturdaySchedule) ||
+            Boolean(mealTimes.hasSundaySchedule)
+          if (!hasTimes) return null
 
           return (
             <div className="bg-amber-50/80 border border-amber-200 rounded-2xl p-4 sm:p-5 mb-6 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -489,20 +502,32 @@ export function TeamJinglePage() {
                     Eure Essenszeiten (Mittagessen)
                   </h2>
                   <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-700">
-                    {mealTimes.saturday && (
+                    {(mealTimes.saturday || mealTimes.hasSaturdaySchedule) && (
                       <div className="flex items-center gap-1.5">
                         <span className="font-semibold text-slate-900">Samstag:</span>
-                        <span className="rounded bg-white/90 border border-amber-200 px-1.5 py-0.5 font-mono font-medium text-amber-950">
-                          {mealTimes.saturday}
-                        </span>
+                        {mealTimes.saturday ? (
+                          <span className="rounded bg-white/90 border border-amber-200 px-1.5 py-0.5 font-mono font-medium text-amber-950">
+                            {mealTimes.saturday}
+                          </span>
+                        ) : (
+                          <span className="rounded bg-amber-100/70 border border-amber-200/80 px-1.5 py-0.5 font-sans italic text-amber-800">
+                            wird ermittelt
+                          </span>
+                        )}
                       </div>
                     )}
-                    {mealTimes.sunday && (
+                    {(mealTimes.sunday || mealTimes.hasSundaySchedule) && (
                       <div className="flex items-center gap-1.5">
                         <span className="font-semibold text-slate-900">Sonntag:</span>
-                        <span className="rounded bg-white/90 border border-amber-200 px-1.5 py-0.5 font-mono font-medium text-amber-950">
-                          {mealTimes.sunday}
-                        </span>
+                        {mealTimes.sunday ? (
+                          <span className="rounded bg-white/90 border border-amber-200 px-1.5 py-0.5 font-mono font-medium text-amber-950">
+                            {mealTimes.sunday}
+                          </span>
+                        ) : (
+                          <span className="rounded bg-amber-100/70 border border-amber-200/80 px-1.5 py-0.5 font-sans italic text-amber-800">
+                            wird ermittelt
+                          </span>
+                        )}
                       </div>
                     )}
                   </div>
@@ -519,6 +544,13 @@ export function TeamJinglePage() {
             </div>
           )
         })()}
+
+        {/* Team Referee Schedule Card */}
+        <TeamRefereeScheduleCard
+          team={team}
+          matches={matches}
+          allTeams={allTeams}
+        />
 
         {/* Tab Navigation */}
         <div className="flex items-center gap-2 mb-6 border-b border-slate-200">

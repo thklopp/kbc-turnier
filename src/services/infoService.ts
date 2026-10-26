@@ -6,7 +6,7 @@ import {
   type Unsubscribe,
 } from "firebase/firestore"
 import { db, isFirebaseConfigured } from "@/lib/firebase"
-import type { TournamentPageConfig, Match, Team, TeamMealTimes, GenderCategory } from "@/types/database"
+import type { TournamentPageConfig, Match, Team, TeamMealTimes, TeamRefereeAssignment, GenderCategory } from "@/types/database"
 
 export const DEFAULT_INFO_MARKDOWN = `# Willkommen zum 20. Kurt-Becker-Cup! 🏑
 
@@ -339,7 +339,20 @@ export function resolveRefereeText(
   teams: Team[]
 ): string {
   if (!text) return ""
-  return resolveMatchVariables(text.trim(), matches, teams).trim()
+  const resolved = resolveMatchVariables(text.trim(), matches, teams).trim()
+
+  const lower = resolved.toLowerCase()
+  const matchedTeam = teams.find(
+    (t) =>
+      t.id.toLowerCase() === lower ||
+      t.shortName.toLowerCase() === lower ||
+      t.name.toLowerCase() === lower
+  )
+  if (matchedTeam) {
+    return matchedTeam.name
+  }
+
+  return resolved
 }
 
 /**
@@ -469,13 +482,15 @@ export function getRefereePreviewInfo(
 export function extractTeamMealTimes(
   markdownContent: string,
   team: Team,
-  matches: Match[] = []
+  matches: Match[] = [],
+  allTeams: Team[] = []
 ): TeamMealTimes {
   const result: TeamMealTimes = {}
   if (!markdownContent || !team) return result
 
   // First resolve any match variables so team names appear directly
-  const resolved = resolveMatchVariables(markdownContent, matches, [team])
+  const teamsPool = allTeams.length > 0 ? allTeams : [team]
+  const resolved = resolveMatchVariables(markdownContent, matches, teamsPool)
 
   const teamNameLower = team.name.trim().toLowerCase()
   const shortNameLower = team.shortName.trim().toLowerCase()
@@ -507,8 +522,10 @@ export function extractTeamMealTimes(
       const lowerHeading = rawLine.toLowerCase()
       if (lowerHeading.includes("samstag") || lowerHeading.includes("saturday") || lowerHeading.includes("tag 1")) {
         currentSectionDay = "saturday"
+        result.hasSaturdaySchedule = true
       } else if (lowerHeading.includes("sonntag") || lowerHeading.includes("sunday") || lowerHeading.includes("tag 2")) {
         currentSectionDay = "sunday"
+        result.hasSundaySchedule = true
       }
     }
 
@@ -549,8 +566,10 @@ export function extractTeamMealTimes(
               timeColIdx = c
             } else if (h.includes("samstag") || h.includes("sa.") || h.includes("sat") || h.includes("tag 1")) {
               satColIdx = c
+              result.hasSaturdaySchedule = true
             } else if (h.includes("sonntag") || h.includes("so.") || h.includes("sun") || h.includes("tag 2")) {
               sunColIdx = c
+              result.hasSundaySchedule = true
             } else if (h.includes("mannschaft") || h.includes("team") || h.includes("verein")) {
               teamColIdx = c
             }
@@ -568,11 +587,13 @@ export function extractTeamMealTimes(
 
         // Mode 1: Table with dedicated Saturday / Sunday columns
         if (satColIdx !== -1 && satColIdx < cells.length) {
+          result.hasSaturdaySchedule = true
           if (matchesTeam(cells[satColIdx]) && timeVal) {
             result.saturday = timeVal
           }
         }
         if (sunColIdx !== -1 && sunColIdx < cells.length) {
+          result.hasSundaySchedule = true
           if (matchesTeam(cells[sunColIdx]) && timeVal) {
             result.sunday = timeVal
           }
@@ -580,6 +601,12 @@ export function extractTeamMealTimes(
 
         // Mode 2: Table under a Saturday / Sunday heading with a Team/Mannschaft column
         if (teamColIdx !== -1 && teamColIdx < cells.length) {
+          if (currentSectionDay === "saturday") {
+            result.hasSaturdaySchedule = true
+          } else if (currentSectionDay === "sunday") {
+            result.hasSundaySchedule = true
+          }
+
           if (matchesTeam(cells[teamColIdx]) && timeVal) {
             if (currentSectionDay === "saturday") {
               result.saturday = timeVal
@@ -600,4 +627,149 @@ export function extractTeamMealTimes(
   }
 
   return result
+}
+
+/**
+ * Checks if a referee field string (raw text or match variable) matches a team.
+ */
+export function isRefereeMatchingTeam(
+  rawRef: string | undefined,
+  team: Team,
+  matches: Match[] = [],
+  teams: Team[] = []
+): boolean {
+  if (!rawRef) return false
+  const trimmed = rawRef.trim()
+  if (!trimmed) return false
+
+  // 1. Direct variable reference check: {{spiel:X:heim}} / {{match:X:away}} etc.
+  const matchVarRegex = /\{\{(?:spiel|match):(\d+):(heim|gast|home|away)(?::(?:kurz|short))?\}\}/i
+  const varMatch = trimmed.match(matchVarRegex)
+  if (varMatch) {
+    const matchNum = parseInt(varMatch[1], 10)
+    const isHome = varMatch[2].toLowerCase() === "heim" || varMatch[2].toLowerCase() === "home"
+    const targetMatch = matches.find((m) => m.matchNumber === matchNum)
+    if (targetMatch) {
+      const targetTeamId = isHome ? targetMatch.teamHomeId : targetMatch.teamAwayId
+      if (targetTeamId && targetTeamId.trim() === team.id.trim()) {
+        return true
+      }
+    }
+  }
+
+  // 2. Resolved text comparison
+  const resolved = resolveRefereeText(trimmed, matches, teams).trim()
+  if (resolved) {
+    const lowerResolved = resolved.toLowerCase()
+    const teamNameLower = team.name.trim().toLowerCase()
+    const shortNameLower = team.shortName.trim().toLowerCase()
+    const teamIdLower = team.id.trim().toLowerCase()
+
+    if (
+      lowerResolved === teamNameLower ||
+      lowerResolved === shortNameLower ||
+      lowerResolved === teamIdLower ||
+      (teamNameLower.length > 3 && lowerResolved.includes(teamNameLower)) ||
+      (teamIdLower.length > 3 && lowerResolved.includes(teamIdLower))
+    ) {
+      return true
+    }
+  }
+
+  return false
+}
+
+/**
+ * Returns the list of referee assignments for a given team.
+ * In a standard tournament schedule, each team is assigned exactly 5 matches
+ * (3 on Saturday, 2 on Sunday).
+ * If a match has not been resolved yet (e.g. before the preliminary round ends),
+ * pending assignments with statusText are populated up to targetTotalCount.
+ */
+export function getTeamRefereeAssignments(
+  team: Team,
+  matches: Match[] = [],
+  allTeams: Team[] = [],
+  targetTotalCount = 5
+): TeamRefereeAssignment[] {
+  if (!team) return []
+
+  const teamsPool = allTeams.length > 0 ? allTeams : [team]
+
+  // Find all matches where team is referee 1 or referee 2
+  const assignedMatches: { match: Match; partnerName?: string }[] = []
+
+  for (const m of matches) {
+    const isRef1 = isRefereeMatchingTeam(m.referee1, team, matches, teamsPool)
+    const isRef2 = isRefereeMatchingTeam(m.referee2, team, matches, teamsPool)
+
+    if (isRef1 || isRef2) {
+      const partnerRaw = isRef1 ? m.referee2 : m.referee1
+      const partnerName = partnerRaw
+        ? resolveRefereeText(partnerRaw, matches, teamsPool)
+        : undefined
+
+      assignedMatches.push({
+        match: m,
+        partnerName: partnerName || undefined,
+      })
+    }
+  }
+
+  // Sort assigned matches chronologically: Saturday first, then Sunday, then by matchNumber
+  assignedMatches.sort((a, b) => {
+    if (a.match.day !== b.match.day) {
+      return a.match.day === "saturday" ? -1 : 1
+    }
+    return a.match.matchNumber - b.match.matchNumber
+  })
+
+  const satMatches = assignedMatches.filter((x) => x.match.day === "saturday")
+  const sunMatches = assignedMatches.filter((x) => x.match.day === "sunday")
+
+  const expectedSaturday = Math.max(satMatches.length, 3)
+  const expectedSunday = Math.max(sunMatches.length, Math.max(0, targetTotalCount - expectedSaturday))
+
+  const results: TeamRefereeAssignment[] = []
+  let slotIndex = 1
+
+  // 1. Process Saturday
+  for (let i = 0; i < satMatches.length; i++) {
+    results.push({
+      slotIndex: slotIndex++,
+      match: satMatches[i].match,
+      resolvedPartnerReferee: satMatches[i].partnerName,
+      isResolved: true,
+      day: "saturday",
+    })
+  }
+  for (let i = satMatches.length; i < expectedSaturday; i++) {
+    results.push({
+      slotIndex: slotIndex++,
+      isResolved: false,
+      day: "saturday",
+      statusText: "Wird ermittelt",
+    })
+  }
+
+  // 2. Process Sunday
+  for (let i = 0; i < sunMatches.length; i++) {
+    results.push({
+      slotIndex: slotIndex++,
+      match: sunMatches[i].match,
+      resolvedPartnerReferee: sunMatches[i].partnerName,
+      isResolved: true,
+      day: "sunday",
+    })
+  }
+  for (let i = sunMatches.length; i < expectedSunday; i++) {
+    results.push({
+      slotIndex: slotIndex++,
+      isResolved: false,
+      day: "sunday",
+      statusText: "Wird nach der Vorrunde ermittelt",
+    })
+  }
+
+  return results
 }

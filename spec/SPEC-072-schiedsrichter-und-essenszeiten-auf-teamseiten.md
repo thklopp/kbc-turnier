@@ -1,6 +1,6 @@
 # SPEC-072: Schiedsrichter-Einsätze und Essenszeiten-Status auf den Team-Seiten
 
-> **Status**: In Review  
+> **Status**: In Abnahme  
 > **Typ**: Feature & Optimierung  
 > **Branch**: `feat/SPEC-072-schiedsrichter-und-essenszeiten-auf-teamseiten`  
 > **Autor**: Agent (Antigravity)  

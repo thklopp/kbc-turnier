@@ -33,6 +33,17 @@ export type TournamentInfoConfig = TournamentPageConfig
 export interface TeamMealTimes {
   saturday?: string
   sunday?: string
+  hasSaturdaySchedule?: boolean
+  hasSundaySchedule?: boolean
+}
+
+export interface TeamRefereeAssignment {
+  slotIndex: number
+  match?: Match
+  resolvedPartnerReferee?: string
+  isResolved: boolean
+  day: "saturday" | "sunday"
+  statusText?: string
 }
 
 export interface Player {
