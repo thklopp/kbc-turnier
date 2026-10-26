@@ -497,6 +497,18 @@ export function TeamJinglePage() {
           </button>
           <button
             type="button"
+            onClick={() => setActiveTab("allstars")}
+            className={`inline-flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
+              activeTab === "allstars"
+                ? "border-blue-600 text-blue-600 bg-blue-50/50 rounded-t-xl"
+                : "border-transparent text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
+            <span>Allstar-Wahl</span>
+          </button>
+          <button
+            type="button"
             onClick={() => setActiveTab("jingle")}
             className={`inline-flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
               activeTab === "jingle"
@@ -521,18 +533,6 @@ export function TeamJinglePage() {
             <span className="ml-1 rounded-full bg-slate-200 px-2 py-0.5 text-[11px] font-mono text-slate-700">
               {team.players?.length || 0}
             </span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("allstars")}
-            className={`inline-flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
-              activeTab === "allstars"
-                ? "border-blue-600 text-blue-600 bg-blue-50/50 rounded-t-xl"
-                : "border-transparent text-slate-500 hover:text-slate-800"
-            }`}
-          >
-            <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
-            <span>Allstar-Wahl</span>
           </button>
         </div>
 

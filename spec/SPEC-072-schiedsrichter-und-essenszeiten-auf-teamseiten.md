@@ -60,10 +60,9 @@ Auf den teamspezifischen Betreuer- und Mannschaftsseiten (`/team/:token`) werden
      - Zuordnung unbestimmter Einsätze zum jeweiligen Tag (in diesem Turniermodus: Samstag 3 Spiele, Sonntag 2 Spiele).
      - Unbestimmte Einsätze erhalten den Status `wird nach der Vorrunde ermittelt`.
 
-3. **Eigener Reiter „Zeiten“ vor „Torjingle“ (`TeamJinglePage.tsx`)**:
+3. **Eigener Reiter „Zeiten“ vor „Allstar-Wahl“ (`TeamJinglePage.tsx`)**:
    - Die Essens- und Schiedsrichterzeiten werden auf einem eigenen Tab-Reiter namens **„Zeiten“** gebündelt.
-   - Dieser Reiter steht an **erster Stelle** vor dem Reiter „Torjingle“:
-     - Reihenfolge: `[Zeiten] [Torjingle] [Spielerkader] [Allstar-Wahl]`
+   - Tab-Reihenfolge: `[Zeiten] [Allstar-Wahl] [Torjingle] [Spielerkader]`
      - Standardmäßig aktiver Tab beim Laden der Seite ist `times` („Zeiten“), sodass Betreuer sofort beim Öffnen des Links alle relevanten Einsatz- und Essenszeiten sehen.
    - Inhalt des Reiters „Zeiten“:
      1. **Eure Essenszeiten (Mittagessen)** (Banner mit Samstag & Sonntag inkl. „wird ermittelt“ und Button zum Essensplan).
@@ -144,7 +143,7 @@ Auf den teamspezifischen Betreuer- und Mannschaftsseiten (`/team/:token`) werden
 | Team-Name                                                   |
 +-------------------------------------------------------------+
 | Tab-Leiste:                                                 |
-| [🕒 Zeiten]  [🎵 Torjingle]  [👥 Kader (10)]  [⭐ Allstars] |
+| [🕒 Zeiten]  [⭐ Allstars]  [🎵 Torjingle]  [👥 Kader (10)] |
 +-------------------------------------------------------------+
 | Wenn Tab "Zeiten" aktiv (Standard):                         |
 |                                                             |
