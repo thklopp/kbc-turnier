@@ -164,15 +164,15 @@ export function calculateFinalRoundAssignments(
       // HF 1 (Spiel 29)
       const res29 = getFeederWinnerAndLoser(matchMap.get(29))
       if (res29) {
-        applySlotUpdate(38, "teamHomeId", res29.winnerId, "Sieger Spiel #29")
-        applySlotUpdate(37, "teamHomeId", res29.loserId, "Verlierer Spiel #29")
+        applySlotUpdate(38, "teamHomeId", res29.winnerId, "Sieger Spiel 29")
+        applySlotUpdate(37, "teamHomeId", res29.loserId, "Verlierer Spiel 29")
       }
 
       // HF 2 (Spiel 30)
       const res30 = getFeederWinnerAndLoser(matchMap.get(30))
       if (res30) {
-        applySlotUpdate(38, "teamAwayId", res30.winnerId, "Sieger Spiel #30")
-        applySlotUpdate(37, "teamAwayId", res30.loserId, "Verlierer Spiel #30")
+        applySlotUpdate(38, "teamAwayId", res30.winnerId, "Sieger Spiel 30")
+        applySlotUpdate(37, "teamAwayId", res30.loserId, "Verlierer Spiel 30")
       }
     } else {
       // Platzierungsspiel 1 (Spiel 27)
@@ -192,15 +192,15 @@ export function calculateFinalRoundAssignments(
       // HF 1 (Spiel 31)
       const res31 = getFeederWinnerAndLoser(matchMap.get(31))
       if (res31) {
-        applySlotUpdate(40, "teamHomeId", res31.winnerId, "Sieger Spiel #31")
-        applySlotUpdate(39, "teamHomeId", res31.loserId, "Verlierer Spiel #31")
+        applySlotUpdate(40, "teamHomeId", res31.winnerId, "Sieger Spiel 31")
+        applySlotUpdate(39, "teamHomeId", res31.loserId, "Verlierer Spiel 31")
       }
 
       // HF 2 (Spiel 32)
       const res32 = getFeederWinnerAndLoser(matchMap.get(32))
       if (res32) {
-        applySlotUpdate(40, "teamAwayId", res32.winnerId, "Sieger Spiel #32")
-        applySlotUpdate(39, "teamAwayId", res32.loserId, "Verlierer Spiel #32")
+        applySlotUpdate(40, "teamAwayId", res32.winnerId, "Sieger Spiel 32")
+        applySlotUpdate(39, "teamAwayId", res32.loserId, "Verlierer Spiel 32")
       }
     }
   }

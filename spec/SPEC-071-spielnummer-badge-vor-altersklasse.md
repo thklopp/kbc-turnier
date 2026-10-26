@@ -54,12 +54,12 @@ Während im Admin-Bereich (`ScheduleManager`, `MatchEditModal`, `ScoreboardDispl
 - [x] **FR-6: Kiosk-Live-Scoreboard (`KioskScoreboardSlide.tsx`)**:
   - **Oberes Meta-Badge-Band**: Einfügen des Badges `#{displayMatch.matchNumber}` unmittelbar vor `{displayMatch.gender}` mit identischem Styling (`rounded-full border px-4 py-1.5 text-sm font-medium ${genderBadge}`).
   - **Vorschau-Leiste „Als Nächstes“**: Einfügen von `#{nextMatch.matchNumber}` unmittelbar vor `{nextMatch.gender}` (getrennt durch Bullets `•`), um auch bei der nächsten Begegnung die Spielnummer anzuzeigen.
-- [x] **FR-7: Platzhalter bei den Finalspielen (#37–#40) auf Spielnummer umstellen**:
-  - Ersetzung der veralteten Platzhalter-Labels `HF 1` und `HF 2` durch `Spiel #` mit der entsprechenden Spielnummer:
-    - Spiel #37 (wU14 Platz 3): `Verlierer Spiel #29` vs. `Verlierer Spiel #30`
-    - Spiel #38 (wU14 Finale): `Sieger Spiel #29` vs. `Sieger Spiel #30`
-    - Spiel #39 (mU14 Platz 3): `Verlierer Spiel #31` vs. `Verlierer Spiel #32`
-    - Spiel #40 (mU14 Finale): `Sieger Spiel #31` vs. `Sieger Spiel #32`
+- [x] **FR-7: Platzhalter bei den Finalspielen (#37–#40) auf Spielnummer umstellen (ohne Raute)**:
+  - Ersetzung der veralteten Platzhalter-Labels `HF 1` und `HF 2` durch `Spiel ` mit der entsprechenden Spielnummer (analog zu Spielen 33–36 ohne Raute):
+    - Spiel #37 (wU14 Platz 3): `Verlierer Spiel 29` vs. `Verlierer Spiel 30`
+    - Spiel #38 (wU14 Finale): `Sieger Spiel 29` vs. `Sieger Spiel 30`
+    - Spiel #39 (mU14 Platz 3): `Verlierer Spiel 31` vs. `Verlierer Spiel 32`
+    - Spiel #40 (mU14 Finale): `Sieger Spiel 31` vs. `Sieger Spiel 32`
   - Implementierung von `normalizeMatchPlaceholders` in `matchService.ts` zur automatischen Konvertierung bestehender und neu abonnierter Matches sowie Anpassung der Schedule-Generierung (`generateTournamentSchedule`) und der Progression-Reason-Strings (`matchProgressionService.ts`).
 
 ### 3.2 Explizit Out-of-Scope
@@ -98,10 +98,10 @@ Während im Admin-Bereich (`ScheduleManager`, `MatchEditModal`, `ScoreboardDispl
   - **Wenn**: Ein aktives oder folgendes Spiel dargestellt wird.
   - **Dann**: Steht im oberen Badge-Cluster nach der Startzeit und vor der Altersklasse das Badge `#{matchNumber}`. Befindet sich das Spiel im Status `live` oder `paused`, wird in der Sub-Bar „Als Nächstes“ ebenfalls `#{nextMatch.matchNumber}` vor der Altersklasse angezeigt.
 
-- [x] **AC-6: Finalspiel-Platzhalter für Medaillenspiele auf Spielnummer**
+- [x] **AC-6: Finalspiel-Platzhalter für Medaillenspiele auf Spielnummer (ohne Raute)**
   - **Gegeben sei**: Die Finalspiele #37 bis #40 sind angesetzt, aber die Halbfinalspiele #29 bis #32 sind noch nicht beendet.
   - **Wenn**: Die Partien in der Gast-Finalrunde, im Kiosk, in der Hero-Kachel oder im Admin-Spielplan dargestellt werden.
-  - **Dann**: Zeigen die Platzhalter `Sieger Spiel #29` / `Verlierer Spiel #29` etc. anstelle der alten Bezeichnungen `HF 1` bzw. `HF 2`.
+  - **Dann**: Zeigen die Platzhalter `Sieger Spiel 29` / `Verlierer Spiel 29` etc. anstelle der alten Bezeichnungen `HF 1` bzw. `HF 2` oder Notationen mit Raute.
 
 ### 4.2 Allgemeine Qualitätskriterien
 - [x] Keine fest kodierten Parameter (`match.matchNumber` dynamisch aus Firestore `Match`-Objekt bezogen).

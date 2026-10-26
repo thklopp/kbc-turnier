@@ -117,28 +117,28 @@ test("SPEC-071: Spielnummer-Badge vor der Altersklasse im Gäste- und Kinomodus"
     )
   })
 
-  await t.test("FR-7 & AC-6: Finalspiel-Platzhalter von HF 1/2 auf Spiel # umgestellt", async () => {
+  await t.test("FR-7 & AC-6: Finalspiel-Platzhalter von HF 1/2 auf Spiel X (ohne Raute) umgestellt", async () => {
     const { normalizeMatchPlaceholders } = await import("../src/services/matchService")
 
-    // Match 37: wU14 Spiel um Platz 3
+    // Match 37: wU14 Spiel um Platz 3 (von HF 1 / HF 2 und von Spiel #29 / #30)
     const m37 = normalizeMatchPlaceholders({
       id: "m37",
       matchNumber: 37,
       teamHomePlaceholder: "Verlierer HF 1",
       teamAwayPlaceholder: "Verlierer HF 2",
     } as any)
-    assert.equal(m37.teamHomePlaceholder, "Verlierer Spiel #29")
-    assert.equal(m37.teamAwayPlaceholder, "Verlierer Spiel #30")
+    assert.equal(m37.teamHomePlaceholder, "Verlierer Spiel 29")
+    assert.equal(m37.teamAwayPlaceholder, "Verlierer Spiel 30")
 
-    // Match 38: wU14 Finale
+    // Match 38: wU14 Finale (auch Normalisierung von Spiel #29)
     const m38 = normalizeMatchPlaceholders({
       id: "m38",
       matchNumber: 38,
-      teamHomePlaceholder: "Sieger HF 1",
-      teamAwayPlaceholder: "Sieger HF 2",
+      teamHomePlaceholder: "Sieger Spiel #29",
+      teamAwayPlaceholder: "Sieger Spiel #30",
     } as any)
-    assert.equal(m38.teamHomePlaceholder, "Sieger Spiel #29")
-    assert.equal(m38.teamAwayPlaceholder, "Sieger Spiel #30")
+    assert.equal(m38.teamHomePlaceholder, "Sieger Spiel 29")
+    assert.equal(m38.teamAwayPlaceholder, "Sieger Spiel 30")
 
     // Match 39: mU14 Spiel um Platz 3
     const m39 = normalizeMatchPlaceholders({
@@ -147,8 +147,8 @@ test("SPEC-071: Spielnummer-Badge vor der Altersklasse im Gäste- und Kinomodus"
       teamHomePlaceholder: "Verlierer HF 1",
       teamAwayPlaceholder: "Verlierer HF 2",
     } as any)
-    assert.equal(m39.teamHomePlaceholder, "Verlierer Spiel #31")
-    assert.equal(m39.teamAwayPlaceholder, "Verlierer Spiel #32")
+    assert.equal(m39.teamHomePlaceholder, "Verlierer Spiel 31")
+    assert.equal(m39.teamAwayPlaceholder, "Verlierer Spiel 32")
 
     // Match 40: mU14 Finale
     const m40 = normalizeMatchPlaceholders({
@@ -157,7 +157,7 @@ test("SPEC-071: Spielnummer-Badge vor der Altersklasse im Gäste- und Kinomodus"
       teamHomePlaceholder: "Sieger HF 1",
       teamAwayPlaceholder: "Sieger HF 2",
     } as any)
-    assert.equal(m40.teamHomePlaceholder, "Sieger Spiel #31")
-    assert.equal(m40.teamAwayPlaceholder, "Sieger Spiel #32")
+    assert.equal(m40.teamHomePlaceholder, "Sieger Spiel 31")
+    assert.equal(m40.teamAwayPlaceholder, "Sieger Spiel 32")
   })
 })
