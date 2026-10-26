@@ -1,6 +1,6 @@
 # SPEC-071: Spielnummer-Badge vor der Altersklasse im Gäste- und Kinomodus
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature / UI-Erweiterung  
 > **Branch**: `feat/SPEC-071-spielnummer-badge-vor-altersklasse`  
 > **Autor**: Antigravity  
@@ -177,4 +177,4 @@ Während im Admin-Bereich (`ScheduleManager`, `MatchEditModal`, `ScoreboardDispl
 - [x] **Schritt 1**: Umsetzung in der Gastansicht (`GuestScheduleView.tsx`, `FinalsBracketView.tsx`, `LiveHeroCard.tsx`).
 - [x] **Schritt 2**: Umsetzung im Kiosk-Modus (`KioskGroupStageSlide.tsx`, `KioskFinalsSlide.tsx`, `KioskScoreboardSlide.tsx`).
 - [x] **Schritt 3**: Verifikation (`npm run build`, Testen der Ansichten, `spec071MatchNumberBadges.test.ts`).
-- [ ] **Gate 2: Endabnahme & Freigabe mit `MERGE` durch den Nutzer**.
+- [x] **Gate 2: Endabnahme & Freigabe mit `MERGE` durch den Nutzer**.
