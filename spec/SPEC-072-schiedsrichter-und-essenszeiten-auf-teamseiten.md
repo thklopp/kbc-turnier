@@ -60,28 +60,14 @@ Auf den teamspezifischen Betreuer- und Mannschaftsseiten (`/team/:token`) werden
      - Zuordnung unbestimmter Einsätze zum jeweiligen Tag (in diesem Turniermodus: Samstag 3 Spiele, Sonntag 2 Spiele).
      - Unbestimmte Einsätze erhalten den Status `wird nach der Vorrunde ermittelt`.
 
-3. **UI-Komponente „Eure Schiedsrichter-Einsätze“ (`TeamRefereeCard.tsx` / `TeamJinglePage.tsx`)**:
-   - Prominente Platzierung auf der Team-Seite direkt unterhalb des Essenszeiten-Banners (vor den Konfigurations-Tabs).
-   - Kopfbereich:
-     - Icon: `Whistle` (Trillerpfeife aus `lucide-react`)
-     - Titel: `Eure Schiedsrichter-Einsätze`
-     - Subtext / Hinweis: `Jede Mannschaft stellt bei 5 Turnierspielen die Schiedsrichter.`
-     - Status-Badge: z. B. `3 von 5 Spielen terminiert` bzw. `Alle 5 Spiele terminiert` (in neutralem / blauen / grünen Badge).
-   - Strukturierte Liste der 5 Einsätze:
-     - **Feststehendes Spiel**:
-       - Badge `#{matchNumber}` mit Altersklassen-Farbakzent (`wU14` Lila, `mU14` Blau).
-       - Tag und Uhrzeit (z. B. `Samstag, 12:05 Uhr` bzw. `Sonntag, 10:40 Uhr`).
-       - Spielpaarung (z. B. `RRK 1 vs. TSG Heidesheim`).
-       - Partner-Schiedsrichter (z. B. `Gemeinsam mit: HTC Stuttgarter Kickers`).
-       - Status-Badge:
-         - `Beendet` / `Gepfiffen` (Grau mit Checkmark bei `status === "finished"`)
-         - `Live` (Grün pulsierend bei `status === "live"`)
-         - `Pause` (Gelb-Orange bei `status === "paused"`)
-         - `Angesetzt` (Blau / Neutral bei `status === "scheduled"`)
-     - **Ausstehendes Spiel (Sonntag)**:
-       - Platzhalter-Badge: `Einsatz 4 (Sonntag)` bzw. `Einsatz 5 (Sonntag)`.
-       - Text: `Wird nach der Vorrunde ermittelt`.
-       - Styling: Dezent umrandet, mit Informations-Icon (`Clock` / `HelpCircle`).
+3. **Eigener Reiter „Zeiten“ vor „Torjingle“ (`TeamJinglePage.tsx`)**:
+   - Die Essens- und Schiedsrichterzeiten werden auf einem eigenen Tab-Reiter namens **„Zeiten“** gebündelt.
+   - Dieser Reiter steht an **erster Stelle** vor dem Reiter „Torjingle“:
+     - Reihenfolge: `[Zeiten] [Torjingle] [Spielerkader] [Allstar-Wahl]`
+     - Standardmäßig aktiver Tab beim Laden der Seite ist `times` („Zeiten“), sodass Betreuer sofort beim Öffnen des Links alle relevanten Einsatz- und Essenszeiten sehen.
+   - Inhalt des Reiters „Zeiten“:
+     1. **Eure Essenszeiten (Mittagessen)** (Banner mit Samstag & Sonntag inkl. „wird ermittelt“ und Button zum Essensplan).
+     2. **Eure Schiedsrichter-Einsätze (5 Spiele)** (`TeamRefereeScheduleCard` mit 5 Slots, Status-Badges und Partner-Schiedsrichtern).
 
 ### 3.2 Explizit Out-of-Scope (Nicht Teil dieser Spec)
 - ❌ Manuelles Zuweisen von Schiedsrichtern durch Betreuer (Schiedsrichter werden weiterhin ausschließlich von der Turnierleitung in `MatchEditModal` konfiguriert).
@@ -157,9 +143,14 @@ Auf den teamspezifischen Betreuer- und Mannschaftsseiten (`/team/:token`) werden
 | [Team-Logo]  [wU14] [Gruppe A]                              |
 | Team-Name                                                   |
 +-------------------------------------------------------------+
+| Tab-Leiste:                                                 |
+| [🕒 Zeiten]  [🎵 Torjingle]  [👥 Kader (10)]  [⭐ Allstars] |
++-------------------------------------------------------------+
+| Wenn Tab "Zeiten" aktiv (Standard):                         |
+|                                                             |
 | 🍽️ Eure Essenszeiten (Mittagessen)                          |
 | Samstag: 12:45 Uhr    Sonntag: wird ermittelt  [Essensplan] |
-+-------------------------------------------------------------+
+|                                                             |
 | 📯 Eure Schiedsrichter-Einsätze             [3/5 terminiert]|
 | Jede Mannschaft stellt bei 5 Turnierspielen die Schieds-    |
 | richter.                                                    |
@@ -179,9 +170,6 @@ Auf den teamspezifischen Betreuer- und Mannschaftsseiten (`/team/:token`) werden
 |                                                             |
 | [ Sonntag ] Einsatz 5                                       |
 |  Wird nach der Vorrunde ermittelt                           |
-+-------------------------------------------------------------+
-| Tab-Leiste: [Torjingle]  [Spielerkader (10)]  [Allstar-Wahl]|
-| ...                                                         |
 +-------------------------------------------------------------+
 ```
 
