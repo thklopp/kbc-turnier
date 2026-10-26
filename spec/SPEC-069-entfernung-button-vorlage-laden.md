@@ -1,6 +1,6 @@
 # SPEC-069: Entfernung des Buttons „Vorlage laden“ aus dem Markdown-Bereich
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Optimierung  
 > **Branch**: `fix/SPEC-069-entfernung-button-vorlage-laden`  
 > **Autor**: Antigravity Agent  
