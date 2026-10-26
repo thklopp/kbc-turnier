@@ -109,6 +109,9 @@ export function KioskScoreboardSlide({
           </span>
         )}
         <span className={`rounded-full border px-4 py-1.5 text-sm font-medium ${genderBadge}`}>
+          #{displayMatch.matchNumber}
+        </span>
+        <span className={`rounded-full border px-4 py-1.5 text-sm font-medium ${genderBadge}`}>
           {displayMatch.gender}
         </span>
         <span
@@ -331,6 +334,8 @@ export function KioskScoreboardSlide({
               Als Nächstes
             </span>
             <span>{nextMatch.scheduledTime} Uhr</span>
+            <span className="text-slate-300">&bull;</span>
+            <span>#{nextMatch.matchNumber}</span>
             <span className="text-slate-300">&bull;</span>
             <span>{nextMatch.gender}</span>
             <span className="text-slate-300">&bull;</span>

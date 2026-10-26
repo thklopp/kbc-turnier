@@ -84,6 +84,9 @@ export function KioskFinalsSlide({ matches, teams }: KioskFinalsSlideProps) {
             {match.scheduledTime}
           </span>
           <span className={`text-xs md:text-sm font-bold px-1.5 py-0.5 rounded border whitespace-nowrap ${genderBadge}`}>
+            #{match.matchNumber}
+          </span>
+          <span className={`text-xs md:text-sm font-bold px-1.5 py-0.5 rounded border whitespace-nowrap ${genderBadge}`}>
             {match.gender}
           </span>
           <span

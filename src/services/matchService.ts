@@ -48,6 +48,38 @@ export function addMinutesToTimeString(timeStr: string, minutesToAdd: number): s
 }
 
 /**
+ * Normalisiert Platzhalter von Finalspielen (#33-#40), sodass "HF 1" / "HF 2"
+ * sowie "Spiel 25" / "Spiel #25" einheitlich als "#25", "#29" etc. dargestellt werden (z. B. "Sieger #29", "Verlierer #31").
+ */
+export function normalizeMatchPlaceholders(match: Match): Match {
+  const cleanPlaceholder = (str?: string): string | undefined => {
+    if (!str) return str
+    let res = str
+    if (res.includes("HF 1")) {
+      res = res.replace("HF 1", match.gender === "wU14" || match.matchNumber <= 38 ? "#29" : "#31")
+    } else if (res.includes("HF 2")) {
+      res = res.replace("HF 2", match.gender === "wU14" || match.matchNumber <= 38 ? "#30" : "#32")
+    }
+    // Ersetze "Spiel #25" oder "Spiel 25" durch "#25"
+    res = res.replace(/Spiel\s*#?(\d+)/g, "#$1")
+    return res
+  }
+
+  const homePlaceholder = cleanPlaceholder(match.teamHomePlaceholder)
+  const awayPlaceholder = cleanPlaceholder(match.teamAwayPlaceholder)
+
+  if (homePlaceholder !== match.teamHomePlaceholder || awayPlaceholder !== match.teamAwayPlaceholder) {
+    return {
+      ...match,
+      teamHomePlaceholder: homePlaceholder,
+      teamAwayPlaceholder: awayPlaceholder,
+    }
+  }
+
+  return match
+}
+
+/**
  * Abonniert alle Matches in Echtzeit.
  */
 export function subscribeMatches(
@@ -56,7 +88,7 @@ export function subscribeMatches(
 ): Unsubscribe {
   if (!isFirebaseConfigured) {
     matchListeners.add(callback)
-    callback([...localMockMatches].sort((a, b) => a.matchNumber - b.matchNumber))
+    callback([...localMockMatches].map(normalizeMatchPlaceholders).sort((a, b) => a.matchNumber - b.matchNumber))
     return () => {
       matchListeners.delete(callback)
     }
@@ -68,7 +100,7 @@ export function subscribeMatches(
     (snapshot) => {
       const matches: Match[] = []
       snapshot.forEach((docSnap) => {
-        matches.push({ ...(docSnap.data() as Match), id: docSnap.id })
+        matches.push(normalizeMatchPlaceholders({ ...(docSnap.data() as Match), id: docSnap.id }))
       })
       matches.sort((a, b) => a.matchNumber - b.matchNumber)
       callback(matches)
@@ -85,12 +117,12 @@ export function subscribeMatches(
  */
 export async function getMatches(): Promise<Match[]> {
   if (!isFirebaseConfigured) {
-    return [...localMockMatches].sort((a, b) => a.matchNumber - b.matchNumber)
+    return [...localMockMatches].map(normalizeMatchPlaceholders).sort((a, b) => a.matchNumber - b.matchNumber)
   }
   const snapshot = await getDocs(collection(db, MATCHES_COLLECTION))
   const matches: Match[] = []
   snapshot.forEach((docSnap) => {
-    matches.push({ ...(docSnap.data() as Match), id: docSnap.id })
+    matches.push(normalizeMatchPlaceholders({ ...(docSnap.data() as Match), id: docSnap.id }))
   })
   return matches.sort((a, b) => a.matchNumber - b.matchNumber)
 }
@@ -248,17 +280,17 @@ export async function generateTournamentSchedule(
     ],
     // Block 3 (Spiele 33-36): Platzierungsspiele Platz 7 und Platz 5 (2x wU14, 2x mU14)
     [
-      { gender: "wU14", finalType: "placement_7_8", matchName: "Spiel um Platz 7", homePlaceholder: "Verlierer Spiel 25", awayPlaceholder: "Verlierer Spiel 26" },
-      { gender: "wU14", finalType: "placement_5_6", matchName: "Spiel um Platz 5", homePlaceholder: "Sieger Spiel 25", awayPlaceholder: "Sieger Spiel 26" },
-      { gender: "mU14", finalType: "placement_7_8", matchName: "Spiel um Platz 7", homePlaceholder: "Verlierer Spiel 27", awayPlaceholder: "Verlierer Spiel 28" },
-      { gender: "mU14", finalType: "placement_5_6", matchName: "Spiel um Platz 5", homePlaceholder: "Sieger Spiel 27", awayPlaceholder: "Sieger Spiel 28" },
+      { gender: "wU14", finalType: "placement_7_8", matchName: "Spiel um Platz 7", homePlaceholder: "Verlierer #25", awayPlaceholder: "Verlierer #26" },
+      { gender: "wU14", finalType: "placement_5_6", matchName: "Spiel um Platz 5", homePlaceholder: "Sieger #25", awayPlaceholder: "Sieger #26" },
+      { gender: "mU14", finalType: "placement_7_8", matchName: "Spiel um Platz 7", homePlaceholder: "Verlierer #27", awayPlaceholder: "Verlierer #28" },
+      { gender: "mU14", finalType: "placement_5_6", matchName: "Spiel um Platz 5", homePlaceholder: "Sieger #27", awayPlaceholder: "Sieger #28" },
     ],
     // Block 4 (Spiele 37-40): Medaillenspiele: Kleines Finale & Großes Finale (2x wU14, 2x mU14)
     [
-      { gender: "wU14", finalType: "placement_3_4", matchName: "Spiel um Platz 3", homePlaceholder: "Verlierer HF 1", awayPlaceholder: "Verlierer HF 2" },
-      { gender: "wU14", finalType: "final", matchName: "Finale", homePlaceholder: "Sieger HF 1", awayPlaceholder: "Sieger HF 2" },
-      { gender: "mU14", finalType: "placement_3_4", matchName: "Spiel um Platz 3", homePlaceholder: "Verlierer HF 1", awayPlaceholder: "Verlierer HF 2" },
-      { gender: "mU14", finalType: "final", matchName: "Finale", homePlaceholder: "Sieger HF 1", awayPlaceholder: "Sieger HF 2" },
+      { gender: "wU14", finalType: "placement_3_4", matchName: "Spiel um Platz 3", homePlaceholder: "Verlierer #29", awayPlaceholder: "Verlierer #30" },
+      { gender: "wU14", finalType: "final", matchName: "Finale", homePlaceholder: "Sieger #29", awayPlaceholder: "Sieger #30" },
+      { gender: "mU14", finalType: "placement_3_4", matchName: "Spiel um Platz 3", homePlaceholder: "Verlierer #31", awayPlaceholder: "Verlierer #32" },
+      { gender: "mU14", finalType: "final", matchName: "Finale", homePlaceholder: "Sieger #31", awayPlaceholder: "Sieger #32" },
     ],
   ]
 
