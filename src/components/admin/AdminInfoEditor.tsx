@@ -3,7 +3,6 @@ import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import {
   Save,
-  RotateCcw,
   Eye,
   Edit3,
   Columns,
@@ -29,8 +28,6 @@ import { useAuth } from "@/hooks/useAuth"
 import {
   subscribeTournamentPage,
   updateTournamentPage,
-  DEFAULT_INFO_MARKDOWN,
-  DEFAULT_ESSEN_MARKDOWN,
   resolveMatchVariables,
 } from "@/services/infoService"
 import { subscribeMatches } from "@/services/matchService"
@@ -187,24 +184,6 @@ export function AdminInfoEditor() {
     }
   }
 
-  const handleResetToDefault = () => {
-    const defaultText =
-      selectedPageId === "info" ? DEFAULT_INFO_MARKDOWN : DEFAULT_ESSEN_MARKDOWN
-    const pageLabel = selectedPageId === "info" ? "Allgemeines" : "Essensplan"
-
-    if (
-      window.confirm(
-        `Möchtest du den Text für „${pageLabel}“ wirklich auf die empfohlene Vorlage zurücksetzen? Ungespeicherte Anpassungen gehen verloren.`
-      )
-    ) {
-      setContent(defaultText)
-      setFeedback({
-        type: "success",
-        message: "Standardtext geladen. Klicke auf 'Speichern', um ihn zu veröffentlichen.",
-      })
-    }
-  }
-
   const insertFormatting = (prefix: string, suffix: string = "") => {
     const textarea = textareaRef.current
     if (!textarea) return
@@ -319,16 +298,6 @@ export function AdminInfoEditor() {
             <ExternalLink className="h-3.5 w-3.5" />
             <span>Live-Seite prüfen</span>
           </a>
-
-          <button
-            type="button"
-            onClick={handleResetToDefault}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900"
-            title="Standardinhalte wiederherstellen"
-          >
-            <RotateCcw className="h-3.5 w-3.5" />
-            <span>Vorlage laden</span>
-          </button>
 
           <button
             type="button"
