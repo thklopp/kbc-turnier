@@ -42,14 +42,16 @@ Auf den teamspezifischen Betreuer- und Mannschaftsseiten (`/team/:token`) werden
 
 1. **Essenszeiten-Banner Erweiterung (`TeamJinglePage.tsx` & `infoService.ts`)**:
    - `extractTeamMealTimes` liefert zusätzliche Flags bzw. Informationen, ob der Essensplan einen Sonntags- (bzw. Samstags-)Plan vorsieht (`hasSundaySchedule: boolean`).
+   - **Suche nach Kurzname und Altersklasse**: Die Erkennung des Teams im Essensplan erfolgt strikt über die Kombination aus **Kurzname des Vereins** (`team.shortName`) und der **Altersklasse** (`team.gender`: `wU14` oder `mU14`), damit Vereine mit Teams in beiden Konkurrenzen (z. B. HTC, HCL, TUS) eindeutig dem korrekten Slot zugewiesen werden.
    - Wenn ein Sonntagsplan im Markdown existiert, aber für das Team noch keine konkrete Zeit ermittelt werden konnte (z. B. weil die Variablen `{{spiel:X:heim}}` noch Platzhalter enthalten):
      - Sonntag wird angezeigt mit dem Text / Status `wird ermittelt` (in dezentem Styling).
      - Sobald ein Spiel aufgelöst ist und dem Team zugeordnet wurde, schlägt die Anzeige nahtlos auf die ermittelte Zeit um (z. B. `11:40 Uhr`).
    - Falls auch für Samstag keine Zeit gefunden wird (aber Samstag existiert), wird analog `wird ermittelt` angezeigt.
 
 2. **Ermittlung der Schiedsrichter-Einsätze (`infoService.ts` / `teamService.ts`)**:
-   - Eine Hilfsfunktion `getTeamRefereeMatches(team: Team, matches: Match[], allTeams: Team[])`:
-     - Durchsucht alle Spiele nach Zuteilung des Teams in `referee1` oder `referee2` (unter Berücksichtigung von direkten Teamnamen/IDs sowie aufgelösten Variablen wie `{{spiel:6:heim}}`).
+   - **Suche nach Kurzname und Altersklasse**: Bei der Zuordnung von Schiedsrichtereinsätzen wird immer die Kombination aus **Kurzname des Vereins** (`team.shortName`) und der **Altersklasse** (`team.gender`: `wU14` oder `mU14`) sowie dem Geschlecht des Spiels (`match.gender === team.gender`) geprüft.
+   - Eine Hilfsfunktion `getTeamRefereeAssignments(team: Team, matches: Match[], allTeams: Team[])`:
+     - Durchsucht alle Spiele nach Zuteilung des Teams in `referee1` oder `referee2` (unter Berücksichtigung von direkten Teamnamen/IDs/Kurznamen sowie aufgelösten Variablen wie `{{spiel:6:heim}}`).
      - Ermittelt für jedes zugeordnete Spiel:
        - `matchNumber`, `scheduledTime`, `day`, `court`, `gender`, `phase`, `status`
        - Begegnung: Heimteam vs. Gastteam (bzw. Platzhalter)

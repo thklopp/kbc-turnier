@@ -336,7 +336,8 @@ export function resolveMatchVariables(
 export function resolveRefereeText(
   text: string,
   matches: Match[],
-  teams: Team[]
+  teams: Team[],
+  targetGender?: GenderCategory
 ): string {
   if (!text) return ""
   const resolved = resolveMatchVariables(text.trim(), matches, teams).trim()
@@ -344,9 +345,10 @@ export function resolveRefereeText(
   const lower = resolved.toLowerCase()
   const matchedTeam = teams.find(
     (t) =>
-      t.id.toLowerCase() === lower ||
-      t.shortName.toLowerCase() === lower ||
-      t.name.toLowerCase() === lower
+      (!targetGender || t.gender === targetGender) &&
+      (t.id.toLowerCase() === lower ||
+        t.shortName.toLowerCase() === lower ||
+        t.name.toLowerCase() === lower)
   )
   if (matchedTeam) {
     return matchedTeam.name
@@ -476,6 +478,7 @@ export function getRefereePreviewInfo(
 
 /**
  * Extracts the meal time for a specific team from markdown content.
+ * Matches by club shortName (Kurzname) and gender (Altersklasse wU14/mU14).
  * Checks for a Markdown table having columns for time, Saturday, and Sunday,
  * or sections for Saturday/Sunday.
  */
@@ -496,14 +499,61 @@ export function extractTeamMealTimes(
   const shortNameLower = team.shortName.trim().toLowerCase()
   const teamIdLower = team.id.trim().toLowerCase()
 
-  const matchesTeam = (text: string): boolean => {
+  const matchesTeamText = (text: string, rowGender?: string): boolean => {
     if (!text) return false
-    const lower = text.toLowerCase()
-    return (
-      (teamNameLower.length > 0 && lower.includes(teamNameLower)) ||
-      (shortNameLower.length > 0 && lower.includes(shortNameLower)) ||
-      (teamIdLower.length > 0 && lower.includes(teamIdLower))
-    )
+    const lower = text.trim().toLowerCase()
+
+    // 1. If rowGender or text specifies gender, verify against team.gender
+    if (rowGender) {
+      const gLower = rowGender.toLowerCase()
+      if (gLower.includes("wu14") || gLower.includes("mädchen")) {
+        if (team.gender !== "wU14") return false
+      } else if (gLower.includes("mu14") || gLower.includes("jungen")) {
+        if (team.gender !== "mU14") return false
+      }
+    }
+
+    if (team.gender === "wU14" && (lower.includes("mu14") || lower.includes("männlich"))) {
+      return false
+    }
+    if (team.gender === "mU14" && (lower.includes("wu14") || lower.includes("weiblich"))) {
+      return false
+    }
+
+    // 2. Exact matches
+    if (
+      lower === shortNameLower ||
+      lower === teamNameLower ||
+      lower === teamIdLower
+    ) {
+      return true
+    }
+
+    // 3. Normalized shortName without hyphens/spaces (e.g. "RRK 1" vs "RRK-1")
+    const normShort = shortNameLower.replace(/[-\s]/g, "")
+    const normText = lower.replace(/[-\s]/g, "")
+    if (normText === normShort) {
+      return true
+    }
+
+    // 4. Token boundary match for shortName (Kurzname)
+    const escapedShort = shortNameLower.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+    const shortRegex = new RegExp(`(^|[^a-zA-Z0-9])${escapedShort}([^a-zA-Z0-9]|$)`, "i")
+    if (shortRegex.test(lower)) {
+      if (shortNameLower.includes("1") && !lower.includes("1")) return false
+      if (shortNameLower.includes("2") && !lower.includes("2")) return false
+      return true
+    }
+
+    // 5. Full team name or ID inclusion
+    if (teamNameLower.length > 3 && lower.includes(teamNameLower)) {
+      return true
+    }
+    if (teamIdLower.length > 0 && lower.includes(teamIdLower)) {
+      return true
+    }
+
+    return false
   }
 
   const lines = resolved.split("\n")
@@ -513,6 +563,7 @@ export function extractTeamMealTimes(
   let satColIdx = -1
   let sunColIdx = -1
   let teamColIdx = -1
+  let genderColIdx = -1
 
   for (let i = 0; i < lines.length; i++) {
     const rawLine = lines[i].trim()
@@ -558,6 +609,7 @@ export function extractTeamMealTimes(
           satColIdx = -1
           sunColIdx = -1
           teamColIdx = -1
+          genderColIdx = -1
 
           // Determine column indices
           for (let c = 0; c < lowerHeaders.length; c++) {
@@ -570,6 +622,14 @@ export function extractTeamMealTimes(
             } else if (h.includes("sonntag") || h.includes("so.") || h.includes("sun") || h.includes("tag 2")) {
               sunColIdx = c
               result.hasSundaySchedule = true
+            } else if (
+              h.includes("altersklasse") ||
+              h.includes("jugend") ||
+              h.includes("gender") ||
+              h.includes("klasse") ||
+              h.includes("ak")
+            ) {
+              genderColIdx = c
             } else if (h.includes("mannschaft") || h.includes("team") || h.includes("verein")) {
               teamColIdx = c
             }
@@ -584,17 +644,18 @@ export function extractTeamMealTimes(
 
         // Table data row
         const timeVal = cells[timeColIdx] || ""
+        const rowGender = genderColIdx !== -1 && genderColIdx < cells.length ? cells[genderColIdx] : undefined
 
         // Mode 1: Table with dedicated Saturday / Sunday columns
         if (satColIdx !== -1 && satColIdx < cells.length) {
           result.hasSaturdaySchedule = true
-          if (matchesTeam(cells[satColIdx]) && timeVal) {
+          if (matchesTeamText(cells[satColIdx], rowGender) && timeVal) {
             result.saturday = timeVal
           }
         }
         if (sunColIdx !== -1 && sunColIdx < cells.length) {
           result.hasSundaySchedule = true
-          if (matchesTeam(cells[sunColIdx]) && timeVal) {
+          if (matchesTeamText(cells[sunColIdx], rowGender) && timeVal) {
             result.sunday = timeVal
           }
         }
@@ -607,7 +668,7 @@ export function extractTeamMealTimes(
             result.hasSundaySchedule = true
           }
 
-          if (matchesTeam(cells[teamColIdx]) && timeVal) {
+          if (matchesTeamText(cells[teamColIdx], rowGender) && timeVal) {
             if (currentSectionDay === "saturday") {
               result.saturday = timeVal
             } else if (currentSectionDay === "sunday") {
@@ -623,6 +684,7 @@ export function extractTeamMealTimes(
       satColIdx = -1
       sunColIdx = -1
       teamColIdx = -1
+      genderColIdx = -1
     }
   }
 
@@ -630,17 +692,24 @@ export function extractTeamMealTimes(
 }
 
 /**
- * Checks if a referee field string (raw text or match variable) matches a team.
+ * Checks if a referee field string (raw text or match variable) matches a team
+ * by checking both the club's Kurzname (shortName) and Altersklasse (mU14 / wU14).
  */
 export function isRefereeMatchingTeam(
   rawRef: string | undefined,
   team: Team,
   matches: Match[] = [],
-  teams: Team[] = []
+  teams: Team[] = [],
+  matchGender?: GenderCategory
 ): boolean {
   if (!rawRef) return false
   const trimmed = rawRef.trim()
   if (!trimmed) return false
+
+  const effectiveGender = matchGender || team.gender
+  if (effectiveGender !== team.gender) {
+    return false
+  }
 
   // 1. Direct variable reference check: {{spiel:X:heim}} / {{match:X:away}} etc.
   const matchVarRegex = /\{\{(?:spiel|match):(\d+):(heim|gast|home|away)(?::(?:kurz|short))?\}\}/i
@@ -650,6 +719,9 @@ export function isRefereeMatchingTeam(
     const isHome = varMatch[2].toLowerCase() === "heim" || varMatch[2].toLowerCase() === "home"
     const targetMatch = matches.find((m) => m.matchNumber === matchNum)
     if (targetMatch) {
+      if (targetMatch.gender !== team.gender) {
+        return false
+      }
       const targetTeamId = isHome ? targetMatch.teamHomeId : targetMatch.teamAwayId
       if (targetTeamId && targetTeamId.trim() === team.id.trim()) {
         return true
@@ -657,23 +729,61 @@ export function isRefereeMatchingTeam(
     }
   }
 
-  // 2. Resolved text comparison
-  const resolved = resolveRefereeText(trimmed, matches, teams).trim()
-  if (resolved) {
-    const lowerResolved = resolved.toLowerCase()
-    const teamNameLower = team.name.trim().toLowerCase()
-    const shortNameLower = team.shortName.trim().toLowerCase()
-    const teamIdLower = team.id.trim().toLowerCase()
+  // 2. Search by Kurzname (shortName) and Altersklasse (gender)
+  const shortLower = team.shortName.trim().toLowerCase()
+  const rawLower = trimmed.toLowerCase()
 
-    if (
-      lowerResolved === teamNameLower ||
-      lowerResolved === shortNameLower ||
-      lowerResolved === teamIdLower ||
-      (teamNameLower.length > 3 && lowerResolved.includes(teamNameLower)) ||
-      (teamIdLower.length > 3 && lowerResolved.includes(teamIdLower))
-    ) {
-      return true
+  // Exclude explicit opposite gender in text
+  if (team.gender === "wU14" && (rawLower.includes("mu14") || rawLower.includes("männlich"))) {
+    return false
+  }
+  if (team.gender === "mU14" && (rawLower.includes("wu14") || rawLower.includes("weiblich"))) {
+    return false
+  }
+
+  // Resolve match variables if present using team.gender
+  const resolved = resolveRefereeText(trimmed, matches, teams, team.gender).trim()
+  const resolvedLower = resolved.toLowerCase()
+
+  // Exact matches
+  if (
+    rawLower === shortLower ||
+    rawLower === team.name.toLowerCase() ||
+    rawLower === team.id.toLowerCase() ||
+    resolvedLower === shortLower ||
+    resolvedLower === team.name.toLowerCase() ||
+    resolvedLower === team.id.toLowerCase()
+  ) {
+    return true
+  }
+
+  // Normalized shortName without hyphens/spaces (e.g. "RRK 1" vs "RRK-1")
+  const normShort = shortLower.replace(/[-\s]/g, "")
+  const normRaw = rawLower.replace(/[-\s]/g, "")
+  const normResolved = resolvedLower.replace(/[-\s]/g, "")
+  if (normRaw === normShort || normResolved === normShort) {
+    return true
+  }
+
+  // Token boundary match for shortName
+  const escapedShort = shortLower.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+  const shortRegex = new RegExp(`(^|[^a-zA-Z0-9])${escapedShort}([^a-zA-Z0-9]|$)`, "i")
+  if (shortRegex.test(rawLower) || shortRegex.test(resolvedLower)) {
+    if (shortLower.includes("1") && !(rawLower.includes("1") || resolvedLower.includes("1"))) {
+      return false
     }
+    if (shortLower.includes("2") && !(rawLower.includes("2") || resolvedLower.includes("2"))) {
+      return false
+    }
+    return true
+  }
+
+  // Match full team name if specified
+  if (
+    team.name.length > 3 &&
+    (rawLower.includes(team.name.toLowerCase()) || resolvedLower.includes(team.name.toLowerCase()))
+  ) {
+    return true
   }
 
   return false
@@ -683,8 +793,7 @@ export function isRefereeMatchingTeam(
  * Returns the list of referee assignments for a given team.
  * In a standard tournament schedule, each team is assigned exactly 5 matches
  * (3 on Saturday, 2 on Sunday).
- * If a match has not been resolved yet (e.g. before the preliminary round ends),
- * pending assignments with statusText are populated up to targetTotalCount.
+ * Matching is performed strictly against the team's Kurzname and Altersklasse (gender).
  */
 export function getTeamRefereeAssignments(
   team: Team,
@@ -700,13 +809,18 @@ export function getTeamRefereeAssignments(
   const assignedMatches: { match: Match; partnerName?: string }[] = []
 
   for (const m of matches) {
-    const isRef1 = isRefereeMatchingTeam(m.referee1, team, matches, teamsPool)
-    const isRef2 = isRefereeMatchingTeam(m.referee2, team, matches, teamsPool)
+    // Only matches of the same gender as team
+    if (m.gender !== team.gender) {
+      continue
+    }
+
+    const isRef1 = isRefereeMatchingTeam(m.referee1, team, matches, teamsPool, m.gender)
+    const isRef2 = isRefereeMatchingTeam(m.referee2, team, matches, teamsPool, m.gender)
 
     if (isRef1 || isRef2) {
       const partnerRaw = isRef1 ? m.referee2 : m.referee1
       const partnerName = partnerRaw
-        ? resolveRefereeText(partnerRaw, matches, teamsPool)
+        ? resolveRefereeText(partnerRaw, matches, teamsPool, m.gender)
         : undefined
 
       assignedMatches.push({

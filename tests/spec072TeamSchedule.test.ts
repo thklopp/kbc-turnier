@@ -206,6 +206,72 @@ describe("SPEC-072: Schiedsrichter- und Essenszeiten auf Team-Seiten", () => {
       assert.strictEqual(isRefereeMatchingTeam("{{spiel:1:heim}}", mockTeams[0], matches, mockTeams), true)
       assert.strictEqual(isRefereeMatchingTeam("{{spiel:1:gast}}", mockTeams[0], matches, mockTeams), false)
     })
+
+    it("unterscheidet Vereine mit identischem Kurznamen anhand der Altersklasse (wU14 vs. mU14)", () => {
+      const htcWu14: Team = {
+        id: "team-htc-w",
+        name: "HTC Stuttgarter Kickers (w)",
+        shortName: "HTC",
+        gender: "wU14",
+        group: "A",
+        logoUrl: null,
+        jingleUrl: null,
+      }
+      const htcMu14: Team = {
+        id: "team-htc-m",
+        name: "HTC Stuttgarter Kickers (m)",
+        shortName: "HTC",
+        gender: "mU14",
+        group: "A",
+        logoUrl: null,
+        jingleUrl: null,
+      }
+      const pool = [htcWu14, htcMu14]
+
+      // Bei einem wU14 Spiel matcht nur das wU14 Team
+      assert.strictEqual(isRefereeMatchingTeam("HTC", htcWu14, [], pool, "wU14"), true)
+      assert.strictEqual(isRefereeMatchingTeam("HTC", htcMu14, [], pool, "wU14"), false)
+
+      // Bei einem mU14 Spiel matcht nur das mU14 Team
+      assert.strictEqual(isRefereeMatchingTeam("HTC", htcMu14, [], pool, "mU14"), true)
+      assert.strictEqual(isRefereeMatchingTeam("HTC", htcWu14, [], pool, "mU14"), false)
+    })
+  })
+
+  describe("extractTeamMealTimes mit Kurzname und Altersklasse", () => {
+    it("weist Vereinen mit gleichem Kurznamen den korrekten Essensslot anhand der Altersklasse zu", () => {
+      const htcWu14: Team = {
+        id: "team-htc-w",
+        name: "HTC Stuttgarter Kickers",
+        shortName: "HTC",
+        gender: "wU14",
+        group: "A",
+        logoUrl: null,
+        jingleUrl: null,
+      }
+      const htcMu14: Team = {
+        id: "team-htc-m",
+        name: "HTC Stuttgarter Kickers",
+        shortName: "HTC",
+        gender: "mU14",
+        group: "A",
+        logoUrl: null,
+        jingleUrl: null,
+      }
+      const mealMd = `
+### 🥪 Samstag
+| Uhrzeit | Altersklasse | Team |
+| :--- | :--- | :--- |
+| 11:30 Uhr | wU14 | HTC |
+| 12:10 Uhr | mU14 | HTC |
+`
+      const pool = [htcWu14, htcMu14]
+      const wTimes = extractTeamMealTimes(mealMd, htcWu14, [], pool)
+      const mTimes = extractTeamMealTimes(mealMd, htcMu14, [], pool)
+
+      assert.strictEqual(wTimes.saturday, "11:30 Uhr")
+      assert.strictEqual(mTimes.saturday, "12:10 Uhr")
+    })
   })
 
   describe("getTeamRefereeAssignments (5 Spiele pro Team)", () => {
