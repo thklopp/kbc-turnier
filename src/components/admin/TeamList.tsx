@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react"
-import type { Team, Match, GenderCategory, TournamentGroup } from "@/types/database"
+import type { Team, Match, GenderCategory, TournamentGroup, TournamentConfig } from "@/types/database"
 import { subscribeTeams, seedDefaultTeams, saveTeam, isTeamFullyConfigured } from "@/services/teamService"
 import { subscribeMatches } from "@/services/matchService"
+import { subscribeTournamentConfig, updateTournamentConfig, getDefaultConfig } from "@/services/configService"
 import { useAudioPlayer } from "@/hooks/useAudioPlayer"
 import { TeamCard } from "./TeamCard"
 import { TeamEditModal } from "./TeamEditModal"
 import { TeamJingleOverviewModal } from "./TeamJingleOverviewModal"
 import { TeamSwapModal } from "./TeamSwapModal"
-import { Users, Plus, Sparkles, Filter, AlertCircle, Music, ArrowLeftRight } from "lucide-react"
+import { Users, Plus, Sparkles, Filter, AlertCircle, Music, ArrowLeftRight, Clock, Star, Eye } from "lucide-react"
 
 export function TeamList() {
   const [teams, setTeams] = useState<Team[]>([])
@@ -21,6 +22,7 @@ export function TeamList() {
   const [isSwapModalOpen, setIsSwapModalOpen] = useState(false)
   const [swapInitialTeam, setSwapInitialTeam] = useState<Team | null>(null)
   const [seeding, setSeeding] = useState(false)
+  const [config, setConfig] = useState<TournamentConfig>(getDefaultConfig())
 
   const { play, stop, isPlaying } = useAudioPlayer()
 
@@ -45,11 +47,32 @@ export function TeamList() {
       }
     )
 
+    const unsubConfig = subscribeTournamentConfig(
+      (updatedConfig) => {
+        setConfig(updatedConfig)
+      },
+      (error) => {
+        console.error("Config Listener Fehler:", error)
+      }
+    )
+
     return () => {
       unsubTeams()
       unsubMatches()
+      unsubConfig()
     }
   }, [])
+
+  const handleToggleTab = async (
+    key: "showTeamTimesTab" | "showTeamAllstarsTab",
+    value: boolean
+  ) => {
+    try {
+      await updateTournamentConfig({ [key]: value })
+    } catch (err) {
+      console.error("Fehler beim Aktualisieren der Tab-Sichtbarkeit:", err)
+    }
+  }
 
   const filteredTeams = teams.filter((t) => {
     const matchesGender = genderFilter === "all" || t.gender === genderFilter
@@ -154,6 +177,71 @@ export function TeamList() {
           >
             <Plus className="h-3.5 w-3.5" />
             <span>Neues Team</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Team Pages Tabs Visibility Control */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div>
+          <div className="flex items-center gap-2">
+            <Eye className="h-4 w-4 text-blue-600" />
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+              Sichtbarkeit auf Betreuer-Seiten
+            </h3>
+          </div>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Steuere zentral, welche Reiter auf den Seiten aller Mannschaften sichtbar sind.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Toggle Zeiten */}
+          <button
+            type="button"
+            onClick={() => handleToggleTab("showTeamTimesTab", !config.showTeamTimesTab)}
+            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+              config.showTeamTimesTab
+                ? "bg-emerald-50 border-emerald-300 text-emerald-800"
+                : "bg-slate-100 border-slate-200 text-slate-500"
+            }`}
+            title="Reiter 'Zeiten' auf allen Team-Seiten ein- oder ausblenden"
+          >
+            <Clock className="h-3.5 w-3.5" />
+            <span>Reiter „Zeiten“:</span>
+            <span
+              className={`px-1.5 py-0.5 rounded-md font-bold text-[10px] ${
+                config.showTeamTimesTab
+                  ? "bg-emerald-200/70 text-emerald-900"
+                  : "bg-slate-200 text-slate-600"
+              }`}
+            >
+              {config.showTeamTimesTab ? "Sichtbar" : "Ausgeblendet"}
+            </span>
+          </button>
+
+          {/* Toggle Allstar-Wahl */}
+          <button
+            type="button"
+            onClick={() => handleToggleTab("showTeamAllstarsTab", !config.showTeamAllstarsTab)}
+            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+              config.showTeamAllstarsTab
+                ? "bg-amber-50 border-amber-300 text-amber-900"
+                : "bg-slate-100 border-slate-200 text-slate-500"
+            }`}
+            title="Reiter 'Allstar-Wahl' auf allen Team-Seiten ein- oder ausblenden"
+          >
+            <Star className="h-3.5 w-3.5" />
+            <span>Reiter „Allstar-Wahl“:</span>
+            <span
+              className={`px-1.5 py-0.5 rounded-md font-bold text-[10px] ${
+                config.showTeamAllstarsTab
+                  ? "bg-amber-200/70 text-amber-950"
+                  : "bg-slate-200 text-slate-600"
+              }`}
+            >
+              {config.showTeamAllstarsTab ? "Sichtbar" : "Ausgeblendet"}
+            </span>
           </button>
         </div>
       </div>

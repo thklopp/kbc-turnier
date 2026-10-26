@@ -6,6 +6,11 @@ import {
   isRefereeMatchingTeam,
   getTeamRefereeAssignments,
 } from "../src/services/infoService"
+import {
+  getDefaultConfig,
+  updateTournamentConfig,
+  getTournamentConfig,
+} from "../src/services/configService"
 
 const mockTeams: Team[] = [
   {
@@ -253,6 +258,32 @@ describe("SPEC-072: Schiedsrichter- und Essenszeiten auf Team-Seiten", () => {
       // 5. Einsatz bleibt ungelöst
       assert.strictEqual(assignments[4].day, "sunday")
       assert.strictEqual(assignments[4].isResolved, false)
+    })
+  })
+
+  describe("AC-8: Tab-Sichtbarkeit für Zeiten und Allstar-Wahl steuern", () => {
+    it("besitzt initiale Standardwerte showTeamTimesTab = true und showTeamAllstarsTab = true", () => {
+      const cfg = getDefaultConfig()
+      assert.strictEqual(cfg.showTeamTimesTab, true)
+      assert.strictEqual(cfg.showTeamAllstarsTab, true)
+    })
+
+    it("aktualisiert showTeamTimesTab und showTeamAllstarsTab separat", async () => {
+      await updateTournamentConfig({ showTeamTimesTab: false, showTeamAllstarsTab: true })
+      let cfg = await getTournamentConfig()
+      assert.strictEqual(cfg.showTeamTimesTab, false)
+      assert.strictEqual(cfg.showTeamAllstarsTab, true)
+
+      await updateTournamentConfig({ showTeamTimesTab: true, showTeamAllstarsTab: false })
+      cfg = await getTournamentConfig()
+      assert.strictEqual(cfg.showTeamTimesTab, true)
+      assert.strictEqual(cfg.showTeamAllstarsTab, false)
+
+      // Zurücksetzen auf Standard
+      await updateTournamentConfig({ showTeamTimesTab: true, showTeamAllstarsTab: true })
+      cfg = await getTournamentConfig()
+      assert.strictEqual(cfg.showTeamTimesTab, true)
+      assert.strictEqual(cfg.showTeamAllstarsTab, true)
     })
   })
 })

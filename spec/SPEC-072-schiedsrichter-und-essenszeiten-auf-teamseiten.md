@@ -60,13 +60,17 @@ Auf den teamspezifischen Betreuer- und Mannschaftsseiten (`/team/:token`) werden
      - Zuordnung unbestimmter Einsätze zum jeweiligen Tag (in diesem Turniermodus: Samstag 3 Spiele, Sonntag 2 Spiele).
      - Unbestimmte Einsätze erhalten den Status `wird nach der Vorrunde ermittelt`.
 
-3. **Eigener Reiter „Zeiten“ vor „Allstar-Wahl“ (`TeamJinglePage.tsx`)**:
+3. **Eigener Reiter „Zeiten“ und Reiter-Sichtbarkeit (`TeamJinglePage.tsx` & `TeamList.tsx`)**:
    - Die Essens- und Schiedsrichterzeiten werden auf einem eigenen Tab-Reiter namens **„Zeiten“** gebündelt.
    - Tab-Reihenfolge: `[Zeiten] [Allstar-Wahl] [Torjingle] [Spielerkader]`
-     - Standardmäßig aktiver Tab beim Laden der Seite ist `times` („Zeiten“), sodass Betreuer sofort beim Öffnen des Links alle relevanten Einsatz- und Essenszeiten sehen.
+     - Standardmäßig aktiver Tab beim Laden der Seite ist `times` („Zeiten“), sofern sichtbar.
    - Inhalt des Reiters „Zeiten“:
      1. **Eure Essenszeiten (Mittagessen)** (Banner mit Samstag & Sonntag inkl. „wird ermittelt“ und Button zum Essensplan).
      2. **Eure Schiedsrichter-Einsätze (5 Spiele)** (`TeamRefereeScheduleCard` mit 5 Slots, Status-Badges und Partner-Schiedsrichtern).
+   - **Globale Ein-/Ausblendung im Adminbereich (`TeamList.tsx`)**:
+     - In der Teamverwaltung (`/admin#teams`) kann die Turnierleitung über zwei getrennte Umschalter die Reiter **„Zeiten“** (`showTeamTimesTab`) und **„Allstar-Wahl“** (`showTeamAllstarsTab`) für alle Mannschaften gemeinsam ein- und ausblenden.
+     - Die Einstellungen werden in `config/tournament` persistiert und wirken sofort in Echtzeit auf alle Betreuerseiten.
+     - Ist ein Reiter ausgeblendet, wird sein Tab auf der Betreuerseite nicht angezeigt; ein intelligenter Fallback wechselt bei Bedarf automatisch auf den nächsten verfügbaren Reiter.
 
 ### 3.2 Explizit Out-of-Scope (Nicht Teil dieser Spec)
 - ❌ Manuelles Zuweisen von Schiedsrichtern durch Betreuer (Schiedsrichter werden weiterhin ausschließlich von der Turnierleitung in `MatchEditModal` konfiguriert).
@@ -122,6 +126,13 @@ Auf den teamspezifischen Betreuer- und Mannschaftsseiten (`/team/:token`) werden
   - **Gegeben sei**: Die Betreuerseite wird auf einem Mobilgerät (z. B. iPhone / Android Smartphone) betrachtet.
   - **Wenn**: Der Nutzer die Seite scrollt.
   - **Dann**: Sind die Badges, Teamnamen und Zeiten einzeilig bzw. sauber umbrechend dargestellt, ohne horizontalen Scrollbalken oder abgeschnittene Texte.
+
+- [ ] **AC-8: Separate Ein-/Ausblendung von Zeiten und Allstar-Wahl im Adminbereich**
+  - **Gegeben sei**: Der Turnierleiter befindet sich im Adminbereich in der Teamverwaltung (`/admin`).
+  - **Wenn**: Der Schalter für Reiter „Zeiten“ auf „Ausgeblendet“ gestellt wird.
+  - **Dann**: Verschwindet der Reiter „Zeiten“ auf den Seiten aller Mannschaften sofort in Echtzeit.
+  - **Und**: Wird der Schalter für „Allstar-Wahl“ auf „Ausgeblendet“ gestellt, verschwindet der Reiter „Allstar-Wahl“ für alle Teams.
+  - **Und**: Beide Schalter lassen sich völlig unabhängig voneinander steuern und werden in `config/tournament` (`showTeamTimesTab`, `showTeamAllstarsTab`) gespeichert.
 
 ### 4.2 Allgemeine Qualitätskriterien
 - [ ] Keine fest kodierten Parameter gemäß `AGENTS.md`.

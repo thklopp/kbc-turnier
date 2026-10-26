@@ -16,6 +16,8 @@ export interface TournamentConfig {
   rotationPattern: "2w_2m"
   allstarVotingStatus?: AllstarVotingStatus
   allstarVotingOpen?: boolean
+  showTeamTimesTab?: boolean
+  showTeamAllstarsTab?: boolean
   updatedAt?: Timestamp
   updatedBy?: string
 }

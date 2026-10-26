@@ -10,13 +10,14 @@ import {
 } from "@/services/teamService"
 import { useAudioPlayer } from "@/hooks/useAudioPlayer"
 import { calculateAudioGain } from "@/lib/audioNormalization"
-import type { Team, Player, Match } from "@/types/database"
+import type { Team, Player, Match, TournamentConfig } from "@/types/database"
 import { TeamRosterManager } from "@/components/common/TeamRosterManager"
 import {
   subscribeTournamentPage,
   extractTeamMealTimes,
 } from "@/services/infoService"
 import { subscribeMatches } from "@/services/matchService"
+import { subscribeTournamentConfig, getDefaultConfig } from "@/services/configService"
 import {
   Music,
   Users,
@@ -49,6 +50,7 @@ export function TeamJinglePage() {
   const [essenContent, setEssenContent] = useState<string>("")
   const [matches, setMatches] = useState<Match[]>([])
   const [allTeams, setAllTeams] = useState<Team[]>([])
+  const [config, setConfig] = useState<TournamentConfig>(getDefaultConfig())
 
   // Audio & File State
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -136,7 +138,7 @@ export function TeamJinglePage() {
     }
   }, [previewUrl, loadAudio])
 
-  // Lade Essensplan, Spielplan & Teams für team-spezifische Essenszeiten & Schiedsrichter
+  // Lade Essensplan, Spielplan, Teams & Turnier-Config für team-spezifische Essenszeiten & Schiedsrichter
   useEffect(() => {
     const unsubPage = subscribeTournamentPage(
       "essen",
@@ -151,12 +153,29 @@ export function TeamJinglePage() {
       (teams) => setAllTeams(teams),
       (err) => console.error("TeamJinglePage: Fehler beim Laden der Teams", err)
     )
+    const unsubConfig = subscribeTournamentConfig(
+      (cfg) => setConfig(cfg),
+      (err) => console.error("TeamJinglePage: Fehler beim Laden der Config", err)
+    )
     return () => {
       unsubPage()
       unsubMatches()
       unsubTeams()
+      unsubConfig()
     }
   }, [])
+
+  const showTimesTab = config.showTeamTimesTab !== false
+  const showAllstarsTab = config.showTeamAllstarsTab !== false
+
+  // Automatischer Fallback, falls der aktuelle Tab administrativ ausgeblendet wurde
+  useEffect(() => {
+    if (activeTab === "times" && !showTimesTab) {
+      setActiveTab(showAllstarsTab ? "allstars" : "jingle")
+    } else if (activeTab === "allstars" && !showAllstarsTab) {
+      setActiveTab(showTimesTab ? "times" : "jingle")
+    }
+  }, [showTimesTab, showAllstarsTab, activeTab])
 
 
   // Aktualisiert die Startzeit und synchronisiert bei Inaktivität den Slider
@@ -483,30 +502,34 @@ export function TeamJinglePage() {
 
         {/* Tab Navigation */}
         <div className="flex items-center gap-2 mb-6 border-b border-slate-200">
-          <button
-            type="button"
-            onClick={() => setActiveTab("times")}
-            className={`inline-flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
-              activeTab === "times"
-                ? "border-blue-600 text-blue-600 bg-blue-50/50 rounded-t-xl"
-                : "border-transparent text-slate-500 hover:text-slate-800"
-            }`}
-          >
-            <Clock className="h-4 w-4" />
-            <span>Zeiten</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("allstars")}
-            className={`inline-flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
-              activeTab === "allstars"
-                ? "border-blue-600 text-blue-600 bg-blue-50/50 rounded-t-xl"
-                : "border-transparent text-slate-500 hover:text-slate-800"
-            }`}
-          >
-            <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
-            <span>Allstar-Wahl</span>
-          </button>
+          {showTimesTab && (
+            <button
+              type="button"
+              onClick={() => setActiveTab("times")}
+              className={`inline-flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
+                activeTab === "times"
+                  ? "border-blue-600 text-blue-600 bg-blue-50/50 rounded-t-xl"
+                  : "border-transparent text-slate-500 hover:text-slate-800"
+              }`}
+            >
+              <Clock className="h-4 w-4" />
+              <span>Zeiten</span>
+            </button>
+          )}
+          {showAllstarsTab && (
+            <button
+              type="button"
+              onClick={() => setActiveTab("allstars")}
+              className={`inline-flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
+                activeTab === "allstars"
+                  ? "border-blue-600 text-blue-600 bg-blue-50/50 rounded-t-xl"
+                  : "border-transparent text-slate-500 hover:text-slate-800"
+              }`}
+            >
+              <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
+              <span>Allstar-Wahl</span>
+            </button>
+          )}
           <button
             type="button"
             onClick={() => setActiveTab("jingle")}
@@ -559,7 +582,7 @@ export function TeamJinglePage() {
           </div>
         )}
 
-        {activeTab === "times" ? (
+        {activeTab === "times" && showTimesTab ? (
           <div>
             {/* Team Meal Times Banner */}
             {(() => {
@@ -632,7 +655,7 @@ export function TeamJinglePage() {
               allTeams={allTeams}
             />
           </div>
-        ) : activeTab === "allstars" ? (
+        ) : activeTab === "allstars" && showAllstarsTab ? (
           <TeamAllstarVoting team={team} token={token!} />
         ) : activeTab === "roster" ? (
           <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 mb-6">

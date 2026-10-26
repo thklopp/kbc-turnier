@@ -43,6 +43,8 @@ export interface TournamentConfig {
   rotationPattern: "2w_2m";          // 2 Mädchenspiele, 2 Jungsspiele im Wechsel
   allstarVotingStatus?: "upcoming" | "open" | "closed"; // Status der Allstar-Wahl (Standard: "upcoming")
   allstarVotingOpen?: boolean;       // Veraltet / Fallback für ältere Clients
+  showTeamTimesTab?: boolean;        // Sichtbarkeit des Reiters "Zeiten" auf Betreuerseiten (Standard: true)
+  showTeamAllstarsTab?: boolean;     // Sichtbarkeit des Reiters "Allstar-Wahl" auf Betreuerseiten (Standard: true)
   updatedAt: FirebaseFirestore.Timestamp;
   updatedBy?: string;                // User-ID des Admins
 }
