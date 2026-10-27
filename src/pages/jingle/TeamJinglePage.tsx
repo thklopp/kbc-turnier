@@ -6,16 +6,18 @@ import {
   saveTeamPlayersByToken,
   isSupportedAudioFile,
   AUDIO_ACCEPT_ATTRIBUTE,
+  subscribeTeams,
 } from "@/services/teamService"
 import { useAudioPlayer } from "@/hooks/useAudioPlayer"
 import { calculateAudioGain } from "@/lib/audioNormalization"
-import type { Team, Player, Match } from "@/types/database"
+import type { Team, Player, Match, TournamentConfig } from "@/types/database"
 import { TeamRosterManager } from "@/components/common/TeamRosterManager"
 import {
   subscribeTournamentPage,
   extractTeamMealTimes,
 } from "@/services/infoService"
 import { subscribeMatches } from "@/services/matchService"
+import { subscribeTournamentConfig, getDefaultConfig } from "@/services/configService"
 import {
   Music,
   Users,
@@ -35,6 +37,7 @@ import {
   ArrowRight,
 } from "lucide-react"
 import { TeamAllstarVoting } from "@/components/team/TeamAllstarVoting"
+import { TeamRefereeScheduleCard } from "@/components/team/TeamRefereeScheduleCard"
 import rrkLogo from "@/assets/images/RRK.webp"
 
 export function TeamJinglePage() {
@@ -42,10 +45,12 @@ export function TeamJinglePage() {
 
   const [loading, setLoading] = useState(true)
   const [team, setTeam] = useState<Team | null>(null)
-  const [activeTab, setActiveTab] = useState<"jingle" | "roster" | "allstars">("jingle")
+  const [activeTab, setActiveTab] = useState<"times" | "jingle" | "roster" | "allstars">("times")
   const [loadError, setLoadError] = useState<string | null>(null)
   const [essenContent, setEssenContent] = useState<string>("")
   const [matches, setMatches] = useState<Match[]>([])
+  const [allTeams, setAllTeams] = useState<Team[]>([])
+  const [config, setConfig] = useState<TournamentConfig>(getDefaultConfig())
 
   // Audio & File State
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -133,7 +138,7 @@ export function TeamJinglePage() {
     }
   }, [previewUrl, loadAudio])
 
-  // Lade Essensplan & Spielplan für team-spezifische Essenszeiten
+  // Lade Essensplan, Spielplan, Teams & Turnier-Config für team-spezifische Essenszeiten & Schiedsrichter
   useEffect(() => {
     const unsubPage = subscribeTournamentPage(
       "essen",
@@ -144,11 +149,33 @@ export function TeamJinglePage() {
       (data) => setMatches(data),
       (err) => console.error("TeamJinglePage: Fehler beim Laden der Matches", err)
     )
+    const unsubTeams = subscribeTeams(
+      (teams) => setAllTeams(teams),
+      (err) => console.error("TeamJinglePage: Fehler beim Laden der Teams", err)
+    )
+    const unsubConfig = subscribeTournamentConfig(
+      (cfg) => setConfig(cfg),
+      (err) => console.error("TeamJinglePage: Fehler beim Laden der Config", err)
+    )
     return () => {
       unsubPage()
       unsubMatches()
+      unsubTeams()
+      unsubConfig()
     }
   }, [])
+
+  const showTimesTab = config.showTeamTimesTab !== false
+  const showAllstarsTab = config.showTeamAllstarsTab !== false
+
+  // Automatischer Fallback, falls der aktuelle Tab administrativ ausgeblendet wurde
+  useEffect(() => {
+    if (activeTab === "times" && !showTimesTab) {
+      setActiveTab(showAllstarsTab ? "allstars" : "jingle")
+    } else if (activeTab === "allstars" && !showAllstarsTab) {
+      setActiveTab(showTimesTab ? "times" : "jingle")
+    }
+  }, [showTimesTab, showAllstarsTab, activeTab])
 
 
   // Aktualisiert die Startzeit und synchronisiert bei Inaktivität den Slider
@@ -473,55 +500,36 @@ export function TeamJinglePage() {
           </div>
         </div>
 
-        {/* Team Meal Times Banner */}
-        {(() => {
-          const mealTimes = extractTeamMealTimes(essenContent, team, matches)
-          if (!mealTimes.saturday && !mealTimes.sunday) return null
-
-          return (
-            <div className="bg-amber-50/80 border border-amber-200 rounded-2xl p-4 sm:p-5 mb-6 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-start gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500 text-white shadow-xs">
-                  <Utensils className="h-5 w-5" />
-                </div>
-                <div>
-                  <h2 className="text-sm font-bold text-slate-900">
-                    Eure Essenszeiten (Mittagessen)
-                  </h2>
-                  <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-700">
-                    {mealTimes.saturday && (
-                      <div className="flex items-center gap-1.5">
-                        <span className="font-semibold text-slate-900">Samstag:</span>
-                        <span className="rounded bg-white/90 border border-amber-200 px-1.5 py-0.5 font-mono font-medium text-amber-950">
-                          {mealTimes.saturday}
-                        </span>
-                      </div>
-                    )}
-                    {mealTimes.sunday && (
-                      <div className="flex items-center gap-1.5">
-                        <span className="font-semibold text-slate-900">Sonntag:</span>
-                        <span className="rounded bg-white/90 border border-amber-200 px-1.5 py-0.5 font-mono font-medium text-amber-950">
-                          {mealTimes.sunday}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <Link
-                to="/info#essen"
-                className="inline-flex items-center gap-1 rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-xs font-bold text-amber-900 shadow-xs hover:bg-amber-50 transition-colors shrink-0"
-              >
-                <span>Gesamter Essensplan</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-          )
-        })()}
-
         {/* Tab Navigation */}
         <div className="flex items-center gap-2 mb-6 border-b border-slate-200">
+          {showTimesTab && (
+            <button
+              type="button"
+              onClick={() => setActiveTab("times")}
+              className={`inline-flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
+                activeTab === "times"
+                  ? "border-blue-600 text-blue-600 bg-blue-50/50 rounded-t-xl"
+                  : "border-transparent text-slate-500 hover:text-slate-800"
+              }`}
+            >
+              <Clock className="h-4 w-4" />
+              <span>Zeiten</span>
+            </button>
+          )}
+          {showAllstarsTab && (
+            <button
+              type="button"
+              onClick={() => setActiveTab("allstars")}
+              className={`inline-flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
+                activeTab === "allstars"
+                  ? "border-blue-600 text-blue-600 bg-blue-50/50 rounded-t-xl"
+                  : "border-transparent text-slate-500 hover:text-slate-800"
+              }`}
+            >
+              <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
+              <span>Allstar-Wahl</span>
+            </button>
+          )}
           <button
             type="button"
             onClick={() => setActiveTab("jingle")}
@@ -549,18 +557,6 @@ export function TeamJinglePage() {
               {team.players?.length || 0}
             </span>
           </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("allstars")}
-            className={`inline-flex items-center gap-2 px-4 py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
-              activeTab === "allstars"
-                ? "border-blue-600 text-blue-600 bg-blue-50/50 rounded-t-xl"
-                : "border-transparent text-slate-500 hover:text-slate-800"
-            }`}
-          >
-            <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
-            <span>Allstar-Wahl</span>
-          </button>
         </div>
 
         {/* Feedback Banners */}
@@ -586,7 +582,80 @@ export function TeamJinglePage() {
           </div>
         )}
 
-        {activeTab === "allstars" ? (
+        {activeTab === "times" && showTimesTab ? (
+          <div>
+            {/* Team Meal Times Banner */}
+            {(() => {
+              const mealTimes = extractTeamMealTimes(essenContent, team, matches, allTeams)
+              const hasTimes =
+                Boolean(mealTimes.saturday) ||
+                Boolean(mealTimes.sunday) ||
+                Boolean(mealTimes.hasSaturdaySchedule) ||
+                Boolean(mealTimes.hasSundaySchedule)
+              if (!hasTimes) return null
+
+              return (
+                <div className="bg-amber-50/80 border border-amber-200 rounded-2xl p-4 sm:p-5 mb-6 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500 text-white shadow-xs">
+                      <Utensils className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h2 className="text-sm font-bold text-slate-900">
+                        Eure Essenszeiten (Mittagessen)
+                      </h2>
+                      <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-700">
+                        {(mealTimes.saturday || mealTimes.hasSaturdaySchedule) && (
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-semibold text-slate-900">Samstag:</span>
+                            {mealTimes.saturday ? (
+                              <span className="rounded bg-white/90 border border-amber-200 px-1.5 py-0.5 font-mono font-medium text-amber-950">
+                                {mealTimes.saturday}
+                              </span>
+                            ) : (
+                              <span className="rounded bg-amber-100/70 border border-amber-200/80 px-1.5 py-0.5 font-sans italic text-amber-800">
+                                wird ermittelt
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        {(mealTimes.sunday || mealTimes.hasSundaySchedule) && (
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-semibold text-slate-900">Sonntag:</span>
+                            {mealTimes.sunday ? (
+                              <span className="rounded bg-white/90 border border-amber-200 px-1.5 py-0.5 font-mono font-medium text-amber-950">
+                                {mealTimes.sunday}
+                              </span>
+                            ) : (
+                              <span className="rounded bg-amber-100/70 border border-amber-200/80 px-1.5 py-0.5 font-sans italic text-amber-800">
+                                wird ermittelt
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <Link
+                    to="/info#essen"
+                    className="inline-flex items-center gap-1 rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-xs font-bold text-amber-900 shadow-xs hover:bg-amber-50 transition-colors shrink-0"
+                  >
+                    <span>Gesamter Essensplan</span>
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              )
+            })()}
+
+            {/* Team Referee Schedule Card */}
+            <TeamRefereeScheduleCard
+              team={team}
+              matches={matches}
+              allTeams={allTeams}
+            />
+          </div>
+        ) : activeTab === "allstars" && showAllstarsTab ? (
           <TeamAllstarVoting team={team} token={token!} />
         ) : activeTab === "roster" ? (
           <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 mb-6">

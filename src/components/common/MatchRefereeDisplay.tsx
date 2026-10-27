@@ -7,7 +7,8 @@ interface MatchRefereeDisplayProps {
   matches: Match[]
   teams: Team[]
   className?: string
-  variant?: "card" | "hero" | "kiosk" | "desk"
+  variant?: "card" | "hero" | "kiosk" | "desk" | "inline-stacked"
+  withLeadingBullet?: boolean
 }
 
 export function MatchRefereeDisplay({
@@ -17,11 +18,28 @@ export function MatchRefereeDisplay({
   teams,
   className = "",
   variant = "card",
+  withLeadingBullet = false,
 }: MatchRefereeDisplayProps) {
   const refereePairText = formatRefereePair(referee1, referee2, matches, teams)
 
   if (!refereePairText) {
     return null
+  }
+
+  if (variant === "inline-stacked") {
+    return (
+      <div className={`inline-flex items-center gap-3 md:gap-4 ${className}`}>
+        {withLeadingBullet && <span className="text-slate-300">&bull;</span>}
+        <div className="flex flex-col text-left leading-tight">
+          <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider text-slate-400">
+            Schiedsrichter
+          </span>
+          <span className="text-xs md:text-sm font-semibold text-slate-800" title={refereePairText}>
+            {refereePairText}
+          </span>
+        </div>
+      </div>
+    )
   }
 
   if (variant === "kiosk") {

@@ -16,6 +16,8 @@ export interface TournamentConfig {
   rotationPattern: "2w_2m"
   allstarVotingStatus?: AllstarVotingStatus
   allstarVotingOpen?: boolean
+  showTeamTimesTab?: boolean
+  showTeamAllstarsTab?: boolean
   updatedAt?: Timestamp
   updatedBy?: string
 }
@@ -33,6 +35,17 @@ export type TournamentInfoConfig = TournamentPageConfig
 export interface TeamMealTimes {
   saturday?: string
   sunday?: string
+  hasSaturdaySchedule?: boolean
+  hasSundaySchedule?: boolean
+}
+
+export interface TeamRefereeAssignment {
+  slotIndex: number
+  match?: Match
+  resolvedPartnerReferee?: string
+  isResolved: boolean
+  day: "saturday" | "sunday"
+  statusText?: string
 }
 
 export interface Player {

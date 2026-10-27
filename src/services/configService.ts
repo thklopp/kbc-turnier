@@ -23,6 +23,8 @@ const DEFAULT_CONFIG: TournamentConfig = {
   rotationPattern: "2w_2m",
   allstarVotingStatus: "upcoming",
   allstarVotingOpen: false,
+  showTeamTimesTab: true,
+  showTeamAllstarsTab: true,
 }
 
 function normalizeConfig(data: Partial<TournamentConfig>): TournamentConfig {
@@ -36,6 +38,8 @@ function normalizeConfig(data: Partial<TournamentConfig>): TournamentConfig {
     id: "tournament",
     allstarVotingStatus: status,
     allstarVotingOpen: status === "open",
+    showTeamTimesTab: data.showTeamTimesTab !== false,
+    showTeamAllstarsTab: data.showTeamAllstarsTab !== false,
   }
 }
 
