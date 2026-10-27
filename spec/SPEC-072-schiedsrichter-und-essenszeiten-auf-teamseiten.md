@@ -1,11 +1,11 @@
 # SPEC-072: Schiedsrichter-Einsätze und Essenszeiten-Status auf den Team-Seiten
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature & Optimierung  
 > **Branch**: `feat/SPEC-072-schiedsrichter-und-essenszeiten-auf-teamseiten`  
 > **Autor**: Agent (Antigravity)  
 > **Erstellt am**: 2026-10-26  
-> **Letzte Änderung**: 2026-10-26  
+> **Letzte Änderung**: 2026-10-27  
 > **Betroffene Bereiche**: Team-Bereich (`/team/:token`, `/jingle/:token`), Info-Service (`infoService.ts`), UI-Komponenten  
 
 ---
@@ -93,19 +93,19 @@ Auf den teamspezifischen Betreuer- und Mannschaftsseiten (`/team/:token`) werden
 
 ### 4.1 Szenarien / Kriterien
 
-- [ ] **AC-1: Essenszeit Sonntag wird immer angezeigt (mit Status „wird ermittelt“ vor Finalrunden-Berechnung)**
+- [x] **AC-1: Essenszeit Sonntag wird immer angezeigt (mit Status „wird ermittelt“ vor Finalrunden-Berechnung)**
   - **Gegeben sei**: Ein Team ruft `/team/:token` auf. Im Essensplan (`config/essen`) ist eine Tabelle für Sonntag mit Variablen wie `{{spiel:26:heim}}` hinterlegt, die noch nicht auf dieses Team aufgelöst sind.
   - **Wenn**: Die Team-Seite lädt.
   - **Dann**: Enthält das Banner „Eure Essenszeiten (Mittagessen)“ zwei Einträge:
     - `Samstag: [Uhrzeit]` (z. B. `12:45 Uhr`)
     - `Sonntag: wird ermittelt` (in dezentem, kursiven Badge).
 
-- [ ] **AC-2: Essenszeit Sonntag schaltet bei feststehender Finalpaarung auf konkrete Uhrzeit um**
+- [x] **AC-2: Essenszeit Sonntag schaltet bei feststehender Finalpaarung auf konkrete Uhrzeit um**
   - **Gegeben sei**: Die Vorrunde ist beendet und das Team belegt z. B. Platz 4 in Gruppe B. Spiel #26 hat nun dieses Team als Heim- oder Gastteam.
   - **Wenn**: Die Team-Seite aufgerufen oder aktualisiert wird.
   - **Dann**: Zeigt das Banner für Sonntag die konkrete Zeit aus dem Essensplan an (z. B. `11:30 Uhr`).
 
-- [ ] **AC-3: Schiedsrichter-Einsätze Samstag vollständig aufgelistet**
+- [x] **AC-3: Schiedsrichter-Einsätze Samstag vollständig aufgelistet**
   - **Gegeben sei**: Ein Team der Altersklasse `wU14` (z. B. `RRK 1`) ist in den Vorrundenspielen #6, #14 und #22 als Schiedsrichter eingeteilt.
   - **Wenn**: Die Betreuerseite dieses Teams aufgerufen wird.
   - **Dann**: Zeigt die Schiedsrichter-Karte 3 terminierte Einsätze für Samstag an mit:
@@ -114,7 +114,7 @@ Auf den teamspezifischen Betreuer- und Mannschaftsseiten (`/team/:token`) werden
     - Vollständigen Namen des Partner-Schiedsrichters (z. B. `Gemeinsam mit: TSG 1848 Heidesheim`).
     - Spielstatus (`Angesetzt`).
 
-- [ ] **AC-4: Schiedsrichter-Einsätze Sonntag als „wird ermittelt“ dargestellt**
+- [x] **AC-4: Schiedsrichter-Einsätze Sonntag als „wird ermittelt“ dargestellt**
   - **Gegeben sei**: Die Sonntags-Finalspiele sind noch nicht berechnet (Spiele 25–40 enthalten noch Variablen wie `{{spiel:29:heim}}` mit ungelösten Platzhaltern).
   - **Wenn**: Die Team-Seite aufgerufen wird.
   - **Dann**: Zeigt die Karte für die verbleibenden 2 Einsätze:
@@ -122,45 +122,45 @@ Auf den teamspezifischen Betreuer- und Mannschaftsseiten (`/team/:token`) werden
     - `Einsatz 5 (Sonntag)`: `Wird nach der Vorrunde ermittelt`
     - Im Header steht der Zähler `3 von 5 Spielen terminiert`.
 
-- [ ] **AC-5: Schiedsrichter-Einsätze Sonntag lösen sich nach Finalrunden-Berechnung auf**
+- [x] **AC-5: Schiedsrichter-Einsätze Sonntag lösen sich nach Finalrunden-Berechnung auf**
   - **Gegeben sei**: Nach Abschluss der Vorrunde werden die Finalrunden-Paarungen berechnet. Das Team wird dadurch Schiedsrichter für Spiel #25 und Spiel #33.
   - **Wenn**: Die Team-Seite betrachtet wird.
   - **Dann**: Werden alle 5 Spiele mit konkreter Spielnummer, Uhrzeit und Partner-Schiedsrichter angezeigt, und der Zähler zeigt `5 von 5 Spielen terminiert`.
 
-- [ ] **AC-6: Live- und Beendet-Status bei Schiedsrichter-Spielen**
+- [x] **AC-6: Live- und Beendet-Status bei Schiedsrichter-Spielen**
   - **Gegeben sei**: Spiel #6, bei dem das Team Schiedsrichter ist, ist beendet (`status: "finished"`). Spiel #14 ist live (`status: "live"`).
   - **Wenn**: Der Betreuer die Seite betrachtet.
   - **Dann**: Ist Einsatz #6 als `Gepfiffen` / `Beendet` (mit Haken) markiert, Einsatz #14 als `Live` (grün hervorgehoben) und Einsatz #22 als `Angesetzt`.
 
-- [ ] **AC-7: Responsives Mobile-Layout**
+- [x] **AC-7: Responsives Mobile-Layout**
   - **Gegeben sei**: Die Betreuerseite wird auf einem Mobilgerät (z. B. iPhone / Android Smartphone) betrachtet.
   - **Wenn**: Der Nutzer die Seite scrollt.
   - **Dann**: Sind die Badges, Teamnamen und Zeiten einzeilig bzw. sauber umbrechend dargestellt, ohne horizontalen Scrollbalken oder abgeschnittene Texte.
 
-- [ ] **AC-8: Separate Ein-/Ausblendung von Zeiten und Allstar-Wahl im Adminbereich**
+- [x] **AC-8: Separate Ein-/Ausblendung von Zeiten und Allstar-Wahl im Adminbereich**
   - **Gegeben sei**: Der Turnierleiter befindet sich im Adminbereich in der Teamverwaltung (`/admin`).
   - **Wenn**: Der Schalter für Reiter „Zeiten“ auf „Ausgeblendet“ gestellt wird.
   - **Dann**: Verschwindet der Reiter „Zeiten“ auf den Seiten aller Mannschaften sofort in Echtzeit.
   - **Und**: Wird der Schalter für „Allstar-Wahl“ auf „Ausgeblendet“ gestellt, verschwindet der Reiter „Allstar-Wahl“ für alle Teams.
   - **Und**: Beide Schalter lassen sich völlig unabhängig voneinander steuern und werden in `config/tournament` (`showTeamTimesTab`, `showTeamAllstarsTab`) gespeichert.
 
-- [ ] **AC-9: Kompakter Abstand unter der Schiedsrichter-Anzeige im Kiosk-Scoreboard**
+- [x] **AC-9: Kompakter Abstand unter der Schiedsrichter-Anzeige im Kiosk-Scoreboard**
   - **Gegeben sei**: Das Live-Scoreboard im Kiosk-Modus (`KioskScoreboardSlide.tsx`) zeigt das aktuelle Spiel mit Schiedsrichtern an.
   - **Wenn**: Die Hauptkachel gerendert wird.
   - **Dann**: Schließt der untere Kachelrand mit deutlich reduziertem Abstand unter der Schiedsrichterzeile ab (`pb-4 md:pb-5 lg:pb-6` statt `py-14 lg:py-[73px]`), sodass kein überflüssiger vertikaler Leerraum entsteht und die Kachel harmonisch zur darunterliegenden Vorschau anschließt.
 
-- [ ] **AC-10: Schiedsrichter des nächsten Spiels am Ende der 1. Zeile (2-zeilig)**
+- [x] **AC-10: Schiedsrichter des nächsten Spiels am Ende der 1. Zeile (2-zeilig)**
   - **Gegeben sei**: Ein Spiel ist live oder pausiert und die Vorschau auf das nächste Spiel (`nextMatch`) wird im Kiosk-Scoreboard angezeigt.
   - **Wenn**: Die Schiedsrichter für `nextMatch` vorhanden sind.
   - **Dann**: Werden sie nicht mehr in einer separaten Zeile unterhalb der Match-Infos dargestellt, sondern am Ende der ersten Zeile hinter den Teams (mit Trennpunkt).
   - **Und**: Das Label „Schiedsrichter“ und die zugeteilten Teams stehen vertikal in zwei Zeilen übereinander.
 
 ### 4.2 Allgemeine Qualitätskriterien
-- [ ] Keine fest kodierten Parameter gemäß `AGENTS.md`.
-- [ ] Strikte TypeScript-Typisierung ohne `any`.
-- [ ] Erfolgreicher Build ohne Fehler (`npm run build`).
-- [ ] Sauberes Firestore-Listener Lifecycle Management.
-- [ ] Vollständige Test-Suite für Schiedsrichter-Zuweisung und Essenszeiten-Extraktion.
+- [x] Keine fest kodierten Parameter gemäß `AGENTS.md`.
+- [x] Strikte TypeScript-Typisierung ohne `any`.
+- [x] Erfolgreicher Build ohne Fehler (`npm run build`).
+- [x] Sauberes Firestore-Listener Lifecycle Management.
+- [x] Vollständige Test-Suite für Schiedsrichter-Zuweisung und Essenszeiten-Extraktion.
 
 ---
 
