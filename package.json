@@ -5,20 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:all": "PATH=\"/opt/homebrew/opt/openjdk/bin:$PATH\" firebase emulators:exec \"vite --host\" --import=./backup/emulator_data --export-on-exit=./backup/emulator_data",
+    "dev:all": "PATH=\"/opt/homebrew/opt/openjdk/bin:$PATH\" firebase emulators:exec --project=kbc-turnier \"vite --host\" --import=./backup/emulator_data --export-on-exit=./backup/emulator_data",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "test": "tsx --test tests/*.test.ts",
     "preview": "vite preview",
     "deploy": "npm run build && wrangler pages deploy dist --project-name kbc-turnier",
-    "seed:players": "tsx scripts/seedPlayers.ts",
-    "clear:players": "tsx scripts/clearPlayers.ts",
-    "emulators": "PATH=\"/opt/homebrew/opt/openjdk/bin:$PATH\" firebase emulators:start --import=./backup/emulator_data --export-on-exit=./backup/emulator_data",
-    "emulators:clean": "PATH=\"/opt/homebrew/opt/openjdk/bin:$PATH\" firebase emulators:start",
+    "emulators": "PATH=\"/opt/homebrew/opt/openjdk/bin:$PATH\" firebase emulators:start --project=kbc-turnier --import=./backup/emulator_data --export-on-exit=./backup/emulator_data",
+    "emulators:clean": "PATH=\"/opt/homebrew/opt/openjdk/bin:$PATH\" firebase emulators:start --project=kbc-turnier",
     "data:export": "tsx scripts/exportProdData.ts",
     "data:import": "tsx scripts/importEmulatorData.ts",
-    "backup:prod": "tsx scripts/backupProdData.ts",
-    "backup": "npm run backup:prod"
+    "backup:prod": "tsx scripts/backupProdData.ts"
   },
   "dependencies": {
     "@fontsource-variable/chivo-mono": "^5.3.0",

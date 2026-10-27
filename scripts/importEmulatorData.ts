@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app"
 import { getFirestore, connectFirestoreEmulator, doc, setDoc, Timestamp } from "firebase/firestore"
-import { getAuth, connectAuthEmulator, createUserWithEmailAndPassword } from "firebase/auth"
+import { getAuth, connectAuthEmulator, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInAnonymously } from "firebase/auth"
 import * as fs from "fs"
 import * as path from "path"
 
@@ -76,18 +76,29 @@ async function main() {
     console.warn("⚠️ connectEmulator:", (err as Error).message)
   }
 
-  // 1. Optional Admin-User im Auth-Emulator bereitstellen
+  // 1. Admin-User im Auth-Emulator bereitstellen & authentifizieren
   const { adminEmail, adminPassword } = loadEnvCredentials()
-  if (adminEmail && adminPassword) {
-    try {
-      await createUserWithEmailAndPassword(auth, adminEmail, adminPassword)
-      console.log(`👤 Admin-Benutzer '${adminEmail}' im Auth-Emulator angelegt.`)
-    } catch (err: unknown) {
-      const fbErr = err as { code?: string }
-      if (fbErr?.code === "auth/email-already-in-use") {
-        console.log(`👤 Admin-Benutzer '${adminEmail}' existiert bereits im Auth-Emulator.`)
-      } else {
-        console.warn(`⚠️ Konnte Admin-Benutzer nicht anlegen:`, (err as Error).message)
+  const email = adminEmail || "admin@kbc-turnier.local"
+  const password = adminPassword || "admin123"
+  try {
+    await createUserWithEmailAndPassword(auth, email, password)
+    console.log(`👤 Admin-Benutzer '${email}' im Auth-Emulator angelegt und authentifiziert.`)
+  } catch (err: unknown) {
+    const fbErr = err as { code?: string }
+    if (fbErr?.code === "auth/email-already-in-use") {
+      try {
+        await signInWithEmailAndPassword(auth, email, password)
+        console.log(`👤 Admin-Benutzer '${email}' im Auth-Emulator angemeldet.`)
+      } catch (loginErr) {
+        console.warn(`⚠️ Konnte Admin-Login nicht durchführen:`, (loginErr as Error).message)
+        await signInAnonymously(auth)
+      }
+    } else {
+      try {
+        await signInAnonymously(auth)
+        console.log("👤 Anonym im Auth-Emulator authentifiziert.")
+      } catch (anonErr) {
+        console.warn(`⚠️ Konnte Auth im Emulator nicht initialisieren:`, (anonErr as Error).message)
       }
     }
   }

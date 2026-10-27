@@ -153,8 +153,6 @@ Um vor Turnierbeginn oder größeren Änderungen ein vollständiges, autarkes Of
 
 ```bash
 npm run backup:prod
-# oder kurz:
-npm run backup
 ```
 
 Das Skript:
