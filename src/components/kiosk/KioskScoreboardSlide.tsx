@@ -121,8 +121,8 @@ export function KioskScoreboardSlide({
         </span>
       </div>
 
-      {/* Main High-Contrast TV Scoreboard Card (+50px Höhe) */}
-      <div className="w-full rounded-3xl border-2 border-slate-200 bg-white py-14 lg:py-[73px] px-8 lg:px-12 shadow-xl text-slate-900">
+      {/* Main High-Contrast TV Scoreboard Card */}
+      <div className="w-full rounded-3xl border-2 border-slate-200 bg-white pt-10 md:pt-12 lg:pt-14 pb-4 md:pb-5 lg:pb-6 px-8 lg:px-12 shadow-xl text-slate-900">
         <div className="grid grid-cols-12 items-start">
           {/* Heim-Team (Cols 1-5) */}
           <div className="col-span-5 flex flex-col items-center text-center px-2">

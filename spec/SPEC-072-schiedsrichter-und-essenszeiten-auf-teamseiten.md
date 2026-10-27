@@ -74,6 +74,10 @@ Auf den teamspezifischen Betreuer- und Mannschaftsseiten (`/team/:token`) werden
      - Die Einstellungen werden in `config/tournament` persistiert und wirken sofort in Echtzeit auf alle Betreuerseiten.
      - Ist ein Reiter ausgeblendet, wird sein Tab auf der Betreuerseite nicht angezeigt; ein intelligenter Fallback wechselt bei Bedarf automatisch auf den nächsten verfügbaren Reiter.
 
+4. **Kompakter Abstand unter den Schiedsrichtern im Kiosk-Live-Scoreboard (`KioskScoreboardSlide.tsx`)**:
+   - Im Kiosk-Live-Scoreboard (`KioskScoreboardSlide`) wird das untere Padding der Hauptkachel des aktuellen Spiels von zuvor `py-14 lg:py-[73px]` asymmetrisch auf `pt-10 md:pt-12 lg:pt-14 pb-4 md:pb-5 lg:pb-6` angepasst.
+   - Dadurch wird der vormals unverhältnismäßig große Leerraum (56px bis 73px) unter der Schiedsrichter-Zeile deutlich reduziert und ein harmonischer Anschluss zur darunter liegenden „Als Nächstes“-Leiste geschaffen.
+
 ### 3.2 Explizit Out-of-Scope (Nicht Teil dieser Spec)
 - ❌ Manuelles Zuweisen von Schiedsrichtern durch Betreuer (Schiedsrichter werden weiterhin ausschließlich von der Turnierleitung in `MatchEditModal` konfiguriert).
 - ❌ Ändern der Turnier-Regeln oder Anzahlen (5 Spiele ist die durch den 40-Spiele-Spielplan gegebene feste Zuteilung).
@@ -135,6 +139,11 @@ Auf den teamspezifischen Betreuer- und Mannschaftsseiten (`/team/:token`) werden
   - **Dann**: Verschwindet der Reiter „Zeiten“ auf den Seiten aller Mannschaften sofort in Echtzeit.
   - **Und**: Wird der Schalter für „Allstar-Wahl“ auf „Ausgeblendet“ gestellt, verschwindet der Reiter „Allstar-Wahl“ für alle Teams.
   - **Und**: Beide Schalter lassen sich völlig unabhängig voneinander steuern und werden in `config/tournament` (`showTeamTimesTab`, `showTeamAllstarsTab`) gespeichert.
+
+- [ ] **AC-9: Kompakter Abstand unter der Schiedsrichter-Anzeige im Kiosk-Scoreboard**
+  - **Gegeben sei**: Das Live-Scoreboard im Kiosk-Modus (`KioskScoreboardSlide.tsx`) zeigt das aktuelle Spiel mit Schiedsrichtern an.
+  - **Wenn**: Die Hauptkachel gerendert wird.
+  - **Dann**: Schließt der untere Kachelrand mit deutlich reduziertem Abstand unter der Schiedsrichterzeile ab (`pb-4 md:pb-5 lg:pb-6` statt `py-14 lg:py-[73px]`), sodass kein überflüssiger vertikaler Leerraum entsteht und die Kachel harmonisch zur darunterliegenden Vorschau anschließt.
 
 ### 4.2 Allgemeine Qualitätskriterien
 - [ ] Keine fest kodierten Parameter gemäß `AGENTS.md`.
