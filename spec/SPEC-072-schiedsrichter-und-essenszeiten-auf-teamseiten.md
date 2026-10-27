@@ -78,6 +78,10 @@ Auf den teamspezifischen Betreuer- und Mannschaftsseiten (`/team/:token`) werden
    - Im Kiosk-Live-Scoreboard (`KioskScoreboardSlide`) wird das untere Padding der Hauptkachel des aktuellen Spiels von zuvor `py-14 lg:py-[73px]` asymmetrisch auf `pt-10 md:pt-12 lg:pt-14 pb-4 md:pb-5 lg:pb-6` angepasst.
    - Dadurch wird der vormals unverhältnismäßig große Leerraum (56px bis 73px) unter der Schiedsrichter-Zeile deutlich reduziert und ein harmonischer Anschluss zur darunter liegenden „Als Nächstes“-Leiste geschaffen.
 
+5. **Kiosk-Vorschau „Als Nächstes“: Schiedsrichter am Ende der 1. Zeile (2-zeilig)**:
+   - In der Vorschauleiste des nächsten Spiels (`KioskScoreboardSlide`) werden die Schiedsrichter nicht mehr in einer separaten Zeile unterhalb gerendert, sondern direkt an das Ende der 1. Zeile (nach der Spielpaarung) verschoben.
+   - Der Eintrag wird zweizeilig („Schiedsrichter“ oben, Mannschaften darunter) als kompakter Block (`variant="inline-stacked"`) dargestellt.
+
 ### 3.2 Explizit Out-of-Scope (Nicht Teil dieser Spec)
 - ❌ Manuelles Zuweisen von Schiedsrichtern durch Betreuer (Schiedsrichter werden weiterhin ausschließlich von der Turnierleitung in `MatchEditModal` konfiguriert).
 - ❌ Ändern der Turnier-Regeln oder Anzahlen (5 Spiele ist die durch den 40-Spiele-Spielplan gegebene feste Zuteilung).
@@ -144,6 +148,12 @@ Auf den teamspezifischen Betreuer- und Mannschaftsseiten (`/team/:token`) werden
   - **Gegeben sei**: Das Live-Scoreboard im Kiosk-Modus (`KioskScoreboardSlide.tsx`) zeigt das aktuelle Spiel mit Schiedsrichtern an.
   - **Wenn**: Die Hauptkachel gerendert wird.
   - **Dann**: Schließt der untere Kachelrand mit deutlich reduziertem Abstand unter der Schiedsrichterzeile ab (`pb-4 md:pb-5 lg:pb-6` statt `py-14 lg:py-[73px]`), sodass kein überflüssiger vertikaler Leerraum entsteht und die Kachel harmonisch zur darunterliegenden Vorschau anschließt.
+
+- [ ] **AC-10: Schiedsrichter des nächsten Spiels am Ende der 1. Zeile (2-zeilig)**
+  - **Gegeben sei**: Ein Spiel ist live oder pausiert und die Vorschau auf das nächste Spiel (`nextMatch`) wird im Kiosk-Scoreboard angezeigt.
+  - **Wenn**: Die Schiedsrichter für `nextMatch` vorhanden sind.
+  - **Dann**: Werden sie nicht mehr in einer separaten Zeile unterhalb der Match-Infos dargestellt, sondern am Ende der ersten Zeile hinter den Teams (mit Trennpunkt).
+  - **Und**: Das Label „Schiedsrichter“ und die zugeteilten Teams stehen vertikal in zwei Zeilen übereinander.
 
 ### 4.2 Allgemeine Qualitätskriterien
 - [ ] Keine fest kodierten Parameter gemäß `AGENTS.md`.

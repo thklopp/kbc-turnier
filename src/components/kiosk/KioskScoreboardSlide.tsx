@@ -349,19 +349,19 @@ export function KioskScoreboardSlide({
               {getTeamDetails(nextMatch.teamHomeId, nextMatch.teamHomePlaceholder, teams).name} vs.{" "}
               {getTeamDetails(nextMatch.teamAwayId, nextMatch.teamAwayPlaceholder, teams).name}
             </span>
-          </div>
 
-          {/* Schiedsrichter Nächstes Spiel (SPEC-070) */}
-          {matches.length > 0 && (
-            <MatchRefereeDisplay
-              referee1={nextMatch.referee1}
-              referee2={nextMatch.referee2}
-              matches={matches}
-              teams={teams}
-              variant="card"
-              className="mt-2.5 pt-2"
-            />
-          )}
+            {/* Schiedsrichter Nächstes Spiel am Ende der 1. Zeile (2-zeilig) */}
+            {matches.length > 0 && (
+              <MatchRefereeDisplay
+                referee1={nextMatch.referee1}
+                referee2={nextMatch.referee2}
+                matches={matches}
+                teams={teams}
+                variant="inline-stacked"
+                withLeadingBullet
+              />
+            )}
+          </div>
         </div>
       )}
     </div>
