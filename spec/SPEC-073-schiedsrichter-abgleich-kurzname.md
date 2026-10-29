@@ -1,6 +1,6 @@
 # SPEC-073: Präziser Schiedsrichter- und Essenszeiten-Abgleich für Teams mit ähnlichen Kurznamen (z. B. HTC vs. NHTC)
 
-> **Status**: Entwurf  
+> **Status**: In Abnahme  
 > **Typ**: Bugfix & Optimierung  
 > **Branch**: `fix/SPEC-073-schiedsrichter-abgleich-kurzname`  
 > **Autor**: Agent (Antigravity)  
@@ -91,7 +91,7 @@ Im aktuellen Code von `isRefereeMatchingTeam` in `src/services/infoService.ts` t
 
 ### 4.1 Szenarien / Kriterien
 
-- [ ] **AC-1: Eindeutige Unterscheidung von HTC und NHTC bei Schiedsrichteransetzung**
+- [x] **AC-1: Eindeutige Unterscheidung von HTC und NHTC bei Schiedsrichteransetzung**
   - **Gegeben sei**: Team 1 ist HTC (`shortName: "HTC"`, `name: "HTC Stuttgarter Kickers"`, `gender: "wU14"`). Team 2 ist NHTC (`shortName: "NHTC"`, `name: "Nürnberger HTC"`, `gender: "wU14"`).
   - **Wenn**: Ein Vorrundenspiel `referee1: "NHTC"` oder `referee1: "Nürnberger HTC"` besitzt.
   - **Dann**:
@@ -99,33 +99,33 @@ Im aktuellen Code von `isRefereeMatchingTeam` in `src/services/infoService.ts` t
     - Liefert `isRefereeMatchingTeam` für Team 1 (HTC) `false`.
     - Erscheint dieses Spiel auf der Teamseite von NHTC und **nicht** auf der Teamseite von HTC.
 
-- [ ] **AC-2: Eindeutige Zuweisung wenn Spiel referee1: "HTC" besitzt**
+- [x] **AC-2: Eindeutige Zuweisung wenn Spiel referee1: "HTC" besitzt**
   - **Gegeben sei**: Ein Spiel besitzt `referee1: "HTC"` oder `referee1: "HTC Stuttgarter Kickers"`.
   - **Wenn**: Die Prüfung für Team 1 (HTC) und Team 2 (NHTC) durchgeführt wird.
   - **Dann**:
     - Liefert `isRefereeMatchingTeam` für Team 1 (HTC) `true`.
     - Liefert `isRefereeMatchingTeam` für Team 2 (NHTC) `false`.
 
-- [ ] **AC-3: Keine Fehlzuordnung bei aufgelösten Match-Variablen (`{{spiel:X:heim}}`)**
+- [x] **AC-3: Keine Fehlzuordnung bei aufgelösten Match-Variablen (`{{spiel:X:heim}}`)**
   - **Gegeben sei**: Ein Sonntagsspiel besitzt `referee1: "{{spiel:25:heim}}"`. Spiel #25 wurde beendet und als Heimteam steht NHTC fest (`teamHomeId: "team-nhtc-w"`).
   - **Wenn**: Die Schiedsrichter-Einsätze für HTC (`team-htc-w`) ermittelt werden.
   - **Dann**: Wird dieses Spiel **nicht** dem HTC zugeordnet, obwohl der aufgelöste Name `"Nürnberger HTC"` das Wort `"HTC"` enthält.
 
-- [ ] **AC-4: Robuste Geschlechtserkennung in `getRefereeGender`**
+- [x] **AC-4: Robuste Geschlechtserkennung in `getRefereeGender`**
   - **Gegeben sei**: Ein Schiedsrichterfeld enthält `"NHTC"`. Im System existieren ein wU14 Team NHTC und ein mU14 Team HTC (oder umgekehrt).
   - **Wenn**: `getRefereeGender("NHTC", matches, teams)` aufgerufen wird.
   - **Dann**: Wird das Geschlecht von NHTC zurückgegeben und nicht fälschlicherweise das von HTC.
 
-- [ ] **AC-5: Keine Fehlzuordnung von Essenszeiten im Essensplan**
+- [x] **AC-5: Keine Fehlzuordnung von Essenszeiten im Essensplan**
   - **Gegeben sei**: Der Essensplan enthält eine Zeile für `"Nürnberger HTC"` um `12:00 Uhr` (wU14) und eine Zeile für `"HTC"` um `12:45 Uhr` (wU14).
   - **Wenn**: `extractTeamMealTimes` für das HTC-Team aufgerufen wird.
   - **Dann**: Erhält HTC die Essenszeit `12:45 Uhr` und **nicht** `12:00 Uhr`.
 
 ### 4.2 Allgemeine Qualitätskriterien
-- [ ] Keine fest kodierten Parameter gemäß `AGENTS.md`.
-- [ ] Vollständige TypeScript-Typisierung ohne `any`.
-- [ ] Alle bestehenden 258 Tests sowie neue Tests für HTC vs. NHTC laufen erfolgreich durch (`npm test`).
-- [ ] Fehlerfreier Build (`npm run build`).
+- [x] Keine fest kodierten Parameter gemäß `AGENTS.md`.
+- [x] Vollständige TypeScript-Typisierung ohne `any`.
+- [x] Alle bestehenden 258 Tests sowie neue Tests für HTC vs. NHTC laufen erfolgreich durch (`npm test`).
+- [x] Fehlerfreier Build (`npm run build`).
 
 ---
 
