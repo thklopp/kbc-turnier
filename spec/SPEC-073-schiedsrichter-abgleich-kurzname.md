@@ -1,6 +1,6 @@
 # SPEC-073: Präziser Schiedsrichter- und Essenszeiten-Abgleich für Teams mit ähnlichen Kurznamen (z. B. HTC vs. NHTC)
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Bugfix & Optimierung  
 > **Branch**: `fix/SPEC-073-schiedsrichter-abgleich-kurzname`  
 > **Autor**: Agent (Antigravity)  
