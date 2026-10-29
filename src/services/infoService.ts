@@ -7,6 +7,7 @@ import {
 } from "firebase/firestore"
 import { db, isFirebaseConfigured } from "@/lib/firebase"
 import type { TournamentPageConfig, Match, Team, TeamMealTimes, TeamRefereeAssignment, GenderCategory } from "@/types/database"
+import { extractClubName } from "@/services/teamService"
 
 export const DEFAULT_INFO_MARKDOWN = `# Willkommen zum 20. Kurt-Becker-Cup! 🏑
 
@@ -330,6 +331,74 @@ export function resolveMatchVariables(
 }
 
 /**
+ * Resolves a referee string (team ID, shortName, team name, club name, or match variable)
+ * to a concrete Team object from the teams pool.
+ */
+export function resolveRefereeToTeam(
+  rawText: string | undefined,
+  matches: Match[] = [],
+  teams: Team[] = [],
+  targetGender?: GenderCategory
+): Team | null {
+  if (!rawText) return null
+  const trimmed = rawText.trim()
+  if (!trimmed) return null
+
+  // 1. Variable check: {{spiel:X:heim}}, {{match:X:away:kurz}}, etc.
+  const matchVarRegex = /\{\{(?:spiel|match):(\d+):(heim|gast|home|away)(?::(?:kurz|short))?\}\}/i
+  const varMatch = trimmed.match(matchVarRegex)
+  if (varMatch) {
+    const matchNum = parseInt(varMatch[1], 10)
+    const isHome = varMatch[2].toLowerCase() === "heim" || varMatch[2].toLowerCase() === "home"
+    const targetMatch = matches.find((m) => m.matchNumber === matchNum)
+    if (!targetMatch) return null
+    if (targetGender && targetMatch.gender !== targetGender) return null
+
+    const teamId = isHome ? targetMatch.teamHomeId : targetMatch.teamAwayId
+    if (!teamId || !teamId.trim()) return null
+
+    return teams.find((t) => t.id.trim() === teamId.trim()) || null
+  }
+
+  // Filter teams by targetGender if specified
+  const pool = targetGender ? teams.filter((t) => t.gender === targetGender) : teams
+  if (pool.length === 0) return null
+
+  const clean = trimmed.toLowerCase()
+  const strippedClean = clean
+    .replace(/\s*\((?:w|m|wu14|mu14)\)\s*$/i, "")
+    .replace(/\s+(?:wu14|mu14)\s*$/i, "")
+    .trim()
+  const normClean = strippedClean.replace(/[-\s]/g, "")
+
+  // 2. Exact ID match
+  const byId = pool.find((t) => t.id.toLowerCase() === clean || t.id.toLowerCase() === strippedClean)
+  if (byId) return byId
+
+  // 3. Exact shortName match
+  const byExactShort = pool.find((t) => t.shortName.trim().toLowerCase() === strippedClean)
+  if (byExactShort) return byExactShort
+
+  // 4. Normalized shortName match (e.g. "RRK 1" vs "RRK-1" or "RRK1")
+  const byNormShort = pool.find(
+    (t) => t.shortName.trim().toLowerCase().replace(/[-\s]/g, "") === normClean
+  )
+  if (byNormShort) return byNormShort
+
+  // 5. Exact full name match
+  const byExactName = pool.find((t) => t.name.trim().toLowerCase() === clean)
+  if (byExactName) return byExactName
+
+  // 6. Clean club name match (using extractClubName)
+  const byClubName = pool.find(
+    (t) => extractClubName(t.name).trim().toLowerCase() === strippedClean
+  )
+  if (byClubName) return byClubName
+
+  return null
+}
+
+/**
  * Resolves a referee team specification (plain text or variable like {{spiel:6:heim}})
  * to the team's full long name.
  */
@@ -340,21 +409,13 @@ export function resolveRefereeText(
   targetGender?: GenderCategory
 ): string {
   if (!text) return ""
-  const resolved = resolveMatchVariables(text.trim(), matches, teams).trim()
-
-  const lower = resolved.toLowerCase()
-  const matchedTeam = teams.find(
-    (t) =>
-      (!targetGender || t.gender === targetGender) &&
-      (t.id.toLowerCase() === lower ||
-        t.shortName.toLowerCase() === lower ||
-        t.name.toLowerCase() === lower)
-  )
-  if (matchedTeam) {
-    return matchedTeam.name
+  const trimmed = text.trim()
+  const resolvedTeam = resolveRefereeToTeam(trimmed, matches, teams, targetGender)
+  if (resolvedTeam) {
+    return resolvedTeam.name
   }
 
-  return resolved
+  return resolveMatchVariables(trimmed, matches, teams).trim()
 }
 
 /**
@@ -402,19 +463,14 @@ export function getRefereeGender(
     }
   }
 
-  // 2. Check in teams list by ID, shortName, or exact name
-  const lower = trimmed.toLowerCase()
-  const exactTeam = teams.find(
-    (t) =>
-      t.id.toLowerCase() === lower ||
-      t.shortName.toLowerCase() === lower ||
-      t.name.toLowerCase() === lower
-  )
-  if (exactTeam) {
-    return exactTeam.gender
+  // 2. Direct resolve via resolveRefereeToTeam
+  const resolved = resolveRefereeToTeam(trimmed, matches, teams)
+  if (resolved) {
+    return resolved.gender
   }
 
   // 3. Fallback: check if raw text contains keywords
+  const lower = trimmed.toLowerCase()
   if (lower.includes("wu14") || lower.includes("weiblich") || lower.includes("mädchen")) {
     return "wU14"
   }
@@ -422,14 +478,22 @@ export function getRefereeGender(
     return "mU14"
   }
 
-  // 4. Partial match against team names
-  const partialTeam = teams.find(
-    (t) =>
-      (t.name && lower.includes(t.name.toLowerCase())) ||
-      (t.shortName && lower.includes(t.shortName.toLowerCase()))
-  )
-  if (partialTeam) {
-    return partialTeam.gender
+  // 4. Token-based match with word boundary
+  const strippedClean = lower
+    .replace(/\s*\((?:w|m|wu14|mu14)\)\s*$/i, "")
+    .replace(/\s+(?:wu14|mu14)\s*$/i, "")
+    .trim()
+
+  for (const t of teams) {
+    const shortEscaped = t.shortName.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+    const shortRegex = new RegExp(`(^|[^a-zA-Z0-9])${shortEscaped}([^a-zA-Z0-9]|$)`, "i")
+    if (shortRegex.test(strippedClean)) {
+      return t.gender
+    }
+    const club = extractClubName(t.name).trim().toLowerCase()
+    if (club.length > 3 && strippedClean.includes(club)) {
+      return t.gender
+    }
   }
 
   return null
@@ -496,6 +560,7 @@ export function extractTeamMealTimes(
   const resolved = resolveMatchVariables(markdownContent, matches, teamsPool)
 
   const teamNameLower = team.name.trim().toLowerCase()
+  const clubNameLower = extractClubName(team.name).trim().toLowerCase()
   const shortNameLower = team.shortName.trim().toLowerCase()
   const teamIdLower = team.id.trim().toLowerCase()
 
@@ -520,23 +585,52 @@ export function extractTeamMealTimes(
       return false
     }
 
-    // 2. Exact matches
+    // 2. Direct resolution via resolveRefereeToTeam if pool is available
+    if (allTeams.length > 0) {
+      const resolvedTeam = resolveRefereeToTeam(text, matches, allTeams, team.gender)
+      if (resolvedTeam) {
+        return resolvedTeam.id.trim() === team.id.trim()
+      }
+    }
+
+    // 3. Exact matches
     if (
       lower === shortNameLower ||
       lower === teamNameLower ||
+      lower === clubNameLower ||
       lower === teamIdLower
     ) {
       return true
     }
 
-    // 3. Normalized shortName without hyphens/spaces (e.g. "RRK 1" vs "RRK-1")
+    // 4. Normalized shortName without hyphens/spaces (e.g. "RRK 1" vs "RRK-1")
     const normShort = shortNameLower.replace(/[-\s]/g, "")
     const normText = lower.replace(/[-\s]/g, "")
     if (normText === normShort) {
       return true
     }
 
-    // 4. Token boundary match for shortName (Kurzname)
+    // 5. Exclude if another team from allTeams matches this cell
+    if (allTeams.length > 0) {
+      const otherMatches = allTeams.some((other) => {
+        if (other.id === team.id || other.gender !== team.gender) return false
+        const otherShort = other.shortName.trim().toLowerCase()
+        const otherNorm = otherShort.replace(/[-\s]/g, "")
+        const otherClub = extractClubName(other.name).trim().toLowerCase()
+        return (
+          lower === otherShort ||
+          normText === otherNorm ||
+          lower === other.name.trim().toLowerCase() ||
+          lower === otherClub ||
+          (otherClub.length > 3 && lower.includes(otherClub))
+        )
+      })
+      if (otherMatches) {
+        return false
+      }
+    }
+
+    // 6. Token boundary match for shortName (Kurzname)
     const escapedShort = shortNameLower.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
     const shortRegex = new RegExp(`(^|[^a-zA-Z0-9])${escapedShort}([^a-zA-Z0-9]|$)`, "i")
     if (shortRegex.test(lower)) {
@@ -545,7 +639,10 @@ export function extractTeamMealTimes(
       return true
     }
 
-    // 5. Full team name or ID inclusion
+    // 7. Full team name or club name inclusion
+    if (clubNameLower.length > 3 && lower.includes(clubNameLower)) {
+      return true
+    }
     if (teamNameLower.length > 3 && lower.includes(teamNameLower)) {
       return true
     }
@@ -702,7 +799,7 @@ export function isRefereeMatchingTeam(
   teams: Team[] = [],
   matchGender?: GenderCategory
 ): boolean {
-  if (!rawRef) return false
+  if (!rawRef || !team) return false
   const trimmed = rawRef.trim()
   if (!trimmed) return false
 
@@ -723,17 +820,15 @@ export function isRefereeMatchingTeam(
         return false
       }
       const targetTeamId = isHome ? targetMatch.teamHomeId : targetMatch.teamAwayId
-      if (targetTeamId && targetTeamId.trim() === team.id.trim()) {
-        return true
+      if (targetTeamId && targetTeamId.trim()) {
+        return targetTeamId.trim() === team.id.trim()
       }
     }
+    return false
   }
 
-  // 2. Search by Kurzname (shortName) and Altersklasse (gender)
-  const shortLower = team.shortName.trim().toLowerCase()
-  const rawLower = trimmed.toLowerCase()
-
   // Exclude explicit opposite gender in text
+  const rawLower = trimmed.toLowerCase()
   if (team.gender === "wU14" && (rawLower.includes("mu14") || rawLower.includes("männlich"))) {
     return false
   }
@@ -741,47 +836,34 @@ export function isRefereeMatchingTeam(
     return false
   }
 
-  // Resolve match variables if present using team.gender
-  const resolved = resolveRefereeText(trimmed, matches, teams, team.gender).trim()
-  const resolvedLower = resolved.toLowerCase()
-
-  // Exact matches
-  if (
-    rawLower === shortLower ||
-    rawLower === team.name.toLowerCase() ||
-    rawLower === team.id.toLowerCase() ||
-    resolvedLower === shortLower ||
-    resolvedLower === team.name.toLowerCase() ||
-    resolvedLower === team.id.toLowerCase()
-  ) {
-    return true
+  // 2. Resolve referee string via resolveRefereeToTeam using the teams pool
+  const pool = teams.length > 0 ? teams : [team]
+  const matchedTeam = resolveRefereeToTeam(trimmed, matches, pool, team.gender)
+  if (matchedTeam) {
+    return matchedTeam.id.trim() === team.id.trim()
   }
 
-  // Normalized shortName without hyphens/spaces (e.g. "RRK 1" vs "RRK-1")
+  // 3. Fallback direct match against this team when not found in pool
+  const strippedClean = rawLower
+    .replace(/\s*\((?:w|m|wu14|mu14)\)\s*$/i, "")
+    .replace(/\s+(?:wu14|mu14)\s*$/i, "")
+    .trim()
+  const normClean = strippedClean.replace(/[-\s]/g, "")
+
+  const shortLower = team.shortName.trim().toLowerCase()
   const normShort = shortLower.replace(/[-\s]/g, "")
-  const normRaw = rawLower.replace(/[-\s]/g, "")
-  const normResolved = resolvedLower.replace(/[-\s]/g, "")
-  if (normRaw === normShort || normResolved === normShort) {
-    return true
-  }
+  const teamNameLower = team.name.trim().toLowerCase()
+  const clubNameLower = extractClubName(team.name).trim().toLowerCase()
+  const teamIdLower = team.id.trim().toLowerCase()
 
-  // Token boundary match for shortName
-  const escapedShort = shortLower.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-  const shortRegex = new RegExp(`(^|[^a-zA-Z0-9])${escapedShort}([^a-zA-Z0-9]|$)`, "i")
-  if (shortRegex.test(rawLower) || shortRegex.test(resolvedLower)) {
-    if (shortLower.includes("1") && !(rawLower.includes("1") || resolvedLower.includes("1"))) {
-      return false
-    }
-    if (shortLower.includes("2") && !(rawLower.includes("2") || resolvedLower.includes("2"))) {
-      return false
-    }
-    return true
-  }
-
-  // Match full team name if specified
   if (
-    team.name.length > 3 &&
-    (rawLower.includes(team.name.toLowerCase()) || resolvedLower.includes(team.name.toLowerCase()))
+    rawLower === teamIdLower ||
+    strippedClean === teamIdLower ||
+    rawLower === shortLower ||
+    strippedClean === shortLower ||
+    normClean === normShort ||
+    rawLower === teamNameLower ||
+    strippedClean === clubNameLower
   ) {
     return true
   }
