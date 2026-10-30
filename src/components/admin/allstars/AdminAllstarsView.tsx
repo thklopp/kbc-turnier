@@ -343,9 +343,9 @@ function SlotCard({
   position?: AllstarVote["votes"]["goalkeeper"]
   teams: Team[]
 }) {
-  const teamName =
-    position?.teamName ||
-    (position?.teamId ? teams.find((t) => t.id === position.teamId)?.name : undefined)
+  const teamObj = position?.teamId ? teams.find((t) => t.id === position.teamId) : undefined
+  const shortName = teamObj?.shortName || position?.teamName || "—"
+  const fullName = teamObj?.name || position?.teamName
 
   return (
     <div className="bg-white p-2 rounded-xl border border-slate-200 flex flex-col justify-between min-h-[64px]">
@@ -357,8 +357,11 @@ function SlotCard({
           <p className="font-bold text-slate-900 truncate text-xs leading-tight">
             #{position.playerNumber} {position.playerName}
           </p>
-          <p className="text-[10px] text-blue-700 font-semibold truncate mt-0.5" title={teamName}>
-            {teamName || "Verein unbekannt"}
+          <p
+            className="text-[10px] text-blue-700 font-bold truncate mt-0.5"
+            title={fullName ? `${fullName} (${shortName})` : shortName}
+          >
+            {shortName}
           </p>
         </div>
       ) : (
@@ -707,12 +710,16 @@ function CategoryColumn({
               evaluation.allVotes.map((v) => {
                 const isSubmitted = v.status === "submitted" || Boolean(v.submittedAt && v.status !== "draft")
                 const filled = v.filledCount ?? countFilledSlots(v.votes)
+                const voterTeam = teams.find((t) => t.id === v.teamId)
+                const voterShort = voterTeam?.shortName || v.teamName
 
                 return (
                   <div key={v.teamId} className="rounded-xl border border-slate-200 p-3 bg-slate-50/30">
                     <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-slate-900 text-xs">{v.teamName}</span>
+                        <span className="font-bold text-slate-900 text-xs" title={v.teamName}>
+                          {voterShort}
+                        </span>
                         {isSubmitted ? (
                           <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-800 bg-emerald-100 border border-emerald-200 px-2 py-0.5 rounded-md">
                             <CheckCircle className="h-3 w-3 text-emerald-600" />
