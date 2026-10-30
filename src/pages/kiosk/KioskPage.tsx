@@ -175,10 +175,10 @@ export function KioskPage() {
         isOnline={isOnline}
       />
 
-      {/* Main Dynamic Slide Area (Persistent slides: zero DOM reconstruction, toggled via hidden) */}
+      {/* Main Dynamic Slide Area (Single-slide: only active slide in DOM) */}
       <div className="flex-1 flex flex-col justify-center items-center overflow-hidden my-auto w-full">
-        <div className={`w-full h-full flex flex-col justify-center items-center ${activeSlide === 0 ? "" : "hidden"}`}>
-          {tournamentFinished ? (
+        {activeSlide === 0 && (
+          tournamentFinished ? (
             <KioskFinalRankingsSlide
               matches={matches}
               teams={teams}
@@ -190,29 +190,27 @@ export function KioskPage() {
               teams={teams}
               matches={matches}
             />
-          )}
-        </div>
+          )
+        )}
 
-        <div className={`w-full h-full flex flex-col justify-center items-center ${activeSlide === 1 ? "" : "hidden"}`}>
+        {activeSlide === 1 && (
           <KioskGroupStageSlide
             matches={matches}
             teams={teams}
           />
-        </div>
-
-        <div className={`w-full h-full flex flex-col justify-center items-center ${activeSlide === 2 ? "" : "hidden"}`}>
+        )}
+        {activeSlide === 2 && (
           <KioskFinalsSlide
             matches={matches}
             teams={teams}
           />
-        </div>
-
-        <div className={`w-full h-full flex flex-col justify-center items-center ${activeSlide === 3 ? "" : "hidden"}`}>
+        )}
+        {activeSlide === 3 && (
           <KioskStandingsSlide
             teams={teams}
             matches={matches}
           />
-        </div>
+        )}
       </div>
     </div>
   )

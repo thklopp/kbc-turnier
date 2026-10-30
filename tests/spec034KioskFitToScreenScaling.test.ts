@@ -46,16 +46,13 @@ describe("SPEC-034: Kiosk Fit-to-Screen Skalierung (Virtual 1080p Stage)", () =>
     assert.ok(content.includes("addEventListener(\"orientationchange\""), "Muss orientationchange-Listener registrieren")
   })
 
-  it("AC-3: KioskLayout integriert die Virtual 1080p Stage mit CSS transform: scale", () => {
+  it("AC-3: KioskLayout rendert nativ Full-HD scrollfrei (abgelöst durch SPEC-076)", () => {
     assert.ok(fs.existsSync(layoutFilePath), "KioskLayout.tsx muss existieren")
     const content = fs.readFileSync(layoutFilePath, "utf-8")
 
-    assert.ok(content.includes("useKioskScale"), "KioskLayout muss useKioskScale verwenden")
-    assert.ok(content.includes("width: 1920"), "Stage muss 1920px Basisbreite besitzen")
-    assert.ok(content.includes("height: 1080"), "Stage muss 1080px Basishöhe besitzen")
-    assert.ok(content.includes("transformOrigin: \"top center\""), "Transform-Origin muss oben zentriert (top center) sein")
     assert.ok(content.includes("overflow-hidden"), "KioskLayout muss scrollfrei (overflow-hidden) sein")
     assert.ok(content.includes("<Outlet />"), "KioskLayout muss Outlet rendern")
     assert.ok(!content.includes("Beenden"), "Beenden-Button muss entfernt sein")
+    assert.ok(!content.includes("transform: `scale"), "KioskLayout darf kein CSS transform: scale mehr verwenden (SPEC-076)")
   })
 })

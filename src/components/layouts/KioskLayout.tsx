@@ -1,10 +1,7 @@
 import { useEffect } from "react"
 import { Outlet } from "react-router-dom"
-import { useKioskScale } from "@/hooks/useKioskScale"
 
 export function KioskLayout() {
-  const scale = useKioskScale(1920, 1080)
-
   // Prevent scrollbars on document body during kiosk mode
   useEffect(() => {
     const prevOverflow = document.body.style.overflow
@@ -15,19 +12,8 @@ export function KioskLayout() {
   }, [])
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden bg-slate-950 flex items-start justify-center select-none">
-      {/* Virtual 1080p Stage (Proportionally scaled to viewport, aligned to top) */}
-      <main
-        style={{
-          width: 1920,
-          height: 1080,
-          transform: `scale(${scale})`,
-          transformOrigin: "top center",
-        }}
-        className="flex-none w-[1920px] h-[1080px] flex flex-col p-6 overflow-hidden bg-slate-100 text-slate-900 shadow-2xl"
-      >
-        <Outlet />
-      </main>
+    <div className="h-screen w-screen overflow-hidden flex flex-col p-6 bg-slate-100 text-slate-900 select-none">
+      <Outlet />
     </div>
   )
 }

@@ -18,25 +18,25 @@ describe("SPEC-075: Kiosk Folienwechsel-Fix (Vermeidung von Reload-Crash & DOM-T
     )
   })
 
-  test("AC-2: KioskPage rendert Folien persistent im DOM und schaltet sie via 'hidden' um", () => {
+  test("AC-2: KioskPage rendert nur die aktive Folie zur Speicherentlastung", () => {
     const pagePath = path.resolve(rootDir, "src/pages/kiosk/KioskPage.tsx")
     const pageContent = fs.readFileSync(pagePath, "utf-8")
 
     assert.ok(
-      pageContent.includes("activeSlide === 0 ? \"\" : \"hidden\""),
-      "Slide 0 muss persistent gemountet sein und mit 'hidden' umgeschaltet werden"
+      pageContent.includes("activeSlide === 0 && ("),
+      "Slide 0 muss nur aktiv gerendert werden"
     )
     assert.ok(
-      pageContent.includes("activeSlide === 1 ? \"\" : \"hidden\""),
-      "Slide 1 muss persistent gemountet sein und mit 'hidden' umgeschaltet werden"
+      pageContent.includes("activeSlide === 1 && ("),
+      "Slide 1 muss nur aktiv gerendert werden"
     )
     assert.ok(
-      pageContent.includes("activeSlide === 2 ? \"\" : \"hidden\""),
-      "Slide 2 muss persistent gemountet sein und mit 'hidden' umgeschaltet werden"
+      pageContent.includes("activeSlide === 2 && ("),
+      "Slide 2 muss nur aktiv gerendert werden"
     )
     assert.ok(
-      pageContent.includes("activeSlide === 3 ? \"\" : \"hidden\""),
-      "Slide 3 muss persistent gemountet sein und mit 'hidden' umgeschaltet werden"
+      pageContent.includes("activeSlide === 3 && ("),
+      "Slide 3 muss nur aktiv gerendert werden"
     )
   })
 
