@@ -38,3 +38,8 @@ dist-ssr/
 *.njsproj
 *.sln
 *.sw?
+
+# Generated PDFs
+*.pdf
+pdf/
+
