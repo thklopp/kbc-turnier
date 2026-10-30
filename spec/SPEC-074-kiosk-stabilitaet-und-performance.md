@@ -1,6 +1,6 @@
 # SPEC-074: Kiosk-Stabilität, Performance & Raspberry-Pi-Optimierung
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Optimierung / Bugfix  
 > **Branch**: `fix/SPEC-074-kiosk-stabilitaet-und-performance`  
 > **Autor**: Antigravity  
