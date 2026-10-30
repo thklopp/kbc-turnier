@@ -1,6 +1,6 @@
 # SPEC-075: Kiosk Folienwechsel-Fix (Vermeidung von Reload-Crash & DOM-Thrashing)
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Bugfix / Stabilität  
 > **Branch**: `fix/SPEC-075-kiosk-slide-transition-fix`  
 > **Autor**: Antigravity  
