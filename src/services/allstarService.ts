@@ -17,6 +17,8 @@ import type {
   AllstarPositionResult,
   AllstarAggregatedPlayer,
   AllstarCategoryEvaluation,
+  AllstarTeamProgress,
+  AllstarSlotKey,
   AllstarVotingStatus,
 } from "@/types/allstars"
 import { getTeamByJingleToken } from "./teamService"
@@ -39,6 +41,56 @@ export function _resetMockAllstarVotes(initialVotes?: AllstarVote[]) {
 }
 
 /**
+ * Ermittelt die Anzahl der gültig belegten Slots (0 bis 6).
+ */
+export function countFilledSlots(
+  votes?: Partial<Record<AllstarSlotKey, AllstarVotePosition>>
+): number {
+  if (!votes) return 0
+  const slots: AllstarSlotKey[] = [
+    "goalkeeper",
+    "fieldPlayer1",
+    "fieldPlayer2",
+    "fieldPlayer3",
+    "fieldPlayer4",
+    "fieldPlayer5",
+  ]
+  return slots.filter((slot) => {
+    const pos = votes[slot]
+    return pos && Boolean(pos.playerId && pos.playerId.trim() !== "")
+  }).length
+}
+
+/**
+ * Normalisiert ein Vote-Dokument aus Firestore oder Mock-Daten.
+ */
+function normalizeVoteDoc(id: string, data: Record<string, any>): AllstarVote {
+  const votes = data.votes || {}
+  const filledCount = typeof data.filledCount === "number" ? data.filledCount : countFilledSlots(votes)
+  const isSubmitted = data.status === "submitted" || (Boolean(data.submittedAt) && data.status !== "draft")
+  const status: "draft" | "submitted" = isSubmitted ? "submitted" : "draft"
+
+  return {
+    id: data.teamId || id,
+    teamId: data.teamId || id,
+    teamName: data.teamName || "Unbekanntes Team",
+    gender: (data.gender as GenderCategory) || "wU14",
+    status,
+    filledCount,
+    votes: {
+      goalkeeper: votes.goalkeeper,
+      fieldPlayer1: votes.fieldPlayer1,
+      fieldPlayer2: votes.fieldPlayer2,
+      fieldPlayer3: votes.fieldPlayer3,
+      fieldPlayer4: votes.fieldPlayer4,
+      fieldPlayer5: votes.fieldPlayer5,
+    },
+    submittedAt: data.submittedAt,
+    updatedAt: data.updatedAt,
+  }
+}
+
+/**
  * Abonniert alle Stimmzettel in Echtzeit.
  */
 export function subscribeAllstarVotes(
@@ -58,25 +110,9 @@ export function subscribeAllstarVotes(
     collRef,
     (snapshot) => {
       try {
-        const votes: AllstarVote[] = snapshot.docs.map((docSnap) => {
-          const data = docSnap.data() || {}
-          return {
-            id: docSnap.id,
-            teamId: data.teamId || docSnap.id,
-            teamName: data.teamName || "Unbekanntes Team",
-            gender: (data.gender as GenderCategory) || "wU14",
-            votes: data.votes || {
-              goalkeeper: {} as AllstarVotePosition,
-              fieldPlayer1: {} as AllstarVotePosition,
-              fieldPlayer2: {} as AllstarVotePosition,
-              fieldPlayer3: {} as AllstarVotePosition,
-              fieldPlayer4: {} as AllstarVotePosition,
-              fieldPlayer5: {} as AllstarVotePosition,
-            },
-            submittedAt: data.submittedAt,
-            updatedAt: data.updatedAt,
-          }
-        })
+        const votes: AllstarVote[] = snapshot.docs.map((docSnap) =>
+          normalizeVoteDoc(docSnap.id, docSnap.data() || {})
+        )
         onUpdate(votes)
       } catch (err) {
         console.error("Fehler beim Verarbeiten der Allstars-Stimmzettel:", err)
@@ -100,18 +136,7 @@ export async function getAllstarVotes(): Promise<AllstarVote[]> {
 
   const collRef = collection(db, ALLSTAR_COLLECTION)
   const snapshot = await getDocs(collRef)
-  return snapshot.docs.map((docSnap) => {
-    const data = docSnap.data()
-    return {
-      id: docSnap.id,
-      teamId: data.teamId || docSnap.id,
-      teamName: data.teamName || "Unbekanntes Team",
-      gender: data.gender as GenderCategory,
-      votes: data.votes,
-      submittedAt: data.submittedAt,
-      updatedAt: data.updatedAt,
-    }
-  })
+  return snapshot.docs.map((docSnap) => normalizeVoteDoc(docSnap.id, docSnap.data() || {}))
 }
 
 /**
@@ -126,16 +151,7 @@ export async function getTeamAllstarVote(teamId: string): Promise<AllstarVote | 
   const docSnap = await getDoc(docRef)
   if (!docSnap.exists()) return null
 
-  const data = docSnap.data()
-  return {
-    id: docSnap.id,
-    teamId: data.teamId || docSnap.id,
-    teamName: data.teamName || "Unbekanntes Team",
-    gender: data.gender as GenderCategory,
-    votes: data.votes,
-    submittedAt: data.submittedAt,
-    updatedAt: data.updatedAt,
-  }
+  return normalizeVoteDoc(docSnap.id, docSnap.data() || {})
 }
 
 /**
@@ -176,7 +192,86 @@ export function validateAllstarVotes(votes: Record<string, AllstarVotePosition>)
 }
 
 /**
- * Speichert den Stimmzettel eines Teams über den Betreuer-Token.
+ * Speichert den Stimmzettel-Entwurf eines Teams (auch unvollständig) über den Betreuer-Token.
+ */
+export async function saveTeamAllstarDraftByToken(
+  token: string,
+  votes: Partial<AllstarVote["votes"]>
+): Promise<AllstarVote> {
+  await ensureAnonymousAuth()
+
+  // 1. Prüfen, ob Abstimmung geöffnet ist
+  const config = await getTournamentConfig()
+  if (config.allstarVotingStatus === "upcoming") {
+    throw new Error("Die Allstars-Abstimmung hat noch nicht begonnen.")
+  }
+  if (config.allstarVotingStatus === "closed" || config.allstarVotingOpen === false) {
+    throw new Error("Die Allstars-Abstimmung wurde von der Turnierleitung beendet.")
+  }
+
+  // 2. Team via Token authentifizieren
+  const currentTeam = await getTeamByJingleToken(token)
+  if (!currentTeam) {
+    throw new Error("Ungültiger oder abgelaufener Link. Bitte wende dich an die Turnierleitung.")
+  }
+
+  const filledCount = countFilledSlots(votes)
+  const now = Timestamp.now()
+
+  if (!isFirebaseConfigured) {
+    const existing = localMockVotes.get(currentTeam.id)
+    const status: "draft" | "submitted" = existing?.status === "submitted" ? "submitted" : "draft"
+    const draftVote: AllstarVote = {
+      id: currentTeam.id,
+      teamId: currentTeam.id,
+      teamName: currentTeam.name,
+      gender: currentTeam.gender,
+      status,
+      filledCount,
+      votes: votes as AllstarVote["votes"],
+      submittedAt: existing?.submittedAt,
+      updatedAt: now,
+    }
+    localMockVotes.set(currentTeam.id, draftVote)
+    notifyMockListeners()
+    return draftVote
+  }
+
+  const docRef = doc(db, ALLSTAR_COLLECTION, currentTeam.id)
+  const existingDoc = await getDoc(docRef)
+  const existingData = existingDoc.data()
+  const status: "draft" | "submitted" =
+    existingData?.status === "submitted" || (Boolean(existingData?.submittedAt) && existingData?.status !== "draft")
+      ? "submitted"
+      : "draft"
+
+  const payload = {
+    teamId: currentTeam.id,
+    teamName: currentTeam.name,
+    gender: currentTeam.gender,
+    status,
+    filledCount,
+    votes,
+    updatedAt: serverTimestamp(),
+  }
+
+  await setDoc(docRef, payload, { merge: true })
+
+  return {
+    id: currentTeam.id,
+    teamId: currentTeam.id,
+    teamName: currentTeam.name,
+    gender: currentTeam.gender,
+    status,
+    filledCount,
+    votes: votes as AllstarVote["votes"],
+    submittedAt: existingData?.submittedAt as Timestamp | undefined,
+    updatedAt: now,
+  }
+}
+
+/**
+ * Speichert und übermittelt den offiziellen Stimmzettel eines Teams über den Betreuer-Token.
  */
 export async function saveTeamAllstarVoteByToken(
   token: string,
@@ -214,6 +309,8 @@ export async function saveTeamAllstarVoteByToken(
       teamId: currentTeam.id,
       teamName: currentTeam.name,
       gender: currentTeam.gender,
+      status: "submitted",
+      filledCount: 6,
       votes,
       submittedAt: existing?.submittedAt || now,
       updatedAt: now,
@@ -225,15 +322,18 @@ export async function saveTeamAllstarVoteByToken(
 
   const docRef = doc(db, ALLSTAR_COLLECTION, currentTeam.id)
   const existingDoc = await getDoc(docRef)
-  const isFirstSubmission = !existingDoc.exists()
+  const existingData = existingDoc.data()
+  const firstSubmittedAt = (existingData?.submittedAt as Timestamp | undefined) || now
 
   const payload = {
     teamId: currentTeam.id,
     teamName: currentTeam.name,
     gender: currentTeam.gender,
+    status: "submitted",
+    filledCount: 6,
     votes,
     updatedAt: serverTimestamp(),
-    ...(isFirstSubmission ? { submittedAt: serverTimestamp() } : {}),
+    submittedAt: existingData?.submittedAt ? existingData.submittedAt : serverTimestamp(),
   }
 
   await setDoc(docRef, payload, { merge: true })
@@ -243,8 +343,10 @@ export async function saveTeamAllstarVoteByToken(
     teamId: currentTeam.id,
     teamName: currentTeam.name,
     gender: currentTeam.gender,
+    status: "submitted",
+    filledCount: 6,
     votes,
-    submittedAt: isFirstSubmission ? now : (existingDoc.data()?.submittedAt as Timestamp) || now,
+    submittedAt: firstSubmittedAt,
     updatedAt: now,
   }
 }
@@ -281,35 +383,67 @@ export function evaluateAllstars(
   const voteMap = new Map<string, AllstarVote>()
   categoryVotes.forEach((v) => voteMap.set(v.teamId, v))
 
+  // Alle Teams der Kategorie mit ihrem detaillierten Fortschritt und Status
+  const teamsProgress: AllstarTeamProgress[] = categoryTeams.map((t) => {
+    const v = voteMap.get(t.id)
+    const filled = v ? (v.filledCount ?? countFilledSlots(v.votes)) : 0
+    const isSubmitted = v
+      ? v.status === "submitted" || Boolean(v.submittedAt && v.status !== "draft")
+      : false
+    const status: "not_started" | "draft" | "submitted" = isSubmitted
+      ? "submitted"
+      : filled > 0
+      ? "draft"
+      : "not_started"
+
+    return {
+      team: t,
+      vote: v,
+      status,
+      filledCount: filled,
+      submittedAt: v?.submittedAt,
+      updatedAt: v?.updatedAt,
+    }
+  })
+
+  // Alphabetische Sortierung nach Teamname für schnelle Orientierung
+  teamsProgress.sort((a, b) => a.team.name.localeCompare(b.team.name))
+
   const submittedTeams: { teamId: string; teamName: string; submittedAt?: Timestamp }[] = []
   const pendingTeams: { teamId: string; teamName: string }[] = []
 
-  categoryTeams.forEach((t) => {
-    const v = voteMap.get(t.id)
-    if (v) {
+  teamsProgress.forEach((item) => {
+    if (item.status === "submitted") {
       submittedTeams.push({
-        teamId: t.id,
-        teamName: t.name,
-        submittedAt: v.submittedAt,
+        teamId: item.team.id,
+        teamName: item.team.name,
+        submittedAt: item.submittedAt,
       })
     } else {
       pendingTeams.push({
-        teamId: t.id,
-        teamName: t.name,
+        teamId: item.team.id,
+        teamName: item.team.name,
       })
     }
   })
+
+  const draftCount = teamsProgress.filter((item) => item.status === "draft").length
+
+  // Für die offizielle Rangliste der Siegerehrung zählen NUR offiziell eingereichte Stimmen!
+  const submittedVotes = categoryVotes.filter(
+    (v) => v.status === "submitted" || (Boolean(v.submittedAt) && v.status !== "draft")
+  )
 
   // Helper zur Aggregation von Nominierungen
   function aggregatePosition(
     positionKey: "goalkeeper" | "fieldPlayers",
     label: string,
     slotsCount: number,
-    getSelections: (v: AllstarVote) => AllstarVotePosition[]
+    getSelections: (v: AllstarVote) => (AllstarVotePosition | undefined | null)[]
   ): AllstarPositionResult {
     const candidateMap = new Map<string, AllstarAggregatedPlayer>()
 
-    categoryVotes.forEach((v) => {
+    submittedVotes.forEach((v) => {
       const selections = getSelections(v)
       selections.forEach((sel) => {
         if (!sel || !sel.playerId) return
@@ -380,6 +514,8 @@ export function evaluateAllstars(
     totalTeams: categoryTeams.length,
     submittedCount: submittedTeams.length,
     pendingCount: pendingTeams.length,
+    draftCount,
+    teamsProgress,
     submittedTeams,
     pendingTeams,
     positions: {

@@ -1,5 +1,5 @@
 import type { Timestamp } from "firebase/firestore"
-import type { GenderCategory, AllstarVotingStatus } from "./database"
+import type { Team, GenderCategory, AllstarVotingStatus } from "./database"
 
 export type { AllstarVotingStatus }
 
@@ -24,16 +24,27 @@ export interface AllstarVote {
   teamId: string
   teamName: string
   gender: GenderCategory
+  status?: "draft" | "submitted"
+  filledCount?: number // Anzahl besetzter Slots (0 bis 6)
   votes: {
-    goalkeeper: AllstarVotePosition
-    fieldPlayer1: AllstarVotePosition
-    fieldPlayer2: AllstarVotePosition
-    fieldPlayer3: AllstarVotePosition
-    fieldPlayer4: AllstarVotePosition
-    fieldPlayer5: AllstarVotePosition
+    goalkeeper?: AllstarVotePosition
+    fieldPlayer1?: AllstarVotePosition
+    fieldPlayer2?: AllstarVotePosition
+    fieldPlayer3?: AllstarVotePosition
+    fieldPlayer4?: AllstarVotePosition
+    fieldPlayer5?: AllstarVotePosition
   }
-  submittedAt: Timestamp
+  submittedAt?: Timestamp
   updatedAt: Timestamp
+}
+
+export interface AllstarTeamProgress {
+  team: Team
+  vote?: AllstarVote
+  status: "not_started" | "draft" | "submitted"
+  filledCount: number // 0 bis 6
+  submittedAt?: Timestamp
+  updatedAt?: Timestamp
 }
 
 export interface AllstarAggregatedPlayer {
@@ -60,6 +71,8 @@ export interface AllstarCategoryEvaluation {
   totalTeams: number
   submittedCount: number
   pendingCount: number
+  draftCount: number
+  teamsProgress: AllstarTeamProgress[]
   submittedTeams: { teamId: string; teamName: string; submittedAt?: Timestamp }[]
   pendingTeams: { teamId: string; teamName: string }[]
   positions: {

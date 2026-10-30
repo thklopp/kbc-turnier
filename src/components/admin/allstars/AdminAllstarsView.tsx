@@ -7,6 +7,7 @@ import {
   subscribeAllstarVotes,
   evaluateAllstars,
   setAllstarVotingStatus,
+  countFilledSlots,
 } from "@/services/allstarService"
 import {
   Star,
@@ -20,6 +21,7 @@ import {
   ChevronUp,
   Loader2,
   Users,
+  PenLine,
 } from "lucide-react"
 
 export function AdminAllstarsView() {
@@ -356,7 +358,12 @@ function CategoryColumn({
                 {categoryLabel}
               </h2>
               <p className="text-xs text-slate-500">
-                {evaluation.submittedCount} von {evaluation.totalTeams} Teams abgestimmt ({percentage}%)
+                {evaluation.submittedCount} von {evaluation.totalTeams} Teams offiziell abgegeben ({percentage}%)
+                {evaluation.draftCount > 0 && (
+                  <span className="text-amber-700 font-semibold ml-1.5">
+                    • {evaluation.draftCount} in Bearbeitung
+                  </span>
+                )}
               </p>
             </div>
           </div>
@@ -373,32 +380,61 @@ function CategoryColumn({
 
         {/* Team Status Chips */}
         <div className="flex flex-wrap gap-1.5 pt-3 border-t border-slate-100">
-          {evaluation.submittedTeams.map((t) => (
-            <span
-              key={t.teamId}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800"
-              title={
-                t.submittedAt?.toDate?.()
-                  ? `Abgegeben um ${t.submittedAt.toDate().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} Uhr`
-                  : "Abgegeben"
-              }
-            >
-              <CheckCircle className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-              <span className="truncate max-w-[140px]">{t.teamName}</span>
-            </span>
-          ))}
+          {evaluation.teamsProgress.map((tp) => {
+            const isSubmitted = tp.status === "submitted"
+            const isDraft = tp.status === "draft"
 
-          {evaluation.pendingTeams.map((t) => (
-            <span
-              key={t.teamId}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50/70 border border-amber-200 text-xs font-medium text-slate-700"
-              title="Stimmabgabe steht noch aus"
-            >
-              <Clock className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-              <span className="truncate max-w-[130px]">{t.teamName}</span>
-              <span className="text-[10px] text-amber-700 font-bold shrink-0">(fehlt)</span>
-            </span>
-          ))}
+            let tooltip = `Noch keine Stimmen gewählt (0/6)`
+            if (isSubmitted) {
+              const timeStr = tp.submittedAt?.toDate?.()
+                ? ` um ${tp.submittedAt.toDate().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} Uhr`
+                : ""
+              tooltip = `Offiziell eingereicht (6/6)${timeStr}`
+            } else if (isDraft) {
+              const timeStr = tp.updatedAt?.toDate?.()
+                ? ` (Stand: ${tp.updatedAt.toDate().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} Uhr)`
+                : ""
+              tooltip = `In Bearbeitung: ${tp.filledCount} von 6 gewählt${timeStr}`
+            }
+
+            return (
+              <span
+                key={tp.team.id}
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+                  isSubmitted
+                    ? "bg-emerald-50 border border-emerald-300 text-emerald-900 shadow-xs"
+                    : isDraft
+                    ? "bg-amber-50 border border-amber-300 text-amber-900"
+                    : "bg-slate-50 border border-slate-200 text-slate-600"
+                }`}
+                title={tooltip}
+              >
+                {isSubmitted ? (
+                  <CheckCircle className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                ) : isDraft ? (
+                  <PenLine className="h-3.5 w-3.5 text-amber-600 shrink-0" />
+                ) : (
+                  <Clock className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                )}
+
+                <span className="truncate max-w-[130px] font-medium" title={tp.team.name}>
+                  {tp.team.name}
+                </span>
+
+                <span
+                  className={`text-[10px] font-bold px-1.5 py-0.2 rounded-md ${
+                    isSubmitted
+                      ? "bg-emerald-200/80 text-emerald-900"
+                      : isDraft
+                      ? "bg-amber-200/80 text-amber-900"
+                      : "bg-slate-200 text-slate-700"
+                  }`}
+                >
+                  {tp.filledCount}/6
+                </span>
+              </span>
+            )
+          })}
         </div>
       </div>
 
@@ -593,7 +629,7 @@ function CategoryColumn({
         })}
       </div>
 
-      {/* 4. Eingereichte Stimmzettel */}
+      {/* 4. Stimmzettel der Teams */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <button
           type="button"
@@ -603,7 +639,7 @@ function CategoryColumn({
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4 text-slate-500" />
             <h4 className="font-bold text-slate-900 text-xs">
-              Eingereichte Stimmzettel ({evaluation.allVotes.length})
+              Stimmzettel der Teams ({evaluation.allVotes.length})
             </h4>
           </div>
           {isTeamVotesOpen ? (
@@ -616,58 +652,102 @@ function CategoryColumn({
         {isTeamVotesOpen && (
           <div className="p-3 border-t border-slate-100 space-y-3">
             {evaluation.allVotes.length === 0 ? (
-              <p className="text-xs text-slate-400 italic">Noch keine Stimmzettel eingereicht.</p>
+              <p className="text-xs text-slate-400 italic">Noch keine Stimmzettel oder Entwürfe vorhanden.</p>
             ) : (
-              evaluation.allVotes.map((v) => (
-                <div key={v.teamId} className="rounded-xl border border-slate-200 p-3 bg-slate-50/30">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-bold text-slate-900 text-xs">{v.teamName}</span>
-                    <span className="text-[10px] text-slate-400">
-                      {v.updatedAt?.toDate?.()
-                        ? v.updatedAt.toDate().toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" })
-                        : ""}
-                    </span>
+              evaluation.allVotes.map((v) => {
+                const isSubmitted = v.status === "submitted" || Boolean(v.submittedAt && v.status !== "draft")
+                const filled = v.filledCount ?? countFilledSlots(v.votes)
+
+                return (
+                  <div key={v.teamId} className="rounded-xl border border-slate-200 p-3 bg-slate-50/30">
+                    <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-slate-900 text-xs">{v.teamName}</span>
+                        {isSubmitted ? (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-800 bg-emerald-100 border border-emerald-200 px-2 py-0.5 rounded-md">
+                            <CheckCircle className="h-3 w-3 text-emerald-600" />
+                            Abgegeben (6/6)
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-800 bg-amber-100 border border-amber-200 px-2 py-0.5 rounded-md">
+                            <PenLine className="h-3 w-3 text-amber-600" />
+                            Entwurf ({filled}/6)
+                          </span>
+                        )}
+                      </div>
+
+                      <span className="text-[10px] text-slate-400">
+                        {v.updatedAt?.toDate?.()
+                          ? v.updatedAt.toDate().toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" })
+                          : ""}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 text-[11px]">
+                      <div className="bg-white p-1.5 rounded-lg border border-slate-200">
+                        <span className="block text-[9px] text-slate-400 font-semibold uppercase">Torwart</span>
+                        {v.votes.goalkeeper?.playerName ? (
+                          <span className="font-medium text-slate-800 truncate block">
+                            #{v.votes.goalkeeper.playerNumber} {v.votes.goalkeeper.playerName}
+                          </span>
+                        ) : (
+                          <span className="italic text-slate-400 block truncate">Noch offen</span>
+                        )}
+                      </div>
+                      <div className="bg-white p-1.5 rounded-lg border border-slate-200">
+                        <span className="block text-[9px] text-slate-400 font-semibold uppercase">Feldspieler 1</span>
+                        {v.votes.fieldPlayer1?.playerName ? (
+                          <span className="font-medium text-slate-800 truncate block">
+                            #{v.votes.fieldPlayer1.playerNumber} {v.votes.fieldPlayer1.playerName}
+                          </span>
+                        ) : (
+                          <span className="italic text-slate-400 block truncate">Noch offen</span>
+                        )}
+                      </div>
+                      <div className="bg-white p-1.5 rounded-lg border border-slate-200">
+                        <span className="block text-[9px] text-slate-400 font-semibold uppercase">Feldspieler 2</span>
+                        {v.votes.fieldPlayer2?.playerName ? (
+                          <span className="font-medium text-slate-800 truncate block">
+                            #{v.votes.fieldPlayer2.playerNumber} {v.votes.fieldPlayer2.playerName}
+                          </span>
+                        ) : (
+                          <span className="italic text-slate-400 block truncate">Noch offen</span>
+                        )}
+                      </div>
+                      <div className="bg-white p-1.5 rounded-lg border border-slate-200">
+                        <span className="block text-[9px] text-slate-400 font-semibold uppercase">Feldspieler 3</span>
+                        {v.votes.fieldPlayer3?.playerName ? (
+                          <span className="font-medium text-slate-800 truncate block">
+                            #{v.votes.fieldPlayer3.playerNumber} {v.votes.fieldPlayer3.playerName}
+                          </span>
+                        ) : (
+                          <span className="italic text-slate-400 block truncate">Noch offen</span>
+                        )}
+                      </div>
+                      <div className="bg-white p-1.5 rounded-lg border border-slate-200">
+                        <span className="block text-[9px] text-slate-400 font-semibold uppercase">Feldspieler 4</span>
+                        {v.votes.fieldPlayer4?.playerName ? (
+                          <span className="font-medium text-slate-800 truncate block">
+                            #{v.votes.fieldPlayer4.playerNumber} {v.votes.fieldPlayer4.playerName}
+                          </span>
+                        ) : (
+                          <span className="italic text-slate-400 block truncate">Noch offen</span>
+                        )}
+                      </div>
+                      <div className="bg-white p-1.5 rounded-lg border border-slate-200">
+                        <span className="block text-[9px] text-slate-400 font-semibold uppercase">Feldspieler 5</span>
+                        {v.votes.fieldPlayer5?.playerName ? (
+                          <span className="font-medium text-slate-800 truncate block">
+                            #{v.votes.fieldPlayer5.playerNumber} {v.votes.fieldPlayer5.playerName}
+                          </span>
+                        ) : (
+                          <span className="italic text-slate-400 block truncate">Noch offen</span>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 text-[11px]">
-                    <div className="bg-white p-1.5 rounded-lg border border-slate-200">
-                      <span className="block text-[9px] text-slate-400 font-semibold uppercase">Torwart</span>
-                      <span className="font-medium text-slate-800 truncate block">
-                        #{v.votes.goalkeeper?.playerNumber} {v.votes.goalkeeper?.playerName}
-                      </span>
-                    </div>
-                    <div className="bg-white p-1.5 rounded-lg border border-slate-200">
-                      <span className="block text-[9px] text-slate-400 font-semibold uppercase">Feldspieler 1</span>
-                      <span className="font-medium text-slate-800 truncate block">
-                        #{v.votes.fieldPlayer1?.playerNumber} {v.votes.fieldPlayer1?.playerName}
-                      </span>
-                    </div>
-                    <div className="bg-white p-1.5 rounded-lg border border-slate-200">
-                      <span className="block text-[9px] text-slate-400 font-semibold uppercase">Feldspieler 2</span>
-                      <span className="font-medium text-slate-800 truncate block">
-                        #{v.votes.fieldPlayer2?.playerNumber} {v.votes.fieldPlayer2?.playerName}
-                      </span>
-                    </div>
-                    <div className="bg-white p-1.5 rounded-lg border border-slate-200">
-                      <span className="block text-[9px] text-slate-400 font-semibold uppercase">Feldspieler 3</span>
-                      <span className="font-medium text-slate-800 truncate block">
-                        #{v.votes.fieldPlayer3?.playerNumber} {v.votes.fieldPlayer3?.playerName}
-                      </span>
-                    </div>
-                    <div className="bg-white p-1.5 rounded-lg border border-slate-200">
-                      <span className="block text-[9px] text-slate-400 font-semibold uppercase">Feldspieler 4</span>
-                      <span className="font-medium text-slate-800 truncate block">
-                        #{v.votes.fieldPlayer4?.playerNumber} {v.votes.fieldPlayer4?.playerName}
-                      </span>
-                    </div>
-                    <div className="bg-white p-1.5 rounded-lg border border-slate-200">
-                      <span className="block text-[9px] text-slate-400 font-semibold uppercase">Feldspieler 5</span>
-                      <span className="font-medium text-slate-800 truncate block">
-                        #{v.votes.fieldPlayer5?.playerNumber} {v.votes.fieldPlayer5?.playerName}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))
+                )
+              })
             )}
           </div>
         )}

@@ -237,15 +237,17 @@ export interface AllstarVote {
   teamId: string;                            // ID des abstimmenden Teams
   teamName: string;                          // Name des abstimmenden Teams
   gender: GenderCategory;                    // "wU14" | "mU14" (stimmt für eigene Altersklasse)
+  status?: "draft" | "submitted";            // Status der Stimmabgabe ("draft" bei Zwischenspeicherung, "submitted" nach Abgabe)
+  filledCount?: number;                      // Anzahl der gesetzten Positionen (0 bis 6)
   votes: {
-    goalkeeper: AllstarVotePosition;         // 1x Torwart
-    fieldPlayer1: AllstarVotePosition;       // 1. Feldspieler
-    fieldPlayer2: AllstarVotePosition;       // 2. Feldspieler
-    fieldPlayer3: AllstarVotePosition;       // 3. Feldspieler
-    fieldPlayer4: AllstarVotePosition;       // 4. Feldspieler
-    fieldPlayer5: AllstarVotePosition;       // 5. Feldspieler
+    goalkeeper?: AllstarVotePosition;        // 1x Torwart
+    fieldPlayer1?: AllstarVotePosition;      // 1. Feldspieler
+    fieldPlayer2?: AllstarVotePosition;      // 2. Feldspieler
+    fieldPlayer3?: AllstarVotePosition;      // 3. Feldspieler
+    fieldPlayer4?: AllstarVotePosition;      // 4. Feldspieler
+    fieldPlayer5?: AllstarVotePosition;      // 5. Feldspieler
   };
-  submittedAt: FirebaseFirestore.Timestamp;
+  submittedAt?: FirebaseFirestore.Timestamp; // Nur gesetzt, wenn offiziell abgegeben (status === "submitted")
   updatedAt: FirebaseFirestore.Timestamp;
 }
 ```

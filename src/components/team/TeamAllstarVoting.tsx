@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, useRef } from "react"
 import type { Team } from "@/types/database"
 import type { AllstarSlotKey, AllstarVote, AllstarVotePosition, AllstarVotingStatus } from "@/types/allstars"
 import { subscribeTeams } from "@/services/teamService"
@@ -6,6 +6,7 @@ import { subscribeTournamentConfig } from "@/services/configService"
 import {
   getTeamAllstarVote,
   saveTeamAllstarVoteByToken,
+  saveTeamAllstarDraftByToken,
   validateAllstarVotes,
 } from "@/services/allstarService"
 import {
@@ -15,6 +16,7 @@ import {
   Lock,
   Clock,
   Loader2,
+  PenLine,
 } from "lucide-react"
 
 interface TeamAllstarVotingProps {
@@ -58,11 +60,13 @@ export function TeamAllstarVoting({ team, token }: TeamAllstarVotingProps) {
   const [teams, setTeams] = useState<Team[]>([])
   const [loading, setLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [draftSaving, setDraftSaving] = useState(false)
   const [votingStatus, setVotingStatus] = useState<AllstarVotingStatus>("upcoming")
   const [slots, setSlots] = useState<SlotsState>(INITIAL_SLOTS)
   const [existingVote, setExistingVote] = useState<AllstarVote | null>(null)
   const [saveSuccess, setSaveSuccess] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const isInitialLoadDone = useRef(false)
 
   // 1. Teams & Turnierkonfiguration abonnieren
   useEffect(() => {
@@ -119,7 +123,13 @@ export function TeamAllstarVoting({ team, token }: TeamAllstarVotingProps) {
       } catch (err) {
         console.error("Fehler beim Laden des Stimmzettels:", err)
       } finally {
-        if (isMounted) setLoading(false)
+        if (isMounted) {
+          setLoading(false)
+          // Erst nach Abschluss des initialen Ladens für Draft-Autosave aktivieren
+          setTimeout(() => {
+            isInitialLoadDone.current = true
+          }, 300)
+        }
       }
     }
     loadVote()
@@ -135,6 +145,57 @@ export function TeamAllstarVoting({ team, token }: TeamAllstarVotingProps) {
     teams.forEach((t) => map.set(t.id, t))
     return map
   }, [teams])
+
+  // Anzahl belegter Positionen (0 bis 6)
+  const filledCount = useMemo(() => {
+    return Object.values(slots).filter((s) => Boolean(s.playerId && s.playerId.trim() !== "")).length
+  }, [slots])
+
+  // Hilfsfunktion zur Generierung der Votes-Payload
+  const buildFormattedVotes = (): Partial<AllstarVote["votes"]> => {
+    const formatted: Record<string, AllstarVotePosition> = {}
+    for (const def of SLOT_DEFINITIONS) {
+      const slot = slots[def.key]
+      if (!slot || !slot.teamId || !slot.playerId) continue
+      const chosenTeam = teamMap.get(slot.teamId)
+      const chosenPlayer = chosenTeam?.players?.find((p) => p.id === slot.playerId)
+      if (chosenTeam && chosenPlayer) {
+        formatted[def.key] = {
+          teamId: chosenTeam.id,
+          teamName: chosenTeam.name,
+          playerId: chosenPlayer.id,
+          playerName: `${chosenPlayer.firstName} ${chosenPlayer.lastName}`,
+          playerNumber: chosenPlayer.number,
+        }
+      }
+    }
+    return formatted
+  }
+
+  // Automatischer Draft-Sync bei Änderungen mit 500ms Debounce
+  useEffect(() => {
+    if (!isInitialLoadDone.current || votingStatus !== "open" || loading) {
+      return
+    }
+
+    const hasSelection = Object.values(slots).some((s) => Boolean(s.playerId))
+    if (!hasSelection && !existingVote) return
+
+    const debounceTimer = setTimeout(async () => {
+      try {
+        setDraftSaving(true)
+        const partialVotes = buildFormattedVotes()
+        const saved = await saveTeamAllstarDraftByToken(token, partialVotes)
+        setExistingVote(saved)
+      } catch (err) {
+        console.warn("Automatisches Sichern des Entwurfs fehlgeschlagen:", err)
+      } finally {
+        setDraftSaving(false)
+      }
+    }, 500)
+
+    return () => clearTimeout(debounceTimer)
+  }, [slots, votingStatus, loading, token, teamMap])
 
   // Duplikat-Erkennung: Ermittelt alle Spieler-IDs, die mehrfach ausgewählt wurden
   const duplicatePlayerIds = useMemo(() => {
@@ -295,18 +356,43 @@ export function TeamAllstarVoting({ team, token }: TeamAllstarVotingProps) {
           </span>
         </div>
 
-        {existingVote && (
-          <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-            <span className="inline-flex items-center gap-1 text-emerald-600 font-medium">
-              <CheckCircle className="h-4 w-4" />
-              Stimmzettel liegt vor
-            </span>
-            <span>
-              Zuletzt aktualisiert:{" "}
-              {existingVote.updatedAt?.toDate?.()
-                ? existingVote.updatedAt.toDate().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " Uhr"
-                : "Kürzlich"}
-            </span>
+        {/* Status-Leiste: Entwurf oder Offiziell Eingereicht */}
+        {votingStatus !== "upcoming" && (
+          <div className="mt-4 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div className="flex flex-wrap items-center gap-2">
+              {existingVote?.status === "submitted" ? (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 font-semibold border border-emerald-200">
+                  <CheckCircle className="h-4 w-4 text-emerald-600" />
+                  Offiziell eingereicht (6/6)
+                </span>
+              ) : filledCount > 0 ? (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-900 font-semibold border border-amber-300">
+                  <PenLine className="h-3.5 w-3.5 text-amber-600" />
+                  Entwurf automatisch gesichert ({filledCount}/6)
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 font-medium border border-slate-200">
+                  <Clock className="h-3.5 w-3.5 text-slate-400" />
+                  Noch keine Spieler gewählt (0/6)
+                </span>
+              )}
+
+              {draftSaving && (
+                <span className="inline-flex items-center gap-1 text-[11px] text-slate-500 font-medium">
+                  <Loader2 className="h-3 w-3 animate-spin text-blue-500" />
+                  Speichere Entwurf...
+                </span>
+              )}
+            </div>
+
+            {existingVote?.updatedAt && (
+              <span className="text-[11px] text-slate-400">
+                Zuletzt aktualisiert:{" "}
+                {existingVote.updatedAt.toDate?.()
+                  ? existingVote.updatedAt.toDate().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " Uhr"
+                  : "Kürzlich"}
+              </span>
+            )}
           </div>
         )}
       </div>
@@ -481,16 +567,22 @@ export function TeamAllstarVoting({ team, token }: TeamAllstarVotingProps) {
                 <span className="text-rose-600 font-semibold">
                   ⚠️ Bitte behebe die Doppelbelegungen vor dem Absenden.
                 </span>
-              ) : existingVote ? (
-                <span>Änderungen überschreiben eure bisherige Auswahl.</span>
+              ) : filledCount < 6 ? (
+                <span>
+                  Noch {6 - filledCount} von 6 Positionen offen (wird automatisch als Entwurf gespeichert).
+                </span>
+              ) : existingVote?.status === "submitted" ? (
+                <span>Änderungen überschreiben eure bisherige offizielle Abgabe.</span>
               ) : (
-                <span>Alle 6 Positionen müssen besetzt sein.</span>
+                <span className="text-emerald-700 font-semibold">
+                  Alle 6 Positionen besetzt – bereit zur offiziellen Abgabe!
+                </span>
               )}
             </div>
 
             <button
               type="submit"
-              disabled={isFormDisabled || duplicatePlayerIds.size > 0}
+              disabled={isFormDisabled || duplicatePlayerIds.size > 0 || filledCount < 6}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed cursor-pointer"
             >
               {isSaving ? (
@@ -501,7 +593,11 @@ export function TeamAllstarVoting({ team, token }: TeamAllstarVotingProps) {
               ) : (
                 <>
                   <Star className="h-4 w-4 fill-white" />
-                  <span>{existingVote ? "Stimmen aktualisieren" : "Allstar-Team einreichen"}</span>
+                  <span>
+                    {existingVote?.status === "submitted"
+                      ? "Stimmen aktualisieren"
+                      : "Allstar-Team offiziell einreichen"}
+                  </span>
                 </>
               )}
             </button>
