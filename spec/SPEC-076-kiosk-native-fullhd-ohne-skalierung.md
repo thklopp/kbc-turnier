@@ -1,6 +1,6 @@
 # SPEC-076: Nativer Full-HD Kiosk ohne CSS-Skalierung
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Optimierung / Bugfix  
 > **Branch**: `fix/SPEC-076-kiosk-native-fullhd-ohne-skalierung`  
 > **Autor**: Antigravity  
