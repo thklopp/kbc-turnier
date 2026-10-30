@@ -11,7 +11,8 @@ interface KioskHeaderProps {
   isPaused: boolean
   onTogglePause: () => void
   onSelectSlide: (index: number) => void
-  slideProgress: number // 0 to 100%
+  slideProgress?: number // 0 to 100% (optional fallback)
+  slideDurationMs?: number
   isOnline: boolean
 }
 
@@ -23,7 +24,7 @@ export function KioskHeader({
   isPaused,
   onTogglePause,
   onSelectSlide,
-  slideProgress,
+  slideDurationMs = 12000,
   isOnline,
 }: KioskHeaderProps) {
   const [currentTime, setCurrentTime] = useState<string>("")
@@ -111,17 +112,21 @@ export function KioskHeader({
             </button>
           </div>
 
-          {/* Slide Progress bar (only animates when not paused) */}
+          {/* Slide Progress bar (CSS animated for zero CPU/Render load) */}
           <div className="w-full flex items-center gap-2">
             <span className="text-[10px] font-mono text-slate-500 whitespace-nowrap">
               {activeSlide + 1}/{totalSlides}
             </span>
             <div className="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
               <div
-                className={`h-full transition-all duration-300 ${
+                key={activeSlide}
+                className={`h-full animate-kiosk-progress ${
                   isPaused ? "bg-amber-500" : "bg-blue-500"
                 }`}
-                style={{ width: `${Math.min(100, Math.max(0, slideProgress))}%` }}
+                style={{
+                  animationDuration: `${slideDurationMs}ms`,
+                  animationPlayState: isPaused ? "paused" : "running",
+                }}
               />
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import type { Match, Team } from "@/types/database"
 
 interface KioskGroupStageSlideProps {
@@ -26,12 +26,16 @@ export function KioskGroupStageSlide({ matches, teams }: KioskGroupStageSlidePro
   const [logoErrors, setLogoErrors] = useState<Record<string, boolean>>({})
 
   // Filter all group stage matches (either phase === 'group' or matchNumber 1-24)
-  const groupMatches = matches
-    .filter((m) => m.phase === "group" || m.matchNumber <= 24)
-    .sort((a, b) => a.matchNumber - b.matchNumber)
+  const groupMatches = useMemo(
+    () =>
+      matches
+        .filter((m) => m.phase === "group" || m.matchNumber <= 24)
+        .sort((a, b) => a.matchNumber - b.matchNumber),
+    [matches]
+  )
 
-  const col1Matches = groupMatches.slice(0, 12)
-  const col2Matches = groupMatches.slice(12, 24)
+  const col1Matches = useMemo(() => groupMatches.slice(0, 12), [groupMatches])
+  const col2Matches = useMemo(() => groupMatches.slice(12, 24), [groupMatches])
 
   const renderMatchRow = (match: Match) => {
     const home = getTeam(match.teamHomeId, match.teamHomePlaceholder, teams)

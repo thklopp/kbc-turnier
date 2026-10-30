@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import type { Team, Match, GenderCategory, TournamentGroup } from "@/types/database"
 import { calculateGroupStandings } from "@/services/standingsService"
 
@@ -10,16 +10,22 @@ interface KioskStandingsSlideProps {
 export function KioskStandingsSlide({ teams, matches }: KioskStandingsSlideProps) {
   const [logoErrors, setLogoErrors] = useState<Record<string, boolean>>({})
 
-  const liveMatches = matches.filter((m) => m.status === "live")
-  const pausedMatches = matches.filter((m) => m.status === "paused")
+  const liveMatches = useMemo(() => matches.filter((m) => m.status === "live"), [matches])
+  const pausedMatches = useMemo(() => matches.filter((m) => m.status === "paused"), [matches])
 
-  const liveTeamIds = new Set(liveMatches.flatMap((m) => [m.teamHomeId, m.teamAwayId]))
-  const pausedTeamIds = new Set(pausedMatches.flatMap((m) => [m.teamHomeId, m.teamAwayId]))
+  const liveTeamIds = useMemo(
+    () => new Set(liveMatches.flatMap((m) => [m.teamHomeId, m.teamAwayId])),
+    [liveMatches]
+  )
+  const pausedTeamIds = useMemo(
+    () => new Set(pausedMatches.flatMap((m) => [m.teamHomeId, m.teamAwayId])),
+    [pausedMatches]
+  )
 
-  const wU14A = calculateGroupStandings(teams, matches, "wU14", "A")
-  const wU14B = calculateGroupStandings(teams, matches, "wU14", "B")
-  const mU14A = calculateGroupStandings(teams, matches, "mU14", "A")
-  const mU14B = calculateGroupStandings(teams, matches, "mU14", "B")
+  const wU14A = useMemo(() => calculateGroupStandings(teams, matches, "wU14", "A"), [teams, matches])
+  const wU14B = useMemo(() => calculateGroupStandings(teams, matches, "wU14", "B"), [teams, matches])
+  const mU14A = useMemo(() => calculateGroupStandings(teams, matches, "mU14", "A"), [teams, matches])
+  const mU14B = useMemo(() => calculateGroupStandings(teams, matches, "mU14", "B"), [teams, matches])
 
   const renderGroupTable = (
     gender: GenderCategory,

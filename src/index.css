@@ -45,3 +45,18 @@
     @apply bg-background text-foreground antialiased;
   }
 }
+
+@keyframes kiosk-slide-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.animate-kiosk-progress {
+  animation-name: kiosk-slide-progress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}

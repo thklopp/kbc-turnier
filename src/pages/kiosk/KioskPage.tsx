@@ -13,7 +13,7 @@ import { KioskFinalRankingsSlide } from "@/components/kiosk/KioskFinalRankingsSl
 import { isTournamentFinished } from "@/services/standingsService"
 
 const SLIDE_DURATION_MS = 12000 // 12 seconds per slide
-const PROGRESS_TICK_MS = 100
+const RELOAD_INTERVAL_MS = 60 * 60 * 1000 // 60 minutes hygiene reload
 
 const BASE_SLIDE_NAMES = [
   "Live",
@@ -21,7 +21,6 @@ const BASE_SLIDE_NAMES = [
   "Finalrunde",
   "Tabellen",
 ]
-
 
 export function KioskPage() {
   const [matches, setMatches] = useState<Match[]>([])
@@ -31,13 +30,22 @@ export function KioskPage() {
   // Carousel State
   const [activeSlide, setActiveSlide] = useState<number>(0)
   const [isPaused, setIsPaused] = useState<boolean>(false)
-  const [elapsedMs, setElapsedMs] = useState<number>(0)
+
+  // Timing & Hygiene Reload Refs
+  const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const remainingMsRef = useRef<number>(SLIDE_DURATION_MS)
+  const slideStartTimeRef = useRef<number>(0)
+  const appStartTimeRef = useRef<number>(0)
+
+  // Initialize start times once mounted
+  useEffect(() => {
+    slideStartTimeRef.current = Date.now()
+    appStartTimeRef.current = Date.now()
+  }, [])
 
   // Connectivity State
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine)
   const [showOfflineBanner, setShowOfflineBanner] = useState<boolean>(!navigator.onLine)
-
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
 
   // Subscriptions to Firestore
   useEffect(() => {
@@ -86,34 +94,48 @@ export function KioskPage() {
   const slideNames = BASE_SLIDE_NAMES
 
 
-  // Carousel progression tick
+  // Advance to next slide with hygiene reload check (at cycle restart)
   const nextSlide = useCallback(() => {
-    setActiveSlide((prev) => (prev + 1) % BASE_SLIDE_NAMES.length)
-    setElapsedMs(0)
+    setActiveSlide((prev) => {
+      const next = (prev + 1) % BASE_SLIDE_NAMES.length
+      // Hygiene reload every 60 minutes on cycle reset (when returning to slide 0)
+      if (next === 0 && Date.now() - appStartTimeRef.current >= RELOAD_INTERVAL_MS) {
+        window.location.reload()
+      }
+      return next
+    })
+    remainingMsRef.current = SLIDE_DURATION_MS
+    slideStartTimeRef.current = Date.now()
   }, [])
 
   useEffect(() => {
-    if (isPaused) return
+    if (isPaused) {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+        timerRef.current = null
+      }
+      const elapsed = Date.now() - slideStartTimeRef.current
+      remainingMsRef.current = Math.max(0, remainingMsRef.current - elapsed)
+      return
+    }
 
-    timerRef.current = setInterval(() => {
-      setElapsedMs((prev) => {
-        const next = prev + PROGRESS_TICK_MS
-        if (next >= SLIDE_DURATION_MS) {
-          nextSlide()
-          return 0
-        }
-        return next
-      })
-    }, PROGRESS_TICK_MS)
+    slideStartTimeRef.current = Date.now()
+    timerRef.current = setTimeout(() => {
+      nextSlide()
+    }, remainingMsRef.current)
 
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current)
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+        timerRef.current = null
+      }
     }
-  }, [isPaused, nextSlide])
+  }, [isPaused, nextSlide, activeSlide])
 
   const handleSelectSlide = (index: number) => {
     setActiveSlide(index)
-    setElapsedMs(0)
+    remainingMsRef.current = SLIDE_DURATION_MS
+    slideStartTimeRef.current = Date.now()
   }
 
   const handleTogglePause = () => {
@@ -128,9 +150,6 @@ export function KioskPage() {
   const nextMatch = useMemo(() => {
     return matches.find((m) => m.status === "scheduled") || null
   }, [matches])
-
-
-  const progressPercent = (elapsedMs / SLIDE_DURATION_MS) * 100
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden select-none">
@@ -162,7 +181,7 @@ export function KioskPage() {
         isPaused={isPaused}
         onTogglePause={handleTogglePause}
         onSelectSlide={handleSelectSlide}
-        slideProgress={progressPercent}
+        slideDurationMs={SLIDE_DURATION_MS}
         isOnline={isOnline}
       />
 

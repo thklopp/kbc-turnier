@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { Trophy } from "lucide-react"
 import type { Match, Team } from "@/types/database"
 import { getMatchDisplayName } from "@/services/matchService"
@@ -35,13 +35,16 @@ export function KioskFinalsSlide({ matches, teams }: KioskFinalsSlideProps) {
   const [logoErrors, setLogoErrors] = useState<Record<string, boolean>>({})
 
   // Filter all final phase matches (phase === 'final' or matchNumber > 24)
-  const finalsMatches = matches
-    .filter((m) => m.phase === "final" || m.matchNumber > 24)
-    .sort((a, b) => a.matchNumber - b.matchNumber)
+  const finalsMatches = useMemo(
+    () =>
+      matches
+        .filter((m) => m.phase === "final" || m.matchNumber > 24)
+        .sort((a, b) => a.matchNumber - b.matchNumber),
+    [matches]
+  )
 
-  // Identify next upcoming match
-  const col1Matches = finalsMatches.slice(0, 8)
-  const col2Matches = finalsMatches.slice(8, 16)
+  const col1Matches = useMemo(() => finalsMatches.slice(0, 8), [finalsMatches])
+  const col2Matches = useMemo(() => finalsMatches.slice(8, 16), [finalsMatches])
 
   const renderMatchRow = (match: Match) => {
     const home = getTeam(match.teamHomeId, match.teamHomePlaceholder, teams)
