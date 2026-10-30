@@ -302,6 +302,7 @@ export function AdminAllstarsView() {
         {(viewMode === "both" || viewMode === "wU14") && (
           <CategoryColumn
             evaluation={evaluationWu14}
+            teams={teams}
             expandedPositions={expandedPositions}
             onTogglePosition={togglePosition}
             isTeamVotesOpen={openTeamVotes.has("wU14")}
@@ -312,6 +313,7 @@ export function AdminAllstarsView() {
         {(viewMode === "both" || viewMode === "mU14") && (
           <CategoryColumn
             evaluation={evaluationMu14}
+            teams={teams}
             expandedPositions={expandedPositions}
             onTogglePosition={togglePosition}
             isTeamVotesOpen={openTeamVotes.has("mU14")}
@@ -325,14 +327,50 @@ export function AdminAllstarsView() {
 
 interface CategoryColumnProps {
   evaluation: AllstarCategoryEvaluation
+  teams: Team[]
   expandedPositions: Set<string>
   onTogglePosition: (key: string) => void
   isTeamVotesOpen: boolean
   onToggleTeamVotes: () => void
 }
 
+function SlotCard({
+  label,
+  position,
+  teams,
+}: {
+  label: string
+  position?: AllstarVote["votes"]["goalkeeper"]
+  teams: Team[]
+}) {
+  const teamName =
+    position?.teamName ||
+    (position?.teamId ? teams.find((t) => t.id === position.teamId)?.name : undefined)
+
+  return (
+    <div className="bg-white p-2 rounded-xl border border-slate-200 flex flex-col justify-between min-h-[64px]">
+      <span className="block text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-1">
+        {label}
+      </span>
+      {position?.playerName ? (
+        <div className="min-w-0">
+          <p className="font-bold text-slate-900 truncate text-xs leading-tight">
+            #{position.playerNumber} {position.playerName}
+          </p>
+          <p className="text-[10px] text-blue-700 font-semibold truncate mt-0.5" title={teamName}>
+            {teamName || "Verein unbekannt"}
+          </p>
+        </div>
+      ) : (
+        <span className="italic text-slate-400 block truncate text-xs">Noch offen</span>
+      )}
+    </div>
+  )
+}
+
 function CategoryColumn({
   evaluation,
+  teams,
   expandedPositions,
   onTogglePosition,
   isTeamVotesOpen,
@@ -610,9 +648,21 @@ function CategoryColumn({
                                 )}
                               </td>
                               <td className="py-2 text-slate-900">
-                                #{p.playerNumber} {p.playerName}
+                                <span className="font-bold block">
+                                  #{p.playerNumber} {p.playerName}
+                                </span>
+                                {p.voterTeamNames && p.voterTeamNames.length > 0 && (
+                                  <span
+                                    className="text-[10px] text-slate-400 font-normal block truncate max-w-[220px]"
+                                    title={`Stimmen erhalten von: ${p.voterTeamNames.join(", ")}`}
+                                  >
+                                    Stimmen von: {p.voterTeamNames.join(", ")}
+                                  </span>
+                                )}
                               </td>
-                              <td className="py-2 text-slate-600 truncate max-w-[120px]">{p.teamName}</td>
+                              <td className="py-2 text-blue-700 font-semibold truncate max-w-[130px]">
+                                {p.teamName}
+                              </td>
                               <td className="py-2 text-right font-bold text-slate-900">
                                 {p.votesCount}
                               </td>
@@ -683,67 +733,13 @@ function CategoryColumn({
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 text-[11px]">
-                      <div className="bg-white p-1.5 rounded-lg border border-slate-200">
-                        <span className="block text-[9px] text-slate-400 font-semibold uppercase">Torwart</span>
-                        {v.votes.goalkeeper?.playerName ? (
-                          <span className="font-medium text-slate-800 truncate block">
-                            #{v.votes.goalkeeper.playerNumber} {v.votes.goalkeeper.playerName}
-                          </span>
-                        ) : (
-                          <span className="italic text-slate-400 block truncate">Noch offen</span>
-                        )}
-                      </div>
-                      <div className="bg-white p-1.5 rounded-lg border border-slate-200">
-                        <span className="block text-[9px] text-slate-400 font-semibold uppercase">Feldspieler 1</span>
-                        {v.votes.fieldPlayer1?.playerName ? (
-                          <span className="font-medium text-slate-800 truncate block">
-                            #{v.votes.fieldPlayer1.playerNumber} {v.votes.fieldPlayer1.playerName}
-                          </span>
-                        ) : (
-                          <span className="italic text-slate-400 block truncate">Noch offen</span>
-                        )}
-                      </div>
-                      <div className="bg-white p-1.5 rounded-lg border border-slate-200">
-                        <span className="block text-[9px] text-slate-400 font-semibold uppercase">Feldspieler 2</span>
-                        {v.votes.fieldPlayer2?.playerName ? (
-                          <span className="font-medium text-slate-800 truncate block">
-                            #{v.votes.fieldPlayer2.playerNumber} {v.votes.fieldPlayer2.playerName}
-                          </span>
-                        ) : (
-                          <span className="italic text-slate-400 block truncate">Noch offen</span>
-                        )}
-                      </div>
-                      <div className="bg-white p-1.5 rounded-lg border border-slate-200">
-                        <span className="block text-[9px] text-slate-400 font-semibold uppercase">Feldspieler 3</span>
-                        {v.votes.fieldPlayer3?.playerName ? (
-                          <span className="font-medium text-slate-800 truncate block">
-                            #{v.votes.fieldPlayer3.playerNumber} {v.votes.fieldPlayer3.playerName}
-                          </span>
-                        ) : (
-                          <span className="italic text-slate-400 block truncate">Noch offen</span>
-                        )}
-                      </div>
-                      <div className="bg-white p-1.5 rounded-lg border border-slate-200">
-                        <span className="block text-[9px] text-slate-400 font-semibold uppercase">Feldspieler 4</span>
-                        {v.votes.fieldPlayer4?.playerName ? (
-                          <span className="font-medium text-slate-800 truncate block">
-                            #{v.votes.fieldPlayer4.playerNumber} {v.votes.fieldPlayer4.playerName}
-                          </span>
-                        ) : (
-                          <span className="italic text-slate-400 block truncate">Noch offen</span>
-                        )}
-                      </div>
-                      <div className="bg-white p-1.5 rounded-lg border border-slate-200">
-                        <span className="block text-[9px] text-slate-400 font-semibold uppercase">Feldspieler 5</span>
-                        {v.votes.fieldPlayer5?.playerName ? (
-                          <span className="font-medium text-slate-800 truncate block">
-                            #{v.votes.fieldPlayer5.playerNumber} {v.votes.fieldPlayer5.playerName}
-                          </span>
-                        ) : (
-                          <span className="italic text-slate-400 block truncate">Noch offen</span>
-                        )}
-                      </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px]">
+                      <SlotCard label="Torwart" position={v.votes.goalkeeper} teams={teams} />
+                      <SlotCard label="Feldspieler 1" position={v.votes.fieldPlayer1} teams={teams} />
+                      <SlotCard label="Feldspieler 2" position={v.votes.fieldPlayer2} teams={teams} />
+                      <SlotCard label="Feldspieler 3" position={v.votes.fieldPlayer3} teams={teams} />
+                      <SlotCard label="Feldspieler 4" position={v.votes.fieldPlayer4} teams={teams} />
+                      <SlotCard label="Feldspieler 5" position={v.votes.fieldPlayer5} teams={teams} />
                     </div>
                   </div>
                 )
