@@ -65,7 +65,7 @@ export function KioskHeader({
   const dayLabel = config?.activeDay === "sunday" ? "Sonntag (Finaltag)" : null
 
   return (
-    <header className="relative flex-none rounded-2xl border border-slate-200 bg-white/95 px-6 py-3.5 shadow-md backdrop-blur-md">
+    <header className="relative flex-none rounded-2xl border border-slate-200 bg-white px-6 py-3.5 shadow-md">
       <div className="flex items-center justify-between">
         {/* Left: Tournament Branding */}
         <div className="flex items-center gap-3">

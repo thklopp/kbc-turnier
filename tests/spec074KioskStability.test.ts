@@ -22,7 +22,7 @@ describe("SPEC-074: Kiosk-Stabilität, Performance & Raspberry-Pi-Optimierung Te
     )
   })
 
-  test("AC-1 & AC-4: KioskPage nutzt 12s Foliendauer, 60min Hygiene-Reload und keinen 100ms Re-Render-Loop mehr", () => {
+  test("AC-1: KioskPage nutzt 12s Foliendauer und keinen 100ms Re-Render-Loop mehr", () => {
     const pagePath = path.resolve(rootDir, "src/pages/kiosk/KioskPage.tsx")
     const pageContent = fs.readFileSync(pagePath, "utf-8")
 
@@ -35,12 +35,8 @@ describe("SPEC-074: Kiosk-Stabilität, Performance & Raspberry-Pi-Optimierung Te
       "KioskPage darf setElapsedMs nicht mehr verwenden"
     )
     assert.ok(
-      pageContent.includes("RELOAD_INTERVAL_MS"),
-      "KioskPage muss RELOAD_INTERVAL_MS für proaktiven Hygiene-Reload definieren"
-    )
-    assert.ok(
-      pageContent.includes("window.location.reload()"),
-      "KioskPage muss bei Erreichen des Reload-Intervalls window.location.reload() aufrufen"
+      pageContent.includes("SLIDE_DURATION_MS = 12000"),
+      "KioskPage muss SLIDE_DURATION_MS = 12000 definieren"
     )
   })
 

@@ -134,7 +134,7 @@ export function KioskScoreboardSlide({
                   onError={() =>
                     setLogoErrors((prev) => ({ ...prev, [displayMatch.teamHomeId]: true }))
                   }
-                  className="max-h-full max-w-full object-contain filter drop-shadow-sm"
+                  className="max-h-full max-w-full object-contain"
                 />
               ) : (
                 <span className="text-6xl md:text-7xl">🏑</span>
@@ -226,7 +226,7 @@ export function KioskScoreboardSlide({
                   onError={() =>
                     setLogoErrors((prev) => ({ ...prev, [displayMatch.teamAwayId]: true }))
                   }
-                  className="max-h-full max-w-full object-contain filter drop-shadow-sm"
+                  className="max-h-full max-w-full object-contain"
                 />
               ) : (
                 <span className="text-6xl md:text-7xl">🏑</span>

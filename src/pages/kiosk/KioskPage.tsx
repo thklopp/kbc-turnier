@@ -13,7 +13,6 @@ import { KioskFinalRankingsSlide } from "@/components/kiosk/KioskFinalRankingsSl
 import { isTournamentFinished } from "@/services/standingsService"
 
 const SLIDE_DURATION_MS = 12000 // 12 seconds per slide
-const RELOAD_INTERVAL_MS = 60 * 60 * 1000 // 60 minutes hygiene reload
 
 const BASE_SLIDE_NAMES = [
   "Live",
@@ -31,16 +30,14 @@ export function KioskPage() {
   const [activeSlide, setActiveSlide] = useState<number>(0)
   const [isPaused, setIsPaused] = useState<boolean>(false)
 
-  // Timing & Hygiene Reload Refs
+  // Timing Refs
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const remainingMsRef = useRef<number>(SLIDE_DURATION_MS)
   const slideStartTimeRef = useRef<number>(0)
-  const appStartTimeRef = useRef<number>(0)
 
-  // Initialize start times once mounted
+  // Initialize start time once mounted
   useEffect(() => {
     slideStartTimeRef.current = Date.now()
-    appStartTimeRef.current = Date.now()
   }, [])
 
   // Connectivity State
@@ -94,16 +91,9 @@ export function KioskPage() {
   const slideNames = BASE_SLIDE_NAMES
 
 
-  // Advance to next slide with hygiene reload check (at cycle restart)
+  // Advance to next slide
   const nextSlide = useCallback(() => {
-    setActiveSlide((prev) => {
-      const next = (prev + 1) % BASE_SLIDE_NAMES.length
-      // Hygiene reload every 60 minutes on cycle reset (when returning to slide 0)
-      if (next === 0 && Date.now() - appStartTimeRef.current >= RELOAD_INTERVAL_MS) {
-        window.location.reload()
-      }
-      return next
-    })
+    setActiveSlide((prev) => (prev + 1) % BASE_SLIDE_NAMES.length)
     remainingMsRef.current = SLIDE_DURATION_MS
     slideStartTimeRef.current = Date.now()
   }, [])
@@ -185,10 +175,10 @@ export function KioskPage() {
         isOnline={isOnline}
       />
 
-      {/* Main Dynamic Slide Area (Fills center height without scroll) */}
+      {/* Main Dynamic Slide Area (Persistent slides: zero DOM reconstruction, toggled via hidden) */}
       <div className="flex-1 flex flex-col justify-center items-center overflow-hidden my-auto w-full">
-        {activeSlide === 0 && (
-          tournamentFinished ? (
+        <div className={`w-full h-full flex flex-col justify-center items-center ${activeSlide === 0 ? "" : "hidden"}`}>
+          {tournamentFinished ? (
             <KioskFinalRankingsSlide
               matches={matches}
               teams={teams}
@@ -200,27 +190,29 @@ export function KioskPage() {
               teams={teams}
               matches={matches}
             />
-          )
-        )}
+          )}
+        </div>
 
-        {activeSlide === 1 && (
+        <div className={`w-full h-full flex flex-col justify-center items-center ${activeSlide === 1 ? "" : "hidden"}`}>
           <KioskGroupStageSlide
             matches={matches}
             teams={teams}
           />
-        )}
-        {activeSlide === 2 && (
+        </div>
+
+        <div className={`w-full h-full flex flex-col justify-center items-center ${activeSlide === 2 ? "" : "hidden"}`}>
           <KioskFinalsSlide
             matches={matches}
             teams={teams}
           />
-        )}
-        {activeSlide === 3 && (
+        </div>
+
+        <div className={`w-full h-full flex flex-col justify-center items-center ${activeSlide === 3 ? "" : "hidden"}`}>
           <KioskStandingsSlide
             teams={teams}
             matches={matches}
           />
-        )}
+        </div>
       </div>
     </div>
   )
