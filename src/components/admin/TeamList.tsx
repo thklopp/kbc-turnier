@@ -8,7 +8,9 @@ import { TeamCard } from "./TeamCard"
 import { TeamEditModal } from "./TeamEditModal"
 import { TeamJingleOverviewModal } from "./TeamJingleOverviewModal"
 import { TeamSwapModal } from "./TeamSwapModal"
-import { Users, Plus, Sparkles, Filter, AlertCircle, Music, ArrowLeftRight, Clock, Star, Eye } from "lucide-react"
+import { TeamRosterPdfModal } from "./TeamRosterPdfModal"
+import { downloadTeamRosterPdf } from "@/services/pdfRosterService"
+import { Users, Plus, Sparkles, Filter, AlertCircle, Music, ArrowLeftRight, Clock, Star, Eye, Printer } from "lucide-react"
 
 export function TeamList() {
   const [teams, setTeams] = useState<Team[]>([])
@@ -20,6 +22,7 @@ export function TeamList() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isJingleOverviewOpen, setIsJingleOverviewOpen] = useState(false)
   const [isSwapModalOpen, setIsSwapModalOpen] = useState(false)
+  const [isRosterPdfModalOpen, setIsRosterPdfModalOpen] = useState(false)
   const [swapInitialTeam, setSwapInitialTeam] = useState<Team | null>(null)
   const [seeding, setSeeding] = useState(false)
   const [config, setConfig] = useState<TournamentConfig>(getDefaultConfig())
@@ -122,6 +125,15 @@ export function TeamList() {
     }
   }
 
+  const handleDownloadTeamPdf = async (team: Team) => {
+    try {
+      await downloadTeamRosterPdf(team, config)
+    } catch (err) {
+      console.error("Fehler beim Erstellen des Team-PDFs:", err)
+      alert("Fehler beim Erstellen des PDFs. Bitte versuche es erneut.")
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Top Header & Actions */}
@@ -169,6 +181,16 @@ export function TeamList() {
           >
             <Music className="h-3.5 w-3.5 text-purple-600" />
             <span>Jingle-Links & Übersicht</span>
+          </button>
+
+          <button
+            onClick={() => setIsRosterPdfModalOpen(true)}
+            disabled={teams.length === 0}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-sm hover:bg-slate-50 transition-colors cursor-pointer disabled:opacity-50"
+            title="Druckfertige Spielkader für alle oder ausgewählte Teams als DIN-A4-PDF exportieren"
+          >
+            <Printer className="h-3.5 w-3.5 text-rose-600" />
+            <span>Kader-PDFs</span>
           </button>
 
           <button
@@ -351,6 +373,7 @@ export function TeamList() {
                 setSwapInitialTeam(t)
                 setIsSwapModalOpen(true)
               }}
+              onDownloadPdf={handleDownloadTeamPdf}
               onPlayJingle={play}
               onStopJingle={stop}
               isPlayingJingle={isPlaying(team.jingleUrl || undefined)}
@@ -389,6 +412,14 @@ export function TeamList() {
           setIsSwapModalOpen(false)
           setSwapInitialTeam(null)
         }}
+      />
+
+      {/* Team Roster PDF Export Modal */}
+      <TeamRosterPdfModal
+        teams={teams}
+        config={config}
+        isOpen={isRosterPdfModalOpen}
+        onClose={() => setIsRosterPdfModalOpen(false)}
       />
     </div>
   )

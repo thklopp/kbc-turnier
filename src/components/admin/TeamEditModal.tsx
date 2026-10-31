@@ -15,6 +15,8 @@ import {
 import { calculateAudioGain } from "@/lib/audioNormalization"
 import { useAudioPlayer } from "@/hooks/useAudioPlayer"
 import { TeamRosterManager } from "@/components/common/TeamRosterManager"
+import { downloadTeamRosterPdf } from "@/services/pdfRosterService"
+import { getTournamentConfig } from "@/services/configService"
 import {
   X,
   Upload,
@@ -31,6 +33,7 @@ import {
   Copy,
   Check,
   AlertTriangle,
+  Printer,
 } from "lucide-react"
 
 interface TeamEditModalProps {
@@ -244,6 +247,30 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
       setTimeout(() => setCopiedLink(false), 2000)
     } catch {
       prompt("Betreuer-Link für dieses Team:", url)
+    }
+  }
+
+  const [downloadingPdf, setDownloadingPdf] = useState(false)
+
+  const handleDownloadRosterPdf = async () => {
+    try {
+      setDownloadingPdf(true)
+      const config = await getTournamentConfig()
+      const teamDataToExport: Team = {
+        ...team,
+        name,
+        shortName,
+        gender,
+        group,
+        logoUrl: logoPreview,
+        players: currentPlayers,
+      }
+      await downloadTeamRosterPdf(teamDataToExport, config)
+    } catch (err) {
+      console.error("Fehler beim Herunterladen des Kader-PDFs:", err)
+      alert("Fehler beim Erstellen des PDFs.")
+    } finally {
+      setDownloadingPdf(false)
     }
   }
 
@@ -643,9 +670,21 @@ function TeamEditForm({ team, onClose }: { team: Team; onClose: () => void }) {
               <Users className="h-4 w-4 text-blue-600" />
               <h3 className="text-xs font-bold text-slate-800">Spielerkader</h3>
             </div>
-            <span className="text-[10px] font-mono font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full">
-              {currentPlayers.length} {currentPlayers.length === 1 ? "Spieler/in" : "Spieler/innen"} erfasst
-            </span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleDownloadRosterPdf}
+                disabled={downloadingPdf}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200 transition-colors shadow-2xs cursor-pointer disabled:opacity-50"
+                title="Aktuellen Mannschaftskader als DIN-A4-PDF herunterladen"
+              >
+                <Printer className="h-3 w-3 text-rose-600" />
+                <span>{downloadingPdf ? "Erzeuge PDF..." : "Kader PDF"}</span>
+              </button>
+              <span className="text-[10px] font-mono font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full">
+                {currentPlayers.length} {currentPlayers.length === 1 ? "Spieler/in" : "Spieler/innen"} erfasst
+              </span>
+            </div>
           </div>
 
           <TeamRosterManager

@@ -2,12 +2,13 @@ import { useState } from "react"
 import type { Team } from "@/types/database"
 import type { AudioPlayOptions } from "@/hooks/useAudioPlayer"
 import { formatTeamJingleToken, isTeamFullyConfigured } from "@/services/teamService"
-import { Play, Square, Edit2, ShieldAlert, Link as LinkIcon, Check, ArrowLeftRight } from "lucide-react"
+import { Play, Square, Edit2, ShieldAlert, Link as LinkIcon, Check, ArrowLeftRight, FileText } from "lucide-react"
 
 interface TeamCardProps {
   team: Team
   onEdit: (team: Team) => void
   onSwap?: (team: Team) => void
+  onDownloadPdf?: (team: Team) => void
   onPlayJingle: (url: string, startTimeMs?: number, options?: AudioPlayOptions) => void
   onStopJingle: () => void
   isPlayingJingle: boolean
@@ -17,6 +18,7 @@ export function TeamCard({
   team,
   onEdit,
   onSwap,
+  onDownloadPdf,
   onPlayJingle,
   onStopJingle,
   isPlayingJingle,
@@ -169,6 +171,21 @@ export function TeamCard({
             <ArrowLeftRight className="h-3.5 w-3.5 text-slate-500 group-hover:text-blue-600 shrink-0" />
             <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-all duration-200 group-hover:max-w-xs group-hover:opacity-100 group-hover:ml-1.5 text-[11px]">
               Tauschen
+            </span>
+          </button>
+        )}
+
+        {/* Kader PDF */}
+        {onDownloadPdf && (
+          <button
+            type="button"
+            onClick={() => onDownloadPdf(team)}
+            className="group inline-flex items-center justify-center h-8 px-2.5 rounded-lg border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200 transition-all duration-200 cursor-pointer overflow-hidden"
+            title="Spielkader als DIN-A4-PDF herunterladen"
+          >
+            <FileText className="h-3.5 w-3.5 text-slate-500 group-hover:text-rose-600 shrink-0" />
+            <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-all duration-200 group-hover:max-w-xs group-hover:opacity-100 group-hover:ml-1.5 text-[11px]">
+              Kader PDF
             </span>
           </button>
         )}
