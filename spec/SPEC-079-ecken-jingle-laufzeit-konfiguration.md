@@ -1,6 +1,6 @@
 # SPEC-079: Konfigurierbare Ecken-Jingle Maximallaufzeit (Standard 25s)
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature / Konfiguration  
 > **Branch**: feat/SPEC-079-ecken-jingle-laufzeit-konfiguration  
 > **Autor**: Antigravity  
