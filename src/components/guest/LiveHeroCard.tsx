@@ -1,4 +1,4 @@
-import type { Match, Team } from "@/types/database"
+import type { Match, Team, MatchEvent } from "@/types/database"
 import { getMatchDisplayName } from "@/services/matchService"
 import { ShieldAlert, Sparkles, Trophy } from "lucide-react"
 import { HockeyGoalIcon } from "@/components/common/HockeyGoalIcon"
@@ -55,6 +55,24 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
     : currentMatch.gender === "wU14"
     ? "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200"
     : "bg-blue-50 text-blue-700 border-blue-200"
+
+  const getGoalScorerLabel = (g: MatchEvent, team?: Team) => {
+    const player = (team?.players || []).find(
+      (p) => (g.playerId ? p.id === g.playerId : p.number === g.playerNumber)
+    )
+    const fullName = player
+      ? [player.firstName?.trim(), player.lastName?.trim()].filter(Boolean).join(" ")
+      : g.playerName
+    const pNum = g.playerNumber ?? player?.number
+
+    if (fullName) {
+      return pNum !== undefined ? `#${pNum} ${fullName}`.trim() : fullName
+    }
+    if (pNum !== undefined) {
+      return `#${pNum}`
+    }
+    return "Tor"
+  }
 
   const finalName =
     currentMatch.matchName && currentMatch.matchName.trim().length > 0
@@ -204,11 +222,7 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
             {/* Heim-Tore */}
             <div className="space-y-1.5">
               {homeGoals.map((g, idx) => {
-                const label = g.playerName
-                  ? `#${g.playerNumber ?? ""} ${g.playerName}`.trim()
-                  : g.playerNumber
-                  ? `#${g.playerNumber}`
-                  : "Tor"
+                const label = getGoalScorerLabel(g, homeTeam)
                 return (
                   <div
                     key={g.id || idx}
@@ -227,11 +241,7 @@ export function LiveHeroCard({ matches, teams }: LiveHeroCardProps) {
             {/* Gast-Tore */}
             <div className="space-y-1.5 text-right flex flex-col items-end">
               {awayGoals.map((g, idx) => {
-                const label = g.playerName
-                  ? `#${g.playerNumber ?? ""} ${g.playerName}`.trim()
-                  : g.playerNumber
-                  ? `#${g.playerNumber}`
-                  : "Tor"
+                const label = getGoalScorerLabel(g, awayTeam)
                 return (
                   <div
                     key={g.id || idx}

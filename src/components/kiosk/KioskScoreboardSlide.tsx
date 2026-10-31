@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Clock, Calendar, CheckCircle2, Pause } from "lucide-react"
-import type { Match, Team } from "@/types/database"
+import type { Match, Team, MatchEvent } from "@/types/database"
 import { HockeyGoalIcon } from "@/components/common/HockeyGoalIcon"
 import { getMatchDisplayName } from "@/services/matchService"
 import { MatchRefereeDisplay } from "@/components/common/MatchRefereeDisplay"
@@ -22,6 +22,7 @@ function getTeamDetails(teamId: string, placeholder?: string, teams: Team[] = []
       logoUrl: team.logoUrl,
       gender: team.gender,
       group: team.group,
+      players: team.players || [],
     }
   }
   return {
@@ -30,6 +31,7 @@ function getTeamDetails(teamId: string, placeholder?: string, teams: Team[] = []
     logoUrl: null,
     gender: null,
     group: null,
+    players: [],
   }
 }
 
@@ -97,6 +99,24 @@ export function KioskScoreboardSlide({
       e.teamId !== "home"
   )
   const cardEvents = (displayMatch.events || []).filter((e) => e.type !== "goal")
+
+  const getGoalScorerLabel = (g: MatchEvent, teamPlayers: Team["players"] = []) => {
+    const player = (teamPlayers || []).find(
+      (p) => (g.playerId ? p.id === g.playerId : p.number === g.playerNumber)
+    )
+    const fullName = player
+      ? [player.firstName?.trim(), player.lastName?.trim()].filter(Boolean).join(" ")
+      : g.playerName
+    const pNum = g.playerNumber ?? player?.number
+
+    if (fullName) {
+      return pNum !== undefined ? `#${pNum} ${fullName}`.trim() : fullName
+    }
+    if (pNum !== undefined) {
+      return `#${pNum}`
+    }
+    return "Tor"
+  }
 
   return (
     <div className="flex h-full flex-col justify-start items-center pt-[72px] pb-4 px-6 max-w-[calc(96rem+100px)] mx-auto w-full">
@@ -245,11 +265,7 @@ export function KioskScoreboardSlide({
               {/* Heim Tore */}
               <div className="flex flex-wrap gap-2">
                 {homeGoals.map((g, idx) => {
-                  const label = g.playerName
-                    ? `#${g.playerNumber ?? ""} ${g.playerName}`.trim()
-                    : g.playerNumber
-                    ? `#${g.playerNumber}`
-                    : "Tor"
+                  const label = getGoalScorerLabel(g, home.players)
                   return (
                     <span
                       key={g.id || idx}
@@ -266,11 +282,7 @@ export function KioskScoreboardSlide({
               {/* Gast Tore */}
               <div className="flex flex-wrap gap-2 justify-end">
                 {awayGoals.map((g, idx) => {
-                  const label = g.playerName
-                    ? `#${g.playerNumber ?? ""} ${g.playerName}`.trim()
-                    : g.playerNumber
-                    ? `#${g.playerNumber}`
-                    : "Tor"
+                  const label = getGoalScorerLabel(g, away.players)
                   return (
                     <span
                       key={g.id || idx}
