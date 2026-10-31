@@ -18,6 +18,7 @@ export interface TournamentConfig {
   allstarVotingOpen?: boolean
   showTeamTimesTab?: boolean
   showTeamAllstarsTab?: boolean
+  cornerJingleDurationSeconds?: number
   updatedAt?: Timestamp
   updatedBy?: string
 }

@@ -70,7 +70,13 @@ export function LiveMatchDesk() {
     playCornerJingle,
     isPlayingCornerJingle,
     currentMinute,
-  } = useLiveMatchDesk(currentMatch, teams, config.gameDurationMinutes, matches)
+  } = useLiveMatchDesk(
+    currentMatch,
+    teams,
+    config.gameDurationMinutes,
+    matches,
+    config.cornerJingleDurationSeconds
+  )
 
   const handleNextMatch = () => {
     if (currentMatchIndex < matches.length - 1) {
