@@ -1,6 +1,6 @@
 # SPEC-078: Vollständige Spielernamen ohne Vornamen-Abkürzung
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Bugfix / UI-Optimierung  
 > **Branch**: fix/SPEC-078-spielernamen-ohne-abkuerzung  
 > **Autor**: Antigravity  
