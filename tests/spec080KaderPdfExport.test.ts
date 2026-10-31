@@ -77,4 +77,14 @@ test("SPEC-080: Team-Kader PDF Export Tests", async (t) => {
     const doc = await generateAllTeamsRosterPdf(teams, config)
     assert.strictEqual(doc.getNumberOfPages(), 2)
   })
+
+  await t.test("Logo-Auflösung: Lädt vorbereitete Vereinslogos und generiert PDF mit Wappen", async () => {
+    const teamWithKnownId: Team = {
+      ...mockTeamA,
+      id: "team-mu14-5", // Rüsselsheimer RK
+      name: "Rüsselsheimer RK",
+    }
+    const doc = await generateTeamRosterPdf(teamWithKnownId, config)
+    assert.strictEqual(doc.getNumberOfPages(), 1)
+  })
 })

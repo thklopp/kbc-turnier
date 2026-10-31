@@ -1,6 +1,7 @@
 import { jsPDF } from "jspdf"
 import autoTable from "jspdf-autotable"
 import type { Team, Player, TournamentConfig } from "@/types/database"
+import { TEAM_LOGOS, TOURNAMENT_LOGO } from "@/assets/teamLogos"
 
 interface DocWithAutoTable extends jsPDF {
   lastAutoTable?: {
@@ -9,10 +10,9 @@ interface DocWithAutoTable extends jsPDF {
 }
 
 /**
- * Wandelt eine Bild-URL in eine Data-URL (PNG Base64) um,
- * damit jsPDF das Logo verlässlich im PDF einbetten kann.
+ * Konvertiert eine Bild-URL via Canvas in eine PNG-Data-URL.
  */
-async function loadLogoDataUrl(url: string): Promise<string> {
+async function convertUrlToDataUrl(url: string): Promise<string> {
   if (typeof window === "undefined" || !url) return ""
   return new Promise((resolve) => {
     const img = new Image()
@@ -33,6 +33,42 @@ async function loadLogoDataUrl(url: string): Promise<string> {
     img.onerror = () => resolve("")
     img.src = url
   })
+}
+
+/**
+ * Wandelt eine Bild-URL in eine Data-URL (PNG Base64) um,
+ * damit jsPDF das Logo verlässlich im PDF einbetten kann.
+ * Verwendet primär das vorbereitete lokale Base64-Logo (CORS-frei & offlinefähig)
+ * und fällt für neu hochgeladene Logos auf Same-Origin / Canvas zurück.
+ */
+export async function loadLogoDataUrl(
+  url?: string | null,
+  teamId?: string
+): Promise<string> {
+  // 1. Direkt aus dem vorbereiteten Vereinswappen-Bestand laden (Zero-CORS, superschnell)
+  if (teamId && TEAM_LOGOS[teamId]) {
+    return TEAM_LOGOS[teamId]
+  }
+
+  // 2. Falls bereits eine Data-URL übergeben wurde (z.B. aus lokalem Upload-Preview)
+  if (url && url.startsWith("data:image/")) {
+    return url
+  }
+
+  // 3. Fallback auf den Same-Origin Pfad im public-Ordner
+  if (teamId) {
+    const publicUrl = `/logos/${teamId}.png`
+    const publicDataUrl = await convertUrlToDataUrl(publicUrl)
+    if (publicDataUrl) return publicDataUrl
+  }
+
+  // 4. Fallback auf die direkte Bild-URL
+  if (url) {
+    const directDataUrl = await convertUrlToDataUrl(url)
+    if (directDataUrl) return directDataUrl
+  }
+
+  return ""
 }
 
 /**
@@ -61,31 +97,41 @@ function drawTeamHeader(
   totalPages: number
 ) {
   const startX = 14
-  const startY = 12
+  const startY = 11
   const pageWidth = 210
   const rightX = pageWidth - startX // 196 mm
 
-  // 1. Oberste Turnierzeile (dezent & seriös)
+  // 1. Oberste Turnierzeile mit Turnierlogo & Metadaten
+  let titleX = startX
+  try {
+    if (TOURNAMENT_LOGO) {
+      doc.addImage(TOURNAMENT_LOGO, "PNG", startX, startY - 2, 7, 9)
+      titleX = startX + 9.5
+    }
+  } catch {
+    titleX = startX
+  }
+
   doc.setFont("helvetica", "bold")
-  doc.setFontSize(10)
-  doc.setTextColor(71, 85, 105) // slate-600
-  doc.text((config.tournamentName || "20. Kurt-Becker-Cup").toUpperCase(), startX, startY)
+  doc.setFontSize(10.5)
+  doc.setTextColor(30, 41, 59) // slate-800
+  doc.text((config.tournamentName || "20. Kurt-Becker-Cup").toUpperCase(), titleX, startY + 4)
 
   doc.setFont("helvetica", "normal")
   doc.setFontSize(8.5)
-  doc.setTextColor(148, 163, 184) // slate-400
-  doc.text("Offizieller Mannschaftsspielkader", startX + 75, startY)
+  doc.setTextColor(100, 116, 139) // slate-500
+  doc.text("Offizieller Mannschaftsspielkader • Großsporthalle Rüsselsheim", titleX + 54, startY + 4)
 
   // Seitennummer oben rechts
-  doc.text(`Seite ${pageNumber} von ${totalPages}`, rightX, startY, { align: "right" })
+  doc.text(`Seite ${pageNumber} von ${totalPages}`, rightX, startY + 4, { align: "right" })
 
   // Obere Trennlinie
   doc.setDrawColor(226, 232, 240) // slate-200
   doc.setLineWidth(0.4)
-  doc.line(startX, startY + 2.5, rightX, startY + 2.5)
+  doc.line(startX, startY + 7.5, rightX, startY + 7.5)
 
   // 2. Banner-Kasten für Vereinsdaten
-  const boxY = startY + 5
+  const boxY = startY + 10.5
   const boxHeight = 36
   const boxWidth = rightX - startX // 182 mm
 
@@ -98,14 +144,32 @@ function drawTeamHeader(
   // Logo oder Initialen links
   const logoX = startX + 4
   const logoY = boxY + 4
-  const logoSize = 28
+  const logoBoxSize = 28
 
   let hasDrawnLogo = false
   if (logoDataUrl) {
     try {
-      doc.addImage(logoDataUrl, "PNG", logoX, logoY, logoSize, logoSize)
+      const format =
+        logoDataUrl.includes("image/jpeg") || logoDataUrl.includes("image/jpg")
+          ? "JPEG"
+          : "PNG"
+
+      const imgProps = doc.getImageProperties(logoDataUrl)
+      const aspect = imgProps.width / imgProps.height
+      let renderW = logoBoxSize
+      let renderH = logoBoxSize
+      if (aspect > 1) {
+        renderH = logoBoxSize / aspect
+      } else {
+        renderW = logoBoxSize * aspect
+      }
+      const renderX = logoX + (logoBoxSize - renderW) / 2
+      const renderY = logoY + (logoBoxSize - renderH) / 2
+
+      doc.addImage(logoDataUrl, format, renderX, renderY, renderW, renderH)
       hasDrawnLogo = true
-    } catch {
+    } catch (err) {
+      console.warn("Fehler beim Zeichnen des Team-Logos in jsPDF:", err)
       hasDrawnLogo = false
     }
   }
@@ -113,17 +177,17 @@ function drawTeamHeader(
   if (!hasDrawnLogo) {
     // Schicker Fallback-Platzhalter mit Kurzname/Initialen
     doc.setFillColor(226, 232, 240) // slate-200
-    doc.roundedRect(logoX, logoY, logoSize, logoSize, 2, 2, "F")
+    doc.roundedRect(logoX, logoY, logoBoxSize, logoBoxSize, 2, 2, "F")
     doc.setFont("helvetica", "bold")
     doc.setFontSize(12)
     doc.setTextColor(71, 85, 105) // slate-600
-    doc.text(team.shortName || "TEAM", logoX + logoSize / 2, logoY + logoSize / 2 + 4, {
+    doc.text(team.shortName || "TEAM", logoX + logoBoxSize / 2, logoY + logoBoxSize / 2 + 4, {
       align: "center",
     })
   }
 
   // Textbereich rechts neben dem Logo
-  const textX = logoX + logoSize + 6
+  const textX = logoX + logoBoxSize + 6
 
   // Vereinsname / Mannschaftsname
   doc.setFont("helvetica", "bold")
@@ -183,7 +247,7 @@ function drawTeamFooter(doc: jsPDF, finalY: number) {
   const rightX = pageWidth - startX // 196 mm
 
   // Falls noch Platz nach der Tabelle ist, Unterschriftenblöcke zeichnen
-  const signY = Math.max(finalY + 8, 260)
+  const signY = Math.max(finalY + 8, 258)
 
   doc.setFont("helvetica", "normal")
   doc.setFontSize(8)
@@ -244,7 +308,7 @@ function renderTeamRosterPage(
 
   // Tabelle erzeugen
   autoTable(doc, {
-    startY: 56,
+    startY: 61,
     margin: { left: 14, right: 14 },
     head: [["Nr.", "Vorname", "Nachname", "Bemerkung (TW / C / Notiz)"]],
     body: tableData,
@@ -314,7 +378,7 @@ export async function generateTeamRosterPdf(
     format: "a4",
   }) as DocWithAutoTable
 
-  const logoDataUrl = team.logoUrl ? await loadLogoDataUrl(team.logoUrl) : ""
+  const logoDataUrl = await loadLogoDataUrl(team.logoUrl, team.id)
   renderTeamRosterPage(doc, team, config, logoDataUrl, 1, 1)
 
   return doc
@@ -358,15 +422,13 @@ export async function generateAllTeamsRosterPdf(
 
   const totalPages = sortedTeams.length || 1
 
-  // Logos vorab parallel laden, um Zeit zu sparen
+  // Logos vorab parallel laden
   const logoDataMap = new Map<string, string>()
   await Promise.all(
     sortedTeams.map(async (t) => {
-      if (t.logoUrl) {
-        const dataUrl = await loadLogoDataUrl(t.logoUrl)
-        if (dataUrl) {
-          logoDataMap.set(t.id, dataUrl)
-        }
+      const dataUrl = await loadLogoDataUrl(t.logoUrl, t.id)
+      if (dataUrl) {
+        logoDataMap.set(t.id, dataUrl)
       }
     })
   )
