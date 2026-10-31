@@ -1,6 +1,6 @@
 # SPEC-080: PDF-Export für Mannschaftskader (DIN A4)
 
-> **Status**: In Abnahme  
+> **Status**: Abgeschlossen  
 > **Typ**: Feature  
 > **Branch**: `feat/SPEC-080-kader-pdf-export`  
 > **Autor**: Antigravity Agent  
@@ -178,5 +178,5 @@ Jede Mannschaft erhält ein druckfertiges DIN-A4-PDF im Hochformat (Portrait), d
 
 ## 8. Abnahme & Freigabe-Gates
 
-- [ ] **1. Gate: Freigabe der Spec durch PO (`APPROVED`)**
-- [ ] **2. Gate: Endabnahme & Freigabe zum Merge (`MERGE`)**
+- [x] **1. Gate: Freigabe der Spec durch PO (`APPROVED`)**
+- [x] **2. Gate: Endabnahme & Freigabe zum Merge (`MERGE`)**
