@@ -460,7 +460,7 @@ export function ScoreboardDisplay({
                       <option value="">Schütze unbekannt</option>
                       {(homeTeam?.players || []).map((p) => (
                         <option key={p.id} value={p.id}>
-                          #{p.number} {p.firstName ? p.firstName.charAt(0) + ". " : ""}{p.lastName}
+                          #{p.number} {[p.firstName, p.lastName].filter(Boolean).join(" ")}
                         </option>
                       ))}
                       {(homeTeam?.players || []).length === 0 && (
@@ -690,7 +690,7 @@ export function ScoreboardDisplay({
                       <option value="">Schütze unbekannt</option>
                       {(awayTeam?.players || []).map((p) => (
                         <option key={p.id} value={p.id}>
-                          #{p.number} {p.firstName ? p.firstName.charAt(0) + ". " : ""}{p.lastName}
+                          #{p.number} {[p.firstName, p.lastName].filter(Boolean).join(" ")}
                         </option>
                       ))}
                       {(awayTeam?.players || []).length === 0 && (

@@ -446,7 +446,7 @@ export async function updateMatchEventScorer(
   player?: Player | null
 ): Promise<void> {
   const formatName = (p: Player) =>
-    `${p.firstName ? p.firstName.trim().charAt(0) + ". " : ""}${p.lastName.trim()}`
+    [p.firstName?.trim(), p.lastName?.trim()].filter(Boolean).join(" ")
 
   if (!isFirebaseConfigured) {
     const idx = localMockMatches.findIndex((m) => m.id === matchId)
