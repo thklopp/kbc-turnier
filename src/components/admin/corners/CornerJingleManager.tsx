@@ -1,10 +1,15 @@
 import { useState, useEffect } from "react"
-import type { CornerJingle } from "@/types/database"
+import type { CornerJingle, TournamentConfig } from "@/types/database"
 import {
   subscribeCornerJingles,
   deleteCornerJingle,
   setDefaultCornerJingle,
 } from "@/services/cornerJingleService"
+import {
+  subscribeTournamentConfig,
+  updateTournamentConfig,
+  getDefaultConfig,
+} from "@/services/configService"
 import { useAudioPlayer } from "@/hooks/useAudioPlayer"
 import { CornerJingleModal } from "./CornerJingleModal"
 import {
@@ -29,7 +34,25 @@ export function CornerJingleManager() {
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
 
+  // Globale Turnierkonfiguration für Ecken-Jingle-Laufzeit
+  const [config, setConfig] = useState<TournamentConfig>(getDefaultConfig())
+  const [durationInput, setDurationInput] = useState<string>("25")
+  const [savingDuration, setSavingDuration] = useState(false)
+  const [durationSuccess, setDurationSuccess] = useState(false)
+  const [durationError, setDurationError] = useState<string | null>(null)
+
   const { play, stop, fadeOut, isPlaying } = useAudioPlayer()
+
+  useEffect(() => {
+    const unsub = subscribeTournamentConfig(
+      (newConfig) => {
+        setConfig(newConfig)
+        setDurationInput(String(newConfig.cornerJingleDurationSeconds || 25))
+      },
+      (err) => console.error("Config Listener Fehler in CornerJingleManager:", err)
+    )
+    return () => unsub()
+  }, [])
 
   useEffect(() => {
     const unsub = subscribeCornerJingles(
@@ -89,6 +112,32 @@ export function CornerJingleManager() {
     }
   }
 
+  const handleSaveDuration = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
+    const val = parseInt(durationInput, 10)
+    if (isNaN(val) || val < 5 || val > 120) {
+      setDurationError("Bitte eine gültige Dauer zwischen 5 und 120 Sekunden angeben.")
+      return
+    }
+    setDurationError(null)
+    setSavingDuration(true)
+    setDurationSuccess(false)
+    try {
+      await updateTournamentConfig({
+        cornerJingleDurationSeconds: val,
+      })
+      setDurationSuccess(true)
+      setTimeout(() => setDurationSuccess(false), 2500)
+    } catch (err: unknown) {
+      console.error("Fehler beim Speichern der Ecken-Jingle-Laufzeit:", err)
+      setDurationError("Fehler beim Speichern der Laufzeit.")
+    } finally {
+      setSavingDuration(false)
+    }
+  }
+
+  const currentDuration = config.cornerJingleDurationSeconds || 25
+
   return (
     <div className="space-y-6">
       {/* Top Banner / Header */}
@@ -107,7 +156,7 @@ export function CornerJingleManager() {
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-0.5">
-              Neutrale Hallen-Jingles für Strafecken – mit Startzeit-Offset und 15s Playback auf dem Live-Desk.
+              Neutrale Hallen-Jingles für Strafecken – mit Startzeit-Offset und {currentDuration}s Playback auf dem Live-Desk.
             </p>
           </div>
         </div>
@@ -120,6 +169,70 @@ export function CornerJingleManager() {
           <Plus className="h-4 w-4 stroke-[3]" />
           <span>Ecken-Jingle hinzufügen</span>
         </button>
+      </div>
+
+      {/* Allgemeine Laufzeit-Konfiguration */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm">
+        <form onSubmit={handleSaveDuration} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700">
+              <Clock className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-slate-900">
+                  Maximale Spieldauer im Live-Desk
+                </span>
+                <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700 border border-amber-200">
+                  Allgemein
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Ecken-Jingles stoppen nach dieser Zeit automatisch mit einem 1-sekündigen Fade-Out.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 self-end sm:self-center">
+            <div className="relative flex items-center">
+              <input
+                type="number"
+                min={5}
+                max={120}
+                value={durationInput}
+                onChange={(e) => {
+                  setDurationInput(e.target.value)
+                  setDurationError(null)
+                }}
+                className="w-24 rounded-xl border border-slate-300 bg-slate-50/50 px-3 py-2 pr-8 text-sm font-mono font-semibold text-slate-900 text-right focus:border-blue-500 focus:bg-white focus:outline-hidden focus:ring-1 focus:ring-blue-500"
+                aria-label="Maximale Spieldauer in Sekunden"
+              />
+              <span className="pointer-events-none absolute right-3 text-xs font-semibold text-slate-400">
+                s
+              </span>
+            </div>
+
+            <button
+              type="submit"
+              disabled={savingDuration || (!durationSuccess && Number(durationInput) === currentDuration)}
+              className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed px-4 py-2 text-xs font-bold text-white shadow-xs transition-colors cursor-pointer shrink-0 min-w-[105px]"
+            >
+              {savingDuration ? (
+                <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              ) : durationSuccess ? (
+                <CheckCircle className="h-3.5 w-3.5 text-emerald-400" />
+              ) : null}
+              <span>{savingDuration ? "Speichern..." : durationSuccess ? "Gespeichert" : "Speichern"}</span>
+            </button>
+          </div>
+        </form>
+
+        {durationError && (
+          <div className="mt-3 flex items-center gap-2 text-xs font-medium text-rose-600">
+            <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+            <span>{durationError}</span>
+          </div>
+        )}
       </div>
 
       {actionError && (

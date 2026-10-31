@@ -25,12 +25,18 @@ const DEFAULT_CONFIG: TournamentConfig = {
   allstarVotingOpen: false,
   showTeamTimesTab: true,
   showTeamAllstarsTab: true,
+  cornerJingleDurationSeconds: 25,
 }
 
 function normalizeConfig(data: Partial<TournamentConfig>): TournamentConfig {
   const status =
     data.allstarVotingStatus ||
     (data.allstarVotingOpen === false ? "closed" : data.allstarVotingOpen === true ? "open" : "upcoming")
+
+  const cornerDuration =
+    typeof data.cornerJingleDurationSeconds === "number" && data.cornerJingleDurationSeconds > 0
+      ? data.cornerJingleDurationSeconds
+      : 25
 
   return {
     ...DEFAULT_CONFIG,
@@ -40,6 +46,7 @@ function normalizeConfig(data: Partial<TournamentConfig>): TournamentConfig {
     allstarVotingOpen: status === "open",
     showTeamTimesTab: data.showTeamTimesTab !== false,
     showTeamAllstarsTab: data.showTeamAllstarsTab !== false,
+    cornerJingleDurationSeconds: cornerDuration,
   }
 }
 

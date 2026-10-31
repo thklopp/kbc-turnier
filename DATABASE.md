@@ -45,6 +45,7 @@ export interface TournamentConfig {
   allstarVotingOpen?: boolean;       // Veraltet / Fallback für ältere Clients
   showTeamTimesTab?: boolean;        // Sichtbarkeit des Reiters "Zeiten" auf Betreuerseiten (Standard: true)
   showTeamAllstarsTab?: boolean;     // Sichtbarkeit des Reiters "Allstar-Wahl" auf Betreuerseiten (Standard: true)
+  cornerJingleDurationSeconds?: number; // Maximale Spieldauer von Ecken-Jingles im Live-Desk in Sekunden (Standard: 25)
   updatedAt: FirebaseFirestore.Timestamp;
   updatedBy?: string;                // User-ID des Admins
 }

@@ -10,7 +10,8 @@ export function useLiveMatchDesk(
   match: Match | null,
   teams: Team[],
   gameDurationMinutes: number,
-  allMatches: Match[] = []
+  allMatches: Match[] = [],
+  cornerJingleDurationSeconds?: number
 ) {
   const durationInSeconds = (gameDurationMinutes || 20) * 60
 
@@ -56,6 +57,11 @@ export function useLiveMatchDesk(
   const activeCornerJingle =
     cornerJingles.find((j) => j.id === activeCornerJingleId) || null
 
+  const cornerDurationMs =
+    (cornerJingleDurationSeconds && cornerJingleDurationSeconds > 0
+      ? cornerJingleDurationSeconds
+      : 25) * 1000
+
   const playCornerJingle = useCallback(() => {
     if (!activeCornerJingle || !activeCornerJingle.audioUrl) return
     if (isPlaying(activeCornerJingle.audioUrl)) {
@@ -63,11 +69,11 @@ export function useLiveMatchDesk(
       return
     }
     play(activeCornerJingle.audioUrl, activeCornerJingle.startTimeMs || 0, {
-      maxDurationMs: 15000,
+      maxDurationMs: cornerDurationMs,
       fadeOutDurationMs: 1000,
       gain: activeCornerJingle.gain,
     })
-  }, [activeCornerJingle, isPlaying, fadeOut, play])
+  }, [activeCornerJingle, isPlaying, fadeOut, play, cornerDurationMs])
 
   const isPlayingCornerJingle = Boolean(
     activeCornerJingle?.audioUrl && isPlaying(activeCornerJingle.audioUrl)
